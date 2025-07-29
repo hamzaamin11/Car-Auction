@@ -74,9 +74,16 @@ import SellerLiveAuctions from "./components/SellerLiveAuctions";
 import SellerLayout from "./components/SellerLayout";
 import SellerVehicleSpects from "./components/SellerVehicleSpects";
 import SellerProtectedRoute from "./SellerProtectedRoute";
+import CustomerList from "./admin/pages/CustomerList";
+import FilterPriceCars from "./pages/FilterPriceCars";
+import { useSelector } from "react-redux";
+import {  BrandList } from "./admin/pages/BrandList";
 
 function Layout() {
   const location = useLocation();
+  const { currentUser } = useSelector((state) => state.auth);
+
+  const role = currentUser?.role;
 
   const isAdminRoute = location.pathname.startsWith("/admin");
   const isAdminLogin = location.pathname === "/admin-login";
@@ -88,7 +95,9 @@ function Layout() {
       {!hideNavbarFooter && location.pathname === "/"}
       <ScrollToTop />
 
-      {!hideNavbarFooter && <Navbar />}
+      {role === "admin" || role === "seller"
+        ? null
+        : !hideNavbarFooter && <Navbar />}
 
       <Routes>
         {/* Main Routes */}
@@ -123,6 +132,8 @@ function Layout() {
 
         <Route path="/details/:type" element={<UsedCars />} />
 
+        <Route path="/filterprice/:tab" element={<FilterPriceCars />} />
+
         <Route path="/Salvagevehicles" element={<SalvageVehicles />} />
         <Route path="/add-vehicles" element={<AddVehicles />} />
         <Route path="/my-bids" element={<MyBids />} />
@@ -144,7 +155,8 @@ function Layout() {
         >
           <Route index element={<AdminDashboard />} />
           <Route path="vehicles" element={<AddAdminVehicle />} />
-          {/* <Route path="manage-vehicles" element={<ManageVehicles />} /> */}
+          <Route path="/admin/addbrand" element={<BrandList />} />
+
           <Route path="vehicle-prices" element={<AddVehiclePrices />} />
           <Route path="vehicle-spects" element={<AddVehicleSpects />} />
           <Route path="vehicle-details" element={<VehicleDetailsViewer />} />
@@ -152,6 +164,7 @@ function Layout() {
           <Route path="upcoming-auctions" element={<UpcomingAuctions />} />
           <Route path="bid-history" element={<AdminBidHistory />} />
           <Route path="manage-users" element={<ManageUsers />} />
+          <Route path="/admin/customerlist" element={<CustomerList />} />
         </Route>
 
         <Route
