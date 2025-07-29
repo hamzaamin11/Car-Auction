@@ -1,6 +1,7 @@
 import axios from "axios";
 import { useEffect, useState } from "react";
 import { Link, useNavigate, useParams } from "react-router-dom";
+import { BASE_URL } from "./Contant/URL";
 
 const AudiQ2Prices = () => {
   const { carType } = useParams();
@@ -14,7 +15,7 @@ const AudiQ2Prices = () => {
   const handleGetPrice = async () => {
     try {
       const res = await axios.get(
-        `http://localhost:3001/customer/getVehicleByMake?requestedMake=${carType}`
+        `${BASE_URL}/customer/getVehicleByMake?requestedMake=${carType}`
       );
       setAllPrices(res.data);
     } catch (error) {
@@ -65,6 +66,11 @@ const AudiQ2Prices = () => {
             ))}
           </tbody>
         </table>
+        {allPrices.length === 0 && (
+          <div className="flex items-center justify-center font-bold py-1">
+            No Car Found
+          </div>
+        )}
       </div>
 
       <div className="space-y-4 sm:hidden">

@@ -1,9 +1,13 @@
-import { Navigate } from 'react-router-dom';
+import { useSelector } from "react-redux";
+
+import { Navigate } from "react-router-dom";
 
 const SellerProtectedRoute = ({ children }) => {
-  const isSeller = localStorage.getItem("isSeller") === "true"; // Check seller flag
+  const { currentUser } = useSelector((state) => state?.auth);
 
-  return isSeller ? children : <Navigate to="/login" />; // Redirect to seller login
+  console.log( "hamzamzmazmas",currentUser );
+
+  return currentUser?.role === "seller" ? children : <Navigate to="/login" />; // Redirect to seller login
 };
 
 export default SellerProtectedRoute;

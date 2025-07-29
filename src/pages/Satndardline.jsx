@@ -8,21 +8,20 @@ import SpecificationSection from "../components/SpecificationSection";
 import TabsComponents from "../components/TabsComponents";
 import axios from "axios";
 import { useParams } from "react-router-dom";
+import { BASE_URL } from "../components/Contant/URL";
 
 const AudiStandardLine = () => {
   const { id } = useParams();
 
-  console.log("id", id);
+  const vehicleId = id;
 
   const [selectedPrice, setSelectedPrice] = useState();
 
-  console.log(selectedPrice, "seleted");
+  console.log(" =>", selectedPrice);
 
   const handleGetPrice = async () => {
     try {
-      const res = await axios.get(
-        `http://localhost:3001/getVehiclesById/${id}`
-      );
+      const res = await axios.get(`${BASE_URL}/getVehiclesById/${id}`);
       setSelectedPrice(res.data);
     } catch (error) {
       console.log(error);
@@ -36,11 +35,10 @@ const AudiStandardLine = () => {
   return (
     <>
       <TabsComponents selectedPrice={selectedPrice} />
-      <CarOverview selectedPrice={selectedPrice} />
+      <CarOverview selectedPrice={selectedPrice} vehicleId={vehicleId} />
       <PriceBlock selectedPrice={selectedPrice} />
       <CarColors selectedPrice={selectedPrice} />
       <SpecificationSection selectedPrice={selectedPrice} />
-   
     </>
   );
 };

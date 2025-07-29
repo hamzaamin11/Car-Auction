@@ -10,6 +10,7 @@ import {
 } from "react-icons/fa";
 import { Link, useNavigate, useParams } from "react-router-dom";
 import axios from "axios";
+import { BASE_URL } from "../components/Contant/URL";
 const vehiclesData = [
   {
     id: 1,
@@ -302,6 +303,7 @@ const makes = [
   "Chevrolet",
 ];
 const fuels = ["Petrol", "Diesel", "Electric", "Manual"];
+
 const cities = [
   "Karachi",
   "Lahore",
@@ -346,6 +348,12 @@ export default function UsedCars() {
   const [filterCity, setFilterCity] = useState("");
 
   const [sortBy, setSortBy] = useState("");
+
+  const [allMakes, setAllMakes] = useState([]);
+
+  const [allModels, setAllModels] = useState([]);
+
+  console.log({ allMakes, allModels });
 
   const [currentPage, setCurrentPage] = useState(1);
 
@@ -427,7 +435,7 @@ export default function UsedCars() {
   const fetchVehicles = async () => {
     try {
       const res = await axios.get(
-        `http://localhost:3001/customer/getVehicleByMake?requestedMake=${type}&page=${currentPage} `
+        `${BASE_URL}/customer/getVehicleByMake?requestedMake=${type}&page=${currentPage} `
       );
       setSelectCars(res.data);
     } catch (error) {
@@ -437,6 +445,30 @@ export default function UsedCars() {
       );
     }
   };
+
+  const handleGetMakes = async () => {
+    try {
+      const res = await axios.get(`${BASE_URL}/getMake`);
+
+      setAllMakes(res.data);
+    } catch (error) {
+      console.log(error);
+    }
+  };
+
+  const handleGetModels = async () => {
+    try {
+      const res = await axios.get(`${BASE_URL}/getModel`);
+      setAllModels(res.data);
+    } catch (error) {
+      console.log(error);
+    }
+  };
+
+  useEffect(() => {
+    handleGetModels();
+    handleGetMakes();
+  }, []);
 
   useEffect(() => {
     fetchVehicles();
@@ -465,9 +497,9 @@ export default function UsedCars() {
             onChange={(e) => setFilterMake(e.target.value)}
           >
             <option value="">All Makes</option>
-            {makes.map((b) => (
-              <option key={b} value={b}>
-                {b}
+            {allMakes.map((make, index) => (
+              <option key={index} value={make?.make}>
+                {make?.make}
               </option>
             ))}
           </select>

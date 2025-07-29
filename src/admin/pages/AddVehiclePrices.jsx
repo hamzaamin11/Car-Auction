@@ -1,54 +1,54 @@
-import React, { useState, useContext } from 'react';
-import { toast, ToastContainer } from 'react-toastify';
-import VehicleContext from "../../context/VehicleContext"
+import React, { useState, useContext, useEffect } from "react";
+import { toast, ToastContainer } from "react-toastify";
+import VehicleContext from "../../context/VehicleContext";
+import { useDispatch, useSelector } from "react-redux";
+import {
+  navigationStart,
+  navigationSuccess,
+} from "../../components/Redux/NavigationSlice";
+import { RotateLoader } from "../../components/Loader/RotateLoader";
 const AddVehiclePrices = () => {
-//   const [vehicles, setVehicles] = useState([]);
+  //   const [vehicles, setVehicles] = useState([]);
   const [loading, setLoading] = useState(false);
   const [formData, setFormData] = useState({
-    vehicleId: '',
-    exFactoryPrice: '',
-    withholdingTaxFiler: '',
-    withholdingTaxNonFiler: '',
-    payorderPriceFiler: '',
-    payorderPriceNonFiler: '',
-    tokenTax: '',
-    incomeTaxFiler: '',
-    registrationFee: '',
-    registrationBook: '',
-    scanningArchivingFee: '',
-    stickerFee: '',
-    numberPlateCharges: '',
-    totalPriceFiler: '',
-    totalPriceNonFiler: ''
+    vehicleId: "",
+    exFactoryPrice: "",
+    withholdingTaxFiler: "",
+    withholdingTaxNonFiler: "",
+    payorderPriceFiler: "",
+    payorderPriceNonFiler: "",
+    tokenTax: "",
+    incomeTaxFiler: "",
+    registrationFee: "",
+    registrationBook: "",
+    scanningArchivingFee: "",
+    stickerFee: "",
+    numberPlateCharges: "",
+    totalPriceFiler: "",
+    totalPriceNonFiler: "",
   });
 
-  const {getVehicles} = useContext(VehicleContext)
+  const { getVehicles, getAllVehicles } = useContext(VehicleContext);
 
-  // Fetch vehicles for dropdown
-//   useEffect(() => {
-//     const fetchVehicles = async () => {
-//       try {
-//         const response = await fetch('http://localhost:3001/api/vehicles');
-//         const data = await response.json();
-//         setVehicles(data);
-//       } catch (error) {
-//         toast.error('Failed to load vehicles');
-//         console.error('Error fetching vehicles:', error);
-//       }
-//     };
-//     fetchVehicles();
-//   }, []);
+  const { loader } = useSelector((state) => state?.navigateState);
+
+  const dispatch = useDispatch();
 
   // Handle form input changes
   const handleChange = (e) => {
     const { name, value } = e.target;
-    setFormData(prev => ({
+    setFormData((prev) => ({
       ...prev,
-      [name]: value
+      [name]: value,
     }));
 
     // Auto-calculate totals if relevant fields change
-    if (name.includes('Price') || name.includes('Tax') || name.includes('Fee') || name.includes('Charges')) {
+    if (
+      name.includes("Price") ||
+      name.includes("Tax") ||
+      name.includes("Fee") ||
+      name.includes("Charges")
+    ) {
       calculateTotals();
     }
   };
@@ -65,7 +65,7 @@ const AddVehiclePrices = () => {
       registrationBook,
       scanningArchivingFee,
       stickerFee,
-      numberPlateCharges
+      numberPlateCharges,
     } = formData;
 
     const numericFields = {
@@ -78,20 +78,24 @@ const AddVehiclePrices = () => {
       registrationBook: parseFloat(registrationBook) || 0,
       scanningArchivingFee: parseFloat(scanningArchivingFee) || 0,
       stickerFee: parseFloat(stickerFee) || 0,
-      numberPlateCharges: parseFloat(numberPlateCharges) || 0
+      numberPlateCharges: parseFloat(numberPlateCharges) || 0,
     };
 
-    const totalFiler = Object.values(numericFields).reduce((sum, val) => sum + val, 0);
-    const totalNonFiler = totalFiler 
-      + (parseFloat(formData.withholdingTaxNonFiler) || 0) 
-      - numericFields.withholdingTaxFiler
-      + (parseFloat(formData.payorderPriceNonFiler) || 0)
-      - numericFields.payorderPriceFiler;
+    const totalFiler = Object.values(numericFields).reduce(
+      (sum, val) => sum + val,
+      0
+    );
+    const totalNonFiler =
+      totalFiler +
+      (parseFloat(formData.withholdingTaxNonFiler) || 0) -
+      numericFields.withholdingTaxFiler +
+      (parseFloat(formData.payorderPriceNonFiler) || 0) -
+      numericFields.payorderPriceFiler;
 
-    setFormData(prev => ({
+    setFormData((prev) => ({
       ...prev,
       totalPriceFiler: totalFiler.toFixed(2),
-      totalPriceNonFiler: totalNonFiler.toFixed(2)
+      totalPriceNonFiler: totalNonFiler.toFixed(2),
     }));
   };
 
@@ -101,44 +105,54 @@ const AddVehiclePrices = () => {
     setLoading(true);
 
     try {
-      const response = await fetch('http://localhost:3001/admin/addVehiclePrices', {
-        method: 'POST',
+      const response = await fetch(`${BASE_URL}/admin/addVehiclePrices`, {
+        method: "POST",
         headers: {
-          'Content-Type': 'application/json',
+          "Content-Type": "application/json",
         },
-        body: JSON.stringify(formData)
+        body: JSON.stringify(formData),
       });
 
       if (!response.ok) {
-        throw new Error('Failed to save pricing');
+        throw new Error("Failed to save pricing");
       }
 
-      toast.success('Pricing saved successfully!');
+      toast.success("Pricing saved successfully!");
       // Reset form after successful submission
       setFormData({
-        vehicleId: '',
-        exFactoryPrice: '',
-        withholdingTaxFiler: '',
-        withholdingTaxNonFiler: '',
-        payorderPriceFiler: '',
-        payorderPriceNonFiler: '',
-        tokenTax: '',
-        incomeTaxFiler: '',
-        registrationFee: '',
-        registrationBook: '',
-        scanningArchivingFee: '',
-        stickerFee: '',
-        numberPlateCharges: '',
-        totalPriceFiler: '',
-        totalPriceNonFiler: ''
+        vehicleId: "",
+        exFactoryPrice: "",
+        withholdingTaxFiler: "",
+        withholdingTaxNonFiler: "",
+        payorderPriceFiler: "",
+        payorderPriceNonFiler: "",
+        tokenTax: "",
+        incomeTaxFiler: "",
+        registrationFee: "",
+        registrationBook: "",
+        scanningArchivingFee: "",
+        stickerFee: "",
+        numberPlateCharges: "",
+        totalPriceFiler: "",
+        totalPriceNonFiler: "",
       });
     } catch (error) {
       toast.error(error.message);
-      console.error('Error saving pricing:', error);
+      console.error("Error saving pricing:", error);
     } finally {
       setLoading(false);
     }
   };
+
+  useEffect(() => {
+    getAllVehicles();
+    dispatch(navigationStart());
+    setTimeout(() => {
+      dispatch(navigationSuccess("Add Price"));
+    }, 1000);
+  }, []);
+
+  if (loader) return <RotateLoader />;
 
   return (
     <div className="container mx-auto px-4 py-8">
@@ -159,26 +173,32 @@ const AddVehiclePrices = () => {
               </label>
               <select
                 name="vehicleId"
-                value={formData.vehicleId} 
+                value={formData.vehicleId}
                 onChange={handleChange}
                 className="w-full px-4 py-2 border border-gray-300 rounded-md focus:ring-indigo-500 focus:border-indigo-500"
                 required
               >
                 <option value="">Select a vehicle</option>
-                {getVehicles.map(vehicle => (
-                  <option key={vehicle.id} value={vehicle.id}>
-                    {vehicle.make} {vehicle.model} ({vehicle.year}) - {vehicle.vin}
-                  </option>
-                ))}
+                {getVehicles &&
+                  getVehicles?.map((vehicle) => (
+                    <option key={vehicle.id} value={vehicle.id}>
+                      {vehicle.make} {vehicle.model} ({vehicle.year}) -{" "}
+                      {vehicle.vin}
+                    </option>
+                  ))}
               </select>
             </div>
 
             {/* Pricing Section */}
             <div className="space-y-4">
-              <h3 className="text-lg font-semibold text-gray-800 border-b pb-2">Base Pricing</h3>
-              
+              <h3 className="text-lg font-semibold text-gray-800 border-b pb-2">
+                Base Pricing
+              </h3>
+
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">Ex-Factory Price *</label>
+                <label className="block text-sm font-medium text-gray-700 mb-1">
+                  Ex-Factory Price *
+                </label>
                 <input
                   type="number"
                   name="exFactoryPrice"
@@ -192,7 +212,9 @@ const AddVehiclePrices = () => {
               </div>
 
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">Withholding Tax (Filer)</label>
+                <label className="block text-sm font-medium text-gray-700 mb-1">
+                  Withholding Tax (Filer)
+                </label>
                 <input
                   type="number"
                   name="withholdingTaxFiler"
@@ -205,7 +227,9 @@ const AddVehiclePrices = () => {
               </div>
 
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">Withholding Tax (Non-Filer)</label>
+                <label className="block text-sm font-medium text-gray-700 mb-1">
+                  Withholding Tax (Non-Filer)
+                </label>
                 <input
                   type="number"
                   name="withholdingTaxNonFiler"
@@ -218,7 +242,9 @@ const AddVehiclePrices = () => {
               </div>
 
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">Pay Order Price (Filer)</label>
+                <label className="block text-sm font-medium text-gray-700 mb-1">
+                  Pay Order Price (Filer)
+                </label>
                 <input
                   type="number"
                   name="payorderPriceFiler"
@@ -231,7 +257,9 @@ const AddVehiclePrices = () => {
               </div>
 
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">Pay Order Price (Non-Filer)</label>
+                <label className="block text-sm font-medium text-gray-700 mb-1">
+                  Pay Order Price (Non-Filer)
+                </label>
                 <input
                   type="number"
                   name="payorderPriceNonFiler"
@@ -246,10 +274,14 @@ const AddVehiclePrices = () => {
 
             {/* Taxes & Fees Section */}
             <div className="space-y-4">
-              <h3 className="text-lg font-semibold text-gray-800 border-b pb-2">Taxes & Fees</h3>
-              
+              <h3 className="text-lg font-semibold text-gray-800 border-b pb-2">
+                Taxes & Fees
+              </h3>
+
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">Token Tax</label>
+                <label className="block text-sm font-medium text-gray-700 mb-1">
+                  Token Tax
+                </label>
                 <input
                   type="number"
                   name="tokenTax"
@@ -262,7 +294,9 @@ const AddVehiclePrices = () => {
               </div>
 
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">Income Tax (Filer)</label>
+                <label className="block text-sm font-medium text-gray-700 mb-1">
+                  Income Tax (Filer)
+                </label>
                 <input
                   type="number"
                   name="incomeTaxFiler"
@@ -275,7 +309,9 @@ const AddVehiclePrices = () => {
               </div>
 
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">Registration Fee</label>
+                <label className="block text-sm font-medium text-gray-700 mb-1">
+                  Registration Fee
+                </label>
                 <input
                   type="number"
                   name="registrationFee"
@@ -288,7 +324,9 @@ const AddVehiclePrices = () => {
               </div>
 
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">Registration Book</label>
+                <label className="block text-sm font-medium text-gray-700 mb-1">
+                  Registration Book
+                </label>
                 <input
                   type="number"
                   name="registrationBook"
@@ -301,7 +339,9 @@ const AddVehiclePrices = () => {
               </div>
 
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">Scanning & Archiving Fee</label>
+                <label className="block text-sm font-medium text-gray-700 mb-1">
+                  Scanning & Archiving Fee
+                </label>
                 <input
                   type="number"
                   name="scanningArchivingFee"
@@ -317,7 +357,9 @@ const AddVehiclePrices = () => {
             {/* Additional Charges Section */}
             <div className="md:col-span-2 grid grid-cols-1 md:grid-cols-3 gap-6">
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">Sticker Fee</label>
+                <label className="block text-sm font-medium text-gray-700 mb-1">
+                  Sticker Fee
+                </label>
                 <input
                   type="number"
                   name="stickerFee"
@@ -330,7 +372,9 @@ const AddVehiclePrices = () => {
               </div>
 
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">Number Plate Charges</label>
+                <label className="block text-sm font-medium text-gray-700 mb-1">
+                  Number Plate Charges
+                </label>
                 <input
                   type="number"
                   name="numberPlateCharges"
@@ -343,15 +387,21 @@ const AddVehiclePrices = () => {
               </div>
 
               <div className="bg-gray-50 p-4 rounded-md">
-                <h4 className="font-medium text-gray-700 mb-2">Calculated Totals</h4>
+                <h4 className="font-medium text-gray-700 mb-2">
+                  Calculated Totals
+                </h4>
                 <div className="space-y-2">
                   <div className="flex justify-between">
                     <span className="text-sm">Total (Filer):</span>
-                    <span className="font-semibold">PKR {formData.totalPriceFiler || '0.00'}</span>
+                    <span className="font-semibold">
+                      PKR {formData.totalPriceFiler || "0.00"}
+                    </span>
                   </div>
                   <div className="flex justify-between">
                     <span className="text-sm">Total (Non-Filer):</span>
-                    <span className="font-semibold">PKR {formData.totalPriceNonFiler || '0.00'}</span>
+                    <span className="font-semibold">
+                      PKR {formData.totalPriceNonFiler || "0.00"}
+                    </span>
                   </div>
                 </div>
               </div>
@@ -364,10 +414,10 @@ const AddVehiclePrices = () => {
               type="submit"
               disabled={loading}
               className={`px-6 py-2 bg-indigo-600 text-white rounded-md hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 ${
-                loading ? 'opacity-70 cursor-not-allowed' : ''
+                loading ? "opacity-70 cursor-not-allowed" : ""
               }`}
             >
-              {loading ? 'Saving...' : 'Save Pricing'}
+              {loading ? "Saving..." : "Save Pricing"}
             </button>
           </div>
         </form>

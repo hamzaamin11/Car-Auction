@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 import { useAuth } from "../context/AuthContext";
 import axios from "axios";
+import { BASE_URL } from "../components/Contant/URL";
 
 const MyBids = () => {
   const { user } = useAuth();
@@ -19,9 +20,9 @@ const MyBids = () => {
 
         let endpoint = "";
         if (user.role === "seller") {
-          endpoint = `http://localhost:3001/customer/myBids/${user.id}`;
+          endpoint = `${BASE_URL}/customer/myBids/${user.id}`;
         } else {
-          endpoint = `http://localhost:3001/customer/myBids/${user.id}`;
+          endpoint = `${BASE_URL}/customer/myBids/${user.id}`;
         }
 
         const res = await fetch(endpoint, {
@@ -48,9 +49,7 @@ const MyBids = () => {
 
   const handleGetBids = async () => {
     try {
-      const res = await axios.get(
-        `http://localhost:3001/customer/myBids/${user.id}`
-      );
+      const res = await axios.get(`${BASE_URL}/customer/myBids/${user.id}`);
 
       setBids(res.data);
     } catch (error) {
@@ -63,13 +62,10 @@ const MyBids = () => {
   }, []);
   const handleEndBid = async (bidId) => {
     try {
-      const res = await fetch(
-        `http://localhost:3001/seller/endBidding/${bidId}`,
-        {
-          method: "PUT",
-          headers: { "Content-Type": "application/json" },
-        }
-      );
+      const res = await fetch(`${BASE_URL}/seller/endBidding/${bidId}`, {
+        method: "PUT",
+        headers: { "Content-Type": "application/json" },
+      });
 
       if (!res.ok) throw new Error("Failed to end bid");
 

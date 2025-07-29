@@ -2,7 +2,7 @@ import { useEffect, useState } from "react";
 import { useAuth } from "../context/AuthContext";
 
 const LotsWon = () => {
-  const { user } = useAuth(); 
+  const { user } = useAuth();
   const [bids, setBids] = useState([]);
   const [filtered, setFiltered] = useState([]);
   const [view, setView] = useState("table");
@@ -13,7 +13,9 @@ const LotsWon = () => {
   useEffect(() => {
     const fetchLotsWon = async () => {
       try {
-        const response = await fetch(`http://localhost:3001/customer/lotsWon/${user?.id}`);
+        const response = await fetch(
+          `${BASE_URL}/customer/lotsWon/${user?.id}`
+        );
         if (!response.ok) throw new Error("Failed to fetch");
         const data = await response.json();
         const sorted = data.sort((a, b) => b.bidAmount - a.bidAmount);
@@ -87,8 +89,15 @@ const LotsWon = () => {
                     <p className="text-sm text-gray-500">VIN: {bid.vin}</p>
                   </div>
                 </div>
-                <p><span className="font-semibold">Year:</span> {bid.year}</p>
-                <p><span className="font-semibold">Bid:</span> <span className="text-green-600 font-bold">${bid.bidAmount}</span></p>
+                <p>
+                  <span className="font-semibold">Year:</span> {bid.year}
+                </p>
+                <p>
+                  <span className="font-semibold">Bid:</span>{" "}
+                  <span className="text-green-600 font-bold">
+                    ${bid.bidAmount}
+                  </span>
+                </p>
               </div>
             ))}
           </div>
@@ -119,7 +128,9 @@ const LotsWon = () => {
                   <td className="p-3">{bid.year}</td>
                   <td className="p-3">{bid.make}</td>
                   <td className="p-3">{bid.model}</td>
-                  <td className="p-3 font-semibold text-green-600">{bid.currentBid}</td>
+                  <td className="p-3 font-semibold text-green-600">
+                    {bid.currentBid}
+                  </td>
                 </tr>
               ))}
             </tbody>
@@ -143,7 +154,9 @@ const LotsWon = () => {
               </h2>
               <p className="text-sm text-gray-500">VIN: {bid.vin}</p>
               <p className="text-sm text-gray-500">Year: {bid.year}</p>
-              <p className="text-lg font-bold text-green-600 mt-2">${bid.currentBid}</p>
+              <p className="text-lg font-bold text-green-600 mt-2">
+                ${bid.currentBid}
+              </p>
             </div>
           ))}
         </div>

@@ -2,22 +2,20 @@ import React, { useEffect, useState } from "react";
 import { FaUserCircle } from "react-icons/fa";
 import { Link, useNavigate } from "react-router-dom";
 import { AiOutlineLogout } from "react-icons/ai";
-
+import { useDispatch, useSelector } from "react-redux";
+import { logOut } from "../../components/Redux/UserSlice";
 
 export default function Topbar() {
-  const [adminName, setAdminName] = useState('');
-  const [adminId, setAdminId] = useState('');
+  const { currentUser } = useSelector((state) => state?.auth);
+  const [adminName, setAdminName] = useState("");
+  const [adminId, setAdminId] = useState("");
   const [dropdownOpen, setDropdownOpen] = useState(false);
   const navigate = useNavigate();
-
-  useEffect(() => {
-    setAdminName(localStorage.getItem('adminName') || '');
-    setAdminId(localStorage.getItem('adminId') || '');
-  }, []);
+  const dispatch = useDispatch();
 
   const handleLogout = () => {
     localStorage.clear();
-    navigate('/');
+    dispatch(logOut());
   };
 
   const toggleDropdown = () => {
@@ -25,51 +23,51 @@ export default function Topbar() {
   };
 
   return (
-    <header className="bg-white shadow-md px-4 py-3 md:px-6 flex items-center justify-between">
-      {/* Logo and title */}
+    <header className="bg-white shadow-md px-4 py-3 md:px-6 flex items-center justify-between relative z-50">
+      {/* Logo */}
       <div className="flex items-center gap-3">
         <Link to="/">
-        <img src="/images/logo.png" alt="Logo" className="h-14 w-14 object-contain sm:h-14 sm:w-24" />
+          <img
+            src="/images/logo.png"
+            alt="Logo"
+            className="h-12 w-12 sm:h-14 sm:w-24 object-contain"
+          />
         </Link>
-        {/* <h1 className="text-base sm:text-lg md:text-xl font-bold text-gray-800">
-          Admin Dashboard
-        </h1> */}
       </div>
 
-      {/* Profile dropdown */}
+      {/* Profile section */}
       <div className="relative">
         <button
           onClick={toggleDropdown}
-          className="flex items-center gap-2 focus:outline-none"
+          className="flex items-center gap-2 focus:outline-none group"
         >
-          <FaUserCircle className="text-2xl text-gray-700" />
-          <span className="hidden sm:inline-block text-sm font-medium text-gray-700">{adminName}</span>
+          <FaUserCircle
+            size={40}
+            className="text-gray-700 group-hover:text-blue-600 transition-colors duration-300"
+          />
         </button>
 
-        {dropdownOpen && (
-          <div className="absolute right-0 mt-2 w-48 bg-white  rounded shadow-md z-50">
-            <div className="p-5 text-sm text-gray-700 border-b">
-              {/* <p><strong>ID:</strong> {adminId}</p> */}
-              <ul className="leading-loose">
-                 <li className="text-base border-b-1 border-gray-100 mb-2"><Link to="/admin">Dashboard</Link></li>
-                 <li className="text-base border-b-1 border-gray-100 mb-2"><Link to="/admin/vehicles">Manage Vehicles</Link></li>
-                 <li className="text-base border-b-1 border-gray-100 mb-2"><Link to="/admin/live-auctions">Live Auctions</Link></li>
-                 <li className="text-base"><Link to="/admin/manage-users">Mange Users</Link></li>
-                 
-              </ul>
-                      
-            </div>
-            <div className="flex items-center">
-              <AiOutlineLogout className="text-red-600 ml-2" size={18}/>
-            <button
-              onClick={handleLogout}
-              className="w-full text-left font-bold ml-2 py-2 text-sm cursor-pointer text-red-600 hover:bg-red-100"
-            >
-              Logout
-            </button>
-            </div>
+        <div
+          className={`absolute right-0 mt-2 w-44 bg-white rounded-md shadow-lg overflow-hidden transition-all duration-300 ease-in-out ${
+            dropdownOpen
+              ? "max-h-40 opacity-100 scale-100"
+              : "max-h-0 opacity-0 scale-95 pointer-events-none"
+          }`}
+        >
+          <div className="px-4 py-3 border-b border-gray-200">
+            <p className="text-sm text-gray-600">Signed in as</p>
+            <p className="text-sm font-medium text-gray-800 truncate">
+              {currentUser?.name || adminName}
+            </p>
           </div>
-        )}
+          <div
+            onClick={handleLogout}
+            className="flex items-center gap-2 px-4 py-3 text-red-600 hover:bg-gray-100 cursor-pointer transition-colors duration-200"
+          >
+            <AiOutlineLogout size={20} />
+            <span className="text-sm font-semibold">Logout</span>
+          </div>
+        </div>
       </div>
     </header>
   );

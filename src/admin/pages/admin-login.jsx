@@ -1,38 +1,50 @@
-import React, { useState } from 'react';
-import { useNavigate } from 'react-router-dom';
-import { FaUserShield, FaLock } from 'react-icons/fa';
+import { useState } from "react";
+import { useNavigate } from "react-router-dom";
+import { FaUserShield, FaLock } from "react-icons/fa";
+import { useAuth } from "../../context/AuthContext";
+import { BASE_URL } from "../../components/Contant/URL";
 
-const AdminLogin = () => {
-  const [email, setEmail] = useState('');
-  const [password, setPassword] = useState('');
-  const [error, setError] = useState('');
+const AdminLogin = ({ children }) => {
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
+  const [error, setError] = useState("");
+  const { login } = useAuth();
   const navigate = useNavigate();
 
   const handleLogin = async (e) => {
     e.preventDefault();
-    setError('');
+    setError("");
 
     try {
-      const response = await fetch('http://localhost:3001/login', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ role: 'admin', email, password }),
+      const response = await fetch(`${BASE_URL}/login`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ role: "admin", email, password }),
       });
 
       const data = await response.json();
 
+      const userData = {
+        id: data.user.id || data.user._id, // Supports both SQL and MongoDB
+        email: data.user.email,
+        role: data.user.role || role,
+        name: data.user.name || formData.email.split("@")[0], // Fallback to email prefix
+        token: data.token, // Optional: if using JWT
+      };
+
       if (response.ok && data.user) {
-        localStorage.setItem('adminName', data.user.name);
-        localStorage.setItem('adminId', data.user.id);
-        localStorage.setItem('adminRole', data.user.role);
-        localStorage.setItem('isAdmin', 'true'); // ✅ Required for auth
-        navigate('/admin');
+        localStorage.setItem("adminName", data.user.name);
+        localStorage.setItem("adminId", data.user.id);
+        localStorage.setItem("adminRole", data.user.role);
+        localStorage.setItem("isAdmin", "true"); // ✅ Required for auth
+        navigate("/admin");
+        login(userData);
       } else {
-        setError(data.message || 'Login failed');
+        setError(data.message || "Login failed");
       }
     } catch (err) {
       console.error(err);
-      setError('Something went wrong. Please try again.');
+      setError("Something went wrong. Please try again.");
     }
   };
 

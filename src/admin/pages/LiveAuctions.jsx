@@ -1,23 +1,45 @@
-import { useContext, useState } from "react";
+import { useContext, useEffect, useState } from "react";
 import Topbar from "../components/Topbar";
 import Sidebar from "../components/Sidebar";
 import { ToastContainer } from "react-toastify";
 import AuctionsContext from "../../context/AuctionsContext";
 import ViewAuctionModal from "./ViewAuctionModal";
+import { useDispatch, useSelector } from "react-redux";
+import {
+  navigationStart,
+  navigationSuccess,
+} from "../../components/Redux/NavigationSlice";
+import { RotateLoader } from "../../components/Loader/RotateLoader";
+import { ViewBrandModal } from "../../components/BrandModal/ViewBrandModal";
 
 export default function LiveAuctions() {
   // const [users, setUsers] = useState(initialUsers);
+
   const { getLiveAuctions, AllLiveAuctions, AuctionById } =
     useContext(AuctionsContext);
-  console.log("live auctions:", getLiveAuctions);
-  const [isModalOpen, setIsModalOpen] = useState(false);
-  const [isViewModalOpen, setIsViewModalOpen] = useState(false);
+
+  const { loader } = useSelector((state) => state.navigateState);
+
+  const dispatch = useDispatch();
+
+  const [selectedVehicle, setselectedVehicle] = useState(null);
+
   const [selectedAuctionId, setSelectedAuctionId] = useState(null);
 
   //   const handleView = async (user) => {
   //     await getUserbyId(user.id); // ✅ correct function call
   //     setIsViewModalOpen(true);
   //   };
+
+  useEffect(() => {
+    AllLiveAuctions();
+    dispatch(navigationStart());
+    setTimeout(() => {
+      dispatch(navigationSuccess("live"));
+    }, 1000);
+  }, []);
+
+  if (loader) return <RotateLoader />;
 
   return (
     <>
@@ -57,7 +79,11 @@ export default function LiveAuctions() {
             </thead>
             <tbody className="bg-white divide-y divide-gray-100">
               {getLiveAuctions?.map((user, idx) => (
-                <tr key={user.id} className={idx % 2 === 0 ? "bg-gray-50" : ""}>
+                <tr
+                  onClick={() => setselectedVehicle(user)}
+                  key={user.id}
+                  className={`idx % 2 === 0 ? "bg-gray-50" : "" cursor-pointer  hover:bg-gray-100 `}
+                >
                   <td className="px-4 py-3 font-medium text-gray-900">
                     {user?.name}
                   </td>
@@ -77,11 +103,23 @@ export default function LiveAuctions() {
             </tbody>
           </table>
         </div>
+        {getLiveAuctions.length === 0 && (
+          <div className="flex items-center justify-center mt-1 font-medium text-xl">
+            No Live Bid yet!
+          </div>
+        )}
 
         {selectedAuctionId && (
           <ViewAuctionModal
             auctionId={selectedAuctionId}
             onClose={() => setSelectedAuctionId(null)}
+          />
+        )}
+
+        {selectedVehicle && (
+          <ViewBrandModal
+            selectedVehicle={selectedVehicle}
+            handleClick={() => setselectedVehicle(null)}
           />
         )}
 

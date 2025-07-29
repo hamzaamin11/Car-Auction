@@ -1,6 +1,7 @@
 // components/LotsLost.jsx
 import { useEffect, useState } from "react";
 import { useAuth } from "../context/AuthContext";
+import { BASE_URL } from "../components/Contant/URL";
 
 const LotsLost = () => {
   const { user } = useAuth();
@@ -16,7 +17,7 @@ const LotsLost = () => {
 
     const fetchLossBids = async () => {
       try {
-        const res = await fetch(`http://localhost:3001/customer/lotsLost/${user.id}`);
+        const res = await fetch(`${BASE_URL}/customer/lotsLost/${user.id}`);
         const data = await res.json();
         const sorted = data.sort((a, b) => b.maxBid - a.maxBid);
         setBids(sorted);

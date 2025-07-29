@@ -1,18 +1,30 @@
 import React, { useState } from "react";
 import { Link, useLocation, useNavigate } from "react-router-dom";
-import { FaBars, FaTimes, FaUser, FaSignInAlt } from "react-icons/fa";
+import {
+  FaBars,
+  FaTimes,
+  FaUser,
+  FaSignInAlt,
+  FaUserCircle,
+} from "react-icons/fa";
 import { RiArrowDropDownLine } from "react-icons/ri";
 import { useAuth } from "../context/AuthContext";
 import { AiOutlineLogout } from "react-icons/ai";
+import { useDispatch, useSelector } from "react-redux";
+import { logOut } from "./Redux/UserSlice";
 
 const Navbar = () => {
   const { user, isAuthenticated, logout } = useAuth();
+
+  const { currentUser } = useSelector((state) => state.auth);
   const [menuOpen, setMenuOpen] = useState(false);
   const [activeDropdown, setActiveDropdown] = useState(null);
-  const [userDropdownOpen, setUserDropdownOpen] = useState(false);
+  const [dropdownOpen, setDropdownOpen] = useState(false);
   const location = useLocation();
   const navigate = useNavigate();
   const isActive = (path) => location.pathname === path;
+
+  const dispatch = useDispatch();
 
   const commonDropdowns = [
     {
@@ -69,6 +81,15 @@ const Navbar = () => {
     ...commonDropdowns,
     ...(user?.role === "seller" ? [sellerOnly] : []),
   ];
+
+  const toggleDropdown = () => {
+    setDropdownOpen((prev) => !prev);
+  };
+
+  const handleLogout = () => {
+    localStorage.clear();
+    dispatch(logOut());
+  };
 
   return (
     <nav className="bg-white shadow-md z-50 relative">
@@ -161,61 +182,39 @@ const Navbar = () => {
         </ul>
 
         <div className="hidden md:flex gap-4 relative">
-          {isAuthenticated ? (
-            <div
-              className="relative"
-              // onMouseEnter={() => setUserDropdownOpen(true)}
-              // onMouseLeave={() => setUserDropdownOpen(false)}
-            >
+          {currentUser && currentUser ? (
+            <div className="relative">
               <button
-                className="flex items-center gap-1 font-medium hover:text-red-600"
-                onClick={() => setUserDropdownOpen(!userDropdownOpen)}
+                onClick={toggleDropdown}
+                className="flex items-center gap-2 focus:outline-none group"
               >
-                Welcome,{" "}
-                {user.name.length > 6
-                  ? user.name.slice(0, 6) + ".."
-                  : user.name}{" "}
-                <RiArrowDropDownLine size={22} />
+                <FaUserCircle
+                  size={40}
+                  className="text-gray-700 group-hover:text-blue-600 transition-colors duration-300"
+                />
               </button>
-              {userDropdownOpen && (
-                <div className="absolute right-0 mt-2 w-48 bg-white rounded shadow-md z-50">
-                  <div className="p-5 text-sm text-gray-700 border-b">
-                    <ul className="leading-loose">
-                      <li
-                        className="text-base mb-2 hover:bg-gray-100"
-                        onClick={() => setUserDropdownOpen(false)}
-                      >
-                        <Link to="/seller">Dashboard</Link>
-                      </li>
-                      <li
-                        className="text-base mb-2 hover:bg-gray-100"
-                        onClick={() => setUserDropdownOpen(false)}
-                      >
-                        <Link to="/seller/add-vehicles">Add Vehicles</Link>
-                      </li>
-                      <li
-                        className="text-base mb-2 hover:bg-gray-100"
-                        onClick={() => setUserDropdownOpen(false)}
-                      >
-                        <Link to="/seller/my-bids">My Bids</Link>
-                      </li>
-                    </ul>
-                  </div>
-                  <div className="flex items-center hover:bg-gray-100">
-                    <AiOutlineLogout className="text-red-600 ml-2" size={18} />
-                    <button
-                      onClick={() => {
-                        logout();
-                        navigate("/");
-                        setUserDropdownOpen(false);
-                      }}
-                      className="w-full text-left font-bold ml-2 py-2 text-sm cursor-pointer text-red-600"
-                    >
-                      Logout
-                    </button>
-                  </div>
+
+              <div
+                className={`absolute right-0 mt-2 w-44 bg-white rounded-md shadow-lg overflow-hidden transition-all duration-300 ease-in-out ${
+                  dropdownOpen
+                    ? "max-h-40 opacity-100 scale-100"
+                    : "max-h-0 opacity-0 scale-95 pointer-events-none"
+                }`}
+              >
+                <div className="px-4 py-3 border-b border-gray-200">
+                  <p className="text-sm text-gray-600">Signed in as</p>
+                  <p className="text-sm font-medium text-gray-800 truncate">
+                    {currentUser?.name || adminName}
+                  </p>
                 </div>
-              )}
+                <div
+                  onClick={handleLogout}
+                  className="flex items-center gap-2 px-4 py-3 text-red-600 hover:bg-gray-100 cursor-pointer transition-colors duration-200"
+                >
+                  <AiOutlineLogout size={20} />
+                  <span className="text-sm font-semibold">Logout</span>
+                </div>
+              </div>
             </div>
           ) : (
             <>

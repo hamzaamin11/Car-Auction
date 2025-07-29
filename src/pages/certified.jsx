@@ -1,5 +1,6 @@
 import axios from "axios";
 import React, { useEffect, useState } from "react";
+import { BASE_URL } from "../components/Contant/URL";
 
 const carData = [
   {
@@ -54,7 +55,7 @@ const CertifiedCarsPage = () => {
   const handleGetcertified = async () => {
     try {
       const res = await axios.get(
-        `http://localhost:3001/seller/getCertifiedVehicles`
+        `${BASE_URL}/seller/getCertifiedVehicles`
       );
       console.log("=>", res.data);
       setGetCertified(res.data);
@@ -66,7 +67,7 @@ const CertifiedCarsPage = () => {
   const handleGetNoncertify = async () => {
     try {
       const res = await axios.get(
-        `http://localhost:3001/seller/getNonCertifiedVehicles`
+        `${BASE_URL}/seller/getNonCertifiedVehicles`
       );
       setGetCertified(res.data);
     } catch (error) {

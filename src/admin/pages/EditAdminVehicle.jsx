@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { toast } from "react-toastify";
 import { useAuth } from "../../context/AuthContext";
+import { BASE_URL } from "../../components/Contant/URL";
 function EditAdminVehicle({
   open,
   setOpen,
@@ -116,7 +117,7 @@ function EditAdminVehicle({
 
     try {
       const response = await fetch(
-        `http://localhost:3001/seller/updateVehicle/${selectedVehicle?.id}`,
+        `${BASE_URL}/seller/updateVehicle/${selectedVehicle?.id}`,
         {
           method: "PUT",
           body: formData, // Send the FormData directly

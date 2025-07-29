@@ -1,186 +1,233 @@
-import React, { useState, useRef, useEffect } from 'react';
-import { ChevronDownIcon } from '@heroicons/react/24/outline';
+import React, { useState, useEffect } from "react";
+import axios from "axios";
+import { BASE_URL } from "../components/Contant/URL";
 
-const Dropdown = ({ label, options, selected, setSelected }) => {
-  const [open, setOpen] = useState(false);
-  const [search, setSearch] = useState('');
-  const ref = useRef(null);
+const ImportCarForm = ({ handleClose, vehicleId }) => {
 
-  const filtered = options.filter((opt) =>
-    opt.toLowerCase().includes(search.toLowerCase())
-  );
+  const [make, setMake] = useState("");
+
+  const [model, setModel] = useState("");
+
+  const [allMakes, setAllMakes] = useState([]);
+
+  const [allModels, setAllModels] = useState([]);
+
+  const [year, setYear] = useState("");
+
+  const [name, setName] = useState("");
+
+  const [city, setCity] = useState("");
+
+  const [mobileNumber, setMobile] = useState("");
+
+  const calcYearVal = () => {
+    const currentYear = new Date().getFullYear();
+    const years = [];
+    for (let i = currentYear; i >= 1970; i--) {
+      years.push(i);
+    }
+    return years;
+  };
+
+  const currentYearList = calcYearVal();
+
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    const formData = { make, model, year, name, city, mobileNumber };
+    try {
+      const res = await axios.post(
+        `${BASE_URL}/customer/addImportedCar`,
+        formData
+      );
+      console.log("Submitted:", res.data);
+      setMake("");
+      setModel("");
+      setYear("");
+      setName("");
+      setCity("");
+      setMobile("");
+    } catch (error) {
+      console.error("Submission Error:", error);
+    }
+  };
+
+  const handleGetMakes = async () => {
+    try {
+      const res = await axios.get(`${BASE_URL}/getMake`);
+      setAllMakes(res.data);
+    } catch (error) {
+      console.error("Get Makes Error:", error);
+    }
+  };
+
+  const handleGetModels = async () => {
+    try {
+      const res = await axios.get(`${BASE_URL}/getModel`);
+      setAllModels(res.data);
+    } catch (error) {
+      console.error("Get Models Error:", error);
+    }
+  };
+
+
 
   useEffect(() => {
-    const handleClickOutside = (event) => {
-      if (ref.current && !ref.current.contains(event.target)) {
-        setOpen(false);
-      }
+    document.body.style.overflow = "hidden";
+
+    return () => {
+      document.body.style.overflow = "auto";
     };
-    document.addEventListener('mousedown', handleClickOutside);
-    return () => document.removeEventListener('mousedown', handleClickOutside);
+  }, []);
+
+  useEffect(() => {
+    handleGetMakes();
+    handleGetModels();
   }, []);
 
   return (
-    <div className="mb-5 w-full">
-      <label className="block text-sm font-medium text-gray-700 mb-1">
-        {label}*
-      </label>
-      <div className="relative" ref={ref}>
-        <div
-          className="border px-4 py-2 rounded-md bg-white cursor-pointer flex justify-between items-center focus:ring-2 focus:ring-blue-500 shadow-sm transition"
-          onClick={() => setOpen(!open)}
-        >
-          <span className={selected ? 'text-gray-900' : 'text-gray-400'}>
-            {selected || `Select ${label}`}
+    <div className="fixed inset-0 bg-black/30 backdrop-blur-sm z-50 flex items-center justify-center px-4">
+      <form
+        onSubmit={handleSubmit}
+        className="bg-white p-8 md:p-10 rounded-xl shadow-2xl w-full max-w-2xl space-y-5"
+      >
+        <div className="flex items-center justify-between">
+          <h2 className="text-2xl font-bold text-left text-[#233d7b] mb-6">
+            Buy this Car
+          </h2>
+
+          <span
+            onClick={handleClose}
+            className="text-xl pb-10 hover:cursor-pointer"
+          >
+            X
           </span>
-          <ChevronDownIcon className="w-5 h-5 text-gray-500" />
         </div>
-        {open && (
-          <div className="absolute z-10 bg-white w-full border mt-1 rounded shadow-lg">
+        <div className="grid md:grid-cols-2 gap-6">
+          {/* Make */}
+          <div className="mb-5 w-full">
+            <label className="block text-sm font-medium text-gray-700 mb-1">
+              Make*
+            </label>
+            <select
+              name="make"
+              value={make}
+              onChange={(e) => setMake(e.target.value)}
+              className="w-full border px-4 py-2 rounded-md shadow-sm focus:ring-2 focus:ring-blue-500"
+              required
+            >
+              <option value="">Please Select Make</option>
+              {allMakes.map((mak) => (
+                <option key={mak.make} value={mak.make}>
+                  {mak.make}
+                </option>
+              ))}
+            </select>
+          </div>
+
+          {/* Model */}
+          <div className="mb-5 w-full">
+            <label className="block text-sm font-medium text-gray-700 mb-1">
+              Model*
+            </label>
+            <select
+              name="model"
+              value={model}
+              onChange={(e) => setModel(e.target.value)}
+              className="w-full border px-4 py-2 rounded-md shadow-sm focus:ring-2 focus:ring-blue-500"
+              required
+            >
+              <option value="">Please Select Model</option>
+              {allModels.map((mod) => (
+                <option key={mod.model} value={mod.model}>
+                  {mod.model}
+                </option>
+              ))}
+            </select>
+          </div>
+
+          {/* Year */}
+          <div className="mb-5 w-full">
+            <label className="block text-sm font-medium text-gray-700 mb-1">
+              Year*
+            </label>
+            <select
+              name="year"
+              value={year}
+              onChange={(e) => setYear(e.target.value)}
+              className="w-full border px-4 py-2 rounded-md shadow-sm focus:ring-2 focus:ring-blue-500"
+              required
+            >
+              <option value="">Please Select Year</option>
+              {currentYearList.map((y) => (
+                <option key={y} value={y}>
+                  {y}
+                </option>
+              ))}
+            </select>
+          </div>
+
+          {/* Name */}
+          <div className="mb-5 w-full">
+            <label className="block text-sm font-medium text-gray-700 mb-1">
+              Name*
+            </label>
             <input
               type="text"
-              placeholder={`Search ${label}`}
-              className="w-full px-3 py-2 text-sm border-b outline-none"
-              value={search}
-              onChange={(e) => setSearch(e.target.value)}
+              value={name}
+              onChange={(e) => setName(e.target.value)}
+              className="w-full border px-4 py-2 rounded-md shadow-sm focus:ring-2 focus:ring-blue-500"
+              placeholder="Enter your name"
+              required
             />
-            <ul className="max-h-48 overflow-y-auto">
-              {filtered.map((item, idx) => (
-                <li
-                  key={idx}
-                  className="px-4 py-2 hover:bg-blue-50 text-sm cursor-pointer transition"
-                  onClick={() => {
-                    setSelected(item);
-                    setOpen(false);
-                    setSearch('');
-                  }}
-                >
-                  {item}
-                </li>
-              ))}
-              {filtered.length === 0 && (
-                <li className="px-4 py-2 text-gray-400 text-sm">No results found</li>
-              )}
-            </ul>
           </div>
-        )}
-      </div>
+
+          {/* City */}
+          <div className="mb-5 w-full">
+            <label className="block text-sm font-medium text-gray-700 mb-1">
+              City*
+            </label>
+            <input
+              type="text"
+              value={city}
+              onChange={(e) => setCity(e.target.value)}
+              className="w-full border px-4 py-2 rounded-md shadow-sm focus:ring-2 focus:ring-blue-500"
+              placeholder="Enter your city"
+              required
+            />
+          </div>
+
+          {/* Mobile Number */}
+          <div className="mb-5 w-full">
+            <label className="block text-sm font-medium text-gray-700 mb-1">
+              Mobile Number*
+            </label>
+            <input
+              type="tel"
+              value={mobileNumber}
+              onChange={(e) => setMobile(e.target.value)}
+              className="w-full border px-4 py-2 rounded-md shadow-sm focus:ring-2 focus:ring-blue-500"
+              placeholder="03xxxxxxxxx"
+              pattern="03[0-9]{9}"
+              required
+            />
+          </div>
+        </div>
+
+        <div className="text-sm text-gray-500 mt-2">
+          I authorize CHAUDHRY Cars Auction to share my contact information with
+          its partners to get in touch with me through email, SMS or phone.
+        </div>
+
+        <div className="text-center pt-4">
+          <button
+            type="submit"
+            className="bg-[#233d7b] text-white px-8 py-2 text-sm font-medium hover:bg-blue-900 transition"
+          >
+            Submit
+          </button>
+        </div>
+      </form>
     </div>
-  );
-};
-
-const ImportCarForm = () => {
-  const makes = [
-    'Audi', 'Austin', 'BAIC', 'BAW', 'Bentley', 'BMW', 'Bugatti', 'Buick', 'BYD', 'Cadillac', 'Chery', 'Chevrolet', 'Chrysler', 'Citroen', 'Classic Cars',
-    'Daewoo', 'Daimler', 'Datsun', 'Deepal', 'DFSK', 'Dodge', 'Dongfeng', 'FAW', 'Ferrari', 'Fiat', 'Ford', 'GAC',
-    'Geely', 'Genesis', 'GMC', 'Golden Dragon', 'Golf', 'GUGO', 'Haval', 'Hillman', 'Hino', 'Honri', 'Hummer', 'Hyundai', 'Infiniti', 'Isuzu', 'JAC', 'Jaguar', 'Jaxeri',
-    'Jeep', 'Jetour', 'Jinbei', 'JMC', 'JW Forland', 'Kaiser Jeep', 'KIA', 'Lada', 'Lamborghini', 'Land Rover', 'Lexus', 'Lifan', 'Lincoln', 'Maserati', 'Master', 'Mazda',
-    'McLaren', 'Mercedes Benz', 'MG', 'MINI', 'Mitsubishi', 'Morris', 'Moto Guzzi', 'Mushtaq', 'Nissan', 'Oldsmobile', 'Opel', 'ORA', 'Peugeot', 'Plymouth', 'Polaris', 'Pontiac',
-    'Porsche', 'Power', 'Prince', 'Proton', 'RAM', 'Range Rover', 'Renault', 'Rinco', 'Rolls Royce', 'Roma', 'Rover', 'Royal Enfield', 'Saab', 'Scion', 'Seres', 'Skoda', 'Smart', 'Sogo',
-    'Sokon', 'SsangYong', 'Subaru', 'Tank', 'Tesla', 'Triumph', 'United', 'Vauxhall', 'Volkswagen', 'Volvo', 'Willys', 'Xiaomi', 'ZOTYE'
-  ];
-  const models = ['Model', 'A3', 'A4', 'A5', 'A6', 'A7', 'A1', 'A7', 'e-torn', 'e-torn GT', 'Other', 'Q2', 'Q3', 'Q4 e-torn', 'Q5', 'Q7', 'Q8', 'Q8 e-torn', 'R8', 'S5', 'TT','Other'];
-  const years = Array.from({ length: 25 }, (_, i) => `${2000 + i}`);
-  const cities = ["All Cities", "Abbottabad", "Abdul Hakeem", "Bahawalpur", "Chakwal", "Chenab Nagar", "Dera Gazi Khan", "Dera ismail Khan", "Faisalabad", "Gujranwala", "Gujrat", "Hyderabad", "Islamabad", "Jehlum", "Karachi", "Lahore", "Madina", "Mardan", "Mirpur Khas", "Multan", "Peshawar", "Rahim Yar Khan", "Rawalpindi", "Sahiwal", "Sargodha", "Sialkot", "Sakhar"];
-
-  const [make, setMake] = useState('');
-  const [model, setModel] = useState('');
-  const [year, setYear] = useState('');
-  const [name, setName] = useState('');
-  const [city, setCity] = useState('');
-  const [mobile, setMobile] = useState('');
-  const [updates, setUpdates] = useState(false);
-  
-
-  const handleSubmit = (e) => {
-    e.preventDefault();
-    console.log({
-      make,
-      model,
-      year,
-      name,
-      city,
-      mobile,
-      updates,
-     
-    });
-    alert("Form submitted Successfully! ");
-  };
-
-  return (
-    <form
-      onSubmit={handleSubmit}
-      className="max-w-2xl mx-auto bg-white p-8 md:p-10 rounded-xl shadow-xl space-y-5"
-    >
-      <h2 className="text-2xl text-sm font-bold text-left text-[#233d7b] mb-6">
-        Import Favourite Car
-      </h2>
-      <div className="border-b-1 border-gray-200 mb-6"></div>
-
-      <div className="grid md:grid-cols-2 gap-6">
-        <Dropdown label="Make" options={makes} selected={make} setSelected={setMake} />
-        <Dropdown label="Model" options={models} selected={model} setSelected={setModel} />
-        <Dropdown label="Year" options={years} selected={year} setSelected={setYear} />
-
-        <div className="mb-5 w-full">
-          <label className="block text-sm font-medium text-gray-700 mb-1">
-            Name*
-          </label>
-          <input
-            type="text"
-            className="w-full border px-4 py-2 rounded-md shadow-sm focus:ring-2 focus:ring-blue-500"
-            placeholder="Enter valid name"
-            value={name}
-            onChange={(e) => setName(e.target.value)}
-            required
-          />
-        </div>
-
-        <Dropdown label="City" options={cities} selected={city} setSelected={setCity} />
-
-        <div className="mb-5 w-full">
-          <label className="block text-sm font-medium text-gray-700 mb-1">
-            Mobile Number*
-          </label>
-          <input
-            type="tel"
-            className="w-full border px-4 py-2 rounded-md shadow-sm focus:ring-2 focus:ring-blue-500"
-            placeholder="03xxxxxxxxx"
-            value={mobile}
-            onChange={(e) => setMobile(e.target.value)}
-            required
-          />
-        </div>
-      </div>
-
-      <div className="flex items-start gap-2">
-        <input
-          type="checkbox"
-          className="mt-1"
-          checked={updates}
-          onChange={() => setUpdates(!updates)}
-        />
-        <label className="text-sm text-gray-700">
-          Send me updates and relevant news.
-        </label>
-      </div>
-
-      <div className="flex items-start gap-2">
-        <p className="text-sm text-gray-500">
-          I authorize CHAUDHRY Cars Auction to share my contact information with its partners to
-          get in touch with me through email, SMS or phone.
-        </p>
-      </div>
-
-      <div className="text-center pt-4">
-        <button
-          type="submit"
-          className="bg-[#233d7b] text-white px-8 py-2 text-sm font-medium hover:bg-blue-900 transition"
-        >
-          Submit
-        </button>
-      </div>
-    </form>
   );
 };
 

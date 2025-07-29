@@ -1,5 +1,6 @@
 import axios from "axios";
 import React, { useState, useEffect } from "react";
+import { BASE_URL } from "./Contant/URL";
 
 const JoinAuctionTable = ({ allLive, upComing }) => {
   const [isRegistered, setIsRegistered] = useState(false);
@@ -50,7 +51,7 @@ const JoinAuctionTable = ({ allLive, upComing }) => {
 
     try {
       const res = await axios.post(
-        `http://localhost:3001/customer/startBidding`,
+        `${BASE_URL}/customer/startBidding`,
         filteredData
       );
       console.log(res.data);
@@ -106,7 +107,7 @@ const JoinAuctionTable = ({ allLive, upComing }) => {
       <h2 className="text-xl font-semibold mb-2 text-gray-800">
         Upcoming Auctions ({upComing.length})
       </h2>
-      <table className="w-full mb-8 border shadow-sm rounded overflow-hidden text-sm">
+      <table className="w-full mb-2 border shadow-sm rounded overflow-hidden text-sm">
         <thead className="bg-gray-200">
           <tr>
             <th className="p-2 text-left">Sr#</th>
@@ -116,6 +117,7 @@ const JoinAuctionTable = ({ allLive, upComing }) => {
             <th className="p-2 text-left">Status</th>
           </tr>
         </thead>
+
         <tbody>
           {upComing?.map((auction, idx) => {
             return (
@@ -132,6 +134,11 @@ const JoinAuctionTable = ({ allLive, upComing }) => {
           })}
         </tbody>
       </table>
+      {upComing.length === 0 && (
+        <span className="flex items-center justify-center font-bold ">
+          No upcoming data
+        </span>
+      )}
 
       {/* Add Auction Form */}
       {isRegistered && (

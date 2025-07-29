@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { useAuth } from "../context/AuthContext";
+import { BASE_URL } from "../components/Contant/URL";
 
 const AddVehicles = () => {
   const { user } = useAuth();
@@ -96,7 +97,7 @@ const AddVehicles = () => {
   const fetchVehicles = async () => {
     setLoading(true);
     try {
-      const res = await fetch("http://localhost:3001/seller/getVehicles");
+      const res = await fetch(`${BASE_URL}/seller/getVehicles`);
       const data = await res.json();
       // Ensure we always set an array
       setVehicles(Array.isArray(data) ? data : []);
@@ -110,7 +111,7 @@ const AddVehicles = () => {
 
   const fetchAuctionVehicles = async () => {
     try {
-      const res = await fetch("http://localhost:3001/seller/getAuctionVehicle");
+      const res = await fetch(`${BASE_URL}/seller/getAuctionVehicle`);
       if (!res.ok) throw new Error("Failed to fetch auction vehicles");
       const data = await res.json();
       setAuctionVehicles(data);
@@ -142,8 +143,8 @@ const AddVehicles = () => {
 
     const method = editId ? "PUT" : "POST";
     const url = editId
-      ? `http://localhost:3001/seller/updateVehicle/${editId}`
-      : `http://localhost:3001/seller/addVehicle`;
+      ? `${BASE_URL}/seller/updateVehicle/${editId}`
+      : `${BASE_URL}/seller/addVehicle`;
 
     try {
       const res = await fetch(url, { method, body: formData });
@@ -170,12 +171,9 @@ const AddVehicles = () => {
   const handleDelete = async (vehicleId) => {
     if (!window.confirm("Confirm deletion?")) return;
     try {
-      const res = await fetch(
-        `http://localhost:3001/seller/deleteVehicle/${vehicleId}`,
-        {
-          method: "PATCH",
-        }
-      );
+      const res = await fetch(`${BASE_URL}/seller/deleteVehicle/${vehicleId}`, {
+        method: "PATCH",
+      });
       if (!res.ok) throw new Error("Failed to delete vehicle");
       setSuccessMsg("Vehicle deleted.");
       fetchVehicles();
@@ -185,7 +183,7 @@ const AddVehicles = () => {
   };
   const handleSubmitSellerBid = async (userId, bidData) => {
     try {
-      const response = await fetch("http://localhost:3001/seller/createBid", {
+      const response = await fetch(`${BASE_URL}/seller/createBid`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -231,28 +229,6 @@ const AddVehicles = () => {
       alert("Failed to create bid. Please try again.");
     }
   };
-  /* const handleStartBidding = async (vehicleId) => {
-  try {
-    const response = await fetch('http://localhost:3001/seller/startBidding', {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify({ vehicleId }),
-    });
-
-    if (!response.ok) {
-      throw new Error('Failed to start bidding');
-    }
-
-    const result = await response.json();
-    console.log("Bidding started:", result);
-    alert("Bidding started successfully for vehicle ID: " + vehicleId);
-  } catch (err) {
-    console.error("Error starting bidding:", err);
-    alert("Error: " + err.message);
-  }
-}; */
 
   const formatPKR = (amount) => {
     if (!amount || isNaN(amount)) return "—";
@@ -265,12 +241,9 @@ const AddVehicles = () => {
   /* End Bidding */
   const handleEndBidding = async (bidId) => {
     try {
-      const res = await fetch(
-        `http://localhost:3001/seller/endBidding/${bidId}`,
-        {
-          method: "PUT",
-        }
-      );
+      const res = await fetch(`${BASE_URL}/seller/endBidding/${bidId}`, {
+        method: "PUT",
+      });
 
       if (!res.ok) throw new Error("Failed to end bidding");
 
@@ -526,7 +499,7 @@ const AddVehicles = () => {
                               };
 
                               const res = await fetch(
-                                "http://localhost:3001/customer/startBidding",
+                                `${BASE_URL}/customer/startBidding`,
                                 {
                                   method: "POST",
                                   headers: {

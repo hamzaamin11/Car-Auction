@@ -1,12 +1,10 @@
-
-
-import React from 'react';
-import { Navigate } from 'react-router-dom';
+import { useSelector } from "react-redux";
+import { Navigate } from "react-router-dom";
 
 const ProtectedRoute = ({ children }) => {
-  const isAdmin = localStorage.getItem("isAdmin") === "true";
+  const { currentUser } = useSelector((state) => state?.auth);
 
-  return isAdmin ? children : <Navigate to="/admin-login" />;
+  return currentUser?.role === "admin" ? children : <Navigate to="/login" />;
 };
 
 export default ProtectedRoute;

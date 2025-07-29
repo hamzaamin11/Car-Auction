@@ -1,36 +1,45 @@
 /* eslint-disable no-unused-vars */
-import React, { useEffect, useState } from 'react';
-import { motion, AnimatePresence } from 'framer-motion';
-import { Link } from 'react-router-dom';
-import { FiArrowRight } from 'react-icons/fi';
+import React, { useEffect, useState } from "react";
+import { motion, AnimatePresence } from "framer-motion";
+import { Link } from "react-router-dom";
+import { FiArrowRight } from "react-icons/fi";
+import firstImage from "../../src/assets/c2.jpg";
+import secondImage from "../../src/assets/car 1.jpg";
+import thirdImage from "../../src/assets/c4.jpg";
 
 const slides = [
   {
     id: 1,
-    heading: '400,000+ Vehicles Auctioned Annually',
-    subheading: 'From New to used cars, find your next vehicle easily with CHAUDHRY Cars Auction.',
-    description: 'Join thousands of satisfied members in buying high-quality repairable cars every day.',
-    button: 'Join Auction Now',
-    buttonLink: '/join',
-    image: 'https://images.ctfassets.net/6jp6wwxb6y1v/34yA76KX4fOBHlgA8mgGdl/0c66adf81b941e1a6147f581b3a395e5/IAA_-_Fleet_Inventory_on_IAA_Timed_Auctions_-_Nov_2024_-_Carousel_Banner_Graphic.jpg',
+    heading: "400,000+ Vehicles Auctioned Annually",
+    subheading:
+      "From New to used cars, find your next vehicle easily with CHAUDHRY Cars Auction.",
+    description:
+      "Join thousands of satisfied members in buying high-quality repairable cars every day.",
+    button: "Join Auction Now",
+    buttonLink: "/join",
+    image: firstImage,
   },
   {
     id: 2,
-    heading: 'New & Used Cars for Every Buyer',
-    subheading: 'Explore CAT S, CAT N, repairable & graded used cars from top brands.',
-    description: 'Ideal for sellers, businesses, and individual car buyers looking for great value vehicles through online auctions.',
-    button: 'Browse Cars ',
-    buttonLink: '/finder',
-    image: '/slide2.jpg',
+    heading: "New & Used Cars for Every Buyer",
+    subheading:
+      "Explore CAT S, CAT N, repairable & graded used cars from top brands.",
+    description:
+      "Ideal for sellers, businesses, and individual car buyers looking for great value vehicles through online auctions.",
+    button: "Browse Cars ",
+    buttonLink: "/finder",
+    image: secondImage,
   },
   {
     id: 3,
-    heading: 'Over 30 Years of Trust',
-    subheading: 'Industry experts in New & used car auctions across the Pakistan.',
-    description: 'Secure online platform trusted by thousands to bid, win, and save big.',
-    button: 'Become a Member',
-    buttonLink: '/register',
-    image: '/slide3.jpeg',
+    heading: "Over 30 Years of Trust",
+    subheading:
+      "Industry experts in New & used car auctions across the Pakistan.",
+    description:
+      "Secure online platform trusted by thousands to bid, win, and save big.",
+    button: "Become a Member",
+    buttonLink: "/register",
+    image: thirdImage,
   },
 ];
 
@@ -56,13 +65,13 @@ const CarBanner = () => {
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
               exit={{ opacity: 0 }}
-              transition={{ duration: 1.2, ease: 'easeInOut' }}
+              transition={{ duration: 1.2, ease: "easeInOut" }}
             >
-              <div className="flex flex-col items-center justify-center h-full bg-black/60 text-white text-center px-4 md:px-10">
+              <div className="flex flex-col items-center justify-center h-full bg-black/20 text-white text-center px-4 md:px-10">
                 <motion.h1
                   initial={{ y: -60, opacity: 0 }}
                   animate={{ y: 0, opacity: 1 }}
-                  transition={{ delay: 0.3, duration: 0.8, ease: 'easeInOut' }}
+                  transition={{ delay: 0.3, duration: 0.8, ease: "easeInOut" }}
                   className="text-4xl md:text-6xl font-bold mb-4"
                 >
                   {slide.heading}
@@ -71,7 +80,7 @@ const CarBanner = () => {
                 <motion.p
                   initial={{ y: 20, opacity: 0 }}
                   animate={{ y: 0, opacity: 1 }}
-                  transition={{ delay: 0.6, duration: 0.7, ease: 'easeInOut' }}
+                  transition={{ delay: 0.6, duration: 0.7, ease: "easeInOut" }}
                   className="text-lg md:text-2xl mb-3"
                 >
                   {slide.subheading}
@@ -80,7 +89,7 @@ const CarBanner = () => {
                 <motion.p
                   initial={{ y: 20, opacity: 0 }}
                   animate={{ y: 0, opacity: 1 }}
-                  transition={{ delay: 0.9, duration: 0.7, ease: 'easeInOut' }}
+                  transition={{ delay: 0.9, duration: 0.7, ease: "easeInOut" }}
                   className="text-sm md:text-lg mb-6 max-w-2xl"
                 >
                   {slide.description}

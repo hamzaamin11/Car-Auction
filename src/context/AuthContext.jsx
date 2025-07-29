@@ -1,13 +1,13 @@
-import React, { createContext, useContext, useEffect, useState } from 'react';
-import { Navigate } from 'react-router-dom';
+import { createContext, use, useContext, useEffect, useState } from "react";
 
 const AuthContext = createContext();
 
-
 export const AuthProvider = ({ children }) => {
   const [user, setUser] = useState();
+
+  console.log("user from auth side", user);
   useEffect(() => {
-    const storedUser = localStorage.getItem('user');
+    const storedUser = localStorage.getItem("user");
     if (storedUser) {
       setUser(JSON.parse(storedUser));
     }
@@ -15,24 +15,23 @@ export const AuthProvider = ({ children }) => {
 
   // Add this login function (only new addition)
   const login = (userData) => {
-    localStorage.setItem('user', JSON.stringify(userData));
+    localStorage.setItem("user", JSON.stringify(userData));
     setUser(userData);
-    
   };
 
   const logout = () => {
-    localStorage.removeItem('user');
-    setUser(null); 
+    localStorage.removeItem("user");
+    setUser(null);
   };
 
   return (
-    <AuthContext.Provider 
-      value={{ 
-        user, 
-        isAuthenticated: !!user, 
-        setUser, 
+    <AuthContext.Provider
+      value={{
+        user,
+        isAuthenticated: !!user,
+        setUser,
         logout,
-        login // Add this to the provider value
+        login, // Add this to the provider value
       }}
     >
       {children}

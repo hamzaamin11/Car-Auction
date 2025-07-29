@@ -1,53 +1,65 @@
-import React, { useState, useEffect, useContext } from 'react';
-import { toast, ToastContainer } from 'react-toastify';
-import VehicleContext from "../../context/VehicleContext"
+import React, { useState, useEffect, useContext } from "react";
+import { toast, ToastContainer } from "react-toastify";
+import VehicleContext from "../../context/VehicleContext";
+import { useDispatch, useSelector } from "react-redux";
+import {
+  navigationStart,
+  navigationSuccess,
+} from "../../components/Redux/NavigationSlice";
+import { RotateLoader } from "../../components/Loader/RotateLoader";
 
 const AddVehicleSpects = () => {
+  const { loader } = useSelector((state) => state?.navigateState);
+
   const [vehicles, setVehicles] = useState([]);
+
   const [loading, setLoading] = useState(false);
+
   const [formData, setFormData] = useState({
-    vehicleId: '',
-    engineType: '',
-    turboCharger: '',
-    displacement: '',
-    numberOfCylinders: '',
-    driveTrain: '',
-    cylinderConfiguration: '',
-    horsePower: '',
-    compressionRatio: '',
-    torque: '',
-    valvesPerCylinder: '',
-    fuelSystem: '',
-    valveMechanism: '',
-    maxSpeed: '',
-    transmissionType: '',
-    gearbox: '',
-    steeringType: '',
-    minTurningRadius: '',
-    powerAssisted: '',
-    frontSuspension: '',
-    rearSuspension: '',
-    frontBrakes: '',
-    rearBrakes: '',
-    wheelType: '',
-    tyreSize: '',
-    wheelSize: '',
-    spareTyre: '',
-    pcd: '',
-    spareTyreSize: '',
-    mileageCity: '',
-    mileageHighway: '',
-    fuelTankCapacity: ''
+    vehicleId: "",
+    engineType: "",
+    turboCharger: "",
+    displacement: "",
+    numberOfCylinders: "",
+    driveTrain: "",
+    cylinderConfiguration: "",
+    horsePower: "",
+    compressionRatio: "",
+    torque: "",
+    valvesPerCylinder: "",
+    fuelSystem: "",
+    valveMechanism: "",
+    maxSpeed: "",
+    transmissionType: "",
+    gearbox: "",
+    steeringType: "",
+    minTurningRadius: "",
+    powerAssisted: "",
+    frontSuspension: "",
+    rearSuspension: "",
+    frontBrakes: "",
+    rearBrakes: "",
+    wheelType: "",
+    tyreSize: "",
+    wheelSize: "",
+    spareTyre: "",
+    pcd: "",
+    spareTyreSize: "",
+    mileageCity: "",
+    mileageHighway: "",
+    fuelTankCapacity: "",
   });
 
- const {getVehicles} = useContext(VehicleContext);
+  const dispatch = useDispatch();
+
+  const { getVehicles, getAllVehicles } = useContext(VehicleContext);
 
   // Handle form input changes
   const handleChange = (e) => {
     const { name, value } = e.target;
-    setFormData(prev => ({
+    setFormData((prev) => ({
       ...prev,
-      [name]: value
+      [name]: value,
     }));
   };
 
@@ -57,70 +69,83 @@ const AddVehicleSpects = () => {
     setLoading(true);
 
     try {
-      const response = await fetch('http://localhost:3001/admin/addVehicleSpecs', {
-        method: 'POST',
+      const response = await fetch(`${BASE_URL}/admin/addVehicleSpecs`, {
+        method: "POST",
         headers: {
-          'Content-Type': 'application/json',
+          "Content-Type": "application/json",
         },
-        body: JSON.stringify(formData)
+        body: JSON.stringify(formData),
       });
 
       if (!response.ok) {
-        throw new Error('Failed to save specifications');
+        throw new Error("Failed to save specifications");
       }
 
-      toast.success('Specifications saved successfully!');
+      toast.success("Specifications saved successfully!");
       // Reset form after successful submission
       setFormData({
-        vehicleId: '',
-    engineType: '',
-    turboCharger: '',
-    displacement: '',
-    numberOfCylinders: '',
-    driveTrain: '',
-    cylinderConfiguration: '',
-    horsePower: '',
-    compressionRatio: '',
-    torque: '',
-    valvesPerCylinder: '',
-    fuelSystem: '',
-    valveMechanism: '',
-    maxSpeed: '',
-    transmissionType: '',
-    gearbox: '',
-    steeringType: '',
-    minTurningRadius: '',
-    powerAssisted: '',
-    frontSuspension: '',
-    rearSuspension: '',
-    frontBrakes: '',
-    rearBrakes: '',
-    wheelType: '',
-    tyreSize: '',
-    wheelSize: '',
-    spareTyre: '',
-    pcd: '',
-    spareTyreSize: '',
-    mileageCity: '',
-    mileageHighway: '',
-    fuelTankCapacity: ''
-
+        vehicleId: "",
+        engineType: "",
+        turboCharger: "",
+        displacement: "",
+        numberOfCylinders: "",
+        driveTrain: "",
+        cylinderConfiguration: "",
+        horsePower: "",
+        compressionRatio: "",
+        torque: "",
+        valvesPerCylinder: "",
+        fuelSystem: "",
+        valveMechanism: "",
+        maxSpeed: "",
+        transmissionType: "",
+        gearbox: "",
+        steeringType: "",
+        minTurningRadius: "",
+        powerAssisted: "",
+        frontSuspension: "",
+        rearSuspension: "",
+        frontBrakes: "",
+        rearBrakes: "",
+        wheelType: "",
+        tyreSize: "",
+        wheelSize: "",
+        spareTyre: "",
+        pcd: "",
+        spareTyreSize: "",
+        mileageCity: "",
+        mileageHighway: "",
+        fuelTankCapacity: "",
       });
     } catch (error) {
       toast.error(error.message);
-      console.error('Error saving specifications:', error);
+      console.error("Error saving specifications:", error);
     } finally {
       setLoading(false);
     }
   };
+
+  useEffect(() => {
+    getAllVehicles();
+    dispatch(navigationStart());
+    setTimeout(() => {
+      dispatch(navigationSuccess("Add Specs"));
+    }, 1000);
+  }, []);
+
+  if (loader) return <RotateLoader />;
 
   return (
     <div className="container mx-auto px-4 py-8">
       <div className="max-w-6xl mx-auto bg-white rounded-lg shadow-md overflow-hidden">
         {/* Form Header */}
         <div className="bg-blue-600 px-6 py-4">
-          <h2 className="text-2xl font-bold text-white">Add Vehicle Specifications</h2>
-          <p className="text-blue-100">Enter detailed technical specifications</p>
+          <h2 className="text-2xl font-bold text-white">
+            Add Vehicle Specifications
+          </h2>
+          <p className="text-blue-100">
+            Enter detailed technical specifications
+          </p>
         </div>
 
         {/* Form Body */}
@@ -139,20 +164,26 @@ const AddVehicleSpects = () => {
                 required
               >
                 <option value="">Select a vehicle</option>
-                {getVehicles?.map(vehicle => (
-                  <option key={vehicle.id} value={vehicle.id}>
-                    {vehicle.make} {vehicle.model} ({vehicle.year}) - {vehicle.vin}
-                  </option>
-                ))}
+                {getVehicles &&
+                  getVehicles?.map((vehicle) => (
+                    <option key={vehicle.id} value={vehicle.id}>
+                      {vehicle.make} {vehicle.model} ({vehicle.year}) -{" "}
+                      {vehicle.vin}
+                    </option>
+                  ))}
               </select>
             </div>
 
             {/* Engine Specifications */}
             <div className="space-y-4 md:col-span-1">
-              <h3 className="text-lg font-semibold text-gray-800 border-b pb-2">Engine Specifications</h3>
-              
+              <h3 className="text-lg font-semibold text-gray-800 border-b pb-2">
+                Engine Specifications
+              </h3>
+
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">Engine Type</label>
+                <label className="block text-sm font-medium text-gray-700 mb-1">
+                  Engine Type
+                </label>
                 <input
                   type="text"
                   name="engineType"
@@ -163,7 +194,9 @@ const AddVehicleSpects = () => {
               </div>
 
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">Turbo Charger</label>
+                <label className="block text-sm font-medium text-gray-700 mb-1">
+                  Turbo Charger
+                </label>
                 <input
                   type="text"
                   name="turboCharger"
@@ -174,7 +207,9 @@ const AddVehicleSpects = () => {
               </div>
 
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">Displacement (cc)</label>
+                <label className="block text-sm font-medium text-gray-700 mb-1">
+                  Displacement (cc)
+                </label>
                 <input
                   type="text"
                   name="displacement"
@@ -184,7 +219,9 @@ const AddVehicleSpects = () => {
                 />
               </div>
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">Drive Train (cc)</label>
+                <label className="block text-sm font-medium text-gray-700 mb-1">
+                  Drive Train (cc)
+                </label>
                 <input
                   type="text"
                   name="driveTrain"
@@ -195,7 +232,9 @@ const AddVehicleSpects = () => {
               </div>
 
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">Number of Cylinders</label>
+                <label className="block text-sm font-medium text-gray-700 mb-1">
+                  Number of Cylinders
+                </label>
                 <input
                   type="number"
                   name="numberOfCylinders"
@@ -207,7 +246,9 @@ const AddVehicleSpects = () => {
               </div>
 
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">Cylinder Configuration</label>
+                <label className="block text-sm font-medium text-gray-700 mb-1">
+                  Cylinder Configuration
+                </label>
                 <input
                   type="text"
                   name="cylinderConfiguration"
@@ -218,7 +259,9 @@ const AddVehicleSpects = () => {
               </div>
 
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">Horse Power (HP)</label>
+                <label className="block text-sm font-medium text-gray-700 mb-1">
+                  Horse Power (HP)
+                </label>
                 <input
                   type="text"
                   name="horsePower"
@@ -229,7 +272,9 @@ const AddVehicleSpects = () => {
               </div>
 
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">Compression Ratio</label>
+                <label className="block text-sm font-medium text-gray-700 mb-1">
+                  Compression Ratio
+                </label>
                 <input
                   type="text"
                   name="compressionRatio"
@@ -242,10 +287,14 @@ const AddVehicleSpects = () => {
 
             {/* Performance & Transmission */}
             <div className="space-y-4 md:col-span-1">
-              <h3 className="text-lg font-semibold text-gray-800 border-b pb-2">Performance & Transmission</h3>
-              
+              <h3 className="text-lg font-semibold text-gray-800 border-b pb-2">
+                Performance & Transmission
+              </h3>
+
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">Torque (Nm)</label>
+                <label className="block text-sm font-medium text-gray-700 mb-1">
+                  Torque (Nm)
+                </label>
                 <input
                   type="text"
                   name="torque"
@@ -256,7 +305,9 @@ const AddVehicleSpects = () => {
               </div>
 
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">Valves Per Cylinder</label>
+                <label className="block text-sm font-medium text-gray-700 mb-1">
+                  Valves Per Cylinder
+                </label>
                 <input
                   type="number"
                   name="valvesPerCylinder"
@@ -268,7 +319,9 @@ const AddVehicleSpects = () => {
               </div>
 
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">Fuel System</label>
+                <label className="block text-sm font-medium text-gray-700 mb-1">
+                  Fuel System
+                </label>
                 <input
                   type="text"
                   name="fuelSystem"
@@ -279,7 +332,9 @@ const AddVehicleSpects = () => {
               </div>
 
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">Valve Mechanism</label>
+                <label className="block text-sm font-medium text-gray-700 mb-1">
+                  Valve Mechanism
+                </label>
                 <input
                   type="text"
                   name="valveMechanism"
@@ -290,7 +345,9 @@ const AddVehicleSpects = () => {
               </div>
 
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">Max Speed (km/h)</label>
+                <label className="block text-sm font-medium text-gray-700 mb-1">
+                  Max Speed (km/h)
+                </label>
                 <input
                   type="text"
                   name="maxSpeed"
@@ -301,7 +358,9 @@ const AddVehicleSpects = () => {
               </div>
 
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">Transmission Type</label>
+                <label className="block text-sm font-medium text-gray-700 mb-1">
+                  Transmission Type
+                </label>
                 <input
                   type="text"
                   name="transmissionType"
@@ -312,7 +371,9 @@ const AddVehicleSpects = () => {
               </div>
 
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">Gearbox</label>
+                <label className="block text-sm font-medium text-gray-700 mb-1">
+                  Gearbox
+                </label>
                 <input
                   type="text"
                   name="gearbox"
@@ -325,10 +386,14 @@ const AddVehicleSpects = () => {
 
             {/* Chassis & Suspension */}
             <div className="space-y-4 md:col-span-1">
-              <h3 className="text-lg font-semibold text-gray-800 border-b pb-2">Chassis & Suspension</h3>
-              
+              <h3 className="text-lg font-semibold text-gray-800 border-b pb-2">
+                Chassis & Suspension
+              </h3>
+
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">Steering Type</label>
+                <label className="block text-sm font-medium text-gray-700 mb-1">
+                  Steering Type
+                </label>
                 <input
                   type="text"
                   name="steeringType"
@@ -339,7 +404,9 @@ const AddVehicleSpects = () => {
               </div>
 
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">Min Turning Radius (m)</label>
+                <label className="block text-sm font-medium text-gray-700 mb-1">
+                  Min Turning Radius (m)
+                </label>
                 <input
                   type="text"
                   name="minTurningRadius"
@@ -350,7 +417,9 @@ const AddVehicleSpects = () => {
               </div>
 
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">Power Assisted</label>
+                <label className="block text-sm font-medium text-gray-700 mb-1">
+                  Power Assisted
+                </label>
                 <select
                   name="powerAssisted"
                   value={formData.powerAssisted}
@@ -364,7 +433,9 @@ const AddVehicleSpects = () => {
               </div>
 
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">Front Suspension</label>
+                <label className="block text-sm font-medium text-gray-700 mb-1">
+                  Front Suspension
+                </label>
                 <input
                   type="text"
                   name="frontSuspension"
@@ -375,7 +446,9 @@ const AddVehicleSpects = () => {
               </div>
 
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">Rear Suspension</label>
+                <label className="block text-sm font-medium text-gray-700 mb-1">
+                  Rear Suspension
+                </label>
                 <input
                   type="text"
                   name="rearSuspension"
@@ -386,7 +459,9 @@ const AddVehicleSpects = () => {
               </div>
 
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">Front Brakes</label>
+                <label className="block text-sm font-medium text-gray-700 mb-1">
+                  Front Brakes
+                </label>
                 <input
                   type="text"
                   name="frontBrakes"
@@ -397,7 +472,9 @@ const AddVehicleSpects = () => {
               </div>
 
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">Rear Brakes</label>
+                <label className="block text-sm font-medium text-gray-700 mb-1">
+                  Rear Brakes
+                </label>
                 <input
                   type="text"
                   name="rearBrakes"
@@ -410,10 +487,14 @@ const AddVehicleSpects = () => {
 
             {/* Wheels & Tires */}
             <div className="space-y-4 md:col-span-1">
-              <h3 className="text-lg font-semibold text-gray-800 border-b pb-2">Wheels & Tires</h3>
-              
+              <h3 className="text-lg font-semibold text-gray-800 border-b pb-2">
+                Wheels & Tires
+              </h3>
+
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">Wheel Type</label>
+                <label className="block text-sm font-medium text-gray-700 mb-1">
+                  Wheel Type
+                </label>
                 <input
                   type="text"
                   name="wheelType"
@@ -424,7 +505,9 @@ const AddVehicleSpects = () => {
               </div>
 
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">Tyre Size</label>
+                <label className="block text-sm font-medium text-gray-700 mb-1">
+                  Tyre Size
+                </label>
                 <input
                   type="text"
                   name="tyreSize"
@@ -435,7 +518,9 @@ const AddVehicleSpects = () => {
               </div>
 
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">Wheel Size</label>
+                <label className="block text-sm font-medium text-gray-700 mb-1">
+                  Wheel Size
+                </label>
                 <input
                   type="text"
                   name="wheelSize"
@@ -446,7 +531,9 @@ const AddVehicleSpects = () => {
               </div>
 
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">Spare Tyre</label>
+                <label className="block text-sm font-medium text-gray-700 mb-1">
+                  Spare Tyre
+                </label>
                 <select
                   name="spareTyre"
                   value={formData.spareTyre}
@@ -461,7 +548,9 @@ const AddVehicleSpects = () => {
               </div>
 
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">PCD</label>
+                <label className="block text-sm font-medium text-gray-700 mb-1">
+                  PCD
+                </label>
                 <input
                   type="text"
                   name="pcd"
@@ -472,7 +561,9 @@ const AddVehicleSpects = () => {
               </div>
 
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">Spare Tyre Size</label>
+                <label className="block text-sm font-medium text-gray-700 mb-1">
+                  Spare Tyre Size
+                </label>
                 <input
                   type="text"
                   name="spareTyreSize"
@@ -485,10 +576,14 @@ const AddVehicleSpects = () => {
 
             {/* Fuel Economy */}
             <div className="space-y-4 md:col-span-2">
-              <h3 className="text-lg font-semibold text-gray-800 border-b pb-2">Fuel Economy</h3>
+              <h3 className="text-lg font-semibold text-gray-800 border-b pb-2">
+                Fuel Economy
+              </h3>
               <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-1">Mileage City (km/l)</label>
+                  <label className="block text-sm font-medium text-gray-700 mb-1">
+                    Mileage City (km/l)
+                  </label>
                   <input
                     type="text"
                     name="mileageCity"
@@ -499,7 +594,9 @@ const AddVehicleSpects = () => {
                 </div>
 
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-1">Mileage Highway (km/l)</label>
+                  <label className="block text-sm font-medium text-gray-700 mb-1">
+                    Mileage Highway (km/l)
+                  </label>
                   <input
                     type="text"
                     name="mileageHighway"
@@ -510,7 +607,9 @@ const AddVehicleSpects = () => {
                 </div>
 
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-1">Fuel Tank Capacity (liters)</label>
+                  <label className="block text-sm font-medium text-gray-700 mb-1">
+                    Fuel Tank Capacity (liters)
+                  </label>
                   <input
                     type="text"
                     name="fuelTankCapacity"
@@ -529,10 +628,10 @@ const AddVehicleSpects = () => {
               type="submit"
               disabled={loading}
               className={`px-6 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 ${
-                loading ? 'opacity-70 cursor-not-allowed' : ''
+                loading ? "opacity-70 cursor-not-allowed" : ""
               }`}
             >
-              {loading ? 'Saving...' : 'Save Specifications'}
+              {loading ? "Saving..." : "Save Specifications"}
             </button>
           </div>
         </form>

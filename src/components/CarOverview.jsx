@@ -1,3 +1,4 @@
+import { useState } from "react";
 import {
   FaGasPump,
   FaRoad,
@@ -6,11 +7,15 @@ import {
   FaStar,
 } from "react-icons/fa";
 import { Link } from "react-router-dom";
+import ImportCarForm from "../pages/import";
 
-const CarOverview = ({ selectedPrice }) => {
+const CarOverview = ({ selectedPrice, vehicleId }) => {
   const currentDate =
     new Date(new Date().toISOString()).toLocaleDateString("sv-SE") ?? "";
 
+  const [isOpen, setIsOpen] = useState(false);
+
+  console.log("isopennn", isOpen);
   return (
     <div className="bg-gray-50 py-6 px-4 sm:px-6 lg:px-10 max-w-7xl mx-auto">
       <div className="text-xl sm:text-2xl font-bold text-[#233D7B] mb-6 leading-snug">
@@ -37,24 +42,27 @@ const CarOverview = ({ selectedPrice }) => {
 
           <div className="flex flex-col gap-3 pt-2">
             <button className="w-auto bg-[#233D7B] text-white px-4 py-2 rounded hover:bg-[#1a2f5c] transition text-sm">
-              {selectedPrice && selectedPrice?.model}{" "}
               {selectedPrice && selectedPrice?.make}{" "}
+              {selectedPrice && selectedPrice?.model}{" "}
               {selectedPrice && selectedPrice?.engine} for Sale
             </button>
 
-            <Link to="/import">
-              <button className="w-auto bg-green-600 text-white px-4 py-2 rounded hover:bg-green-700 transition text-sm">
-                Import This Car
-              </button>
-            </Link>
+            <button
+              onClick={() => setIsOpen((prev) => !prev)}
+              className="w-auto bg-green-600 text-white px-4 py-2 rounded hover:bg-green-700 transition text-sm"
+            >
+              Buy this Car
+            </button>
           </div>
         </div>
 
         <div>
           <img
-            src={(selectedPrice && selectedPrice.image) || "/images/AudiQ2.jpg"}
+            src={
+              (selectedPrice && selectedPrice.images[1]) || "/images/AudiQ2.jpg"
+            }
             alt="image"
-            className="w-full h-auto rounded-md"
+            className="w-96  h-96 rounded-md"
           />
         </div>
       </div>
@@ -90,6 +98,13 @@ const CarOverview = ({ selectedPrice }) => {
           </p>
         </div>
       </div>
+
+      {isOpen === true && (
+        <ImportCarForm
+          handleClose={() => setIsOpen(false)}
+          vehicleId={vehicleId}
+        />
+      )}
     </div>
   );
 };

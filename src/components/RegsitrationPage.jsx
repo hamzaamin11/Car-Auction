@@ -1,25 +1,26 @@
 /* eslint-disable no-unused-vars */
-import React, { useState } from 'react';
-import { useNavigate } from 'react-router-dom';
-import PhoneInput from 'react-phone-input-2';
-import 'react-phone-input-2/lib/style.css';
-import { ToastContainer, toast } from 'react-toastify';
-import 'react-toastify/dist/ReactToastify.css';
-import axios from 'axios';
+import React, { useState } from "react";
+import { useNavigate } from "react-router-dom";
+import PhoneInput from "react-phone-input-2";
+import "react-phone-input-2/lib/style.css";
+import { ToastContainer, toast } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
+import axios from "axios";
+import { BASE_URL } from "./Contant/URL";
 
 const RegistrationPage = () => {
   const navigate = useNavigate();
 
   const [formData, setFormData] = useState({
-    name: '',
-    cnic: '',
-    email: '',
-    password: '',
-    confirmPassword: '',
-    contact: '',
-    address: '',
-    postcode: '',
-    role: '',
+    name: "",
+    cnic: "",
+    email: "",
+    password: "",
+    confirmPassword: "",
+    contact: "",
+    address: "",
+    postcode: "",
+    role: "",
     image: null,
     consent: false,
   });
@@ -27,9 +28,9 @@ const RegistrationPage = () => {
   const handleChange = (e) => {
     const { name, value, type, checked, files } = e.target;
 
-    if (name === 'image') {
+    if (name === "image") {
       setFormData((prev) => ({ ...prev, image: files[0] }));
-    } else if (name === 'consent') {
+    } else if (name === "consent") {
       setFormData((prev) => ({ ...prev, consent: checked }));
     } else {
       setFormData((prev) => ({ ...prev, [name]: value }));
@@ -44,43 +45,43 @@ const RegistrationPage = () => {
     e.preventDefault();
 
     if (!formData.consent) {
-      toast.error('You must agree to the terms.');
+      toast.error("You must agree to the terms.");
       return;
     }
 
     if (formData.password !== formData.confirmPassword) {
-      toast.error('Passwords do not match.');
+      toast.error("Passwords do not match.");
       return;
     }
 
     const data = new FormData();
-    data.append('name', formData.name);
-    data.append('cnic', formData.cnic);
-    data.append('email', formData.email);
-    data.append('password', formData.password);
-    data.append('address', formData.address);
-    data.append('contact', formData.contact);
-    data.append('postcode', formData.postcode);
-    data.append('role', formData.role);
-    if (formData.image) data.append('image', formData.image);
+    data.append("name", formData.name);
+    data.append("cnic", formData.cnic);
+    data.append("email", formData.email);
+    data.append("password", formData.password);
+    data.append("address", formData.address);
+    data.append("contact", formData.contact);
+    data.append("postcode", formData.postcode);
+    data.append("role", formData.role);
+    if (formData.image) data.append("image", formData.image);
 
     const apiUrl =
-      formData.role === 'seller'
-        ? 'http://localhost:3001/register'
-        : 'http://localhost:3001/register';
+      formData.role === "seller"
+        ? `${BASE_URL}/register`
+        : `${BASE_URL}/register`;
 
     try {
       const response = await axios.post(apiUrl, data, {
         headers: {
-          'Content-Type': 'multipart/form-data',
+          "Content-Type": "multipart/form-data",
         },
       });
 
-      toast.success('Registered successfully!');
-      setTimeout(() => navigate('/login'), 2000);
+      toast.success("Registered successfully!");
+      setTimeout(() => navigate("/login"), 2000);
     } catch (error) {
-      console.error('Registration error:', error);
-      toast.error('Registration failed.');
+      console.error("Registration error:", error);
+      toast.error("Registration failed.");
     }
   };
 
@@ -94,11 +95,15 @@ const RegistrationPage = () => {
     >
       <ToastContainer position="top-right" autoClose={3000} />
       <div className="p-8 md:p-10 max-w-2xl w-full rounded shadow ml-4">
-        <h2 className="text-3xl font-bold text-[#222] mb-6">Create Your Account</h2>
+        <h2 className="text-3xl font-bold text-[#222] mb-6">
+          Create Your Account
+        </h2>
         <form onSubmit={handleRegister} className="grid gap-6 md:grid-cols-2">
           {/* Full Name */}
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1">Full Name</label>
+            <label className="block text-sm font-medium text-gray-700 mb-1">
+              Full Name
+            </label>
             <input
               type="text"
               name="name"
@@ -111,7 +116,9 @@ const RegistrationPage = () => {
 
           {/* CNIC */}
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1">CNIC</label>
+            <label className="block text-sm font-medium text-gray-700 mb-1">
+              CNIC
+            </label>
             <input
               type="text"
               name="cnic"
@@ -122,9 +129,10 @@ const RegistrationPage = () => {
             />
           </div>
 
-        
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1">Email</label>
+            <label className="block text-sm font-medium text-gray-700 mb-1">
+              Email
+            </label>
             <input
               type="email"
               name="email"
@@ -135,9 +143,10 @@ const RegistrationPage = () => {
             />
           </div>
 
-         
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1">Address</label>
+            <label className="block text-sm font-medium text-gray-700 mb-1">
+              Address
+            </label>
             <input
               type="text"
               name="address"
@@ -148,25 +157,27 @@ const RegistrationPage = () => {
             />
           </div>
 
-    
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1">Contact</label>
+            <label className="block text-sm font-medium text-gray-700 mb-1">
+              Contact
+            </label>
             <PhoneInput
-              country={'pk'}
+              country={"pk"}
               value={formData.contact}
               onChange={handlePhoneChange}
               inputStyle={{
-                width: '100%',
-                height: '42px',
-                borderRadius: '8px',
-                border: '1px solid ##808080',
+                width: "100%",
+                height: "42px",
+                borderRadius: "8px",
+                border: "1px solid ##808080",
               }}
             />
           </div>
 
-          
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1">Post Code</label>
+            <label className="block text-sm font-medium text-gray-700 mb-1">
+              Post Code
+            </label>
             <input
               type="text"
               name="postcode"
@@ -178,7 +189,9 @@ const RegistrationPage = () => {
           </div>
 
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1">Password</label>
+            <label className="block text-sm font-medium text-gray-700 mb-1">
+              Password
+            </label>
             <input
               type="password"
               name="password"
@@ -189,9 +202,10 @@ const RegistrationPage = () => {
             />
           </div>
 
-        
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1">Confirm Password</label>
+            <label className="block text-sm font-medium text-gray-700 mb-1">
+              Confirm Password
+            </label>
             <input
               type="password"
               name="confirmPassword"
@@ -204,7 +218,9 @@ const RegistrationPage = () => {
 
           {/* Select Role */}
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1">Select Role</label>
+            <label className="block text-sm font-medium text-gray-700 mb-1">
+              Select Role
+            </label>
             <select
               name="role"
               value={formData.role}
@@ -220,7 +236,9 @@ const RegistrationPage = () => {
 
           {/* Upload Picture */}
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1">Upload Picture</label>
+            <label className="block text-sm font-medium text-gray-700 mb-1">
+              Upload Picture
+            </label>
             <input
               type="file"
               name="image"
@@ -230,7 +248,6 @@ const RegistrationPage = () => {
             />
           </div>
 
-       
           <div className="md:col-span-2 flex items-center">
             <input
               type="checkbox"

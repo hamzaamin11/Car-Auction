@@ -2,11 +2,14 @@ import React, { useEffect, useState } from "react";
 import { ChevronLeft, ChevronRight, X } from "lucide-react";
 import { Link, useNavigate } from "react-router-dom";
 import axios from "axios";
+import { BASE_URL } from "./Contant/URL";
 
 // ---------------- CarCard -------------------
 const CarCard = ({ car }) => {
   const [imageIndex, setImageIndex] = useState(0);
   const [isModalOpen, setIsModalOpen] = useState(false);
+
+  console.log("car => ", car);
 
   const navigate = useNavigate();
 
@@ -36,10 +39,10 @@ const CarCard = ({ car }) => {
         className="relative"
       >
         <img
-          src={Array.isArray(car.image) ? car.image[0] : car.image}
+          src={car.images[1]}
           alt={"car"}
           onClick={() => openModal(0)}
-          className="w-full h-48 object-cover rounded-t-xl cursor-zoom-in"
+          className="w-full h-48 object-cover rounded-t-xl hover:cursor-pointer"
         />
       </div>
 
@@ -123,7 +126,7 @@ const CarCardSlider = () => {
 
   const handleGetVehicles = async () => {
     try {
-      const res = await axios.get(`http://localhost:3001/customer/getVehicles`);
+      const res = await axios.get(`${BASE_URL}/customer/getVehicles`);
       setAllCars(res.data);
       console.log("get All vehicles", res.data);
     } catch (error) {

@@ -3,6 +3,7 @@ import AuctionsContext from "./AuctionsContext";
 import PropTypes from "prop-types";
 import { useState } from "react";
 import { useEffect } from "react";
+import { BASE_URL } from "../components/Contant/URL";
 
 function AuctionsProvider({ children }) {
   const [getLiveAuctions, setGetLiveAuctions] = useState([]);
@@ -11,7 +12,7 @@ function AuctionsProvider({ children }) {
   const [aucHistory, setAucHistory] = useState([]);
 
   const AllLiveAuctions = async () => {
-    const res = await fetch("http://localhost:3001/liveAuctions", {
+    const res = await fetch(`${BASE_URL}/liveAuctions`, {
       method: "GET",
       headers: {
         "Content-Type": "applications/json",
@@ -25,7 +26,7 @@ function AuctionsProvider({ children }) {
   console.log(getLiveAuctions);
 
   const UpComingAuctions = async () => {
-    const res = await fetch("http://localhost:3001/seller/upcomingAuctions", {
+    const res = await fetch(`${BASE_URL}/seller/upcomingAuctions`, {
       method: "GET",
       headers: {
         "Content-Type": "applications/json",
@@ -37,7 +38,7 @@ function AuctionsProvider({ children }) {
   };
 
   const getBidHistory = async () => {
-    const res = await fetch("http://localhost:3001/seller/auctionHistory", {
+    const res = await fetch(`${BASE_URL}/seller/auctionHistory`, {
       method: "GET",
       headers: {
         "Content-Type": "application/json",
@@ -49,7 +50,7 @@ function AuctionsProvider({ children }) {
   };
 
   const AuctionById = async (id) => {
-    const res = await fetch(`http://localhost:3001/liveAuctionsById/${id}`, {
+    const res = await fetch(`${BASE_URL}/liveAuctionsById/${id}`, {
       method: "GET",
       headers: {
         "Content-Type": "application/json",

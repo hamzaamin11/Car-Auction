@@ -2,6 +2,7 @@ import React, { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 import { useAuth } from "../context/AuthContext"; // adjust path as needed
 import axios from "axios";
+import { BASE_URL } from "./Contant/URL";
 
 const carsData = [
   {
@@ -188,7 +189,7 @@ const VehicleFinderSection = () => {
   const handleGetCars = async () => {
     try {
       const res = await axios.get(
-        `http://localhost:3001/customer/getVehicles?vehicleCondition=${filters.condition}&make=${filters.make}&model=${filters.model}&year=${filters.year}&buyNowPrice=${filters.price}`
+        `${BASE_URL}/customer/getVehicles?vehicleCondition=${filters.condition}&make=${filters.make}&model=${filters.model}&year=${filters.year}&buyNowPrice=${filters.price}`
       );
       setAllCars(res.data);
     } catch (error) {
@@ -198,7 +199,7 @@ const VehicleFinderSection = () => {
 
   const handleGetMakes = async () => {
     try {
-      const res = await axios.get(`http://localhost:3001/getMake`);
+      const res = await axios.get(`${BASE_URL}/getMake`);
 
       setAllmakes(res.data);
     } catch (error) {
@@ -208,7 +209,7 @@ const VehicleFinderSection = () => {
 
   const handleGetModels = async () => {
     try {
-      const res = await axios.get(`http://localhost:3001/getModel`);
+      const res = await axios.get(`${BASE_URL}/getModel`);
       setAllModels(res.data);
     } catch (error) {
       console.log(error);
@@ -439,10 +440,8 @@ const VehicleFinderSection = () => {
                   {user?.role === "customer" && (
                     <Link
                       to="/make-bidding"
-                      className="bg-green-500 text-white text-sm px-3 py-1 rounded hover:bg-green-600"
-                    >
-                      Bid Now
-                    </Link>
+                      className=" text-white text-sm px-3 py-1 rounded hover:bg-green-600"
+                    ></Link>
                   )}
 
                   <Link

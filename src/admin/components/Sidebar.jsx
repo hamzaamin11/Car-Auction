@@ -1,20 +1,27 @@
 import { NavLink } from "react-router-dom";
-import { FaTachometerAlt, FaCar, FaGavel, FaUsers, FaHistory } from "react-icons/fa";
+import {
+  FaTachometerAlt,
+  FaCar,
+  FaGavel,
+  FaUsers,
+  FaHistory,
+} from "react-icons/fa";
+import { FaMessage } from "react-icons/fa6";
 
 const Sidebar = () => {
   const menuItems = [
-    { 
-      name: "Dashboard", 
-      path: "/admin", 
+    {
+      name: "Dashboard",
+      path: "/admin",
       icon: <FaTachometerAlt />,
-      end: true
+      end: true,
     },
     {
       name: "Vehicles",
       icon: <FaCar />,
       children: [
         { name: "Add Vehicle", path: "/admin/vehicles" },
-        // { name: "Manage Vehicles", path: "/admin/manage-vehicles" },
+        { name: "Add Vehicles Brand", path: "/admin/addbrand" },
         { name: "Add Prices", path: "/admin/vehicle-prices" },
         { name: "Add Specs", path: "/admin/vehicle-spects" },
         { name: "View Details", path: "/admin/vehicle-details" },
@@ -31,20 +38,25 @@ const Sidebar = () => {
     {
       name: "Bids",
       icon: <FaHistory />,
-      children: [
-        { name: "Bid History", path: "/admin/bid-history" },
-      ],
+      children: [{ name: "Bid History", path: "/admin/bid-history" }],
     },
-    { 
-      name: "Users", 
-      path: "/admin/manage-users", 
-      icon: <FaUsers /> 
+    {
+      name: "Users",
+      path: "/admin/manage-users",
+      icon: <FaUsers />,
+    },
+    {
+      name: "Customers List",
+      path: "/admin/customerlist",
+      icon: <FaMessage />,
     },
   ];
 
   return (
     <div className="h-full overflow-y-auto p-4">
-      <h2 className="text-2xl font-bold mb-6 text-gray-800 mt-8">Admin Panel</h2>
+      <h2 className="text-2xl font-bold mb-6 text-gray-800 mt-8">
+        Admin Panel
+      </h2>
       <nav className="space-y-1">
         {menuItems.map((item) => (
           <div key={item.name}>
@@ -61,9 +73,9 @@ const Sidebar = () => {
                       to={child.path}
                       className={({ isActive }) =>
                         `block px-3 py-2 text-sm rounded-md ${
-                          isActive 
-                            ? 'bg-blue-50 text-blue-600' 
-                            : 'text-gray-600 hover:bg-gray-100'
+                          isActive
+                            ? "bg-blue-50 text-blue-600"
+                            : "text-gray-600 hover:bg-gray-100"
                         }`
                       }
                     >
@@ -79,8 +91,8 @@ const Sidebar = () => {
                 className={({ isActive }) =>
                   `flex items-center px-4 py-3 rounded-md ${
                     isActive
-                      ? 'bg-blue-50 text-blue-600'
-                      : 'text-gray-600 hover:bg-gray-100'
+                      ? "bg-blue-50 text-blue-600"
+                      : "text-gray-600 hover:bg-gray-100"
                   }`
                 }
               >

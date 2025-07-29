@@ -1,6 +1,7 @@
 import axios from "axios";
 import { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
+import { BASE_URL } from "./Contant/URL";
 
 export default function AuctionsTable() {
   const [searchTerm, setSearchTerm] = useState("");
@@ -9,7 +10,7 @@ export default function AuctionsTable() {
   const [getAuctions, setGetAuctions] = useState([]);
 
   useEffect(() => {
-    fetch("http://localhost:3001/liveAuctions")
+    fetch(`${BASE_URL}/liveAuctions`)
       .then((res) => res.json())
       .then((data) => setSalesData(data))
       .catch((err) => console.error("Error fetching auctions:", err));
@@ -21,7 +22,7 @@ export default function AuctionsTable() {
 
   const handleGetAuctions = async () => {
     try {
-      const res = await axios.get(`http://localhost:3001/todayAuction`);
+      const res = await axios.get(`${BASE_URL}/todayAuction`);
       setGetAuctions(res.data);
     } catch (error) {
       console.log(error);
@@ -41,7 +42,6 @@ export default function AuctionsTable() {
         onChange={(e) => setSearchTerm(e.target.value)}
         className="mb-4 px-4 py-2 border rounded"
       />
-
       <table className="min-w-full table-auto border border-gray-300">
         <thead>
           <tr className="bg-gray-200 text-left">
@@ -52,7 +52,7 @@ export default function AuctionsTable() {
           </tr>
         </thead>
         <tbody>
-          {getAuctions.map((sale, index) => (
+          {getAuctions?.map((sale, index) => (
             <tr key={sale.id} className="border-b hover:bg-gray-50">
               <td className="px-4 py-2">{index + 1}</td>
               <td className="px-4 py-2 font-semibold">{sale.locationId}</td>
@@ -64,6 +64,11 @@ export default function AuctionsTable() {
           ))}
         </tbody>
       </table>
+      {getAuctions.length === 0 && (
+        <div className="flex items-center justify-center font-bold py-1">
+          No data found!
+        </div>
+      )}
       {expandedRow !== null && (
         <div className="mt-4 p-4 border bg-gray-100 rounded">
           <h2 className="text-lg font-bold mb-2">

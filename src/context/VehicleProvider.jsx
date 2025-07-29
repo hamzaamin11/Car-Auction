@@ -1,8 +1,10 @@
-import React, { useEffect, useState } from 'react';
-import VehicleContext from './VehicleContext';
-import PropTypes from 'prop-types';
-import Swal from 'sweetalert2';
-import { toast } from 'react-toastify';
+import React, { useEffect, useState } from "react";
+import VehicleContext from "./VehicleContext";
+import PropTypes from "prop-types";
+import Swal from "sweetalert2";
+import { toast } from "react-toastify";
+import { BASE_URL } from "../components/Contant/URL";
+import { RotateLoader } from "../components/Loader/RotateLoader";
 
 function VehicleProvider({ children }) {
   const [getVehicles, setGetVehicles] = useState([]);
@@ -10,18 +12,16 @@ function VehicleProvider({ children }) {
   const [vehicleSpecs, setVehicleSpecs] = useState(null);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
-    const [selectedVehicleId, setSelectedVehicleId] = useState(null);
-
-  
+  const [selectedVehicleId, setSelectedVehicleId] = useState(null);
 
   const resetVehicleDetails = () => {
-  setVehiclePrices(null);
-  setVehicleSpecs(null);
-};
+    setVehiclePrices(null);
+    setVehicleSpecs(null);
+  };
 
   const getAllVehicles = async () => {
     try {
-      const res = await fetch("http://localhost:3001/seller/getVehicles");
+      const res = await fetch(`${BASE_URL}/seller/getVehicles`);
       const data = await res.json();
       setGetVehicles(data);
     } catch (err) {
@@ -45,14 +45,16 @@ function VehicleProvider({ children }) {
       setSelectedVehicleId(null);
       return;
     }
-setSelectedVehicleId(vehicleId);
+    setSelectedVehicleId(vehicleId);
     setLoading(true);
     setError(null);
-    
+
     try {
       const fetchData = async (endpoint) => {
         try {
-          const res = await fetch(`http://localhost:3001/seller/${endpoint}?vehicleId=${vehicleId}`);
+          const res = await fetch(
+            `${BASE_URL}/seller/${endpoint}?vehicleId=${vehicleId}`
+          );
           if (!res.ok) return null;
           const data = await res.json();
           return Array.isArray(data) ? data[0] : data;
@@ -62,13 +64,12 @@ setSelectedVehicleId(vehicleId);
       };
 
       const [prices, specs] = await Promise.all([
-        fetchData('getvehiclePrices'),
-        fetchData('getvehicleSpecs')
+        fetchData("getvehiclePrices"),
+        fetchData("getvehicleSpecs"),
       ]);
 
       setVehiclePrices(prices);
       setVehicleSpecs(specs);
-
     } catch (err) {
       console.error("Vehicle selection error:", err);
       toast.error("Error loading vehicle details");
@@ -87,14 +88,14 @@ setSelectedVehicleId(vehicleId);
       cancelButtonColor: "#d33",
       confirmButtonText: "Yes, delete it!",
     });
-  
+
     if (!result.isConfirmed) return;
-  
+
     try {
-      const res = await fetch(`http://localhost:3001/seller/deleteVehicle/${id}`, {
+      const res = await fetch(`${BASE_URL}/seller/deleteVehicle/${id}`, {
         method: "PATCH",
       });
-  
+
       if (res.ok) {
         toast.success("Vehicle deleted successfully!");
         getAllVehicles();
@@ -123,7 +124,7 @@ setSelectedVehicleId(vehicleId);
         setSelectedVehicle: fetchVehicleData,
         setVehiclePrices,
         setVehicleSpecs,
-        resetVehicleDetails
+        resetVehicleDetails,
       }}
     >
       {children}

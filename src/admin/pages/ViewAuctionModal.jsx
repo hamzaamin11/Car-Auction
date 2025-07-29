@@ -1,19 +1,20 @@
 import React from "react";
 import AuctionsContext from "../../context/AuctionsContext";
 import { useContext, useEffect } from "react";
+import { BASE_URL } from "../../components/Contant/URL";
 
 const ViewAuctionModal = ({ auctionId, onClose }) => {
   const { auctionById, AuctionById } = useContext(AuctionsContext);
 
   useEffect(() => {
-  console.log("Fetching auction ID:", auctionId);
-  if (auctionId) {
-    AuctionById(auctionId).then(() => {
-      console.log("Fetched auction data:", auctionById); 
-    });
-  }
-}, [auctionId]);
-  console.log("fetched by id:", auctionId)
+    console.log("Fetching auction ID:", auctionId);
+    if (auctionId) {
+      AuctionById(auctionId).then(() => {
+        console.log("Fetched auction data:", auctionById);
+      });
+    }
+  }, [auctionId]);
+  console.log("fetched by id:", auctionId);
 
   if (!auctionById || !auctionId) return null;
 
@@ -46,7 +47,7 @@ const ViewAuctionModal = ({ auctionId, onClose }) => {
                 <div className="h-48 w-full bg-gray-200 rounded-lg flex items-center justify-center overflow-hidden">
                   {auctionById.image ? (
                     <img
-                      src={`http://localhost:3001/${auctionById.image}`}
+                      src={`${BASE_URL}/${auctionById.image}`}
                       alt={`${auctionById.make} ${auctionById.model}`}
                       className="h-full w-full object-cover"
                     />
@@ -54,7 +55,7 @@ const ViewAuctionModal = ({ auctionId, onClose }) => {
                     <span className="text-gray-500">No Image Available</span>
                   )}
                 </div>
-                
+
                 {/* Quick Facts */}
                 <div className="mt-4 space-y-2">
                   <div className="flex justify-between border-b pb-1">
@@ -67,7 +68,9 @@ const ViewAuctionModal = ({ auctionId, onClose }) => {
                   </div>
                   <div className="flex justify-between border-b pb-1">
                     <span className="text-gray-600">Mileage:</span>
-                    <span className="font-medium">{auctionById.mileage} km</span>
+                    <span className="font-medium">
+                      {auctionById.mileage} km
+                    </span>
                   </div>
                   <div className="flex justify-between border-b pb-1">
                     <span className="text-gray-600">VIN:</span>
@@ -78,7 +81,9 @@ const ViewAuctionModal = ({ auctionId, onClose }) => {
 
               {/* Vehicle Details */}
               <div className="md:col-span-1">
-                <h4 className="text-lg font-semibold text-[#191970] mb-3">Vehicle Specifications</h4>
+                <h4 className="text-lg font-semibold text-[#191970] mb-3">
+                  Vehicle Specifications
+                </h4>
                 <div className="space-y-3">
                   <div>
                     <label className="block text-sm text-gray-500">Make</label>
@@ -89,42 +94,68 @@ const ViewAuctionModal = ({ auctionId, onClose }) => {
                     <p className="text-sm font-medium">{auctionById.model}</p>
                   </div>
                   <div>
-                    <label className="block text-sm text-gray-500">Series</label>
+                    <label className="block text-sm text-gray-500">
+                      Series
+                    </label>
                     <p className="text-sm font-medium">{auctionById.series}</p>
                   </div>
                   <div>
-                    <label className="block text-sm text-gray-500">Body Style</label>
-                    <p className="text-sm font-medium">{auctionById.bodyStyle}</p>
+                    <label className="block text-sm text-gray-500">
+                      Body Style
+                    </label>
+                    <p className="text-sm font-medium">
+                      {auctionById.bodyStyle}
+                    </p>
                   </div>
                   <div>
-                    <label className="block text-sm text-gray-500">Transmission</label>
-                    <p className="text-sm font-medium">{auctionById.transmission}</p>
+                    <label className="block text-sm text-gray-500">
+                      Transmission
+                    </label>
+                    <p className="text-sm font-medium">
+                      {auctionById.transmission}
+                    </p>
                   </div>
                   <div>
-                    <label className="block text-sm text-gray-500">Fuel Type</label>
-                    <p className="text-sm font-medium">{auctionById.fuelType}</p>
+                    <label className="block text-sm text-gray-500">
+                      Fuel Type
+                    </label>
+                    <p className="text-sm font-medium">
+                      {auctionById.fuelType}
+                    </p>
                   </div>
                 </div>
               </div>
 
               {/* Auction Details */}
               <div className="md:col-span-1">
-                <h4 className="text-lg font-semibold text-[#191970] mb-3">Auction Information</h4>
+                <h4 className="text-lg font-semibold text-[#191970] mb-3">
+                  Auction Information
+                </h4>
                 <div className="space-y-4">
                   <div className="bg-gray-50 p-3 rounded-lg">
                     <h5 className="font-medium mb-2">Bidding</h5>
                     <div className="space-y-2">
                       <div className="flex justify-between">
-                        <span className="text-sm text-gray-600">Current Bid:</span>
-                        <span className="text-sm font-bold">PKR {auctionById.currentBid}</span>
+                        <span className="text-sm text-gray-600">
+                          Current Bid:
+                        </span>
+                        <span className="text-sm font-bold">
+                          PKR {auctionById.currentBid}
+                        </span>
                       </div>
                       <div className="flex justify-between">
-                        <span className="text-sm text-gray-600">Seller Offer:</span>
-                        <span className="text-sm font-bold">PKR {auctionById.sellerOffer}</span>
+                        <span className="text-sm text-gray-600">
+                          Seller Offer:
+                        </span>
+                        <span className="text-sm font-bold">
+                          PKR {auctionById.sellerOffer}
+                        </span>
                       </div>
                       <div className="flex justify-between">
                         <span className="text-sm text-gray-600">Buy Now:</span>
-                        <span className="text-sm font-bold text-green-600">PKR {auctionById.buyNowPrice}</span>
+                        <span className="text-sm font-bold text-green-600">
+                          PKR {auctionById.buyNowPrice}
+                        </span>
                       </div>
                     </div>
                   </div>
@@ -133,13 +164,17 @@ const ViewAuctionModal = ({ auctionId, onClose }) => {
                     <h5 className="font-medium mb-2">Timing</h5>
                     <div className="space-y-2">
                       <div>
-                        <label className="block text-xs text-gray-500">Start Time</label>
+                        <label className="block text-xs text-gray-500">
+                          Start Time
+                        </label>
                         <p className="text-sm">
                           {new Date(auctionById.startTime).toLocaleString()}
                         </p>
                       </div>
                       <div>
-                        <label className="block text-xs text-gray-500">End Time</label>
+                        <label className="block text-xs text-gray-500">
+                          End Time
+                        </label>
                         <p className="text-sm font-medium text-red-600">
                           {new Date(auctionById.endTime).toLocaleString()}
                         </p>
@@ -151,9 +186,15 @@ const ViewAuctionModal = ({ auctionId, onClose }) => {
                     <h5 className="font-medium mb-2">Seller Contact</h5>
                     <div className="space-y-1">
                       <p className="text-sm font-medium">{auctionById.name}</p>
-                      <p className="text-xs text-gray-600">{auctionById.email}</p>
-                      <p className="text-xs text-gray-600">{auctionById.contact}</p>
-                      <p className="text-xs text-gray-600 mt-2">{auctionById.address}</p>
+                      <p className="text-xs text-gray-600">
+                        {auctionById.email}
+                      </p>
+                      <p className="text-xs text-gray-600">
+                        {auctionById.contact}
+                      </p>
+                      <p className="text-xs text-gray-600 mt-2">
+                        {auctionById.address}
+                      </p>
                     </div>
                   </div>
                 </div>

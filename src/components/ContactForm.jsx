@@ -1,5 +1,6 @@
 import axios from "axios";
 import React, { useState } from "react";
+import { BASE_URL } from "./Contant/URL";
 
 const initialState = {
   subject: "",
@@ -26,7 +27,7 @@ const ContactForm = () => {
     e.preventDefault();
     try {
       const res = await axios.post(
-        `http://localhost:3001/customer/contactFrom`,
+        `${BASE_URL}/customer/contactFrom`,
         formData
       );
       console.log(res.data);

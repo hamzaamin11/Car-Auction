@@ -1,26 +1,42 @@
-import React, { useContext, useState } from "react";
+import React, { useContext, useEffect, useState } from "react";
 import Topbar from "../components/Topbar";
 import Sidebar from "../components/Sidebar";
 import UserContext from "../../context/UserContext";
 import ViewUserModal from "./ViewUserModal";
 import { ToastContainer } from "react-toastify";
 import EditUserModal from "./EditUserModal";
-
+import { useDispatch, useSelector } from "react-redux";
+import {
+  navigationStart,
+  navigationSuccess,
+} from "../../components/Redux/NavigationSlice";
+import { RotateLoader } from "../../components/Loader/RotateLoader";
 
 export default function ManageUsers() {
+  const { loader } = useSelector((state) => state.navigateState);
   // const [users, setUsers] = useState(initialUsers);
   const { getUsers, userbyId, getUserbyId, delUser } = useContext(UserContext);
   // const [viewUser, setViewUser] = useState(null);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [isViewModalOpen, setIsViewModalOpen] = useState(false);
   const [selectedUser, setSelectedUser] = useState(null);
-  console.log("user passed",selectedUser);
-  
+  console.log("user passed", selectedUser);
+
+  const dispatch = useDispatch();
 
   const handleView = async (user) => {
     await getUserbyId(user.id); // ✅ correct function call
     setIsViewModalOpen(true);
   };
+
+  useEffect(() => {
+    dispatch(navigationStart());
+    setTimeout(() => {
+      dispatch(navigationSuccess("alluser"));
+    }, 1000);
+  }, []);
+
+  if (loader) return <RotateLoader />;
 
   return (
     <>
