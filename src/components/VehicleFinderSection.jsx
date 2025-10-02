@@ -1,7 +1,7 @@
-import { useEffect, useState } from "react";
-import { useNavigate } from "react-router-dom";
-import { useAuth } from "../context/AuthContext"; // adjust path as needed
 import axios from "axios";
+import React, { useEffect, useState } from "react";
+import { useNavigate } from "react-router-dom";
+import Select from "react-select"; // Import react-select for searchable dropdowns
 import { BASE_URL } from "./Contant/URL";
 
 const initialState = {
@@ -29,7 +29,7 @@ const VehicleFinderSection = () => {
 
   const navigate = useNavigate();
 
-  // ✅ Fetch cars from API
+  // Fetch cars from API
   const handleGetCars = async () => {
     try {
       const res = await axios.get(
@@ -41,7 +41,7 @@ const VehicleFinderSection = () => {
     }
   };
 
-  // ✅ Fetch all makes
+  // Fetch all makes
   const handleGetMakes = async () => {
     try {
       const res = await axios.get(`${BASE_URL}/admin/getBrands`);
@@ -51,7 +51,7 @@ const VehicleFinderSection = () => {
     }
   };
 
-  // ✅ Fetch selected make details
+  // Fetch selected make details
   const handleSelectMake = async () => {
     if (!filters.make) return;
     try {
@@ -62,7 +62,7 @@ const VehicleFinderSection = () => {
     }
   };
 
-  // ✅ Fetch models based on selected make
+  // Fetch models based on selected make
   const handleGetModels = async () => {
     if (!filters.make) return;
     try {
@@ -73,8 +73,9 @@ const VehicleFinderSection = () => {
     }
   };
 
-  const handleChange = (e) => {
-    setFilters({ ...filters, [e.target.name]: e.target.value });
+  // Update state from form
+  const handleChange = (name, value) => {
+    setFilters((prev) => ({ ...prev, [name]: value }));
   };
 
   const handleTabClick = (tab) => {
@@ -82,15 +83,41 @@ const VehicleFinderSection = () => {
     setStartIndex(0);
   };
 
+  // Transform makes for react-select
   const totalMakes = allMakes.map((make) => ({
     label: make.brandName,
     value: make.id,
   }));
 
+  // Transform models for react-select
   const totalModels = allModels.map((model) => ({
     label: model.modelName,
     value: model.modelName,
   }));
+
+  // Generate years for react-select
+  const calcYearVal = () => {
+    const possibleYearValue = [];
+    const currentYear = new Date().getFullYear();
+    for (let i = 1970; i <= currentYear; i++) {
+      possibleYearValue.unshift({ label: i.toString(), value: i.toString() });
+    }
+    return possibleYearValue;
+  };
+  const years = calcYearVal();
+
+  // Generate prices (not used in this version, but kept for consistency)
+  const generateCarPrices = () => {
+    const prices = [];
+    const start = 1000000;
+    const end = 200000000;
+    const step = 2000000;
+    for (let price = start; price <= end; price += step) {
+      prices.push(price);
+    }
+    return prices;
+  };
+  const allPrices = generateCarPrices();
 
   const renderStars = (rating) => {
     const fullStars = Math.floor(rating);
@@ -117,30 +144,7 @@ const VehicleFinderSection = () => {
     );
   };
 
-  const calcYearVal = () => {
-    const possibleYearValue = [];
-    const currentYear = new Date().getFullYear();
-    for (let i = 1970; i <= currentYear; i++) {
-      possibleYearValue.unshift(i);
-    }
-    return possibleYearValue;
-  };
-  const years = calcYearVal();
-
-  // ✅ Prices
-  const generateCarPrices = () => {
-    const prices = [];
-    const start = 1000000;
-    const end = 200000000;
-    const step = 2000000;
-    for (let price = start; price <= end; price += step) {
-      prices.push(price);
-    }
-    return prices;
-  };
-  const allPrices = generateCarPrices();
-
-  // ✅ useEffect calls
+  // useEffect calls
   useEffect(() => {
     handleGetCars();
     handleGetMakes();
@@ -161,47 +165,62 @@ const VehicleFinderSection = () => {
     <div className="max-w-7xl mx-auto p-6 font-sans">
       {/* Filters */}
       <div className="flex lg:flex-row flex-col items-center justify-between gap-4 mb-4">
-        <select
-          name="make"
-          value={filters.make}
-          onChange={handleChange}
-          className="border rounded px-3 py-2 text-sm w-full"
-        >
-          <option value={() => setSelectMake("")}>Select Make</option>
-          {totalMakes.map((make, index) => (
-            <option key={index} value={make.value}>
-              {make.label}
-            </option>
-          ))}
-        </select>
+        <div className="w-full">
+          <label className="block text-sm font-medium text-gray-700 mb-1">
+            Select Make
+          </label>
+          <Select
+            options={[{ label: "Select Make", value: "" }, ...totalMakes]}
+            value={
+              totalMakes.find((option) => option.value === filters.make) || {
+                label: "Select Make",
+                value: "",
+              }
+            }
+            onChange={(selected) => handleChange("make", selected.value)}
+            placeholder="Select Make"
+            isSearchable
+            className="w-full"
+          />
+        </div>
 
-        <select
-          name="model"
-          value={filters.model}
-          onChange={handleChange}
-          className="border rounded px-3 py-2 text-sm w-full"
-        >
-          <option value="">Select Model</option>
-          {totalModels.map((model, index) => (
-            <option key={index} value={model.value}>
-              {model.label}
-            </option>
-          ))}
-        </select>
+        <div className="w-full">
+          <label className="block text-sm font-medium text-gray-700 mb-1">
+            Select Model
+          </label>
+          <Select
+            options={[{ label: "Select Model", value: "" }, ...totalModels]}
+            value={
+              totalModels.find((option) => option.value === filters.model) || {
+                label: "Select Model",
+                value: "",
+              }
+            }
+            onChange={(selected) => handleChange("model", selected.value)}
+            placeholder="Select Model"
+            isSearchable
+            className="w-full"
+          />
+        </div>
 
-        <select
-          name="year"
-          value={filters.year}
-          onChange={handleChange}
-          className="border rounded px-3 py-2 text-sm w-full"
-        >
-          <option value="">Select Year</option>
-          {years.map((year) => (
-            <option key={year} value={year}>
-              {year}
-            </option>
-          ))}
-        </select>
+        <div className="w-full">
+          <label className="block text-sm font-medium text-gray-700 mb-1">
+            Select Year
+          </label>
+          <Select
+            options={[{ label: "Select Year", value: "" }, ...years]}
+            value={
+              years.find((option) => option.value === filters.year) || {
+                label: "Select Year",
+                value: "",
+              }
+            }
+            onChange={(selected) => handleChange("year", selected.value)}
+            placeholder="Select Year"
+            isSearchable
+            className="w-full"
+          />
+        </div>
 
         <button
           onClick={handleGetCars}
