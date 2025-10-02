@@ -89,6 +89,9 @@ export default function LiveAuctions() {
                     Owner Name
                   </th>
                   <th className="px-4 py-3 text-left text-sm font-semibold">
+                    Image
+                  </th>
+                  <th className="px-4 py-3 text-left text-sm font-semibold">
                     Make
                   </th>
                   <th className="px-4 py-3 text-left text-sm font-semibold">
@@ -120,6 +123,13 @@ export default function LiveAuctions() {
                     <td className="px-4 py-3 font-medium text-gray-900">
                       {user?.name}
                     </td>
+                    <td className="px-4 py-3">
+                      <img
+                        src={user?.images[0]}
+                        alt={user?.name || "Vehicle"}
+                        className="w-16 h-16 object-cover rounded"
+                      />
+                    </td>
                     <td className="px-4 py-3 text-gray-700">{user?.make}</td>
 
                     <td className="px-4 py-3 text-gray-700">{user?.model}</td>
@@ -132,7 +142,7 @@ export default function LiveAuctions() {
                     </td>
                     <td className="px-4 py-3 text-gray-700">
                       {user.endTime
-                        ? moment(user.endTime).local().format("HH:mm:ss")
+                        ? moment(user.endTime).local().format("hh:mm:ss A")
                         : "--"}
                     </td>
                     <td className="px-4 py-3 text-gray-700">

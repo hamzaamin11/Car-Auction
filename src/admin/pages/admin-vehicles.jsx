@@ -339,13 +339,99 @@ function AddAdminVehicle({ open, setOpen, onVehicleUpdated }) {
   };
 
   const { getVehicles, delVehicle, getAllVehicles } =
-    useContext(VehicleContext); // ✅ Ensure VehicleContext is imported
+    useContext(VehicleContext);
 
   const { user } = useAuth();
 
   const dispatch = useDispatch();
 
   const [selectedCount, setSelectedCount] = useState(0);
+
+  const [price, setPrice] = useState("");
+
+  const numberToIndianWords = (num) => {
+    if (num === 0) return "Zero";
+
+    const ones = [
+      "",
+      "One",
+      "Two",
+      "Three",
+      "Four",
+      "Five",
+      "Six",
+      "Seven",
+      "Eight",
+      "Nine",
+      "Ten",
+      "Eleven",
+      "Twelve",
+      "Thirteen",
+      "Fourteen",
+      "Fifteen",
+      "Sixteen",
+      "Seventeen",
+      "Eighteen",
+      "Nineteen",
+    ];
+
+    const tens = [
+      "",
+      "",
+      "Twenty",
+      "Thirty",
+      "Forty",
+      "Fifty",
+      "Sixty",
+      "Seventy",
+      "Eighty",
+      "Ninety",
+    ];
+
+    // Helper: 2 digit numbers
+    const twoDigits = (n) => {
+      if (n < 20) return ones[n];
+      const t = Math.floor(n / 10);
+      const o = n % 10;
+      return tens[t] + (o ? " " + ones[o] : "");
+    };
+
+    // Helper: 3 digit numbers
+    const threeDigits = (n) => {
+      const h = Math.floor(n / 100);
+      const r = n % 100;
+      return (
+        (h ? ones[h] + " Hundred " : "") + (r ? twoDigits(r) : "")
+      ).trim();
+    };
+
+    let words = "";
+
+    // Crores
+    if (Math.floor(num / 10000000) > 0) {
+      words += numberToIndianWords(Math.floor(num / 10000000)) + " Crore ";
+      num %= 10000000;
+    }
+
+    // Lakhs
+    if (Math.floor(num / 100000) > 0) {
+      words += numberToIndianWords(Math.floor(num / 100000)) + " Lac ";
+      num %= 100000;
+    }
+
+    // Thousands
+    if (Math.floor(num / 1000) > 0) {
+      words += numberToIndianWords(Math.floor(num / 1000)) + " Thousand ";
+      num %= 1000;
+    }
+
+    // Hundreds
+    if (num > 0) {
+      words += threeDigits(num);
+    }
+
+    return words.trim();
+  };
 
   const handleFileChange = (e) => {
     const files = e.target.files;
@@ -802,24 +888,31 @@ function AddAdminVehicle({ open, setOpen, onVehicleUpdated }) {
                   </div>
 
                   <div>
-                    <label className=" block text-sm font-medium text-gray-700 mb-1">
+                    <label className="block text-sm font-medium text-gray-700 mb-1">
                       Add Vehicle Price <span className="text-red-500">*</span>
                     </label>
                     <input
                       type="text"
                       name="buyNowPrice"
-                      value={vehicle.buyNowPrice}
+                      value={price}
                       onChange={(e) => {
                         const value = e.target.value;
 
-                        // sirf digits aur max 9 digits allow karo
+                        // Sirf digits aur max 9 digits allow karo
                         if (/^\d*$/.test(value) && value.length <= 9) {
-                          handleChange(e);
+                          setPrice(value);
                         }
                       }}
                       placeholder="Add Price"
                       className="border border-gray-300 px-4 py-2 rounded focus:outline-none focus:ring-2 focus:ring-indigo-500 w-full"
                     />
+
+                    {/* Neeche number in words show karo */}
+                    {price && (
+                      <p className="mt-2 text-sm text-red-500 font-semibold">
+                        {numberToIndianWords(parseInt(price))}
+                      </p>
+                    )}
                   </div>
                 </div>
 
@@ -983,8 +1076,8 @@ function AddAdminVehicle({ open, setOpen, onVehicleUpdated }) {
                       </span>
                       <span className="px-3 py-1 bg-white border rounded-full text-xs text-gray-700 shadow-sm">
                         <b>City:</b>{" "}
-                        {vehicle.cityName.charAt(0).toUpperCase() +
-                          vehicle.cityName.slice(1) || "--"}
+                        {vehicle?.cityName?.charAt(0)?.toUpperCase() +
+                          vehicle?.cityName?.slice(1) || "--"}
                       </span>
                     </div>
                   </div>

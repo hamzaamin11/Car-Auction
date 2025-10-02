@@ -117,6 +117,9 @@ export default function UpcomingAuctions() {
                     Owner Name
                   </th>
                   <th className="px-4 py-3 text-left text-sm font-semibold">
+                    Image
+                  </th>
+                  <th className="px-4 py-3 text-left text-sm font-semibold">
                     Make
                   </th>
                   <th className="px-4 py-3 text-left text-sm font-semibold">
@@ -126,7 +129,7 @@ export default function UpcomingAuctions() {
                     Condition
                   </th>
                   <th className="px-4 py-3 text-left text-sm font-semibold">
-                    Seller Offer
+                    Price
                   </th>
                   <th className="px-4 py-3 text-left text-sm font-semibold">
                     Start Time
@@ -159,6 +162,15 @@ export default function UpcomingAuctions() {
                     >
                       {user?.name}
                     </td>
+
+                    <td className="px-4 py-3">
+                      <img
+                        src={user?.images[0]}
+                        alt={user?.name || "Vehicle"}
+                        className="w-16 h-16 object-cover rounded"
+                      />
+                    </td>
+
                     <td
                       onClick={() => setselectedVehicle(user)}
                       className="px-4 py-3 text-gray-700"
@@ -188,7 +200,7 @@ export default function UpcomingAuctions() {
                       className="px-4 py-3 text-gray-700"
                     >
                       {user.startTime
-                        ? moment(user.startTime).local().format("HH:mm:ss")
+                        ? moment(user.startTime).local().format("hh:mm:ss A")
                         : "--"}
                     </td>
                     <td

@@ -142,6 +142,91 @@ function EditAdminVehicle({
 
   const [selectedCount, setSelectedCount] = useState(0);
 
+  const [price, setPrice] = useState(vehicle?.buyNowPrice || "");
+
+  useEffect(() => {
+    if (vehicle?.buyNowPrice) {
+      setPrice(String(vehicle.buyNowPrice)); // ✅ sync initial value
+    }
+  }, [vehicle]);
+
+  // Indian Numbering System function
+  const numberToIndianWords = (num) => {
+    if (!num) return "";
+
+    const ones = [
+      "",
+      "One",
+      "Two",
+      "Three",
+      "Four",
+      "Five",
+      "Six",
+      "Seven",
+      "Eight",
+      "Nine",
+      "Ten",
+      "Eleven",
+      "Twelve",
+      "Thirteen",
+      "Fourteen",
+      "Fifteen",
+      "Sixteen",
+      "Seventeen",
+      "Eighteen",
+      "Nineteen",
+    ];
+
+    const tens = [
+      "",
+      "",
+      "Twenty",
+      "Thirty",
+      "Forty",
+      "Fifty",
+      "Sixty",
+      "Seventy",
+      "Eighty",
+      "Ninety",
+    ];
+
+    const twoDigits = (n) => {
+      if (n < 20) return ones[n];
+      const t = Math.floor(n / 10);
+      const o = n % 10;
+      return tens[t] + (o ? " " + ones[o] : "");
+    };
+
+    const threeDigits = (n) => {
+      const h = Math.floor(n / 100);
+      const r = n % 100;
+      return (h ? ones[h] + " Hundred " : "") + (r ? twoDigits(r) : "");
+    };
+
+    let words = "";
+
+    if (Math.floor(num / 10000000) > 0) {
+      words += numberToIndianWords(Math.floor(num / 10000000)) + " Crore ";
+      num %= 10000000;
+    }
+
+    if (Math.floor(num / 100000) > 0) {
+      words += numberToIndianWords(Math.floor(num / 100000)) + " Lac ";
+      num %= 100000;
+    }
+
+    if (Math.floor(num / 1000) > 0) {
+      words += numberToIndianWords(Math.floor(num / 1000)) + " Thousand ";
+      num %= 1000;
+    }
+
+    if (num > 0) {
+      words += threeDigits(num);
+    }
+
+    return words.trim();
+  };
+
   const handleFileChange = (e) => {
     const files = e.target.files;
     setSelectedCount(files.length); // kitni images select hui hain
@@ -454,14 +539,19 @@ function EditAdminVehicle({
                 value={parsePrice(vehicle.buyNowPrice)}
                 onChange={(e) => {
                   const value = e.target.value;
-
                   if (/^\d*$/.test(value) && value.length <= 9) {
-                    handleChange(e);
+                    setPrice(value); // Local state update
+                    handleChange(e); // Parent handler call
                   }
                 }}
                 placeholder="Add Price"
                 className="border border-gray-300 px-4 py-2 rounded focus:outline-none focus:ring-2 focus:ring-indigo-500 w-full"
               />
+              {price && (
+                <p className="mt-2 text-sm text-red-500 font-semibold">
+                  {numberToIndianWords(parseInt(price))}
+                </p>
+              )}
             </div>
           </div>
 
