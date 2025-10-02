@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { ChevronLeft, ChevronRight, X } from "lucide-react";
-import { Link, useNavigate } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 import axios from "axios";
 import { BASE_URL } from "./Contant/URL";
 
@@ -8,9 +8,6 @@ import { BASE_URL } from "./Contant/URL";
 const CarCard = ({ car }) => {
   const [imageIndex, setImageIndex] = useState(0);
   const [isModalOpen, setIsModalOpen] = useState(false);
-
-  console.log("car => ", car);
-
   const navigate = useNavigate();
 
   const openModal = (index) => {
@@ -33,47 +30,29 @@ const CarCard = ({ car }) => {
   };
 
   return (
-    <div className="relative bg-white rounded-xl shadow-lg hover:shadow-2xl transition-all duration-300 overflow-hidden max-w-xs w-full">
-      <div
-        onClick={() => navigate(`/standardline/${car.id}`)}
-        className="relative"
-      >
+    <div
+      className="relative bg-white rounded-xl shadow-lg hover:shadow-2xl transition-all duration-300 overflow-hidden  w-full"
+      onClick={() => navigate(`/standardline/${car.id}`)}
+    >
+      <div className="relative w-full">
         <img
-          src={car.images[1]}
-          alt={"car"}
-          onClick={() => openModal(0)}
-          className="w-full h-48 object-cover rounded-t-xl hover:cursor-pointer"
+          src={car.images[0]}
+          alt="car"
+          onClick={() => navigate(`/standardline/${car.id}`)}
+          className="w-96 lg:w-[96rem] h-48 object-cover rounded-t-xl hover:cursor-pointer p-2"
         />
       </div>
 
       <div className="p-4 space-y-2 text-gray-800">
-        <h3 className="text-lg font-semibold">{car?.model}</h3>
+        <h3 className="text-md font-bold gap-1.5">
+          {car?.make}-{car?.model}
+        </h3>
         <p className="text-sm">
-          <span className="font-medium">Current Bid:</span> {car?.currentBid}
+          <span className=" font-bold">Demand Price:</span> {car?.buyNowPrice}
         </p>
         <p className="text-sm">
-          <span className="font-medium">Location:</span> {car.locationId}
+          <span className="font-bold">Location:</span> {car.cityName}
         </p>
-
-        {/* Static Reviews */}
-        <p className="text-sm flex items-center gap-1">
-          <span className="font-medium">Reviews:</span>
-          <span className="flex text-yellow-400">
-            {[...Array(5)].map((_, i) => (
-              <svg
-                key={i}
-                xmlns="http://www.w3.org/2000/svg"
-                className="w-4 h-4 fill-current"
-                viewBox="0 0 24 24"
-                stroke="currentColor"
-                strokeWidth="0"
-              >
-                <path d="M12 .587l3.668 7.431 8.2 1.192-5.934 5.782 1.401 8.171L12 18.896l-7.335 3.867 1.401-8.171L.132 9.21l8.2-1.192z" />
-              </svg>
-            ))}
-          </span>
-        </p>
-
         <span
           onClick={() => navigate(`/standardline/${car.id}`)}
           className="block bg-[#ed3237] hover:bg-red-700 text-center text-sm font-semibold text-white py-2 rounded transition hover:cursor-pointer"
@@ -119,16 +98,13 @@ const CarCard = ({ car }) => {
 // ---------------- CarCardSlider -------------------
 const CarCardSlider = () => {
   const [currentIndex, setCurrentIndex] = useState(0);
-  const visibleCards = 3;
+  const [visibleCards, setVisibleCards] = useState(4);
   const [allCars, setAllCars] = useState([]);
-
-  const navigate = useNavigate();
 
   const handleGetVehicles = async () => {
     try {
       const res = await axios.get(`${BASE_URL}/customer/getVehicles`);
       setAllCars(res.data);
-      console.log("get All vehicles", res.data);
     } catch (error) {
       console.log(error);
     }
@@ -138,22 +114,35 @@ const CarCardSlider = () => {
     handleGetVehicles();
   }, []);
 
-  const getVisibleCars = () => {
-    const total = allCars.length;
-    const count = Math.min(visibleCards, total);
+  useEffect(() => {
+    const updateVisibleCards = () => {
+      if (window.innerWidth < 768) {
+        setVisibleCards(1); // Mobile: 1 card
+      } else {
+        setVisibleCards(4); // Desktop: 4 cards
+      }
+    };
 
-    return Array.from(
-      { length: count },
-      (_, offset) => allCars[(currentIndex + offset) % total]
-    );
+    updateVisibleCards(); // run on load
+    window.addEventListener("resize", updateVisibleCards);
+
+    return () => window.removeEventListener("resize", updateVisibleCards);
+  }, []);
+
+  const getVisibleCars = () => {
+    return allCars.slice(currentIndex, currentIndex + visibleCards);
   };
 
   const nextCards = () => {
-    setCurrentIndex((prev) => (prev + 1) % allCars.length);
+    if (currentIndex + visibleCards < allCars.length) {
+      setCurrentIndex((prev) => prev + 1);
+    }
   };
 
   const prevCards = () => {
-    setCurrentIndex((prev) => (prev === 0 ? allCars.length - 1 : prev - 1));
+    if (currentIndex > 0) {
+      setCurrentIndex((prev) => prev - 1);
+    }
   };
 
   return (
@@ -161,17 +150,20 @@ const CarCardSlider = () => {
       <h2 className="text-3xl md:text-4xl font-bold text-center mb-10 text-gray-800">
         Available Cars
       </h2>
-      <div className="relative flex items-center justify-center">
+      <div className="relative flex flex-col items-center justify-center">
+        {/* Desktop Arrows */}
         {allCars.length > visibleCards && (
           <button
             onClick={prevCards}
-            className="absolute left-0 md:-left-10 bg-white p-2 rounded-full shadow text-gray-700 z-10 hover:bg-gray-100"
+            disabled={currentIndex === 0}
+            className="absolute left-0 md:-left-10 bg-white p-2 rounded-full shadow text-gray-700 z-10 hover:bg-gray-100 hidden lg:block disabled:opacity-50"
           >
             <ChevronLeft size={28} />
           </button>
         )}
 
-        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6">
+        {/* Cards */}
+        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-6">
           {getVisibleCars().map((car) => (
             <CarCard key={car.id} car={car} />
           ))}
@@ -180,10 +172,31 @@ const CarCardSlider = () => {
         {allCars.length > visibleCards && (
           <button
             onClick={nextCards}
-            className="absolute right-0 md:-right-10 bg-white p-2 rounded-full shadow text-gray-700 z-10 hover:bg-gray-100"
+            disabled={currentIndex + visibleCards >= allCars.length}
+            className="absolute right-0 md:-right-10 bg-white p-2 rounded-full shadow text-gray-700 z-10 hover:bg-gray-100 hidden lg:block disabled:opacity-50"
           >
             <ChevronRight size={28} />
           </button>
+        )}
+
+        {/* Mobile Buttons */}
+        {allCars.length > visibleCards && (
+          <div className="flex lg:hidden gap-4 mt-6">
+            <button
+              onClick={prevCards}
+              disabled={currentIndex === 0}
+              className="bg-white p-2 rounded-full shadow text-gray-700 hover:bg-gray-100 disabled:opacity-50"
+            >
+              <ChevronLeft size={24} />
+            </button>
+            <button
+              onClick={nextCards}
+              disabled={currentIndex + visibleCards >= allCars.length}
+              className="bg-white p-2 rounded-full shadow text-gray-700 hover:bg-gray-100 disabled:opacity-50"
+            >
+              <ChevronRight size={24} />
+            </button>
+          </div>
         )}
       </div>
     </div>

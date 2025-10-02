@@ -1,34 +1,54 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import { FaUserCircle } from "react-icons/fa";
-import { Link, useNavigate } from "react-router-dom";
+import { Link, useNavigate, useLocation } from "react-router-dom";
 import { AiOutlineLogout } from "react-icons/ai";
 import { useDispatch, useSelector } from "react-redux";
 import { logOut } from "../../components/Redux/UserSlice";
+import logo from "../../assets/wheellogo.png";
 
 export default function Topbar() {
   const { currentUser } = useSelector((state) => state?.auth);
-  const [adminName, setAdminName] = useState("");
-  const [adminId, setAdminId] = useState("");
+
   const [dropdownOpen, setDropdownOpen] = useState(false);
+  const dropdownRef = useRef(null); // ✅ dropdown ka ref
+
   const navigate = useNavigate();
+  const location = useLocation(); // ✅ route change detect karne ke liye
   const dispatch = useDispatch();
 
   const handleLogout = () => {
     localStorage.clear();
     dispatch(logOut());
+    setDropdownOpen(false); // ✅ logout ke baad bhi close
   };
 
   const toggleDropdown = () => {
     setDropdownOpen((prev) => !prev);
   };
 
+  // ✅ Outside click detection
+  useEffect(() => {
+    function handleClickOutside(event) {
+      if (dropdownRef.current && !dropdownRef.current.contains(event.target)) {
+        setDropdownOpen(false);
+      }
+    }
+    document.addEventListener("mousedown", handleClickOutside);
+    return () => document.removeEventListener("mousedown", handleClickOutside);
+  }, []);
+
+  // ✅ Route change hone par dropdown close
+  useEffect(() => {
+    setDropdownOpen(false);
+  }, [location]);
+
   return (
     <header className="bg-white shadow-md px-4 py-3 md:px-6 flex items-center justify-between relative z-50">
       {/* Logo */}
       <div className="flex items-center gap-3">
-        <Link to="/">
+        <Link to={currentUser?.role === "admin" ? "/admin" : "/"}>
           <img
-            src="/images/logo.png"
+            src={logo}
             alt="Logo"
             className="h-12 w-12 sm:h-14 sm:w-24 object-contain"
           />
@@ -36,7 +56,7 @@ export default function Topbar() {
       </div>
 
       {/* Profile section */}
-      <div className="relative">
+      <div className="relative" ref={dropdownRef}>
         <button
           onClick={toggleDropdown}
           className="flex items-center gap-2 focus:outline-none group"
@@ -57,7 +77,7 @@ export default function Topbar() {
           <div className="px-4 py-3 border-b border-gray-200">
             <p className="text-sm text-gray-600">Signed in as</p>
             <p className="text-sm font-medium text-gray-800 truncate">
-              {currentUser?.name || adminName}
+              {currentUser?.name || "--"}
             </p>
           </div>
           <div

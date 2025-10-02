@@ -5,18 +5,13 @@ import AboutNews from "../components/AboutNews";
 import CopartHistorySection from "../components/CopartHistorySection";
 import MembershipPromiseSection from "../components/MembershipPromiseSection";
 
-
 const About = () => {
-    return (
-        <>
-        <AboutBanner />
-        <AboutDetails />
-        <CopartHistorySection />
-        <MembershipPromiseSection />
-        <AboutLocation />
-        <AboutNews />
-        </>
-    );
+  return (
+    <>
+      <AboutBanner />
+      <AboutDetails />
+    </>
+  );
 };
 
 export default About;

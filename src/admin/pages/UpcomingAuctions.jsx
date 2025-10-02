@@ -13,153 +13,322 @@ import { RotateLoader } from "../../components/Loader/RotateLoader";
 import axios from "axios";
 import { BASE_URL } from "../../components/Contant/URL";
 import { ViewBrandModal } from "../../components/BrandModal/ViewBrandModal";
+import moment from "moment";
+import { AdminAddBid } from "../../components/AdminAddBidComponent/AdminAddBid";
+import { AdminUpdatebid } from "../AdminUpdatebid";
 
 export default function UpcomingAuctions() {
-  // const [users, setUsers] = useState(initialUsers);
-  const { comingAuc, UpComingAuctions } = useContext(AuctionsContext);
-
-  console.log("=>", comingAuc);
+  const { currentUser } = useSelector((state) => state?.auth);
 
   const [selectedVehicle, setselectedVehicle] = useState(null);
 
+  const [selectCar, setSelectCar] = useState(null);
+
   const [selectedAuctionId, setSelectedAuctionId] = useState(null);
 
-  const { loader } = useSelector((state) => state.navigateState);
+  const [allUpcoming, setAllUpcoming] = useState([]);
 
-  console.log("awais jani", comingAuc);
+  console.log("", allUpcoming);
 
-  const handleToggleModal = () => {
-    setIsModalOpen((prev) => !prev);
+  const [isOpen, setIsOpen] = useState("");
+
+  const [pageNo, setPageNo] = useState(1);
+
+  console.log(pageNo);
+
+  const handleNextPage = () => {
+    setPageNo(pageNo + 1);
   };
 
-  const handleGoLive = async (id) => {
-    try {
-      const res = await axios.put(
-        `${BASE_URL}/admin/updateBidStatusAdmin/${id}`
-      );
-      toast.success("Your bid has gone live successfully.");
+  const handlePrevPage = () => {
+    setPageNo(pageNo > 1 ? pageNo - 1 : 1);
+  };
 
-      UpComingAuctions();
+  const id = currentUser?.id;
+
+  // const handleToggleModal = (user) => {
+  //   setIsOpen((prev) => !prev);
+  //   setSelectCar(user);
+  // };
+
+  const handleGetAllUpcomingAuctions = async () => {
+    try {
+      const res = await axios.get(
+        `${BASE_URL}/admin/upcomingAuctionsForAdmin?entry=${10}&page=${pageNo}`
+      );
+      console.log(" =>", res.data);
+      setAllUpcoming(res.data);
+    } catch (error) {
+      console.log("=>", error);
+    }
+  };
+
+  const handleGetAllUpcomingAuctionsbySeller = async () => {
+    try {
+      const res = await axios.get(`${BASE_URL}/seller/upcomingAuctions/${id}`);
+      setAllUpcoming(res.data);
     } catch (error) {
       console.log(error);
     }
   };
 
-  const disptach = useDispatch();
-  useEffect(() => {
-    UpComingAuctions();
-    disptach(navigationStart());
-    setTimeout(() => {
-      disptach(navigationSuccess("Upcoming"));
-    }, 1000);
-  }, []);
+  const handleToggleModel = (active) => {
+    setIsOpen((prev) => (prev === active ? "" : active));
+  };
 
-  if (loader) return <RotateLoader />;
+  const handleUpdateBid = async (id) => {
+    try {
+      const res = await axios.put(
+        `${BASE_URL}/admin/updateBidStatusAdmin/${id}`
+      );
+      toast.success("Your bid has gone live successfully.");
+      handleGetAllUpcomingAuctions();
+    } catch (error) {
+      console.log(error);
+    }
+  };
+
+  useEffect(() => {
+    if (currentUser?.role === "admin") {
+      handleGetAllUpcomingAuctions();
+    } else if (currentUser?.role === "seller") {
+      handleGetAllUpcomingAuctionsbySeller();
+    }
+  }, [pageNo]);
 
   return (
     <>
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 font-sans">
-        <h1 className="text-3xl sm:text-4xl font-bold mb-8 text-gray-900">
+        <h1 className="lg:text-3xl text-xl font-bold mb-8 text-gray-900">
           Upcoming Auctions
         </h1>
 
-        <div className="overflow-x-auto shadow ring-1 ring-gray-300 rounded-lg">
-          <table className="min-w-full divide-y divide-gray-200">
-            <thead className="bg-[#191970] text-white">
-              <tr>
-                <th className="px-4 py-3 text-left text-sm font-semibold">
-                  Name
-                </th>
-                <th className="px-4 py-3 text-left text-sm font-semibold">
-                  Vehicle
-                </th>
-
-                <th className="px-4 py-3 text-center text-sm font-semibold">
-                  Condition
-                </th>
-                <th className="px-4 py-3 text-left text-sm font-semibold">
-                  Seller Offer
-                </th>
-                <th className="px-4 py-3 text-left text-sm font-semibold">
-                  Max. Bid
-                </th>
-                <th className="px-4 py-3 text-left text-sm font-semibold">
-                  Date
-                </th>
-                <th className="px-4 py-3 text-left text-sm font-semibold">
-                  Action
-                </th>
-              </tr>
-            </thead>
-            <tbody className="bg-white divide-y divide-gray-100">
-              {comingAuc?.map((user, idx) => (
-                <tr
-                  key={user.id}
-                  className={`idx % 2 === 0 ? "bg-gray-50" : "" cursor-pointer  hover:bg-gray-100 `}
-                >
-                  <td
-                    onClick={() => setselectedVehicle(user)}
-                    className="px-4 py-3 font-medium text-gray-900"
+        <div className="overflow-x-auto shadow ring-1 ring-gray-300 rounded-lg ">
+          {/* Desktop Table */}
+          <div className="hidden md:block ">
+            <table className="min-w-full divide-y divide-gray-200">
+              <thead className="bg-[#191970] text-white">
+                <tr>
+                  <th
+                    className={`px-4 py-3 text-left text-sm font-semibold ${
+                      currentUser?.role === "seller" && "hidden"
+                    } `}
                   >
-                    {user?.name}
-                  </td>
-                  <td className="px-4 py-3 text-gray-700">{user.model}</td>
-
-                  <td
-                    onClick={() => setselectedVehicle(user)}
-                    className="px-4 py-3 text-center space-x-2"
-                  >
-                    {user?.vehicleCondition}
-                  </td>
-
-                  <td
-                    onClick={() => setselectedVehicle(user)}
-                    className="px-4 py-3 text-gray-700"
-                  >
-                    {user.sellerOffer}
-                  </td>
-                  <td
-                    onClick={() => setselectedVehicle(user)}
-                    className="px-4 py-3 text-gray-700 "
-                  >
-                    {user.maxBid || "Pending"}
-                  </td>
-                  <td
-                    onClick={() => setselectedVehicle(user)}
-                    className="px-4 py-3 text-gray-700 "
-                  >
-                    {user.endTime?.slice(0, 10)}
-                  </td>
-                  <td>
-                    <span
-                      onClick={() => handleGoLive(user.bidId)}
-                      className="px-2 py-1  bg-blue-500 text-white text-center rounded "
-                    >
-                      Go Live
-                    </span>
-                  </td>
+                    Owner Name
+                  </th>
+                  <th className="px-4 py-3 text-left text-sm font-semibold">
+                    Make
+                  </th>
+                  <th className="px-4 py-3 text-left text-sm font-semibold">
+                    Model
+                  </th>
+                  <th className="px-4 py-3 text-center text-sm font-semibold">
+                    Condition
+                  </th>
+                  <th className="px-4 py-3 text-left text-sm font-semibold">
+                    Seller Offer
+                  </th>
+                  <th className="px-4 py-3 text-left text-sm font-semibold">
+                    Start Time
+                  </th>
+                  <th className="px-4 py-3 text-left text-sm font-semibold">
+                    Date
+                  </th>
+                  {currentUser.role === "seller" ? null : (
+                    <th className="px-4 py-3 text-left text-sm font-semibold">
+                      Action
+                    </th>
+                  )}
                 </tr>
-              ))}
-            </tbody>
-          </table>
+              </thead>
+              <tbody className="bg-white divide-y divide-gray-100">
+                {allUpcoming?.map((user, idx) => (
+                  <tr
+                    key={user.id}
+                    className={`${
+                      idx % 2 === 0 ? "bg-gray-50" : ""
+                    } cursor-pointer hover:bg-gray-100`}
+                  >
+                    <td
+                      onClick={() => {
+                        handleToggleModel("view"), setselectedVehicle(user);
+                      }}
+                      className={`px-4 py-3 font-medium text-gray-900 ${
+                        currentUser?.role === "seller" && "hidden"
+                      }`}
+                    >
+                      {user?.name}
+                    </td>
+                    <td
+                      onClick={() => setselectedVehicle(user)}
+                      className="px-4 py-3 text-gray-700"
+                    >
+                      {user.make}
+                    </td>
+                    <td
+                      onClick={() => setselectedVehicle(user)}
+                      className="px-4 py-3 text-gray-700"
+                    >
+                      {user.model}
+                    </td>
+                    <td
+                      onClick={() => setselectedVehicle(user)}
+                      className="px-4 py-3 text-center text-gray-700"
+                    >
+                      {user?.vehicleCondition}
+                    </td>
+                    <td
+                      onClick={() => setselectedVehicle(user)}
+                      className="px-4 py-3 text-gray-700"
+                    >
+                      {user.sellerOffer}
+                    </td>
+                    <td
+                      onClick={() => setselectedVehicle(user)}
+                      className="px-4 py-3 text-gray-700"
+                    >
+                      {user.startTime
+                        ? moment(user.startTime).local().format("HH:mm:ss")
+                        : "--"}
+                    </td>
+                    <td
+                      onClick={() => setselectedVehicle(user)}
+                      className="px-4 py-3 text-gray-700"
+                    >
+                      {user.startTime?.slice(0, 10)}
+                    </td>
+                    {currentUser?.role === "seller" ? null : (
+                      <td
+                        className="px-4 py-3"
+                        onClick={(e) => {
+                          handleToggleModel("update"), setselectedVehicle(user);
+                        }}
+                      >
+                        <span className="px-3 py-1 bg-blue-500 text-white text-xs rounded cursor-pointer hover:bg-blue-600 transition">
+                          Edit
+                        </span>
+                      </td>
+                    )}
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
+
+          {/* Mobile Cards */}
+          <div className="block md:hidden space-y-4 p-3">
+            {allUpcoming?.map((user) => (
+              <div
+                key={user.id}
+                className="bg-white rounded-xl shadow-md border border-gray-200 p-4 hover:shadow-lg hover:border-indigo-300 hover:bg-indigo-50/30 transition-all duration-300"
+              >
+                {/* Header */}
+                <div className="flex justify-between items-center mb-3">
+                  <h3 className="font-bold text-lg text-gray-900">Seller</h3>
+                  <span className="text-gray-700 font-medium">
+                    {user?.name}
+                  </span>
+                </div>
+
+                {/* Vehicle Info */}
+                <div className="space-y-2 text-sm">
+                  <p className="flex justify-between">
+                    <span className="text-gray-900 font-bold">Vehicle</span>
+                    <span className="text-gray-500">
+                      {user?.make}/{user?.model}
+                    </span>
+                  </p>
+
+                  <p className="flex justify-between">
+                    <span className="text-gray-900 font-bold">Condition</span>
+                    <span className="text-gray-500">
+                      {user?.vehicleCondition}
+                    </span>
+                  </p>
+
+                  <p className="flex justify-between">
+                    <span className="text-gray-900 font-bold">
+                      Seller Offer
+                    </span>
+                    <span className="text-gray-900">{user?.sellerOffer}</span>
+                  </p>
+
+                  <p className="flex justify-between">
+                    <span className="text-gray-900 font-bold">Start Time</span>
+                    <span className="text-gray-500">
+                      {user?.startTime?.slice(11, 19)}
+                    </span>
+                  </p>
+
+                  <p className="flex justify-between">
+                    <span className="text-gray-900 font-bold">Date</span>
+                    <span className="text-gray-500">
+                      {user?.startTime?.slice(0, 10)}
+                    </span>
+                  </p>
+                </div>
+
+                {/* Action Button */}
+                <div className="mt-4">
+                  <button
+                    onClick={(e) => {
+                      handleToggleModel("update"), setselectedVehicle(user);
+                    }}
+                    className="w-full py-2.5 bg-blue-600 text-white text-sm font-medium rounded-lg hover:bg-blue-700 transition-colors duration-300 hover:cursor-pointer"
+                  >
+                    Edit
+                  </button>
+                </div>
+              </div>
+            ))}
+          </div>
         </div>
 
-        {comingAuc?.length === 0 && (
-          <div className="flex items-center justify-center mt-1 font-medium text-xl">
+        {allUpcoming?.length === 0 && (
+          <div className="flex items-center justify-center font-medium lg:text-xl  text-sm ">
             No Upcoming Bid yet!
           </div>
         )}
 
+        <div className="flex justify-between  mt-6">
+          {/* Prev Button */}
+          <button
+            className={`bg-[#518ecb] text-white px-5 py-2 rounded hover:bg-[#518ecb] ${
+              pageNo > 1 ? "block" : "hidden"
+            }`}
+            onClick={handlePrevPage}
+          >
+            ‹ Prev
+          </button>
+
+          {/* Next Button */}
+          <div></div>
+          <button
+            className={`bg-[#518ecb] text-white px-5 py-2 rounded hover:bg-[#518ecb] ${
+              allUpcoming.length === 0 ? "hidden" : "block"
+            }`}
+            onClick={handleNextPage}
+          >
+            Next ›
+          </button>
+        </div>
         {selectedAuctionId && (
           <ViewAuctionModal
             auctionId={selectedAuctionId}
             onClose={() => setSelectedAuctionId(null)}
           />
         )}
-        {selectedVehicle && (
+        {isOpen === "view" && (
           <ViewBrandModal
             selectedVehicle={selectedVehicle}
-            handleClick={() => setselectedVehicle(null)}
+            handleClick={() => handleToggleModel("view")}
+          />
+        )}
+
+        {isOpen === "update" && (
+          <AdminUpdatebid
+            selectedVehicle={selectedVehicle}
+            setIsOpenBid={() => handleToggleModel("update")}
           />
         )}
 

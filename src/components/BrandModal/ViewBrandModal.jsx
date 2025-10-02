@@ -4,6 +4,7 @@ import { MdClose } from "react-icons/md";
 
 export const ViewBrandModal = ({ selectedVehicle, handleClick }) => {
   const [viewImage, setViewImage] = useState(null);
+
   const [indexImage, setIndexImage] = useState(0);
 
   console.log(indexImage);
@@ -30,7 +31,7 @@ export const ViewBrandModal = ({ selectedVehicle, handleClick }) => {
 
   return (
     <div className="fixed inset-0 z-50 backdrop-blur-sm flex items-start justify-center pt-20">
-      <div className="bg-white w-[80%] md:w-[70%] lg:w-[60%]  rounded-lg shadow-lg p-6 relative">
+      <div className="bg-white w-full md:w-[70%] lg:w-[60%]  max-h-[80vh] overflow-auto rounded-lg shadow-lg p-6 relative">
         {/* Close Icon */}
         <button
           onClick={handleClick}
@@ -40,7 +41,9 @@ export const ViewBrandModal = ({ selectedVehicle, handleClick }) => {
         </button>
 
         {/* Header */}
-        <h2 className="text-xl font-semibold text-blue-700 mb-6">View Car</h2>
+        <h2 className="text-xl font-semibold text-blue-700 mb-6">
+          View Vehicler
+        </h2>
 
         {/* Grid Layout */}
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
@@ -138,7 +141,7 @@ export const ViewBrandModal = ({ selectedVehicle, handleClick }) => {
                   src={img}
                   alt={`Thumbnail-${idx}`}
                   onClick={() => setViewImage(img)}
-                  className={`w-[60px] h-[50px] object-cover rounded cursor-pointer border ${
+                  className={`w-[50px] h-[50px] object-cover rounded cursor-pointer border ${
                     viewImage === img
                       ? "border-blue-600 border-4"
                       : "border-gray-300"

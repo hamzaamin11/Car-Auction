@@ -30,7 +30,7 @@ export const ViewAdminCar = ({ selectedVehicle, handleClick }) => {
 
   return (
     <div className="fixed inset-0 z-50 backdrop-blur-sm flex items-start justify-center pt-20">
-      <div className="bg-white w-[80%] md:w-[70%] lg:w-[60%]  rounded-lg shadow-lg p-6 relative">
+      <div className="bg-white  md:w-[70%] lg:w-[60%]  w-full rounded-lg shadow-lg p-6 relative max-h-[80vh] overflow-auto">
         {/* Close Icon */}
         <button
           onClick={handleClick}
@@ -40,81 +40,85 @@ export const ViewAdminCar = ({ selectedVehicle, handleClick }) => {
         </button>
 
         {/* Header */}
-        <h2 className="text-xl font-semibold text-blue-700 mb-6">View Car</h2>
+        <h2 className="text-xl font-semibold text-blue-700 mb-6">
+          View Vehicle
+        </h2>
 
         {/* Grid Layout */}
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
           {/* Left: Car Details */}
           <div className="space-y-2 text-sm text-gray-800 grid grid-cols-2 gap-5 w-[100%] ">
             <p>
-              <span className="font-bold">VIN:</span> {selectedVehicle?.vin}
+              <span className="font-bold">Location:</span>{" "}
+              {selectedVehicle?.cityName.charAt(0).toUpperCase() +
+                selectedVehicle?.cityName.slice(1) || "--"}
             </p>
             <p>
-              <span className="font-bold">Model:</span> {selectedVehicle?.model}
+              <span className="font-bold">Make:</span>{" "}
+              {selectedVehicle?.make.charAt(0).toUpperCase() +
+                selectedVehicle?.make.slice(1) || "--"}
             </p>
             <p>
-              <span className="font-bold">Make:</span> {selectedVehicle?.make}
+              <span className="font-bold">Model:</span>{" "}
+              {selectedVehicle?.model.charAt(0).toUpperCase() +
+                selectedVehicle?.model.slice(1) || "--"}
             </p>
-            <p>
-              <span className="font-bold">Color:</span> {selectedVehicle?.color}
-            </p>
-            <p>
-              <span className="font-bold">Transmission:</span>{" "}
-              {selectedVehicle?.transmission}
-            </p>
-            <p>
-              <span className="font-bold">Fuel Type:</span>{" "}
-              {selectedVehicle?.fuelType}
-            </p>
+
             <p>
               <span className="font-bold">Series:</span>{" "}
-              {selectedVehicle?.series}
+              {selectedVehicle?.series.charAt(0).toUpperCase() +
+                selectedVehicle?.series.slice(1) || "--"}
+            </p>
+            <p>
+              <span className="font-bold">Color:</span>{" "}
+              {selectedVehicle?.color.charAt(0).toUpperCase() +
+                selectedVehicle?.color.slice(1) || "--"}
+            </p>
+
+            <p>
+              <span className="font-bold">Transmission:</span>{" "}
+              {selectedVehicle?.transmission.charAt(0).toUpperCase() +
+                selectedVehicle?.transmission.slice(1) || "--"}
+            </p>
+            <p>
+              <span className="font-bold">Fuel Type:</span>
+              {selectedVehicle?.fuelType.charAt(0).toUpperCase() +
+                selectedVehicle?.fuelType.slice(1) || "--"}
             </p>
 
             <p>
               <span className="font-bold">Body Style:</span>{" "}
-              {selectedVehicle?.bodyStyle}
+              {selectedVehicle?.bodyStyle.charAt(0).toUpperCase() +
+                selectedVehicle?.bodyStyle.slice(1) || "--"}
             </p>
 
             <p>
               <span className="font-bold">Certify Status:</span>{" "}
-              {selectedVehicle?.certifyStatus}
+              {selectedVehicle?.certifyStatus.charAt(0).toUpperCase() +
+                selectedVehicle?.certifyStatus.slice(1) || "--"}
             </p>
 
             <p>
               <span className="font-bold">Drive Type:</span>{" "}
-              {selectedVehicle?.driveType}
-            </p>
-
-            <p>
-              <span className="font-bold">Engine No:</span>{" "}
-              {selectedVehicle?.engine}
-            </p>
-
-            <p>
-              <span className="font-bold">Location:</span>{" "}
-              {selectedVehicle?.locationId}
-            </p>
-
-            <p>
-              <span className="font-bold">Sale Status:</span>{" "}
-              {selectedVehicle?.saleStatus}
+              {selectedVehicle?.driveType.charAt(0).toUpperCase() +
+                selectedVehicle?.driveType.slice(1) || "--"}
             </p>
 
             <p>
               <span className="font-bold">Mileage:</span>{" "}
-              {selectedVehicle?.mileage}
+              {selectedVehicle?.mileage || "--"}
             </p>
             <p>
               <span className="font-bold">Year:</span> {selectedVehicle?.year}
             </p>
             <p>
               <span className="font-bold">Condition:</span>{" "}
-              {selectedVehicle?.vehicleCondition}
+              {selectedVehicle?.vehicleCondition.charAt(0).toUpperCase() +
+                selectedVehicle?.vehicleCondition.slice(1) || "--"}
             </p>
             <p>
               <span className="font-bold">Price:</span>{" "}
-              {selectedVehicle?.buyNowPrice}
+              {selectedVehicle?.buyNowPrice || "--"}
             </p>
           </div>
 
@@ -138,7 +142,7 @@ export const ViewAdminCar = ({ selectedVehicle, handleClick }) => {
                   src={img}
                   alt={`Thumbnail-${idx}`}
                   onClick={() => setViewImage(img)}
-                  className={`w-[60px] h-[50px] object-cover rounded cursor-pointer border ${
+                  className={`w-[50px] h-[50px] object-cover rounded cursor-pointer border ${
                     viewImage === img
                       ? "border-blue-600 border-4"
                       : "border-gray-300"

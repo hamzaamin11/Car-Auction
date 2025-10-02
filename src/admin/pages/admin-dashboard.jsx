@@ -1,31 +1,16 @@
-import React, { useEffect, useState } from "react";
-import {
-  BarChart,
-  Bar,
-  XAxis,
-  YAxis,
-  Tooltip,
-  ResponsiveContainer,
-  PieChart,
-  Pie,
-  Cell,
-  Legend,
-} from "recharts";
+import { useEffect, useState } from "react";
 import {
   FaCarSide,
   FaGavel,
-  FaMoneyBillAlt,
-  FaChartLine,
-  FaTrash,
-  FaPlus,
-  FaUser,
+  FaUsers,
+  FaCalendarAlt,
+  FaHistory,
 } from "react-icons/fa";
-import Topbar from "../components/Topbar";
-import Sidebar from "../components/Sidebar";
+
 import axios from "axios";
 import { BASE_URL } from "../../components/Contant/URL";
 import Card from "../../components/AdminCardComponent/Card";
-import { RotateLoader } from "../../components/Loader/RotateLoader";
+import { MdBrandingWatermark } from "react-icons/md";
 
 const barData = [
   { name: "Jan", sales: 300 },
@@ -57,7 +42,17 @@ const Dashboard = () => {
 
   const [totalVehicles, setTotalVehicles] = useState({});
 
+  const [allBrands, setAllBrands] = useState([]);
+
+  const [allModels, setAllModels] = useState([]);
+
+  const [allSeries, setAllSeries] = useState([]);
+
   const [liveAuctions, setLiveAuctions] = useState({});
+
+  const [upcomingBid, setUpcompingBid] = useState({});
+
+  const [totalCustomers, setTotalCustomers] = useState({});
 
   const handleDelete = (id) => {
     setBids(bids.filter((bid) => bid.id !== id));
@@ -92,53 +87,140 @@ const Dashboard = () => {
     }
   };
 
-  const handleGetBid = () => {};
+  const handleUpcomingBid = async () => {
+    try {
+      const res = await axios.get(`${BASE_URL}/customer/totalUpcomingAuctions`);
+      setUpcompingBid(res.data);
+    } catch (error) {
+      console.log(error);
+    }
+  };
+
+  const handleGetCustomers = async () => {
+    try {
+      const res = await axios.get(`${BASE_URL}/customer/totalBuyers`);
+      setTotalCustomers(res.data);
+    } catch (error) {
+      console.log(error);
+    }
+  };
+
+  const handleGetAllBrands = async () => {
+    setLoading(true);
+    try {
+      const res = await axios.get(`${BASE_URL}/admin/getBrands`);
+
+      setAllBrands(res.data);
+      setLoading(false);
+    } catch (error) {
+      console.log(error);
+      setLoading(false);
+    }
+  };
+
+  const handleGetAllModels = async () => {
+    try {
+      const res = await axios.get(`${BASE_URL}/getModels`);
+
+      setAllModels(res.data);
+    } catch (error) {
+      console.log(error);
+    }
+  };
+
+  const handleGetAllSeries = async () => {
+    try {
+      const res = await axios.get(`${BASE_URL}/getSeries`);
+      setAllSeries(res.data);
+    } catch (error) {
+      console.log(error);
+    }
+  };
 
   useEffect(() => {
     handleGetAllVehicle();
     handleGetAllLiveAuction();
+    handleUpcomingBid();
+    handleGetCustomers();
+    handleGetAllBrands();
+    handleGetAllModels();
+    handleGetAllSeries();
   }, []);
 
-  if (loading) return <RotateLoader />;
   return (
     <>
       {/* <Topbar />
     <Sidebar /> */}
-      <div className="p-6 bg-gray-50  space-y-8">
+      <div className="p-6 bg-gray-50   space-y-8">
         <h2 className="text-3xl font-bold text-[#191970]">Welcome, Admin</h2>
 
         {/* Summary Stats */}
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
+        <div className="grid grid-cols-2 lg:grid-cols-4 gap-6">
           <Card
             title={"Total Vehicles"}
             totalData={totalVehicles.totalVehicles}
-            color={"bg-[#191970]"}
+            color={"bg-blue-200"}
             icon={<FaCarSide size={28} />}
+            path={"/admin/vehicles"}
           />
 
           <Card
-            title={"Live Auctions"}
+            title={"Live Auction"}
             totalData={liveAuctions.totalLiveAuctions}
-            color={"bg-green-500"}
+            color={"bg-blue-200"}
             icon={<FaGavel size={28} />}
+            path={"/admin/live-auctions"}
           />
 
           <Card
-            title={"Bids Placed"}
-            totalData={totalVehicles.totalVehicles}
-            color={"bg-yellow-500"}
-            icon=<FaChartLine size={28} />
+            title={"Upcoming Auction"}
+            totalData={upcomingBid.totalUpcomingAuctions}
+            color={"bg-blue-200"}
+            icon=<FaCalendarAlt size={28} />
+            path={"/admin/upcoming-auctions"}
           />
 
           <Card
             title={"Total Users"}
+            totalData={totalCustomers.totalBuyers}
+            color={"bg-blue-200"}
+            icon={<FaUsers size={28} />}
+            path={"/admin/manage-users"}
+          />
+        </div>
+        <div className="lg:hidden grid grid-cols-2 lg:grid-cols-4 gap-6">
+          <Card
+            title={"Bid History"}
             totalData={totalVehicles.totalVehicles}
-            color={"bg-purple-600"}
-            icon={<FaUser size={28} />}
+            color={"bg-blue-200"}
+            icon={<FaHistory size={28} />}
+            path={"/admin/bid-history"}
+          />
+          <Card
+            title={"Add Brand"}
+            totalData={allBrands.length}
+            color={"bg-blue-200"}
+            icon={<MdBrandingWatermark size={28} />}
+            path={"/admin/addbrand"}
+          />
+
+          <Card
+            title={"Add Model"}
+            totalData={allModels.length}
+            color={"bg-blue-200"}
+            icon={<FaCarSide size={28} />}
+            path={"/admin/addmodel"}
+          />
+          <Card
+            title={"Add Series"}
+            totalData={allSeries.length}
+            color={"bg-blue-200"}
+            icon={<FaCarSide size={28} />}
+            path={"/admin/addseries"}
           />
         </div>
 
-        {/* Charts */}
+        {/* Charts 
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
           <div className="bg-white p-6 rounded-xl shadow-sm">
             <h3 className="text-lg font-semibold mb-4 text-[#191970]">
@@ -183,85 +265,7 @@ const Dashboard = () => {
           </div>
         </div>
 
-        {/* Recent Bids Section */}
-        <div className="bg-white p-6 rounded-xl shadow-sm">
-          <h3 className="text-lg font-semibold mb-4 text-[#191970]">
-            Recent Bids
-          </h3>
-
-          <div className="overflow-x-auto rounded-md">
-            <table className="min-w-full border text-sm">
-              <thead className="bg-[#E6E6FA] text-[#191970]">
-                <tr>
-                  <th className="p-2 text-left">Vehicle</th>
-                  <th className="p-2 text-left">Bidder</th>
-                  <th className="p-2 text-left">Amount</th>
-                  <th className="p-2 text-left">Actions</th>
-                </tr>
-              </thead>
-              <tbody>
-                {bids.map((bid) => (
-                  <tr key={bid.id} className="border-t">
-                    <td className="p-2">{bid.vehicle}</td>
-                    <td className="p-2">{bid.bidder}</td>
-                    <td className="p-2">{bid.amount}</td>
-                    <td className="p-2">
-                      <button
-                        onClick={() => handleDelete(bid.id)}
-                        className="text-red-500 hover:text-red-700"
-                        title="Delete"
-                      >
-                        <FaTrash />
-                      </button>
-                    </td>
-                  </tr>
-                ))}
-              </tbody>
-            </table>
-          </div>
-
-          {/* Add New Bid Form */}
-          <div className="mt-6">
-            <h4 className="text-md font-semibold text-[#191970] mb-2">
-              Add New Bid
-            </h4>
-            <div className="grid grid-cols-1 md:grid-cols-4 gap-3">
-              <input
-                type="text"
-                placeholder="Vehicle"
-                className="p-2 border border-gray-300 rounded"
-                value={newBid.vehicle}
-                onChange={(e) =>
-                  setNewBid({ ...newBid, vehicle: e.target.value })
-                }
-              />
-              <input
-                type="text"
-                placeholder="Bidder"
-                className="p-2 border border-gray-300 rounded"
-                value={newBid.bidder}
-                onChange={(e) =>
-                  setNewBid({ ...newBid, bidder: e.target.value })
-                }
-              />
-              <input
-                type="text"
-                placeholder="Amount"
-                className="p-2 border border-gray-300 rounded"
-                value={newBid.amount}
-                onChange={(e) =>
-                  setNewBid({ ...newBid, amount: e.target.value })
-                }
-              />
-              <button
-                onClick={handleAddBid}
-                className="bg-[#191970] text-white px-4 py-2 rounded flex items-center justify-center gap-2 hover:bg-[#000080] transition"
-              >
-                <FaPlus /> Add
-              </button>
-            </div>
-          </div>
-        </div>
+        */}
       </div>
     </>
   );

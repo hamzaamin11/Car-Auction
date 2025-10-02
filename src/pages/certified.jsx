@@ -1,62 +1,19 @@
 import axios from "axios";
 import React, { useEffect, useState } from "react";
 import { BASE_URL } from "../components/Contant/URL";
-
-const carData = [
-  {
-    id: 1,
-    name: "Toyota Corolla 2025",
-    image: "/images/toyota1.jpg",
-    certified: true,
-    price: "PKR 59.7 lacs",
-    fuel: "Petrol",
-    city: "Lahore",
-  },
-  {
-    id: 2,
-    name: "Suzuki Mehran 2018",
-    image: "/images/",
-    certified: false,
-    price: "PKR 9.5 lacs",
-    fuel: "Petrol",
-    city: "Karachi",
-  },
-  {
-    id: 3,
-    name: "Honda Civic 2025",
-    image: "/images/hondacivic.avif",
-    certified: true,
-    price: "PKR 8,659,000",
-    fuel: "Petrol",
-    city: "Islamabad",
-  },
-  {
-    id: 4,
-    name: "Changan Lumin",
-    image: "/images/lumin.png",
-    certified: true,
-    price: "PKR 20 Lacs to 35 Lacs",
-    fuel: "Petrol",
-    city: "Abbottabad",
-  },
-];
+import { useNavigate } from "react-router-dom";
+import { RotateLoader } from "../components/Loader/RotateLoader";
 
 const CertifiedCarsPage = () => {
   const [activeTab, setActiveTab] = useState("certified");
 
-  console.log("active tab", activeTab);
+  const navigate = useNavigate();
 
   const [getCertified, setGetCertified] = useState([]);
 
-  const filteredCars = carData.filter(
-    (car) => car.certified === (activeTab === "certified")
-  );
-
   const handleGetcertified = async () => {
     try {
-      const res = await axios.get(
-        `${BASE_URL}/seller/getCertifiedVehicles`
-      );
+      const res = await axios.get(`${BASE_URL}/seller/getCertifiedVehicles`);
       console.log("=>", res.data);
       setGetCertified(res.data);
     } catch (error) {
@@ -66,9 +23,7 @@ const CertifiedCarsPage = () => {
 
   const handleGetNoncertify = async () => {
     try {
-      const res = await axios.get(
-        `${BASE_URL}/seller/getNonCertifiedVehicles`
-      );
+      const res = await axios.get(`${BASE_URL}/seller/getNonCertifiedVehicles`);
       setGetCertified(res.data);
     } catch (error) {
       console.log(error);
@@ -118,9 +73,10 @@ const CertifiedCarsPage = () => {
           <div
             key={car.id}
             className="bg-white rounded-xl shadow-md overflow-hidden relative hover:shadow-xl transition"
+            onClick={() => navigate(`/detailbid/${car.id}`)}
           >
             <img
-              src={car.imageBase64}
+              src={car.images[0]}
               alt={car.name}
               className="w-full h-44 object-cover"
             />
@@ -128,23 +84,38 @@ const CertifiedCarsPage = () => {
               className={`absolute top-3 left-3 px-3 py-1 text-xs font-bold rounded-full shadow ${
                 car.certifyStatus === "Certified"
                   ? "bg-green-600 text-white"
-                  : "bg-gray-500 text-white"
+                  : "bg-red-500 text-white"
               }`}
             >
-              {car.certifyStatus}
+              {car?.certifyStatus}
             </span>
             <div className="p-4">
               <h3 className="text-lg font-bold text-gray-800">
-                {car.make} {car.model}
+                {car?.make} {car?.model} {car?.series}
               </h3>
-              <p className="text-sm text-gray-600">
-                {car.locationId} • {car.mileage}
+              <p className="text-sm gap-1">
+                <strong className="pr-1">Location</strong>
+                {car.locationId} <strong className="pr-1">Milage</strong>
+                {car.mileage}Km
+                <strong className="px-1">Year</strong>
+                {car.year}
               </p>
-              <p className="text-[#3eb549] font-semibold mt-1">{car.price}</p>
+
+              <p className="font-semibold mt-1">
+                {" "}
+                <strong className="pr-1">Demand Price:</strong>
+                {car.buyNowPrice}
+              </p>
             </div>
           </div>
         ))}
       </div>
+      {getCertified?.length === 0 && (
+        <div className="flex items-center justify-center">
+          {" "}
+          No vehicle found yet
+        </div>
+      )}
     </div>
   );
 };

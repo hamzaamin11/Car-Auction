@@ -3,15 +3,12 @@ import DeliveryHero from "../components/DeliveryHero";
 import DeliverySteps from "../components/DeliverySteps";
 
 const VehicleDelivery = () => {
-
-    return (
-        <>
-        <DeliveryHero />
-        <DeliverySteps />
-        <DeliveryCTA />
-        </>
-    );
+  return (
+    <>
+      <DeliveryHero />
+      <DeliverySteps />
+    </>
+  );
 };
-
 
 export default VehicleDelivery;

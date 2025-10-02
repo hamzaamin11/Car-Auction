@@ -2,6 +2,8 @@ import axios from "axios";
 import { useEffect, useState } from "react";
 import { MdClose } from "react-icons/md";
 import { BASE_URL } from "../Contant/URL";
+import moment from "moment";
+import { toast, ToastContainer } from "react-toastify";
 
 export const AdminAddBid = ({
   setIsOpenBid,
@@ -9,22 +11,33 @@ export const AdminAddBid = ({
   getAllVehicles,
 }) => {
   const initialState = {
-    sellerOffer: "",
     startTime: "",
     endTime: "",
-    vehicleId: selectedVehicle.id,
-    userId: selectedVehicle.userId,
+    vehicleId: selectedVehicle?.id || selectedVehicle?.newVehicleId,
+    userId: selectedVehicle?.userId,
     saleStatus: "pending",
   };
+
   const [viewImage, setViewImage] = useState();
 
   const [formData, setFormData] = useState(initialState);
 
-  console.log("love dose", formData);
+  const [loading, setLoading] = useState(false);
 
   const handleChange = (e) => {
     const { name, value } = e.target;
-    setFormData({ ...formData, [name]: value });
+    let updatedValue = value;
+
+    // agar ye datetime-local hai to backend ke liye UTC ISO string bana do
+    if (name === "startTime" || name === "endTime") {
+      updatedValue = new Date(value).toISOString();
+      // Example: "2025-09-01T13:00" -> "2025-09-01T08:00:00.000Z"
+    }
+
+    setFormData({
+      ...formData,
+      [name]: updatedValue,
+    });
   };
 
   useEffect(() => {
@@ -35,13 +48,17 @@ export const AdminAddBid = ({
 
   const handleBidSubmit = async (e) => {
     e.preventDefault();
+    setLoading(true);
     try {
       const res = await axios.post(`${BASE_URL}/seller/createBid`, formData);
       console.log("res", res.data);
       getAllVehicles();
       setIsOpenBid(false);
+      toast.success("Vehicle has been added for bid");
+      setLoading(false);
     } catch (error) {
       console.log(error);
+      setLoading(false);
     }
   };
 
@@ -60,57 +77,62 @@ export const AdminAddBid = ({
         </h2>
 
         <div className="grid md:grid-cols-2 gap-4">
-          {/* Left Side (Info + Form) */}
+          {/* Left Side */}
           <div className="space-y-2 text-sm">
-            <p>
-              <strong>Model:</strong> {selectedVehicle?.model}
-            </p>
-            <p>
-              <strong>Make:</strong> {selectedVehicle?.make}
-            </p>
-            <p>
-              <strong>Year:</strong> {selectedVehicle?.year}
-            </p>
-            <p>
-              <strong>Color:</strong> {selectedVehicle?.color}
-            </p>
-            <p>
-              <strong>Fuel:</strong> {selectedVehicle?.fuelType}
-            </p>
+            <div className="grid grid-cols-2 space-y-2">
+              <p>
+                <strong>Model:</strong> {selectedVehicle?.model}
+              </p>
+              <p>
+                <strong>Make:</strong> {selectedVehicle?.make}
+              </p>
+              <p>
+                <strong>Year:</strong> {selectedVehicle?.year}
+              </p>
+              <p>
+                <strong>Color:</strong> {selectedVehicle?.color}
+              </p>
+              <p>
+                <strong>Fuel:</strong> {selectedVehicle?.fuelType}
+              </p>
+              <p>
+                <strong>Transmission:</strong> {selectedVehicle?.transmission}
+              </p>
+              <p>
+                <strong>Body Style:</strong> {selectedVehicle?.bodyStyle}
+              </p>
+              <p>
+                <strong>Location:</strong> {selectedVehicle?.locationId}
+              </p>
+              <p>
+                <strong>Demand Price:</strong> {selectedVehicle?.buyNowPrice}
+              </p>
+              <p>
+                <strong>Condition:</strong> {selectedVehicle?.vehicleCondition}
+              </p>
+            </div>
 
-            {/* Inputs Section */}
+            {/* Inputs */}
             <div className="space-y-3 mt-4">
-              <div className="flex flex-col md:flex-row md:items-center md:space-x-4 space-y-2 md:space-y-0">
-                {/* Bid Amount */}
-                <div className="flex-1">
-                  <label className="block text-xs mb-1 font-medium">
-                    Bid Amount
-                  </label>
-                  <input
-                    type="number"
-                    name="sellerOffer"
-                    value={formData.sellerOffer}
-                    onChange={handleChange}
-                    className="w-full border px-3 py-2 rounded text-sm"
-                  />
-                </div>
-
-                {/* Start Date & Time */}
-                <div className="flex-1">
-                  <label className="block text-xs mb-1 font-medium">
-                    Start Date & Time
-                  </label>
-                  <input
-                    name="startTime"
-                    type="datetime-local"
-                    value={formData.startTime}
-                    onChange={handleChange}
-                    className="w-full border px-3 py-2 rounded text-sm"
-                  />
-                </div>
+              {/* Start Time */}
+              <div>
+                <label className="block text-xs mb-1 font-medium">
+                  Start Date & Time
+                </label>
+                <input
+                  type="datetime-local"
+                  name="startTime"
+                  value={
+                    formData.startTime
+                      ? moment(formData.startTime).format("YYYY-MM-DDTHH:mm") // UTC → local
+                      : ""
+                  }
+                  onChange={handleChange}
+                  className="w-full border px-3 py-2 rounded text-sm"
+                />
               </div>
 
-              {/* End Date & Time */}
+              {/* End Time */}
               <div>
                 <label className="block text-xs mb-1 font-medium">
                   End Date & Time
@@ -118,22 +140,28 @@ export const AdminAddBid = ({
                 <input
                   type="datetime-local"
                   name="endTime"
-                  value={formData.endTime}
+                  value={
+                    formData.endTime
+                      ? moment(formData.endTime).format("YYYY-MM-DDTHH:mm") // UTC → local
+                      : ""
+                  }
                   onChange={handleChange}
                   className="w-full border px-3 py-2 rounded text-sm"
                 />
               </div>
 
-              {/* Submit Button */}
+              {/* Submit */}
               <button
+                disabled={loading}
                 onClick={handleBidSubmit}
                 className="mt-2 w-full bg-blue-600 text-white py-2 rounded text-sm hover:bg-blue-700"
               >
-                Submit Bid
+                {loading ? "Loading..." : "Submit Bid"}
               </button>
             </div>
           </div>
-          {/* Right Side (Image) */}
+
+          {/* Right Side (Images) */}
           <div className="flex flex-col items-center">
             <img
               src={viewImage}
@@ -155,6 +183,7 @@ export const AdminAddBid = ({
             </div>
           </div>
         </div>
+        <ToastContainer />
       </div>
     </div>
   );

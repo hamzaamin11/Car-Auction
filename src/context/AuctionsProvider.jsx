@@ -4,8 +4,12 @@ import PropTypes from "prop-types";
 import { useState } from "react";
 import { useEffect } from "react";
 import { BASE_URL } from "../components/Contant/URL";
+import { useSelector } from "react-redux";
 
 function AuctionsProvider({ children }) {
+  const { currentUser } = useSelector((state) => state.auth);
+  const id = currentUser?.id;
+  console.log("jani nay ro ro k =>", currentUser);
   const [getLiveAuctions, setGetLiveAuctions] = useState([]);
   const [auctionById, setAuctionById] = useState(null);
   const [comingAuc, setComingAuc] = useState([]);
@@ -26,7 +30,7 @@ function AuctionsProvider({ children }) {
   console.log(getLiveAuctions);
 
   const UpComingAuctions = async () => {
-    const res = await fetch(`${BASE_URL}/seller/upcomingAuctions`, {
+    const res = await fetch(`${BASE_URL}/seller/upcomingAuctions/${id}`, {
       method: "GET",
       headers: {
         "Content-Type": "applications/json",

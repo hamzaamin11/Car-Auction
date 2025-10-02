@@ -2,6 +2,43 @@ import React, { useEffect, useState } from "react";
 import { toast } from "react-toastify";
 import { useAuth } from "../../context/AuthContext";
 import { BASE_URL } from "../../components/Contant/URL";
+import { useSelector } from "react-redux";
+import Select from "react-select";
+import CarSelector from "../../components/CarSelector";
+import axios from "axios";
+
+const bodyStyles = [
+  "Convertible",
+  "Coupe",
+  "Crossover",
+  "Hatchback",
+  "Minivan",
+  "Pickup Truck",
+  "Sedan",
+  "Station Wagon",
+  "SUV",
+  "Van",
+];
+
+const carColors = [
+  "White",
+  "Black",
+  "Silver",
+  "Gray",
+  "Red",
+  "Blue",
+  "Green",
+  "Yellow",
+  "Orange",
+  "Brown",
+  "Beige",
+  "Gold",
+  "Maroon",
+  "Purple",
+  "Pink",
+  "Turquoise",
+];
+
 function EditAdminVehicle({
   open,
   setOpen,
@@ -28,19 +65,47 @@ function EditAdminVehicle({
     locationId: "",
     saleStatus: "",
     auctionDate: "",
-    currentBid: "",
     buyNowPrice: "",
     certifyStatus: "",
     image: null,
   };
 
-  const [vehicleData, setVehicleData] = useState(initialVehicleState);
+  const [vehicle, setVehicle] = useState(initialVehicleState);
+  const selected = useSelector((state) => state.carSelector);
+  console.log("vehicleData", selectedVehicle);
+
+  const parsePrice = (priceStr) => {
+    if (!priceStr) return "";
+
+    // ✅ hamesha string me convert karo
+    const str = priceStr.toString().toLowerCase();
+
+    // Agar "Lac" likha ho
+    if (str.includes("lac")) {
+      const num = parseFloat(str);
+      return num * 100000; // 1 Lac = 100000
+    }
+
+    // Agar "Crore" likha ho
+    if (str.includes("crore")) {
+      const num = parseFloat(str);
+      return num * 10000000; // 1 Crore = 10000000
+    }
+
+    // Warna number nikal lo (commas, symbols hata ke)
+    const parsed = parseFloat(str.replace(/[^0-9.]/g, ""));
+    return isNaN(parsed) ? "" : parsed;
+  };
+
   const [loading, setLoading] = useState(false);
   const [imagePreview, setImagePreview] = useState(null);
+  const [allCities, setAllCities] = useState([]);
+
+  const [isOpen, setIsOpen] = useState(false);
 
   useEffect(() => {
     if (selectedVehicle) {
-      setVehicleData({
+      setVehicle({
         vin: selectedVehicle.vin || "",
         year: selectedVehicle.year || "",
         make: selectedVehicle.make || "",
@@ -56,10 +121,10 @@ function EditAdminVehicle({
         vehicleCondition: selectedVehicle.vehicleCondition || "",
         keysAvailable: selectedVehicle.keysAvailable || "",
         locationId: selectedVehicle.locationId || "",
+        cityName: selectedVehicle.cityName || "", // ✅ yeh add karo
         saleStatus: selectedVehicle.saleStatus || "",
         auctionDate: selectedVehicle.auctionDate || "",
-        currentBid: selectedVehicle.currentBid || "",
-        buyNowPrice: selectedVehicle.buyNowPrice || "",
+        buyNowPrice: parsePrice(selectedVehicle.buyNowPrice) || "",
         certifyStatus: selectedVehicle.certifyStatus || "",
         image: selectedVehicle.image || null,
       });
@@ -75,12 +140,20 @@ function EditAdminVehicle({
 
   const { user } = useAuth();
 
+  const [selectedCount, setSelectedCount] = useState(0);
+
+  const handleFileChange = (e) => {
+    const files = e.target.files;
+    setSelectedCount(files.length); // kitni images select hui hain
+    handleAddedImage(e); // aapka existing handler call karna
+  };
+
   const handleChange = (e) => {
     const { name, type, value, files } = e.target;
 
     if (type === "file") {
       const file = files[0];
-      setVehicleData((prev) => ({
+      setVehicle((prev) => ({
         ...prev,
         [name]: file,
       }));
@@ -94,11 +167,47 @@ function EditAdminVehicle({
         reader.readAsDataURL(file);
       }
     } else {
-      setVehicleData((prev) => ({
+      setVehicle((prev) => ({
         ...prev,
         [name]: value,
       }));
     }
+  };
+
+  const handleIsOpenToggle = (active) => {
+    setIsOpen((prev) => (prev === active ? "" : active));
+  };
+
+  const handleSearchable = (selectedOption) => {
+    setVehicle((prev) => ({
+      ...prev,
+      locationId: selectedOption.value,
+    }));
+  };
+
+  const handleGetAllCities = async () => {
+    try {
+      const res = await axios.get(`${BASE_URL}/getCitites`);
+
+      setAllCities(res.data);
+    } catch (error) {
+      console.log(error);
+    }
+  };
+
+  const cityData = [
+    { label: "Select City", value: "" },
+    ...(allCities?.map((city) => ({
+      label: city.cityName,
+      value: city.id,
+    })) || []),
+  ];
+
+  useEffect(() => {
+    handleGetAllCities();
+  }, [open]);
+  const handleUpdateCarInfo = () => {
+    handleIsOpenToggle("selector");
   };
 
   const handleSubmit = async (e) => {
@@ -109,7 +218,7 @@ function EditAdminVehicle({
     formData.append("userId", selectedVehicle.userId);
 
     // Append all fields to formData
-    Object.entries(vehicleData).forEach(([key, value]) => {
+    Object.entries(vehicle).forEach(([key, value]) => {
       if (value !== null && value !== undefined && key !== "id") {
         formData.append(key, value);
       }
@@ -158,340 +267,304 @@ function EditAdminVehicle({
           </button>
         </div>
 
-        <form
-          onSubmit={handleSubmit}
-          className="grid grid-cols-1 sm:grid-cols-2 gap-4"
-        >
-          <div className="flex flex-col">
-            <label className="block mb-2 font-semibold text-gray-700">
-              VIN
+        <form onSubmit={handleSubmit} className="space-y-2">
+          <div>
+            <label className="block text-sm font-medium text-gray-700 mb-1">
+              City <span className="text-red-500">*</span>
             </label>
-            <input
-              name="vin"
-              value={vehicleData.vin}
-              onChange={handleChange}
-              placeholder="VIN"
-              className="border border-gray-300 px-4 py-2 rounded focus:outline-none focus:ring-2 focus:ring-indigo-500 w-full"
-              required
-              maxLength={17}
+
+            <Select
+              onChange={handleSearchable}
+              options={cityData}
+              value={
+                cityData.find(
+                  (option) =>
+                    String(option.value) === String(vehicle?.locationId)
+                ) || null
+              }
+              isClearable
             />
+
+            <div>
+              <label className=" block text-sm font-medium text-gray-700 my-1">
+                Car Info <span className="text-red-500">*</span>
+              </label>
+              <input
+                onClick={handleUpdateCarInfo}
+                value={`${vehicle?.year || ""} ${vehicle?.make || ""} ${
+                  vehicle?.model || ""
+                } ${vehicle?.series || ""}`}
+                placeholder="Year/Make/Model/Version"
+                readOnly
+                className={`border border-gray-300 px-4 py-2 rounded focus:outline-none focus:ring-2 focus:ring-indigo-500 w-full ${
+                  vehicle.year &&
+                  vehicle.make &&
+                  vehicle.model &&
+                  vehicle.series
+                    ? "bg-green-200 text-green-700"
+                    : "bg-red-200"
+                }`}
+              />
+            </div>
           </div>
-          <div className="flex flex-col">
-            <label className="block mb-2 font-semibold text-gray-700">
-              Year
-            </label>
-            <input
-              name="year"
-              value={vehicleData.year}
-              onChange={handleChange}
-              placeholder="Year"
-              className="border border-gray-300 px-4 py-2 rounded focus:outline-none focus:ring-2 focus:ring-indigo-500 w-full"
-            />
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+            <div>
+              <label className="block text-sm font-medium text-gray-700 mb-1">
+                Vehicle Drive Type<span className="text-red-500">*</span>
+              </label>
+
+              <select
+                name="driveType"
+                value={vehicle.driveType}
+                onChange={handleChange}
+                className="border border-gray-300 px-4 py-2 rounded focus:outline-none focus:ring-2 focus:ring-indigo-500 w-full"
+              >
+                <option value="">Select Drive Type</option>
+                <option value="fwd">FWD (Front-Wheel Drive)</option>
+                <option value="rwd">RWD (Rear-Wheel Drive)</option>
+                <option value="awd">AWD (All-Wheel Drive)</option>
+                <option value="4wd">4WD (Four-Wheel Drive)</option>
+              </select>
+            </div>
+
+            <div>
+              <label className="block text-sm font-medium text-gray-700 mb-1">
+                Vehicle Body Style <span className="text-red-500">*</span>
+              </label>
+
+              <select
+                name="bodyStyle"
+                value={vehicle.bodyStyle}
+                onChange={handleChange}
+                className="border border-gray-300 px-4 py-2 rounded focus:outline-none focus:ring-2 focus:ring-indigo-500 w-full"
+              >
+                <option value={""}>Please Select BodyStyle</option>
+
+                {bodyStyles?.map((body) => (
+                  <option id={body} value={body}>
+                    {body}
+                  </option>
+                ))}
+              </select>
+            </div>
+
+            <div>
+              <label className="block text-sm font-medium text-gray-700 mb-1">
+                Vehicle Transmission Type<span className="text-red-500">*</span>
+              </label>
+
+              <select
+                name="transmission"
+                value={vehicle?.transmission || ""}
+                onChange={handleChange}
+                className="border border-gray-300 px-4 py-2 rounded focus:outline-none focus:ring-2 focus:ring-indigo-500 w-full"
+              >
+                <option value={""}>Please Select Transmission Type</option>
+                <option value={"Automatic"}>Automatic</option>
+                <option value={"Manual"}>Manual</option>
+              </select>
+            </div>
+
+            <div>
+              <label className=" block text-sm font-medium text-gray-700 mb-1">
+                Vehicle Meter Reading<span className="text-red-500">*</span>
+              </label>
+              <input
+                name="mileage"
+                value={vehicle?.mileage || ""}
+                onChange={(e) => {
+                  const value = e.target.value;
+                  if (/^\d*$/.test(value) && value.length <= 7) {
+                    handleChange(e);
+                  }
+                }}
+                placeholder="Meter Reading(KM)"
+                className="border border-gray-300 px-4 py-2 rounded focus:outline-none focus:ring-2 focus:ring-indigo-500 w-full"
+              />
+            </div>
+
+            <div>
+              <label className="block text-sm font-medium text-gray-700 mb-1">
+                Vehicle Color <span className="text-red-500">*</span>
+              </label>
+
+              <select
+                name="color"
+                value={vehicle.color || ""}
+                onChange={handleChange}
+                className="border border-gray-300 px-4 py-2 rounded focus:outline-none focus:ring-2 focus:ring-indigo-500 w-full"
+              >
+                <option value={""}>Please Select Color</option>
+
+                {carColors?.map((color) => (
+                  <option id={color} value={color}>
+                    {color}
+                  </option>
+                ))}
+              </select>
+            </div>
+
+            <div>
+              <label className="block text-sm font-medium text-gray-700 mb-1">
+                Vehicle Fuel Type<span className="text-red-500">*</span>
+              </label>
+              <select
+                name="fuelType"
+                value={vehicle.fuelType}
+                onChange={handleChange}
+                placeholder="Fuel Type"
+                className="border border-gray-300 px-4 py-2 rounded focus:outline-none focus:ring-2 focus:ring-indigo-500 w-full"
+              >
+                <option value="">Select Fuel Type</option>
+                <option value="petrol">Petrol</option>
+                <option value="diesel">Diesel</option>
+                <option value="cng">CNG (Compressed Natural Gas)</option>
+                <option value="lpg">LPG (Liquefied Petroleum Gas)</option>
+                <option value="electric">Electric</option>
+                <option value="hybrid">Hybrid</option>
+              </select>
+            </div>
+
+            <div>
+              <label className="block text-sm font-medium text-gray-700 mb-1">
+                Vehicle Condition<span className="text-red-500">*</span>
+              </label>
+
+              <select
+                name="vehicleCondition"
+                value={vehicle.vehicleCondition}
+                onChange={handleChange}
+                placeholder="Vehicle Condition"
+                className="border border-gray-300 px-4 py-2 rounded focus:outline-none focus:ring-2 focus:ring-indigo-500 w-full"
+              >
+                <option value="">Select Vehicle Condition</option>
+                <option value="new">New</option>
+                <option value="used">Used</option>
+                <option value="accidented">Accidented</option>
+              </select>
+            </div>
+
+            <div>
+              <label className=" block text-sm font-medium text-gray-700 mb-1">
+                Add Vehicle Price <span className="text-red-500">*</span>
+              </label>
+              <input
+                type="text"
+                name="buyNowPrice"
+                value={parsePrice(vehicle.buyNowPrice)}
+                onChange={(e) => {
+                  const value = e.target.value;
+
+                  if (/^\d*$/.test(value) && value.length <= 9) {
+                    handleChange(e);
+                  }
+                }}
+                placeholder="Add Price"
+                className="border border-gray-300 px-4 py-2 rounded focus:outline-none focus:ring-2 focus:ring-indigo-500 w-full"
+              />
+            </div>
           </div>
-          <div className="flex flex-col">
-            <label className="block mb-2 font-semibold text-gray-700">
-              Make
+
+          <div>
+            <label className="block text-sm font-medium text-gray-700 mb-1">
+              Certified Status <span className="text-red-500">*</span>
             </label>
-            <input
-              name="make"
-              value={vehicleData.make}
-              onChange={handleChange}
-              placeholder="Make"
-              className="border border-gray-300 px-4 py-2 rounded focus:outline-none focus:ring-2 focus:ring-indigo-500 w-full"
-              required
-            />
-          </div>
-          <div className="flex flex-col">
-            <label className="block mb-2 font-semibold text-gray-700">
-              Model
-            </label>
-            <input
-              name="model"
-              value={vehicleData.model}
-              onChange={handleChange}
-              placeholder="Model"
-              className="border border-gray-300 px-4 py-2 rounded focus:outline-none focus:ring-2 focus:ring-indigo-500 w-full"
-              required
-            />
-          </div>
-          <div className="flex flex-col">
-            <label className="block mb-2 font-semibold text-gray-700">
-              Series
-            </label>
-            <input
-              name="series"
-              value={vehicleData.series}
-              onChange={handleChange}
-              placeholder="Series"
-              className="border border-gray-300 px-4 py-2 rounded focus:outline-none focus:ring-2 focus:ring-indigo-500 w-full"
-            />
-          </div>
-          <div className="flex flex-col">
-            <label className="block mb-2 font-semibold text-gray-700">
-              Body Style
-            </label>
-            <input
-              name="bodyStyle"
-              value={vehicleData.bodyStyle}
-              onChange={handleChange}
-              placeholder="Body Style"
-              className="border border-gray-300 px-4 py-2 rounded focus:outline-none focus:ring-2 focus:ring-indigo-500 w-full"
-            />
-          </div>
-          <div className="flex flex-col">
-            <label className="block mb-2 font-semibold text-gray-700">
-              Engine
-            </label>
-            <input
-              name="engine"
-              value={vehicleData.engine}
-              onChange={handleChange}
-              placeholder="Engine"
-              className="border border-gray-300 px-4 py-2 rounded focus:outline-none focus:ring-2 focus:ring-indigo-500 w-full"
-            />
-          </div>
-          <div className="flex flex-col">
-            <label className="block mb-2 font-semibold text-gray-700">
-              Engine
-            </label>
-            <input
-              name="engine"
-              value={vehicleData.engine}
-              onChange={handleChange}
-              placeholder="Engine"
-              className="border border-gray-300 px-4 py-2 rounded focus:outline-none focus:ring-2 focus:ring-indigo-500 w-full"
-            />
-          </div>
-          <div className="flex flex-col">
-            <label className="block mb-2 font-semibold text-gray-700">
-              Transmission
-            </label>
-            <input
-              name="transmission"
-              value={vehicleData.transmission}
-              onChange={handleChange}
-              placeholder="Transmission"
-              className="border border-gray-300 px-4 py-2 rounded focus:outline-none focus:ring-2 focus:ring-indigo-500 w-full"
-            />
-          </div>
-          <div className="flex flex-col">
-            <label className="block mb-2 font-semibold text-gray-700">
-              Drive Type
-            </label>
-            <input
-              name="driveType"
-              value={vehicleData.driveType}
-              onChange={handleChange}
-              placeholder="Drive Type"
-              className="border border-gray-300 px-4 py-2 rounded focus:outline-none focus:ring-2 focus:ring-indigo-500 w-full"
-            />
-          </div>
-          <div className="flex flex-col">
-            <label className="block mb-2 font-semibold text-gray-700">
-              Fuel Type
-            </label>
-            <input
-              name="fuelType"
-              value={vehicleData.fuelType}
-              onChange={handleChange}
-              placeholder="Fuel Type"
-              className="border border-gray-300 px-4 py-2 rounded focus:outline-none focus:ring-2 focus:ring-indigo-500 w-full"
-            />
-          </div>
-          <div className="flex flex-col">
-            <label className="block mb-2 font-semibold text-gray-700">
-              Color
-            </label>
-            <input
-              name="color"
-              value={vehicleData.color}
-              onChange={handleChange}
-              placeholder="Color"
-              className="border border-gray-300 px-4 py-2 rounded focus:outline-none focus:ring-2 focus:ring-indigo-500 w-full"
-            />
-          </div>
-          <div className="flex flex-col">
-            <label className="block mb-2 font-semibold text-gray-700">
-              Mileage
-            </label>
-            <input
-              name="mileage"
-              value={vehicleData.mileage}
-              onChange={handleChange}
-              placeholder="Mileage"
-              className="border border-gray-300 px-4 py-2 rounded focus:outline-none focus:ring-2 focus:ring-indigo-500 w-full"
-            />
-          </div>
-          <div className="flex flex-col">
-            <label className="block mb-2 font-semibold text-gray-700">
-              Mileage
-            </label>
-            <input
-              name="mileage"
-              value={vehicleData.mileage}
-              onChange={handleChange}
-              placeholder="Mileage"
-              className="border border-gray-300 px-4 py-2 rounded focus:outline-none focus:ring-2 focus:ring-indigo-500 w-full"
-            />
-          </div>
-          <div className="flex flex-col">
-            <label className="block mb-2 font-semibold text-gray-700">
-              Vehicle Condition
-            </label>
-            <input
-              name="vehicleCondition"
-              value={vehicleData.vehicleCondition}
-              onChange={handleChange}
-              placeholder="Vehicle Condition"
-              className="border border-gray-300 px-4 py-2 rounded focus:outline-none focus:ring-2 focus:ring-indigo-500 w-full"
-            />
-          </div>
-          <div className="flex flex-col">
-            <label className="block mb-2 font-semibold text-gray-700">
-              Keys Available
-            </label>
-            <input
-              name="keysAvailable"
-              value={vehicleData.keysAvailable}
-              onChange={handleChange}
-              placeholder="Keys Available"
-              className="border border-gray-300 px-4 py-2 rounded focus:outline-none focus:ring-2 focus:ring-indigo-500 w-full"
-            />
-          </div>
-          <div className="flex flex-col">
-            <label className="block mb-2 font-semibold text-gray-700">
-              Keys Available
-            </label>
-            <input
-              name="keysAvailable"
-              value={vehicleData.keysAvailable}
-              onChange={handleChange}
-              placeholder="Keys Available"
-              className="border border-gray-300 px-4 py-2 rounded focus:outline-none focus:ring-2 focus:ring-indigo-500 w-full"
-            />
-          </div>
-          <div className="flex flex-col">
-            <label className="block mb-2 font-semibold text-gray-700">
-              Location ID
-            </label>
-            <input
-              name="locationId"
-              value={vehicleData.locationId}
-              onChange={handleChange}
-              placeholder="Location ID"
-              className="border border-gray-300 px-4 py-2 rounded focus:outline-none focus:ring-2 focus:ring-indigo-500 w-full"
-            />
-          </div>
-          <div className="flex flex-col">
-            <label className="block mb-2 font-semibold text-gray-700">
-              Sale Status
-            </label>
-            <input
-              name="saleStatus"
-              value={vehicleData.saleStatus}
-              onChange={handleChange}
-              placeholder="Sale Status"
-              className="border border-gray-300 px-4 py-2 rounded focus:outline-none focus:ring-2 focus:ring-indigo-500 w-full"
-            />
-          </div>
-          <div className="flex flex-col">
-            <label className="block mb-2 font-semibold text-gray-700">
-              Auction Date
-            </label>
-            <input
-              name="auctionDate"
-              value={vehicleData.auctionDate.slice(0, 10)}
-              onChange={handleChange}
-              placeholder="Sale Status"
-              className="border border-gray-300 px-4 py-2 rounded focus:outline-none focus:ring-2 focus:ring-indigo-500 w-full"
-            />
-          </div>
-          <div className="flex flex-col">
-            <label className="block mb-2 font-semibold text-gray-700">
-              Current Bid
-            </label>
-            <input
-              name="currentBid"
-              value={vehicleData.currentBid}
-              onChange={handleChange}
-              placeholder="Current Bid"
-              className="border border-gray-300 px-4 py-2 rounded focus:outline-none focus:ring-2 focus:ring-indigo-500 w-full"
-            />
-          </div>
-          <div className="flex flex-col">
-            <label className="block mb-2 font-semibold text-gray-700">
-              Buy Now Price
-            </label>
-            <input
-              name="buyNowPrice"
-              value={vehicleData.buyNowPrice}
-              onChange={handleChange}
-              placeholder="Buy Now Price"
-              className="border border-gray-300 px-4 py-2 rounded focus:outline-none focus:ring-2 focus:ring-indigo-500 w-full"
-            />
-          </div>
-          <div className="flex flex-col">
-            <label className="block mb-2 font-semibold text-gray-700">
-              Buy Now Price
-            </label>
-            <input
-              name="buyNowPrice"
-              value={vehicleData.buyNowPrice}
-              onChange={handleChange}
-              placeholder="Buy Now Price"
-              className="border border-gray-300 px-4 py-2 rounded focus:outline-none focus:ring-2 focus:ring-indigo-500 w-full"
-            />
-          </div>
-          <div className="flex flex-col">
-            <label className="block mb-2 font-semibold text-gray-700">
-              Certify Status
-            </label>
-            <input
+
+            <select
               name="certifyStatus"
-              value={vehicleData.certifyStatus}
+              value={vehicle.certifyStatus}
               onChange={handleChange}
               placeholder="Certify Status"
               className="border border-gray-300 px-4 py-2 rounded focus:outline-none focus:ring-2 focus:ring-indigo-500 w-full"
-            />
+            >
+              <option value="">Please Select Certify Status</option>
+              <option value="Certified">Certified</option>
+              <option value="Non-Certified">NonCertified</option>
+            </select>
           </div>
 
           {/* Image Upload */}
-          <div className="flex items-center justify-between">
-            <div className="flex flex-col">
-              <label className="block mb-2 font-semibold text-gray-700">
-                Vehicle Image
-              </label>
-              <input
-                type="file"
-                accept="image/*"
-                name="image"
-                onChange={handleChange}
-                className="w-full text-sm file:px-4 file:py-2 file:bg-indigo-600 file:text-white file:rounded file:cursor-pointer"
-              />
-            </div>
-            {imagePreview && (
-              <div className="mt-2">
-                <img
-                  src={imagePreview}
-                  alt="Vehicle preview"
-                  className="h-32 object-contain"
-                />
-                <p className="text-sm text-gray-500 mt-1">Current image</p>
-              </div>
-            )}
-          </div>
 
-          <div className="col-span-full flex justify-center mt-4">
-            <button
-              type="submit"
-              disabled={loading}
-              className={`bg-indigo-600 text-white px-4 py-2 rounded hover:bg-indigo-700 w-full ${
-                loading ? "opacity-50 cursor-not-allowed" : ""
-              }`}
-            >
-              {loading ? "Updating..." : "Update Vehicle"}
-            </button>
+          {<img src={vehicle} />}
+
+          {/* Submit Button */}
+          <div className="col-span-1 sm:col-span-2 mt-4">
+            <div className="mb-6">
+              <label className="block text-sm font-medium text-gray-700 mb-2">
+                Vehicle Images <span className="text-red-500">*</span>
+              </label>
+
+              <div className="flex items-center justify-center w-full">
+                <label
+                  htmlFor="vehicleImage"
+                  className="flex flex-col items-center justify-center w-full h-40 border-2 border-dashed border-gray-300 rounded-lg cursor-pointer bg-gray-50 hover:bg-gray-100 transition"
+                >
+                  <div className="flex flex-col items-center justify-center pt-5 pb-6">
+                    <svg
+                      className="w-10 h-10 mb-3 text-gray-400"
+                      fill="none"
+                      stroke="currentColor"
+                      strokeWidth="2"
+                      viewBox="0 0 24 24"
+                    >
+                      <path
+                        strokeLinecap="round"
+                        strokeLinejoin="round"
+                        d="M7 16a4 4 0 01-.88-7.903A5.002 5.002 0 0115.9 6H16a5 5 0 010 10h-1m-4 4v-8m0 0l-3 3m3-3l3 3"
+                      />
+                    </svg>
+                    <p className="text-sm text-gray-600">
+                      <span className="font-medium text-indigo-600">
+                        Click to upload
+                      </span>
+                    </p>
+                    <p className="text-xs text-gray-400">
+                      PNG, JPG (Max 5MB each)
+                    </p>
+                    <p className="text-xs text-gray-400 px-2">
+                      You can add maximum 5 images and first image will be used
+                      as front on the card
+                    </p>
+
+                    {/* Selected images count show karega */}
+                    {selectedCount > 0 && (
+                      <p className="text-sm text-green-600 font-medium mt-2">
+                        {selectedCount} image
+                        {selectedCount > 1 ? "s" : ""} selected
+                      </p>
+                    )}
+                  </div>
+
+                  <input
+                    id="vehicleImage"
+                    type="file"
+                    multiple
+                    name="image"
+                    onChange={handleFileChange}
+                    className="hidden"
+                  />
+                </label>
+              </div>
+            </div>
+            <div className="flex justify-center">
+              <button
+                type="submit"
+                disabled={loading}
+                className="bg-indigo-600 text-white px-5 py-2 rounded-lg shadow-md hover:bg-indigo-700 transition"
+              >
+                {loading ? "loading..." : "Submit Vehicle"}
+              </button>
+            </div>
           </div>
+          {isOpen === "selector" && (
+            <div className="fixed inset-0 bg-opacity-40 flex items-center justify-center z-50">
+              <div className="w-full max-w-5xl bg-white p-6 rounded-lg shadow-lg relative">
+                <CarSelector
+                  handleIsOpenToggle={() => handleIsOpenToggle("")}
+                />
+              </div>
+            </div>
+          )}
         </form>
       </div>
     </div>

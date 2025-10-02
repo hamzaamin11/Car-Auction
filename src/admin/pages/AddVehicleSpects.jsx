@@ -7,6 +7,7 @@ import {
   navigationSuccess,
 } from "../../components/Redux/NavigationSlice";
 import { RotateLoader } from "../../components/Loader/RotateLoader";
+import { BASE_URL } from "../../components/Contant/URL";
 
 const AddVehicleSpects = () => {
   const { loader } = useSelector((state) => state?.navigateState);
@@ -168,7 +169,7 @@ const AddVehicleSpects = () => {
                   getVehicles?.map((vehicle) => (
                     <option key={vehicle.id} value={vehicle.id}>
                       {vehicle.make} {vehicle.model} ({vehicle.year}) -{" "}
-                      {vehicle.vin}
+                      {vehicle.series}
                     </option>
                   ))}
               </select>

@@ -1,4 +1,3 @@
-import React from "react";
 import {
   BrowserRouter as Router,
   Routes,
@@ -7,12 +6,11 @@ import {
 } from "react-router-dom";
 
 import "./App.css";
+
 import ScrollToTop from "./pages/ScrollTop";
 
 import Navbar from "./components/Navbar";
 import Footer from "./components/Footer";
-import AnimatedCursor from "./components/AnimatedCursor";
-
 import Home from "./pages/Home";
 import About from "./pages/about";
 import ContactUs from "./pages/contact";
@@ -77,7 +75,21 @@ import SellerProtectedRoute from "./SellerProtectedRoute";
 import CustomerList from "./admin/pages/CustomerList";
 import FilterPriceCars from "./pages/FilterPriceCars";
 import { useSelector } from "react-redux";
-import {  BrandList } from "./admin/pages/BrandList";
+import { BrandList } from "./admin/pages/BrandList";
+import { Customerbid } from "./admin/pages/Customerbid";
+import { SellerIntro } from "./pages/SellerIntro";
+import { SellerDashboard } from "./admin/pages/SellerDashboard";
+import RegistrationWithEmail from "./components/RegistrationWithEmail";
+import ValidationEmail from "./pages/ValidationEmail";
+import { ModelList } from "./pages/ModelList";
+import { SeriesList } from "./components/SeriesList";
+import { BecomePartner } from "./pages/BecomePartner";
+import { Suggestion } from "./pages/Suggestion";
+import { SuggestionList } from "./admin/pages/SuggestionList";
+import { ContactList } from "./admin/pages/ContactList";
+import { BecomePartnerList } from "./admin/pages/BecomePartnerList";
+import { CitiesList } from "./pages/CitiesList";
+
 
 function Layout() {
   const location = useLocation();
@@ -95,44 +107,84 @@ function Layout() {
       {!hideNavbarFooter && location.pathname === "/"}
       <ScrollToTop />
 
-      {role === "admin" || role === "seller"
+      {role === "admin" || role === "seller" || location.pathname === "/"
         ? null
         : !hideNavbarFooter && <Navbar />}
+
+      {location.pathname === "/" && <Navbar />}
 
       <Routes>
         {/* Main Routes */}
         <Route path="/" element={<Home />} />
+
         <Route path="/about" element={<About />} />
+
         <Route path="/contact" element={<ContactUs />} />
+
+        <Route path="/partner" element={<BecomePartner />} />
+
+        <Route path="/suggestion" element={<Suggestion />} />
+
         <Route path="/register" element={<Register />} />
+
+        <Route path="/validation" element={<ValidationEmail />} />
+
+        <Route path="/registerwitemail" element={<RegistrationWithEmail />} />
+
         <Route path="/login" element={<Signin />} />
+
         <Route path="/work" element={<HowItWorks />} />
+
         <Route path="/finder" element={<VehicleFinder />} />
+
         <Route path="/Allvehicles" element={<AllVehicles />} />
+
         <Route path="/Usedvehicles" element={<UsedVehicles />} />
+
         <Route path="/make" element={<SearchByMake />} />
+
+        <Route path="/sellerIntro" element={<SellerIntro />} />
+
         <Route path="/saleslist" element={<SalesList />} />
+
         <Route path="/saved" element={<SavedSearches />} />
+
         <Route path="/alerts" element={<VehicleAlerts />} />
+
         <Route path="/today" element={<TodaysAuctions />} />
+
         <Route path="/carPrice/:carType" element={<AudiPricelist />} />
+
         <Route path="/standardline/:id" element={<AudiStandardLine />} />
+
+        <Route path="/detailbid/:id" element={<Customerbid />} />
+
         <Route path="/roadprice" element={<GetRoadPrice />} />
+
         <Route path="/OnRoadPriceCalculator/:city" element={<OnRoadPrice />} />
+
         <Route path="/import" element={<ImportCarForm />} />
+
         <Route path="/calendar" element={<AuctionsCalendar />} />
+
         <Route path="/join" element={<JoinAuctions />} />
+
         <Route path="/calculator" element={<PriceCalculator />} />
+
         <Route path="/certified" element={<CertifiedCarsPage />} />
+
         <Route path="/buy" element={<BuyYourVehicle />} />
+
         <Route path="/sell" element={<SellInAuction />} />
+
         <Route path="/center" element={<SupportCenter />} />
+
         <Route path="/delivery" element={<VehicleDelivery />} />
         <Route path="/news" element={<ChaudhryNews />} />
 
         <Route path="/details/:type" element={<UsedCars />} />
 
-        <Route path="/filterprice/:tab" element={<FilterPriceCars />} />
+        <Route path="/filterprice/:name/:value" element={<FilterPriceCars />} />
 
         <Route path="/Salvagevehicles" element={<SalvageVehicles />} />
         <Route path="/add-vehicles" element={<AddVehicles />} />
@@ -156,6 +208,18 @@ function Layout() {
           <Route index element={<AdminDashboard />} />
           <Route path="vehicles" element={<AddAdminVehicle />} />
           <Route path="/admin/addbrand" element={<BrandList />} />
+          <Route path="/admin/addmodel" element={<ModelList />} />
+          <Route path="/admin/addseries" element={<SeriesList />} />
+            <Route path="/admin/city" element={<CitiesList />} />
+
+          <Route path="/admin/suggestionlist" element={<SuggestionList />} />
+
+          <Route path="/admin/contactlist" element={<ContactList />} />
+
+          <Route
+            path="/admin/becomepartnerlist"
+            element={<BecomePartnerList />}
+          />
 
           <Route path="vehicle-prices" element={<AddVehiclePrices />} />
           <Route path="vehicle-spects" element={<AddVehicleSpects />} />
@@ -175,7 +239,9 @@ function Layout() {
             </SellerProtectedRoute>
           }
         >
-          <Route index element={<AddVehicles />} /> {/* /seller */}
+          <Route path="/seller/dashboard" element={<SellerDashboard />} />
+          <Route path="/seller/addVehicle" element={<AddVehicles />} />{" "}
+          {/* /seller */}
           <Route path="add-vehicles" element={<AddVehicles />} />{" "}
           {/* /seller/add-vehicles */}
           <Route path="vehicle-prices" element={<SellerVehiclePrices />} />

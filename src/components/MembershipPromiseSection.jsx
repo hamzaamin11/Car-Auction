@@ -1,7 +1,7 @@
-import React, { useEffect } from 'react';
-import { Link } from 'react-router-dom';
-import AOS from 'aos';
-import 'aos/dist/aos.css';
+import React, { useEffect } from "react";
+import { Link } from "react-router-dom";
+import AOS from "aos";
+import "aos/dist/aos.css";
 
 const MembershipPromiseSection = () => {
   useEffect(() => {
@@ -12,21 +12,27 @@ const MembershipPromiseSection = () => {
     <div className="w-full bg-white py-12 overflow-hidden">
       <div className="max-w-7xl mx-auto px-4 md:px-8">
         <div className="grid grid-cols-1 md:grid-cols-12 gap-8 items-center">
-
-         
           <div className="md:col-span-6" data-aos="fade-right">
-            <h2 className="text-3xl font-bold text-blue-900 mb-4">Our Promise to Members</h2>
+            <h2 className="text-3xl font-bold text-blue-900 mb-4">
+              Our Promise to Members
+            </h2>
 
             <p className="text-black mb-4 font-semibold">
-              At CHAUDHRY, we are committed to providing our Members with an unbeatable auction experience.
+              At WheelBidz, we are committed to providing our Members with an
+              unbeatable auction experience.
             </p>
 
             <p className="text-black mb-4 leading-relaxed">
-              And we think that our combination of stock variety, online auction convenience and nationwide presence (with locations based all over the Pakistan), means that we can do just that...
+              And we think that our combination of stock variety, online auction
+              convenience and nationwide presence (with locations based all over
+              the Pakistan), means that we can do just that...
             </p>
 
             <p className="text-black mb-6 leading-relaxed">
-              Whether you’re a car dealer, business owner or dismantler, a browse through our extensive variety of vehicles (including the largest selection of New stock in Pakisatn), should assure that CHAUDHRY Cars Auction has something to suit all trade needs and requirements.
+              Whether you’re a car dealer, business owner or dismantler, a
+              browse through our extensive variety of vehicles (including the
+              largest selection of New stock in Pakisatn), should assure that
+              WheelBidz has something to suit all trade needs and requirements.
             </p>
 
             <Link to="/register">
@@ -36,10 +42,8 @@ const MembershipPromiseSection = () => {
             </Link>
           </div>
 
-        
           <div className="md:col-span-1 hidden md:block"></div>
 
-         
           <div className="md:col-span-5" data-aos="fade-left">
             <Link to="/register">
               <img

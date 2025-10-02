@@ -3,7 +3,6 @@ import axios from "axios";
 import { BASE_URL } from "../components/Contant/URL";
 
 const ImportCarForm = ({ handleClose, vehicleId }) => {
-
   const [make, setMake] = useState("");
 
   const [model, setModel] = useState("");
@@ -68,8 +67,6 @@ const ImportCarForm = ({ handleClose, vehicleId }) => {
       console.error("Get Models Error:", error);
     }
   };
-
-
 
   useEffect(() => {
     document.body.style.overflow = "hidden";
@@ -214,8 +211,8 @@ const ImportCarForm = ({ handleClose, vehicleId }) => {
         </div>
 
         <div className="text-sm text-gray-500 mt-2">
-          I authorize CHAUDHRY Cars Auction to share my contact information with
-          its partners to get in touch with me through email, SMS or phone.
+          I authorize WheelBidz to share my contact information with its
+          partners to get in touch with me through email, SMS or phone.
         </div>
 
         <div className="text-center pt-4">

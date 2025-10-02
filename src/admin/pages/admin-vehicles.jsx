@@ -18,27 +18,265 @@ import { RotateLoader } from "../../components/Loader/RotateLoader";
 import { AdminAddBid } from "../../components/AdminAddBidComponent/AdminAddBid";
 import axios from "axios";
 import { BidderModal } from "../../components/ViewBiderPeoples/BidderModal";
+import Swal from "sweetalert2";
+import Select from "react-select";
+import CarSelector from "../../components/CarSelector";
+import {
+  addMake,
+  addModel,
+  addSeries,
+  addYear,
+} from "../../components/Redux/SelectorCarSlice";
+import AllVehicles from "../../pages/Allvehicles";
+
+const bodyStyles = [
+  "Convertible",
+  "Coupe",
+  "Crossover",
+  "Hatchback",
+  "Minivan",
+  "Pickup Truck",
+  "Sedan",
+  "Station Wagon",
+  "SUV",
+  "Van",
+];
+
+const carColors = [
+  "White",
+  "Black",
+  "Silver",
+  "Gray",
+  "Red",
+  "Blue",
+  "Green",
+  "Yellow",
+  "Orange",
+  "Brown",
+  "Beige",
+  "Gold",
+  "Maroon",
+  "Purple",
+  "Pink",
+  "Turquoise",
+];
+
+const Cities = [
+  // A
+  "Abbottabad",
+  "Addul Hakeem",
+  "Ahmadpur East",
+  "Ahmednagar",
+  "Alipur",
+  "Arandu",
+  "Arifwala",
+  "Atharan Hazari",
+  "Attock",
+
+  // B
+  "Badah",
+  "Badin",
+  "Bahawalnagar",
+  "Bahawalpur",
+  "Balakot",
+  "Bannu",
+  "Barkhan",
+  "Basirpur",
+  "Basti Maluk",
+  "Bela",
+  "Bhag",
+  "Bhakkar",
+  "Bhan",
+  "Bhera",
+  "Bucheki",
+
+  // C
+  "Chacharan Sharif",
+  "Chak Jhumra",
+  "Chakwal",
+  "Chaman",
+  "Charsadda",
+  "Chawinda",
+  "Chichawatni",
+  "Chiniot",
+  "Chitral",
+  "Choubara",
+  "Chunian",
+
+  // D
+  "Dadu",
+  "Daira Din Panah",
+  "Dalbandin",
+  "Daulatpur",
+  "Daur",
+  "Depalpur",
+  "Dera Bugti",
+  "Dera Ghazi Khan",
+  "Dera Ismail Khan",
+  "Dhadar",
+  "Digri",
+  "Dijkot",
+  "Dinga",
+  "Diplo",
+  "Dir",
+  "Drosh",
+  "Dudhial",
+  "Duki",
+  "Dunyapur",
+
+  // E
+  "Eminabad",
+
+  // F
+  "Faisalabad",
+  "Fateh Jang",
+  "Fateh Pur",
+  "Firozwala",
+  "Fort Abbas",
+
+  // G
+  "Gaddani",
+  "Gambat",
+  "Garhi Khairo",
+  "Gharibwal",
+  "Gharo",
+  "Gilgit",
+  "Gojra",
+  "Gujranwala",
+  "Gujrat",
+  "Gwadar",
+
+  // H
+  "Hafizabad",
+  "Hala",
+  "Hangu",
+  "Haripur",
+  "Harnai",
+  "Haroonabad",
+  "Hasilpur",
+  "Havelian",
+  "Hoshab",
+  "Hyderabad",
+
+  // I
+  "Isa Khel",
+  "Islamabad",
+
+  // J
+  "Jacobabad",
+  "Jaranwala",
+  "Jhang",
+  "Jhelum",
+  "Jamshoro",
+
+  // K
+  "Karachi",
+  "Kamalia",
+  "Kamoke",
+  "Kandhkot",
+  "Kasur",
+  "Khairpur",
+  "Khushab",
+  "Khuzdar",
+  "Kohat",
+  "Kot Abdul Malik",
+  "Kot Addu",
+  "Kotri",
+
+  // L
+  "Lahore",
+  "Larkana",
+  "Layyah",
+  "Lodhran",
+
+  // M
+  "Mandi Bahauddin",
+  "Mansehra",
+  "Mardan",
+  "Mianwali",
+  "Mirpur Khas",
+  "Mirpur (Azad Kashmir)",
+  "Mingora",
+  "Muzaffarabad",
+  "Muzaffargarh",
+  "Multan",
+  "Muridke",
+
+  // N
+  "Nawabshah",
+  "Narowal",
+  "Nowshera",
+
+  // O
+  "Okara",
+
+  // P
+  "Pakpattan",
+  "Parachinar",
+
+  // Q
+  "Quetta",
+  "Qambar Shahdadkot",
+
+  // R
+  "Rahim Yar Khan",
+  "Rawalpindi",
+  "Rabwah",
+
+  // S
+  "Sadiqabad",
+  "Sahiwal",
+  "Sambrial",
+  "Sanghar",
+  "Sargodha",
+  "Shaheed Benazirabad (Nawabshah)",
+  "Sheikhupura",
+  "Shikarpur",
+  "Sialkot",
+  "Sukkur",
+  "Swabi",
+
+  // T
+  "Taxila",
+  "Tando Adam",
+  "Tando Allahyar",
+  "Tando Muhammad Khan",
+  "Talagang",
+  "Tharparkar",
+  "Thatta",
+  "Turβat",
+
+  // V
+  "Vehari",
+
+  // W
+  "Wah Cantonment",
+  "Wazirabad",
+  "WeTa? (ignore)",
+
+  // Z
+  "Zabād",
+  "Zafarke",
+  "Zafarwal",
+  "Zahir Pir",
+  "Zahri",
+  "Zaida",
+];
 
 function AddAdminVehicle({ open, setOpen, onVehicleUpdated }) {
   const initialVehicleState = {
-    vin: "",
     year: "",
     make: "",
     model: "",
     series: "",
     bodyStyle: "",
-    engine: "",
-    transmission: "",
-    driveType: "",
-    fuelType: "",
+    transmission: "Automatic",
+    driveType: "fwd",
+    fuelType: "petrol",
     color: "",
     mileage: "",
-    vehicleCondition: "",
-    keysAvailable: "",
+    vehicleCondition: "new",
     locationId: "",
-    saleStatus: "",
-    auctionDate: "",
-    currentBid: "",
     buyNowPrice: "",
     certifyStatus: "",
     image: [],
@@ -46,17 +284,29 @@ function AddAdminVehicle({ open, setOpen, onVehicleUpdated }) {
 
   const { currentUser } = useSelector((state) => state?.auth);
 
-  const { loader } = useSelector((state) => state?.navigateState);
+  const selected = useSelector((state) => state.carSelector);
 
   const [vehicle, setVehicle] = useState(initialVehicleState);
 
+  const [allCities, setAllCities] = useState([]);
+
+  console.log("allCities =>", allCities);
+
+  console.log(" =>", vehicle.certifyStatus);
+
+  const [allVehicles, setAllVehicles] = useState([]);
+
+  console.log(AllVehicles);
+
   const [isOpenBid, setIsOpenBid] = useState(false);
 
-  console.log("vehicle", vehicle);
+  const [isOpen, setIsOpen] = useState("");
 
   const [viewBider, setViewBider] = useState(false);
 
-  console.log(viewBider);
+  const [loading, setLoading] = useState(false);
+
+  console.log("loading =>", loading);
 
   const [getVehicleId, setGetVehicleId] = useState(null);
 
@@ -68,9 +318,25 @@ function AddAdminVehicle({ open, setOpen, onVehicleUpdated }) {
 
   const [viewModal, setViewModal] = useState(false);
 
+  const [search, setSearch] = useState("");
+
   const [selectedVehicle, setSelectedVehicle] = useState(null);
 
-  console.log("selectVehicle =>", selectedVehicle);
+  const [actionBtn, setActionBtn] = useState(null);
+
+  const [pageNo, setPageNo] = useState(1);
+
+  const handleNextPage = () => {
+    setPageNo(pageNo + 1);
+  };
+
+  const handlePrevPage = () => {
+    setPageNo(pageNo > 0 ? pageNo - 1 : 0);
+  };
+
+  const handleClickActionBtn = (active) => {
+    setActionBtn((prev) => (prev === active ? null : active));
+  };
 
   const { getVehicles, delVehicle, getAllVehicles } =
     useContext(VehicleContext); // ✅ Ensure VehicleContext is imported
@@ -78,6 +344,14 @@ function AddAdminVehicle({ open, setOpen, onVehicleUpdated }) {
   const { user } = useAuth();
 
   const dispatch = useDispatch();
+
+  const [selectedCount, setSelectedCount] = useState(0);
+
+  const handleFileChange = (e) => {
+    const files = e.target.files;
+    setSelectedCount(files.length); // kitni images select hui hain
+    handleAddedImage(e); // aapka existing handler call karna
+  };
 
   // const handleChange = (e) => {
   //   const { name, type, value, files } = e.target;
@@ -92,8 +366,81 @@ function AddAdminVehicle({ open, setOpen, onVehicleUpdated }) {
     setVehicle({ ...vehicle, [name]: value });
   };
 
-  const handleImage = (e) => {
+  const handleSearchable = (selectedOption) => {
+    setVehicle((prev) => ({
+      ...prev,
+      locationId: selectedOption.value,
+    }));
+  };
+
+  const handleGetVehicles = async () => {
+    try {
+      const res = await axios.get(
+        `${BASE_URL}/seller/getVehicles?search=${search}&page=${pageNo}&entry=${10}`
+      );
+      console.log(res.data);
+      setAllVehicles(res.data);
+    } catch (error) {
+      console.log(error);
+    }
+  };
+
+  const handleGetAllCities = async () => {
+    setLoading(true);
+    try {
+      const res = await axios.get(`${BASE_URL}/getCitites`);
+
+      setAllCities(res.data);
+      setLoading(false);
+    } catch (error) {
+      console.log(error);
+      setLoading(false);
+    }
+  };
+
+  const cityData = [
+    { label: "Select City", value: "" },
+    ...(allCities?.map((city) => ({
+      label: city.cityName,
+      value: city.id,
+    })) || []),
+  ];
+
+  const handleIsOpenToggle = (active) => {
+    setIsOpen((prev) => (prev === active ? "" : active));
+  };
+
+  const handleUpdateCarInfo = () => {
+    handleIsOpenToggle("selector");
+  };
+
+  const handleDeleteVehicle = async (id) => {
+    const result = await Swal.fire({
+      title: "Are you sure?",
+      text: "This vehicle will be deleted.",
+      icon: "warning",
+      showCancelButton: true,
+      confirmButtonColor: "#9333ea",
+      cancelButtonColor: "#d33",
+      confirmButtonText: "Yes, delete it!",
+    });
+
+    if (!result.isConfirmed) return;
+
+    try {
+      const res = await axios.patch(`${BASE_URL}/seller/deleteVehicle/${id}`);
+      console.log(res.data);
+      handleGetVehicles();
+      toast.info("Vehicle has been deleted successfully");
+    } catch (error) {
+      console.log(error);
+    }
+  };
+
+  const handleAddedImage = (e) => {
     const files = Array.from(e.target.files); // get selected files as array
+
+    if (files.length > 5) return toast.error("You can added maximum 5 images");
     setVehicle((prev) => ({
       ...prev,
       image: [...prev.image, ...files], // append new images to previous ones
@@ -108,15 +455,31 @@ function AddAdminVehicle({ open, setOpen, onVehicleUpdated }) {
       dispatch(navigationSuccess("submit"));
     }, 1000);
   }, []);
+
+  useEffect(() => {
+    handleGetVehicles();
+  }, [search, pageNo]);
+
   const handleSubmit = async (e) => {
     e.preventDefault();
+    setLoading(true);
 
-    const formData = new FormData();
-
-    if (vehicle.image.length < 4) {
-      return toast.error("Please Add Maximum 5 Images ");
+    // ✅ Validation Step
+    for (const [key, value] of Object.entries(vehicle)) {
+      if (key === "image") {
+        if (!value || value.length === 0) {
+          toast.error("Please upload at least one image");
+          setLoading(false);
+          return;
+        }
+      } else if (!value || value.toString().trim() === "") {
+        toast.error(`Please fill out the ${key} field`);
+        setLoading(false);
+        return;
+      }
     }
 
+    const formData = new FormData();
     formData.append("userId", currentUser?.id);
 
     Object.entries(vehicle).forEach(([key, value]) => {
@@ -135,35 +498,21 @@ function AddAdminVehicle({ open, setOpen, onVehicleUpdated }) {
       console.log(key, value);
     }
 
-    const loadingToast = toast.loading("Submitting...");
-
     try {
       const res = await fetch(`${BASE_URL}/seller/addVehicle`, {
         method: "POST",
         body: formData,
       });
 
-      if (res.ok) {
-        toast.update(loadingToast, {
-          render: "Vehicle Added Successfully!",
-          type: "success",
-          isLoading: false,
-          autoClose: 3000,
-        });
-        setVehicle(initialVehicleState);
-        getAllVehicles();
-        setShowModal(false);
-      } else {
-        toast.update(loadingToast, {
-          render: "Failed to add vehicle.",
-          type: "error",
-          isLoading: false,
-          autoClose: 3000,
-        });
-      }
+      setVehicle(initialVehicleState);
+      handleGetVehicles();
+      setShowModal(false);
+      setLoading(false);
+      toast.success("Vehicle Added successfully");
     } catch (error) {
       toast.error(error?.response?.data?.message || "An error occurred");
       console.log(error);
+      setLoading(false);
     }
   };
 
@@ -179,7 +528,6 @@ function AddAdminVehicle({ open, setOpen, onVehicleUpdated }) {
   };
 
   useEffect(() => {
-    getAllVehicles();
     if (getVehicleId) {
       handleViewBidder();
     }
@@ -199,22 +547,68 @@ function AddAdminVehicle({ open, setOpen, onVehicleUpdated }) {
 
   const [showModal, setShowModal] = useState(false);
 
-  if (loader) return <RotateLoader />;
+  useEffect(() => {
+    setVehicle((prev) => ({
+      ...prev,
+      year: selected?.year,
+      make: selected?.make,
+      model: selected?.model,
+      series: selected?.series,
+    }));
+  }, [selected]);
+
+  useEffect(() => {
+    handleGetAllCities();
+  }, []);
 
   return (
     <>
       {/* <Topbar />
       <Sidebar /> */}
       <div className="min-h-screen bg-gray-100 p-6">
-        <div className="flex flex-row justify-between items-center">
-          <h2 className="text-3xl font-bold text-center text-gray-800 mb-10">
-            Vehicle List
+        <h2 className="text-3xl font-bold text-gray-800 block sm:hidden">
+          Vehicle List
+        </h2>
+        <div className="flex justify-between items-center w-full gap-2">
+          <h2 className="text-3xl font-bold text-gray-800 hidden lg:block">
+            Vehicle List{" "}
           </h2>
+
+          <div class="relative w-full max-w-md mt-4 lg:mt-0">
+            <span class="absolute inset-y-0 left-0 flex items-center pl-3 text-gray-400">
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                class="h-5 w-5"
+                fill="none"
+                viewBox="0 0 24 24"
+                stroke="currentColor"
+              >
+                <path
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                  stroke-width="2"
+                  d="M21 21l-4.35-4.35m0 0A7.5 7.5 0 104.5 4.5a7.5 7.5 0 0012.15 12.15z"
+                />
+              </svg>
+            </span>
+
+            <input
+              type="text"
+              placeholder="Search by car name..."
+              onChange={(e) => setSearch(e.target.value)}
+              class="w-full pl-10 pr-4 py-2 placeholder:text-xs lg:placeholder:text-lg rounded-lg border border-gray-300 shadow-sm placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500"
+            />
+          </div>
           <button
-            onClick={() => setShowModal(true)}
-            className="bg-[#191970] hover:bg-blue-900 text-white font-bold py-2 px-6 rounded-full shadow"
+            onClick={() => {
+              setShowModal(true), dispatch(addYear(""));
+              dispatch(addMake(""));
+              dispatch(addModel(""));
+              dispatch(addSeries(""));
+            }}
+            className="bg-[#191970] hover:bg-blue-900 text-white font-medium lg:py-2 py-1  px-4 lg:text-sm text-xs rounded shadow transition-all duration-200 mt-4"
           >
-            + Add Vehicle
+            Add Vehicle
           </button>
         </div>
 
@@ -222,8 +616,8 @@ function AddAdminVehicle({ open, setOpen, onVehicleUpdated }) {
 
         {/* Vehicle Form Modal */}
         {showModal && (
-          <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/20 bg-opacity-30  px-4">
-            <div className="bg-white w-full max-w-5xl max-h-[90vh] overflow-y-auto p-6 rounded-lg relative">
+          <div className="fixed inset-0 z-50 flex items-center justify-center backdrop-blur-sm bg-opacity-30  px-4">
+            <div className="bg-white w-full max-w-5xl max-h-[95vh] overflow-y-auto p-6 rounded-lg relative">
               {/* Header */}
               <div className="flex justify-between items-center border-b pb-3 mb-4">
                 <h2 className="text-2xl font-bold text-gray-800">
@@ -238,315 +632,200 @@ function AddAdminVehicle({ open, setOpen, onVehicleUpdated }) {
               </div>
 
               {/* Form Starts */}
-              <form
-                onSubmit={handleSubmit}
-                className="grid grid-cols-1 sm:grid-cols-2 gap-4"
-              >
+              <form onSubmit={handleSubmit} className="space-y-2">
                 <div>
-                  <label className=" block text-sm font-medium text-gray-700 mb-1">
-                    Vehicle Identifition Number
+                  <label className="block text-sm font-medium text-gray-700 mb-1">
+                    City <span className="text-red-500">*</span>
                   </label>
-                  <input
-                    name="vin"
-                    value={vehicle.vin}
-                    onChange={handleChange}
-                    placeholder="VIN"
-                    className="border border-gray-300 px-4 py-2 rounded focus:outline-none focus:ring-2 focus:ring-indigo-500 w-full"
-                    required
-                    maxLength={17}
-                  />
+
+                  <Select onChange={handleSearchable} options={cityData} />
+
+                  <div>
+                    <label className=" block text-sm font-medium text-gray-700 my-1">
+                      Car Info <span className="text-red-500">*</span>
+                    </label>
+                    <input
+                      onClick={handleUpdateCarInfo}
+                      value={`${selected?.year || ""} ${selected?.make || ""} ${
+                        selected?.model || ""
+                      } ${selected?.series || ""}`}
+                      placeholder="Year/Make/Model/Version"
+                      readOnly
+                      className={`border border-gray-300 px-4 py-2 rounded focus:outline-none focus:ring-2 focus:ring-indigo-500 w-full ${
+                        (selected.year && selected.make && selected.model) ||
+                        selected.series
+                          ? "bg-green-200 text-green-700"
+                          : "bg-red-200"
+                      }`}
+                    />
+                  </div>
+                </div>
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                  <div>
+                    <label className="block text-sm font-medium text-gray-700 mb-1">
+                      Vehicle Drive Type <span className="text-red-500">*</span>
+                    </label>
+
+                    <select
+                      name="driveType"
+                      value={vehicle.driveType}
+                      onChange={handleChange}
+                      className="border border-gray-300 px-4 py-2 rounded focus:outline-none focus:ring-2 focus:ring-indigo-500 w-full"
+                    >
+                      <option value="">Select Drive Type</option>
+                      <option value="fwd">FWD (Front-Wheel Drive)</option>
+                      <option value="rwd">RWD (Rear-Wheel Drive)</option>
+                      <option value="awd">AWD (All-Wheel Drive)</option>
+                      <option value="4wd">4WD (Four-Wheel Drive)</option>
+                    </select>
+                  </div>
+
+                  <div>
+                    <label className="block text-sm font-medium text-gray-700 mb-1">
+                      Vehicle Body Style <span className="text-red-500">*</span>
+                    </label>
+
+                    <select
+                      name="bodyStyle"
+                      value={vehicle.bodyStyle}
+                      onChange={handleChange}
+                      className="border border-gray-300 px-4 py-2 rounded focus:outline-none focus:ring-2 focus:ring-indigo-500 w-full"
+                    >
+                      <option value={""}>Please Select BodyStyle</option>
+
+                      {bodyStyles?.map((body) => (
+                        <option id={body} value={body}>
+                          {body}
+                        </option>
+                      ))}
+                    </select>
+                  </div>
+
+                  <div>
+                    <label className="block text-sm font-medium text-gray-700 mb-1">
+                      Vehicle Transmission Type{" "}
+                      <span className="text-red-500">*</span>
+                    </label>
+
+                    <select
+                      name="transmission"
+                      value={vehicle?.transmission || ""}
+                      onChange={handleChange}
+                      className="border border-gray-300 px-4 py-2 rounded focus:outline-none focus:ring-2 focus:ring-indigo-500 w-full"
+                    >
+                      <option value={""}>
+                        Please Select Transmission Type
+                      </option>
+                      <option value={"Automatic"}>Automatic</option>
+                      <option value={"Manual"}>Manual</option>
+                    </select>
+                  </div>
+
+                  <div>
+                    <label className=" block text-sm font-medium text-gray-700 mb-1">
+                      Vehicle Meter Reading
+                      <span className="text-red-500">*</span>
+                    </label>
+                    <input
+                      name="mileage"
+                      value={vehicle?.mileage || ""}
+                      onChange={(e) => {
+                        const value = e.target.value;
+                        if (/^\d*$/.test(value) && value.length <= 7) {
+                          handleChange(e);
+                        }
+                      }}
+                      placeholder="Meter Reading(KM)"
+                      className="border border-gray-300 px-4 py-2 rounded focus:outline-none focus:ring-2 focus:ring-indigo-500 w-full"
+                    />
+                  </div>
+
+                  <div>
+                    <label className="block text-sm font-medium text-gray-700 mb-1">
+                      Vehicle Color <span className="text-red-500">*</span>
+                    </label>
+
+                    <select
+                      name="color"
+                      value={vehicle.color || ""}
+                      onChange={handleChange}
+                      className="border border-gray-300 px-4 py-2 rounded focus:outline-none focus:ring-2 focus:ring-indigo-500 w-full"
+                    >
+                      <option value={""}>Please Select Color</option>
+
+                      {carColors?.map((color) => (
+                        <option id={color} value={color}>
+                          {color}
+                        </option>
+                      ))}
+                    </select>
+                  </div>
+
+                  <div>
+                    <label className="block text-sm font-medium text-gray-700 mb-1">
+                      Vehicle Fuel Type <span className="text-red-500">*</span>
+                    </label>
+                    <select
+                      name="fuelType"
+                      value={vehicle.fuelType}
+                      onChange={handleChange}
+                      placeholder="Fuel Type"
+                      className="border border-gray-300 px-4 py-2 rounded focus:outline-none focus:ring-2 focus:ring-indigo-500 w-full"
+                    >
+                      <option value="">Select Fuel Type</option>
+                      <option value="petrol">Petrol</option>
+                      <option value="diesel">Diesel</option>
+                      <option value="cng">CNG (Compressed Natural Gas)</option>
+                      <option value="lpg">LPG (Liquefied Petroleum Gas)</option>
+                      <option value="electric">Electric</option>
+                      <option value="hybrid">Hybrid</option>
+                    </select>
+                  </div>
+
+                  <div>
+                    <label className="block text-sm font-medium text-gray-700 mb-1">
+                      Vehicle Condition <span className="text-red-500">*</span>
+                    </label>
+
+                    <select
+                      name="vehicleCondition"
+                      value={vehicle.vehicleCondition}
+                      onChange={handleChange}
+                      placeholder="Vehicle Condition"
+                      className="border border-gray-300 px-4 py-2 rounded focus:outline-none focus:ring-2 focus:ring-indigo-500 w-full"
+                    >
+                      <option value="">Select Vehicle Condition</option>
+                      <option value="new">New</option>
+                      <option value="used">Used</option>
+                      <option value="accidented">Accidented</option>
+                    </select>
+                  </div>
+
+                  <div>
+                    <label className=" block text-sm font-medium text-gray-700 mb-1">
+                      Add Vehicle Price <span className="text-red-500">*</span>
+                    </label>
+                    <input
+                      type="text"
+                      name="buyNowPrice"
+                      value={vehicle.buyNowPrice}
+                      onChange={(e) => {
+                        const value = e.target.value;
+
+                        // sirf digits aur max 9 digits allow karo
+                        if (/^\d*$/.test(value) && value.length <= 9) {
+                          handleChange(e);
+                        }
+                      }}
+                      placeholder="Add Price"
+                      className="border border-gray-300 px-4 py-2 rounded focus:outline-none focus:ring-2 focus:ring-indigo-500 w-full"
+                    />
+                  </div>
                 </div>
 
                 <div>
                   <label className="block text-sm font-medium text-gray-700 mb-1">
-                    Vehicle Year
-                  </label>
-                  <input
-                    name="year"
-                    type="date"
-                    value={vehicle.year}
-                    onChange={handleChange}
-                    placeholder="Year"
-                    className="border border-gray-300 px-4 py-2 rounded focus:outline-none focus:ring-2 focus:ring-indigo-500 w-full"
-                  />
-                </div>
-
-                <div>
-                  <label className=" block text-sm font-medium text-gray-700 mb-1">
-                    Manufactured By{" "}
-                  </label>
-
-                  <input
-                    name="make"
-                    value={vehicle.make}
-                    onChange={handleChange}
-                    placeholder="Make"
-                    className="border border-gray-300 px-4 py-2 rounded focus:outline-none focus:ring-2 focus:ring-indigo-500 w-full"
-                    required
-                  />
-                </div>
-
-                <div>
-                  <label className=" block text-sm font-medium text-gray-700 mb-1">
-                    Vehicle Model
-                  </label>
-
-                  <input
-                    name="model"
-                    value={vehicle.model}
-                    onChange={handleChange}
-                    placeholder="Model"
-                    className="border border-gray-300 px-4 py-2 rounded focus:outline-none focus:ring-2 focus:ring-indigo-500 w-full"
-                    required
-                  />
-                </div>
-
-                <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-1">
-                    Vehicle Model Series
-                  </label>
-                  <input
-                    name="series"
-                    value={vehicle.series}
-                    onChange={handleChange}
-                    placeholder="Series"
-                    className="border border-gray-300 px-4 py-2 rounded focus:outline-none focus:ring-2 focus:ring-indigo-500 w-full"
-                  />
-                </div>
-
-                <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-1">
-                    Vehicle Body Style
-                  </label>
-                  <input
-                    name="bodyStyle"
-                    value={vehicle.bodyStyle}
-                    onChange={handleChange}
-                    placeholder="Body Style"
-                    className="border border-gray-300 px-4 py-2 rounded focus:outline-none focus:ring-2 focus:ring-indigo-500 w-full"
-                  />
-                </div>
-
-                <div>
-                  <label className=" block text-sm font-medium text-gray-700 mb-1">
-                    Vehicle Engine Number
-                  </label>
-                  <input
-                    name="engine"
-                    value={vehicle.engine}
-                    type="text"
-                    onChange={handleChange}
-                    placeholder="Engine"
-                    className="border border-gray-300 px-4 py-2 rounded focus:outline-none focus:ring-2 focus:ring-indigo-500 w-full"
-                  />
-                </div>
-
-                <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-1">
-                    Vehicle Transmission Type
-                  </label>
-
-                  <select
-                    name="transmission"
-                    value={vehicle.transmission}
-                    onChange={handleChange}
-                    className="border border-gray-300 px-4 py-2 rounded focus:outline-none focus:ring-2 focus:ring-indigo-500 w-full"
-                  >
-                    <option value={""} disabled selected>
-                      Please Select Transmission Type
-                    </option>
-                    <option value={"Automatic"}>Automatic</option>
-                    <option value={"Manual"}>Manual</option>
-                  </select>
-                </div>
-
-                <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-1">
-                    Vehicle Drive Type
-                  </label>
-
-                  <select
-                    name="driveType"
-                    value={vehicle.driveType}
-                    onChange={handleChange}
-                    className="border border-gray-300 px-4 py-2 rounded focus:outline-none focus:ring-2 focus:ring-indigo-500 w-full"
-                  >
-                    <option value="" disabled selected>
-                      Select Drive Type
-                    </option>
-                    <option value="fwd">FWD (Front-Wheel Drive)</option>
-                    <option value="rwd">RWD (Rear-Wheel Drive)</option>
-                    <option value="awd">AWD (All-Wheel Drive)</option>
-                    <option value="4wd">4WD (Four-Wheel Drive)</option>
-                  </select>
-                </div>
-
-                <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-1">
-                    Vehicle Fuel Type
-                  </label>
-                  <select
-                    name="fuelType"
-                    value={vehicle.fuelType}
-                    onChange={handleChange}
-                    placeholder="Fuel Type"
-                    className="border border-gray-300 px-4 py-2 rounded focus:outline-none focus:ring-2 focus:ring-indigo-500 w-full"
-                  >
-                    <option value="" disabled selected>
-                      Select Fuel Type
-                    </option>
-                    <option value="petrol">Petrol</option>
-                    <option value="diesel">Diesel</option>
-                    <option value="cng">CNG (Compressed Natural Gas)</option>
-                    <option value="lpg">LPG (Liquefied Petroleum Gas)</option>
-                    <option value="electric">Electric</option>
-                    <option value="hybrid">Hybrid</option>
-                  </select>
-                </div>
-
-                <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-1">
-                    Vehicle Color
-                  </label>
-
-                  <input
-                    name="color"
-                    value={vehicle.color}
-                    onChange={handleChange}
-                    placeholder="Color"
-                    className="border border-gray-300 px-4 py-2 rounded focus:outline-none focus:ring-2 focus:ring-indigo-500 w-full"
-                  />
-                </div>
-
-                <div>
-                  <label className=" block text-sm font-medium text-gray-700 mb-1">
-                    Vehicle Mileage
-                  </label>
-                  <input
-                    name="mileage"
-                    type="number"
-                    value={vehicle.mileage}
-                    onChange={handleChange}
-                    placeholder="Mileage"
-                    className="border border-gray-300 px-4 py-2 rounded focus:outline-none focus:ring-2 focus:ring-indigo-500 w-full"
-                  />
-                </div>
-
-                <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-1">
-                    Vehicle Condition
-                  </label>
-
-                  <select
-                    name="vehicleCondition"
-                    value={vehicle.vehicleCondition}
-                    onChange={handleChange}
-                    placeholder="Vehicle Condition"
-                    className="border border-gray-300 px-4 py-2 rounded focus:outline-none focus:ring-2 focus:ring-indigo-500 w-full"
-                  >
-                    <option value="" disabled selected>
-                      Select Vehicle Condition
-                    </option>
-                    <option value="new">New</option>
-                    <option value="used">Used</option>
-                    <option value="accidented">Accidented</option>
-                  </select>
-                </div>
-
-                <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-1">
-                    Vehicle Available keys
-                  </label>
-
-                  <input
-                    name="keysAvailable"
-                    type="number"
-                    value={vehicle.keysAvailable}
-                    onChange={handleChange}
-                    placeholder="Keys Available"
-                    className="border border-gray-300 px-4 py-2 rounded focus:outline-none focus:ring-2 focus:ring-indigo-500 w-full"
-                  />
-                </div>
-
-                <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-1">
-                    Vehicle Location
-                  </label>
-                  <input
-                    name="locationId"
-                    value={vehicle.locationId}
-                    onChange={handleChange}
-                    placeholder="Location "
-                    className="border border-gray-300 px-4 py-2 rounded focus:outline-none focus:ring-2 focus:ring-indigo-500 w-full"
-                  />
-                </div>
-
-                <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-1">
-                    Vehicle Sale Status
-                  </label>
-                  <select
-                    name="saleStatus"
-                    value={vehicle.saleStatus}
-                    onChange={handleChange}
-                    placeholder="Sale Status"
-                    className="border border-gray-300 px-4 py-2 rounded focus:outline-none focus:ring-2 focus:ring-indigo-500 w-full"
-                  >
-                    <option value="" disabled selected>
-                      Please Select Status
-                    </option>
-                    <option value="live">Live</option>
-                    <option value="book">Book</option>
-                    <option value="sold">Sold</option>
-                  </select>
-                </div>
-
-                <div>
-                  <label className=" block text-sm font-medium text-gray-700 mb-1">
-                    Vehicle Current Date
-                  </label>
-
-                  <input
-                    name="auctionDate"
-                    type="date"
-                    value={vehicle.auctionDate}
-                    onChange={handleChange}
-                    placeholder="Auction Date"
-                    className="border border-gray-300 px-4 py-2 rounded focus:outline-none focus:ring-2 focus:ring-indigo-500 w-full"
-                  />
-                </div>
-
-                <div>
-                  <label className=" block text-sm font-medium text-gray-700 mb-1">
-                    Initial Bid
-                  </label>
-
-                  <input
-                    name="currentBid"
-                    value={vehicle.currentBid}
-                    type="number"
-                    onChange={handleChange}
-                    placeholder="Current Bid"
-                    className="border border-gray-300 px-4 py-2 rounded focus:outline-none focus:ring-2 focus:ring-indigo-500 w-full"
-                  />
-                </div>
-
-                <div>
-                  <label className=" block text-sm font-medium text-gray-700 mb-1">
-                    Add Vehicle Price
-                  </label>
-                  <input
-                    name="buyNowPrice"
-                    value={vehicle.buyNowPrice}
-                    onChange={handleChange}
-                    placeholder="Add Price"
-                    className="border border-gray-300 px-4 py-2 rounded focus:outline-none focus:ring-2 focus:ring-indigo-500 w-full"
-                  />
-                </div>
-
-                <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-1">
-                    Certified Status
+                    Certified Status <span className="text-red-500">*</span>
                   </label>
 
                   <select
@@ -556,84 +835,176 @@ function AddAdminVehicle({ open, setOpen, onVehicleUpdated }) {
                     placeholder="Certify Status"
                     className="border border-gray-300 px-4 py-2 rounded focus:outline-none focus:ring-2 focus:ring-indigo-500 w-full"
                   >
-                    <option value="" disabled selected>
-                      Please Select Certify Status
-                    </option>
-                    <option value="certified">Certified</option>
-                    <option value="nonCertified">NonCertified</option>
+                    <option value="">Please Select Certify Status</option>
+                    <option value="Certified">Certified</option>
+                    <option value="Non-Certified">NonCertified</option>
                   </select>
                 </div>
 
                 {/* Image Upload */}
 
                 {/* Submit Button */}
-                <div className="col-span-1 sm:col-span-2 flex justify-center  mt-4">
-                  <label className="font-medium pt-1 w-70 text-gray-700 mb-1 block">
-                    Vehicle Image
-                  </label>
-                  <input
-                    type="file"
-                    multiple
-                    name="image"
-                    onChange={handleImage}
-                    className="w-full text-sm file:px-4 file:py-2 file:bg-indigo-600 file:text-white file:rounded file:cursor-pointer"
-                  />
-                  <button
-                    type="submit"
-                    className="  bg-indigo-600 text-white px-2 w-full rounded hover:bg-indigo-700"
-                  >
-                    Submit Vehicle
-                  </button>
+                <div className="col-span-1 sm:col-span-2 mt-4">
+                  <div className="mb-6">
+                    <label className="block text-sm font-medium text-gray-700 mb-2">
+                      Vehicle Images <span className="text-red-500">*</span>
+                    </label>
+
+                    <div className="flex items-center justify-center w-full">
+                      <label
+                        htmlFor="vehicleImage"
+                        className="flex flex-col items-center justify-center w-full h-40 border-2 border-dashed border-gray-300 rounded-lg cursor-pointer bg-gray-50 hover:bg-gray-100 transition"
+                      >
+                        <div className="flex flex-col items-center justify-center pt-5 pb-6">
+                          <svg
+                            className="w-10 h-10 mb-3 text-gray-400"
+                            fill="none"
+                            stroke="currentColor"
+                            strokeWidth="2"
+                            viewBox="0 0 24 24"
+                          >
+                            <path
+                              strokeLinecap="round"
+                              strokeLinejoin="round"
+                              d="M7 16a4 4 0 01-.88-7.903A5.002 5.002 0 0115.9 6H16a5 5 0 010 10h-1m-4 4v-8m0 0l-3 3m3-3l3 3"
+                            />
+                          </svg>
+                          <p className="text-sm text-gray-600">
+                            <span className="font-medium text-indigo-600">
+                              Click to upload
+                            </span>
+                          </p>
+                          <p className="text-xs text-gray-400">
+                            PNG, JPG (Max 5MB each)
+                          </p>
+                          <p className="text-xs text-gray-400 px-2">
+                            You can add maximum 5 images and first image will be
+                            used as front on the card
+                          </p>
+
+                          {/* Selected images count show karega */}
+                          {selectedCount > 0 && (
+                            <p className="text-sm text-green-600 font-medium mt-2">
+                              {selectedCount} image
+                              {selectedCount > 1 ? "s" : ""} selected
+                            </p>
+                          )}
+                        </div>
+
+                        <input
+                          id="vehicleImage"
+                          type="file"
+                          multiple
+                          name="image"
+                          onChange={handleFileChange}
+                          className="hidden"
+                        />
+                      </label>
+                    </div>
+                  </div>
+                  <div className="flex justify-center">
+                    <button
+                      type="submit"
+                      disabled={loading}
+                      className="bg-indigo-600 text-white px-5 py-2 rounded-lg shadow-md hover:bg-indigo-700 transition"
+                    >
+                      {loading ? "loading..." : "Submit Vehicle"}
+                    </button>
+                  </div>
                 </div>
               </form>
             </div>
+
+            {/* Car Selector Modal */}
+            {isOpen === "selector" && (
+              <div className="fixed inset-0 bg-opacity-40 flex items-center justify-center z-50">
+                <div className="w-full max-w-5xl bg-white p-6 rounded-lg shadow-lg relative">
+                  <CarSelector
+                    handleIsOpenToggle={() => handleIsOpenToggle("")}
+                  />
+                </div>
+              </div>
+            )}
           </div>
         )}
-
         {/* Vehicle List Table */}
-        <div className="mt-8 overflow-x-auto">
-          <table className="min-w-full bg-white shadow-md rounded-lg overflow-hidden">
-            <thead className="bg-[#191970] text-white">
-              <tr>
-                <th className="py-3 px-4 text-left">SR#</th>
-                <th className="py-3 px-4 text-left">Make</th>
-                <th className="py-3 px-4 text-left">Model</th>
-                <th className="py-3 px-4 text-left">Year</th>
-                <th className="py-3 px-4 text-left">Series</th>
-                <th className="py-3 px-4 text-left">Mileage</th>
-                <th className="py-3 px-4 text-left">Buy Now Price</th>
-                <th className="px-4 py-3 text-center text-sm font-semibold">
-                  Actions
-                </th>
-              </tr>
-            </thead>
-            <tbody>
-              {getVehicles?.length > 0 ? (
-                getVehicles.map((vehicle, index) => (
-                  <tr key={index} className="border-t">
-                    <td className="py-3 px-4">{index + 1}</td>
-                    <td className="py-3 px-4">{vehicle.make}</td>
-                    <td className="py-3 px-4">{vehicle.model}</td>
-                    <td className="py-3 px-4">{vehicle.year}</td>
-                    <td className="py-3 px-4">{vehicle.series}</td>
-                    <td className="py-3 px-4">{vehicle.mileage}</td>
-                    <td className="py-3 px-4">{vehicle.buyNowPrice}</td>
-                    <td className="px-4 py-3 text-center space-x-2">
+
+        <div className="max-w-7xl mx-auto space-y-4 px-2 sm:px-4">
+          {allVehicles?.length > 0 ? (
+            allVehicles.map((vehicle, index) => (
+              <div key={index}>
+                {/* ✅ Desktop: Card View */}
+                <div className="hidden lg:flex flex-col lg:flex-row md:items-center md:justify-between border rounded-lg hover:shadow-md transition-all duration-200 p-3 gap-4">
+                  {/* Left: Image */}
+                  <div className="relative w-full md:w-40 h-40 md:h-24 flex-shrink-0 rounded-md overflow-hidden">
+                    {vehicle.images ? (
+                      <img
+                        src={vehicle.images[0]}
+                        alt={`${vehicle.make} ${vehicle.model}`}
+                        className="h-full w-full object-cover"
+                      />
+                    ) : (
+                      <div className="h-full w-full flex items-center justify-center bg-gray-100 text-gray-400 text-sm">
+                        No Image
+                      </div>
+                    )}
+                  </div>
+
+                  {/* Middle: Info */}
+                  <div className="flex-1 px-0 md:px-4">
+                    <h2 className="text-base font-bold text-gray-800">
+                      {vehicle.make.charAt(0).toUpperCase() +
+                        vehicle.make.slice(1)}{" "}
+                      {vehicle.model.charAt(0).toUpperCase() +
+                        vehicle.model.slice(1)}{" "}
+                      {vehicle.series.charAt(0).toUpperCase() +
+                        vehicle.series.slice(1)}{" "}
+                      for sale | {vehicle.year}
+                    </h2>
+                    <p className="text-lg font-bold text-gray-800">
+                      PKR {vehicle.buyNowPrice}
+                    </p>
+
+                    {/* Specs */}
+                    <div className="flex flex-wrap gap-2 mt-2">
+                      <span className="px-3 py-1 bg-white border rounded-full text-xs text-gray-700 shadow-sm">
+                        <b>Meter Reading:</b> {vehicle.mileage || "--"}
+                      </span>
+
+                      <span className="px-3 py-1 bg-white border rounded-full text-xs text-gray-700 shadow-sm">
+                        <b>Color:</b>{" "}
+                        {vehicle.color.charAt(0).toUpperCase() +
+                          vehicle.color.slice(1) || "--"}
+                      </span>
+                      <span className="px-3 py-1 bg-white border rounded-full text-xs text-gray-700 shadow-sm">
+                        <b>Transmission:</b>{" "}
+                        {vehicle.transmission.charAt(0).toUpperCase() +
+                          vehicle.transmission.slice(1) || "--"}
+                      </span>
+                      <span className="px-3 py-1 bg-white border rounded-full text-xs text-gray-700 shadow-sm">
+                        <b>City:</b>{" "}
+                        {vehicle.cityName.charAt(0).toUpperCase() +
+                          vehicle.cityName.slice(1) || "--"}
+                      </span>
+                    </div>
+                  </div>
+
+                  {/* Right: Actions */}
+                  <div className="w-full md:w-56 text-left md:text-right">
+                    <div className="flex flex-wrap md:flex-nowrap gap-2 justify-start md:justify-end mt-4 md:mt-12">
                       <button
                         onClick={() => {
                           setSelectedVehicle(vehicle);
                           setEditModalOpen(true);
                         }}
-                        className="px-3 py-1 text-sm border border-yellow-500 text-yellow-500 rounded hover:bg-yellow-500 hover:text-white transition hover:cursor-pointer"
+                        className="px-2 py-1 text-xs font-medium border border-yellow-500 text-yellow-600 rounded-md hover:bg-yellow-500 hover:text-white transition-all"
                       >
                         Edit
                       </button>
 
-                      {vehicle.saleStatus === "upcoming" ? (
-                        <button
-                          onClick={() => handleBidAddedbtn(vehicle.id)}
-                          className="px-3 py-1 text-sm border w-24 border-green-600 text-green-600 rounded hover:bg-green-600 hover:text-white transition hover:cursor-not-allowed"
-                        >
+                      {vehicle.saleStatus === "upcoming" ||
+                      vehicle.saleStatus === "sold" ? (
+                        <button className="px-4 py-1 text-xs font-medium border border-green-500 text-green-600 rounded-md cursor-not-allowed">
                           Bid Added
                         </button>
                       ) : (
@@ -642,7 +1013,7 @@ function AddAdminVehicle({ open, setOpen, onVehicleUpdated }) {
                             setSelectedVehicle(vehicle);
                             setIsOpenBid(true);
                           }}
-                          className="px-3 py-1 text-sm border w-24 border-green-600 text-green-600 rounded hover:bg-green-600 hover:text-white transition hover:cursor-pointer"
+                          className="px-2 py-1 text-xs font-medium border border-green-500 text-green-600 rounded-md hover:bg-green-500 hover:text-white transition-all"
                         >
                           Add Bid
                         </button>
@@ -653,29 +1024,141 @@ function AddAdminVehicle({ open, setOpen, onVehicleUpdated }) {
                           setSelectedVehicle(vehicle);
                           setViewModal(true);
                         }}
-                        className="px-3 py-1 text-sm border border-[#191970] text-[#191970] rounded hover:bg-[#191970] hover:text-white transition hover:cursor-pointer"
+                        className="px-2 py-1 text-xs font-medium border border-indigo-700 text-indigo-700 rounded-md hover:bg-indigo-700 hover:text-white transition-all"
                       >
                         View
                       </button>
 
                       <button
-                        onClick={() => delVehicle(vehicle.id)}
-                        className="px-3 py-1 text-sm border border-red-600 text-red-600 rounded hover:bg-red-600 hover:text-white transition hover:cursor-pointer"
+                        onClick={() => handleDeleteVehicle(vehicle.id)}
+                        className="px-2 py-1 text-xs font-medium border border-red-500 text-red-600 rounded-md hover:bg-red-500 hover:text-white transition-all"
                       >
                         Delete
                       </button>
-                    </td>
-                  </tr>
-                ))
-              ) : (
-                <tr>
-                  <td colSpan="8" className="text-center py-4 text-gray-500">
-                    No vehicles found. Please add a vehicle.
-                  </td>
-                </tr>
-              )}
-            </tbody>
-          </table>
+                    </div>
+                  </div>
+                </div>
+
+                {/* ✅ Mobile: List View */}
+                <div className="md:block lg:hidden border-b py-3">
+                  <div className="flex items-center gap-3">
+                    {/* 🚗 Thumbnail Image */}
+                    <div
+                      className="w-16 h-16 flex-shrink-0 rounded-md overflow-hidden bg-gray-100"
+                      onClick={() => {
+                        setSelectedVehicle(vehicle);
+                        setViewModal(true);
+                      }}
+                    >
+                      {vehicle.images && vehicle.images.length > 0 ? (
+                        <img
+                          src={vehicle.images[0]}
+                          alt={`${vehicle.make} ${vehicle.model}`}
+                          className="h-full w-full object-cover"
+                        />
+                      ) : (
+                        <div className="h-full w-full flex items-center justify-center text-gray-400 text-xs">
+                          No Img
+                        </div>
+                      )}
+                    </div>
+
+                    {/* 📋 Vehicle Info */}
+                    <div
+                      className="flex-1"
+                      onClick={() => {
+                        setSelectedVehicle(vehicle);
+                        setViewModal(true);
+                      }}
+                    >
+                      <h2 className="text-sm font-bold text-gray-800">
+                        {vehicle.make.charAt(0).toUpperCase() +
+                          vehicle.make.slice(1)}{" "}
+                        {vehicle.model.charAt(0).toUpperCase() +
+                          vehicle.model.slice(1)}{" "}
+                        {vehicle.series.charAt(0).toUpperCase() +
+                          vehicle.series.slice(1)}
+                      </h2>
+                      <p className="text-xs text-gray-700 font-semibold">
+                        PKR {vehicle.buyNowPrice}
+                      </p>
+                      <p className="text-xs text-gray-500">
+                        {vehicle.year} •{" "}
+                        {vehicle.fuelType.charAt(0).toUpperCase() +
+                          vehicle.fuelType.slice(1)}{" "}
+                        •{" "}
+                        {vehicle.transmission.charAt(0).toUpperCase() +
+                          vehicle.transmission.slice(1)}
+                      </p>
+                    </div>
+
+                    {/* 🎛 Actions */}
+                    <div className="flex flex-col gap-1">
+                      <button
+                        onClick={() => {
+                          setSelectedVehicle(vehicle);
+                          setEditModalOpen(true);
+                        }}
+                        className="px-2 py-1 text-[10px] font-medium border border-yellow-500 text-yellow-600 rounded-md hover:bg-yellow-500 hover:text-white transition-all"
+                      >
+                        Edit
+                      </button>
+
+                      <button
+                        onClick={() => handleDeleteVehicle(vehicle.id)}
+                        className="px-2 py-1 text-xs font-medium border border-red-500 text-red-600 rounded-md hover:bg-red-500 hover:text-white transition-all"
+                      >
+                        Delete
+                      </button>
+                      {vehicle.saleStatus === "upcoming" ||
+                      vehicle.saleStatus === "sold" ? (
+                        <button className="px-4 py-1 text-xs font-medium border border-green-500 text-green-600 rounded-md cursor-not-allowed">
+                          Bid Added
+                        </button>
+                      ) : (
+                        <button
+                          onClick={() => {
+                            setSelectedVehicle(vehicle);
+                            setIsOpenBid(true);
+                          }}
+                          className="px-2 py-1 text-xs font-medium border border-green-500 text-green-600 rounded-md hover:bg-green-500 hover:text-white transition-all"
+                        >
+                          Add Bid
+                        </button>
+                      )}
+                    </div>
+                  </div>
+                </div>
+              </div>
+            ))
+          ) : (
+            <p className="text-center text-gray-500 py-6">
+              No vehicles found. Please add a vehicle.
+            </p>
+          )}
+        </div>
+
+        <div className="flex justify-between  mt-6">
+          {/* Prev Button */}
+          <button
+            className={`bg-[#518ecb] text-white px-5 py-2 rounded hover:bg-[#518ecb] ${
+              pageNo > 1 ? "block" : "hidden"
+            }`}
+            onClick={handlePrevPage}
+          >
+            ‹ Prev
+          </button>
+
+          {/* Next Button */}
+          <div></div>
+          <button
+            className={`bg-[#518ecb] text-white px-5 py-2 rounded hover:bg-[#518ecb] ${
+              allVehicles.length === 0 ? "hidden" : "block"
+            }`}
+            onClick={handleNextPage}
+          >
+            Next ›
+          </button>
         </div>
       </div>
 
@@ -683,30 +1166,21 @@ function AddAdminVehicle({ open, setOpen, onVehicleUpdated }) {
         open={editModalOpen}
         setOpen={setEditModalOpen}
         selectedVehicle={selectedVehicle}
-        onVehicleUpdated={getAllVehicles} // Your data refresh function
+        onVehicleUpdated={handleGetVehicles}
       />
-
       {viewModal ? (
         <ViewAdminCar
           handleClick={handleToggle}
           selectedVehicle={selectedVehicle}
         />
       ) : null}
-
       {isOpenBid && (
         <AdminAddBid
           selectedVehicle={selectedVehicle}
           setIsOpenBid={setIsOpenBid}
-          getAllVehicles={getAllVehicles}
+          getAllVehicles={handleGetVehicles}
         />
       )}
-
-      {viewBider ? (
-        <BidderModal
-          allBidCustomer={allBidCustomer}
-          handleClose={() => handleViewBidClose()}
-        />
-      ) : null}
 
       <ToastContainer />
     </>

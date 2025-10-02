@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useRef, useEffect } from "react";
 import { Link, useLocation, useNavigate } from "react-router-dom";
 import {
   FaBars,
@@ -12,18 +12,39 @@ import { useAuth } from "../context/AuthContext";
 import { AiOutlineLogout } from "react-icons/ai";
 import { useDispatch, useSelector } from "react-redux";
 import { logOut } from "./Redux/UserSlice";
+import logoImage from "../../src/assets/wheellogo.png";
 
 const Navbar = () => {
   const { user, isAuthenticated, logout } = useAuth();
-
   const { currentUser } = useSelector((state) => state.auth);
+
   const [menuOpen, setMenuOpen] = useState(false);
   const [activeDropdown, setActiveDropdown] = useState(null);
   const [dropdownOpen, setDropdownOpen] = useState(false);
+
+  const dropdownRef = useRef(null);
+
+  const toggleDropdown = () => {
+    setDropdownOpen((prev) => !prev);
+  };
+
+  useEffect(() => {
+    function handleClickOutside(event) {
+      if (dropdownRef.current && !dropdownRef.current.contains(event.target)) {
+        setDropdownOpen(false);
+      }
+    }
+
+    document.addEventListener("mousedown", handleClickOutside);
+    return () => {
+      document.removeEventListener("mousedown", handleClickOutside);
+    };
+  }, []);
+
+  // ✅ Ref banaya dropdown ke liye
   const location = useLocation();
   const navigate = useNavigate();
   const isActive = (path) => location.pathname === path;
-
   const dispatch = useDispatch();
 
   const commonDropdowns = [
@@ -32,8 +53,7 @@ const Navbar = () => {
       label: "Vehicles",
       items: [
         { to: "/finder", label: "Vehicle Finder" },
-        { to: "/make", label: "Search By Make" },
-        { to: "/saleslist", label: "Prices" },
+        { to: "/saleslist", label: "Search By Make" },
         { to: "/certified", label: "Certified Cars" },
       ],
     },
@@ -44,16 +64,6 @@ const Navbar = () => {
         { to: "/today", label: "Today's Auctions" },
         { to: "/calendar", label: "Auctions Calendar" },
         { to: "/join", label: "Join Auctions" },
-      ],
-    },
-    {
-      id: 3,
-      label: "Services & Support",
-      items: [
-        { to: "/center", label: "Support Center" },
-        { to: "/delivery", label: "Vehicle Delivery" },
-        { to: "/news", label: "Chaudhry News" },
-        { to: "/payment", label: "Payment Method" },
       ],
     },
   ];
@@ -67,29 +77,27 @@ const Navbar = () => {
     ],
   };
 
-  // const bidStatusDropdown = {
-  //   id: 5,
-  //   label: "Bid Status",
-  //   items: [
-  //     { to: "/my-bids", label: "My Bids" },
-  //     { to: "/lots-lost", label: "Lots Lost" },
-  //     { to: "/lots-won", label: "Lots Won" },
-  //   ],
-  // };
-
   const dropdowns = [
     ...commonDropdowns,
     ...(user?.role === "seller" ? [sellerOnly] : []),
   ];
 
-  const toggleDropdown = () => {
-    setDropdownOpen((prev) => !prev);
-  };
-
   const handleLogout = () => {
     localStorage.clear();
     dispatch(logOut());
   };
+
+  // ✅ Click outside close logic
+  useEffect(() => {
+    const handleClickOutside = (event) => {
+      if (dropdownRef.current && !dropdownRef.current.contains(event.target)) {
+        setDropdownOpen(false);
+      }
+    };
+
+    document.addEventListener("mousedown", handleClickOutside);
+    return () => document.removeEventListener("mousedown", handleClickOutside);
+  }, []);
 
   return (
     <nav className="bg-white shadow-md z-50 relative">
@@ -98,10 +106,9 @@ const Navbar = () => {
           to="/"
           className="text-xl font-bold text-red-600 flex items-center gap-2"
         >
-          <img src="/images/logo.png" alt="Logo" className="h-12" />
+          <img src={logoImage} alt="Logo" className="h-12 pt-4 lg:pt-0 " />
         </Link>
-
-        <ul className="hidden md:flex items-center space-x-6 font-semibold relative">
+        <ul className="hidden md:flex items-center space-x-4 font-semibold relative">
           <li>
             <Link
               to="/"
@@ -112,6 +119,7 @@ const Navbar = () => {
               Home
             </Link>
           </li>
+
           <li>
             <Link
               to="/about"
@@ -122,19 +130,6 @@ const Navbar = () => {
               About
             </Link>
           </li>
-
-          {/* {isAuthenticated && (
-            <li>
-              <Link
-                to="/add-vehicles"
-                className={`hover:text-red-600 ${
-                  isActive("/add-vehicles") ? "text-red-600 font-semibold" : ""
-                }`}
-              >
-                Add Vehicles
-              </Link>
-            </li>
-          )} */}
 
           {dropdowns.map((dropdown) => (
             <li
@@ -169,7 +164,26 @@ const Navbar = () => {
               </ul>
             </li>
           ))}
-          <li>
+
+          <li className="space-x-6">
+            <Link
+              to="/partner"
+              className={`hover:text-red-600 ${
+                isActive("/partner") ? "text-red-600 font-semibold" : ""
+              }`}
+            >
+              Become a Partner
+            </Link>
+
+            <Link
+              to="/suggestion"
+              className={`hover:text-red-600 ${
+                isActive("/suggestion") ? "text-red-600 font-semibold" : ""
+              }`}
+            >
+              Suggestions
+            </Link>
+
             <Link
               to="/contact"
               className={`hover:text-red-600 ${
@@ -179,10 +193,21 @@ const Navbar = () => {
               Contact Us
             </Link>
           </li>
-        </ul>
 
-        <div className="hidden md:flex gap-4 relative">
-          {currentUser && currentUser ? (
+          <li>
+            {currentUser?.role === "customer" ? null : (
+              <button
+                onClick={() => navigate("/sellerIntro")}
+                className="bg-red-600 text-white font-bold px-2 py-1.5 rounded hover:cursor-pointer"
+              >
+                Post an Ad
+              </button>
+            )}
+          </li>
+        </ul>
+        {/* ✅ Dropdown with outside click close */}
+        <div className="hidden md:flex gap-4 relative" ref={dropdownRef}>
+          {currentUser ? (
             <div className="relative">
               <button
                 onClick={toggleDropdown}
@@ -204,7 +229,7 @@ const Navbar = () => {
                 <div className="px-4 py-3 border-b border-gray-200">
                   <p className="text-sm text-gray-600">Signed in as</p>
                   <p className="text-sm font-medium text-gray-800 truncate">
-                    {currentUser?.name || adminName}
+                    {currentUser?.name || "--"}
                   </p>
                 </div>
                 <div
@@ -267,6 +292,22 @@ const Navbar = () => {
             Contact Us
           </Link>
 
+          <Link
+            to="/suggestion"
+            onClick={() => setMenuOpen(false)}
+            className="block font-medium"
+          >
+            Suggestion
+          </Link>
+
+          <Link
+            to="/partner"
+            onClick={() => setMenuOpen(false)}
+            className="block font-medium"
+          >
+            Become A Partner
+          </Link>
+
           {user?.role === "seller" && (
             <Link
               to="/add-vehicles"
@@ -310,8 +351,6 @@ const Navbar = () => {
 
           {isAuthenticated ? (
             <div className="pt-4 border-t border-white text-sm">
-              <div className="py-2">Welcome, {user.name}</div>
-              <div className="py-1">ID: {user.id}</div>
               <button
                 onClick={() => {
                   logout();

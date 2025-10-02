@@ -1,12 +1,55 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
+import SearchableOption from "./MenuOption/SearchableOption";
+import { Options } from "../admin/components/InputFields/Options";
+import axios from "axios";
+import { BASE_URL } from "./Contant/URL";
+
+const initialState = {
+  city: "",
+  make: "",
+  model: "",
+  budget: {},
+  bodyStyle: "",
+};
 
 const TabsSection = () => {
-  const [activeTab, setActiveTab] = useState("City");
+  const [activeTab, setActiveTab] = useState("");
+
+  console.log(activeTab);
+
+  console.log(activeTab);
 
   const [currentPage, setCurrentPage] = useState(0);
 
+  const [allMake, setAllMake] = useState([]);
+
   const itemsPerPage = 12;
+
+  const [filterData, setFilterData] = useState(initialState);
+
+  const [allCities, setAllCities] = useState([]);
+
+  const navigate = useNavigate();
+
+  const handleChange = (e) => {
+    const { name, value } = e.target;
+    setFilterData({ ...filterData, [name]: value });
+    navigate(`/filterprice/${name}/${value}`);
+  };
+
+  const handleFilterPrice = (e) => {
+    const { name, value } = e.target;
+
+    const [min, max] = value.split("-");
+
+    setFilterData({
+      ...filterData,
+      [name]: { min: Number(min), max: Number(max) },
+    });
+    navigate(`/filterprice/${name}/${value}`);
+  };
+  const selectedTopic = ["City", "Make", "Model", "BodyStyle", "Budgets"];
 
   const tabData = {
     City: [
@@ -105,11 +148,86 @@ const TabsSection = () => {
     ],
   };
 
+  const handleGetAllCities = async () => {
+    try {
+      const res = await axios.get(`${BASE_URL}/getCitites`);
+
+      setAllCities(res.data);
+    } catch (error) {
+      console.log(error);
+    }
+  };
+
+  useEffect(() => {
+    handleGetAllCities();
+  }, []);
+
+  const cityData = [
+    ...(allCities?.map((city) => ({
+      label: city.cityName,
+      value: city.id,
+    })) || []),
+  ];
+
+  const allMakes = [
+    ...allMake.map((make) => ({
+      label: make?.brandName,
+      value: make?.id,
+    })),
+  ];
+  const auctionData = {
+    budgets: [
+      { label: "5–10 Lac", min: 500000, max: 1000000 },
+      { label: "10–20 Lac", min: 1000000, max: 2000000 },
+      { label: "20–30 Lac", min: 2000000, max: 3000000 },
+      { label: "30–40 Lac", min: 3000000, max: 4000000 },
+      { label: "40–50 Lac", min: 4000000, max: 5000000 },
+      { label: "50–60 Lac", min: 5000000, max: 6000000 },
+      { label: "60–80 Lac", min: 6000000, max: 8000000 },
+      { label: "80 Lac – 1 Crore", min: 8000000, max: 10000000 },
+      { label: "1 Crore – 1.5 Crore", min: 10000000, max: 15000000 },
+      { label: "1.5 Crore – 2 Crore", min: 15000000, max: 20000000 },
+    ],
+
+    BodyType: [
+      { label: "Mini Vehicles", value: "Mini Vehicles" },
+      { label: "Van", value: "Van" },
+      { label: "Truck", value: "Truck" },
+      { label: "SUV", value: "SUV" },
+      { label: "Subcompact hatchback", value: "Subcompact hatchback" },
+      { label: "Station Wagon", value: "Station Wagon" },
+      { label: "Single Cabin", value: "Single Cabin" },
+      { label: "Sedan", value: "Sedan" },
+      { label: "Pick Up", value: "Pick Up" },
+      { label: "Off-Road Vehicles", value: "Off-Road Vehicles" },
+      { label: "MPV", value: "MPV" },
+      { label: "Compact hatchback", value: "Compact hatchback" },
+      { label: "Mini Van", value: "Mini Van" },
+      { label: "Micro Van", value: "Micro Van" },
+      { label: "High Roof", value: "High Roof" },
+      { label: "Hatchback", value: "Hatchback" },
+      { label: "Double Cabin", value: "Double Cabin" },
+      { label: "Crossover", value: "Crossover" },
+      { label: "Coupe", value: "Coupe" },
+      { label: "Convertible", value: "Convertible" },
+      { label: "Compact SUV", value: "Compact SUV" },
+      { label: "Compact sedan", value: "Compact sedan" },
+    ],
+  };
+
+  const handleGetAllMakes = async () => {
+    try {
+      const res = await axios.get(`${BASE_URL}/admin/getBrands`);
+      setAllMake(res.data);
+      console.log(res.data);
+    } catch (error) {
+      console.log(res.data);
+    }
+  };
+
   const imageTabs = ["Make"];
 
   const isImageTab = imageTabs.includes(activeTab);
-
-  const navigate = useNavigate();
 
   const totalPages = isImageTab
     ? Math.ceil(tabData[activeTab].length / itemsPerPage)
@@ -130,93 +248,63 @@ const TabsSection = () => {
       )
     : tabData[activeTab];
 
+  const handleClickTabs = (active) => {
+    setActiveTab((prev) => (prev === active ? "" : active));
+  };
+
+  useEffect(() => {
+    handleGetAllMakes();
+  }, []);
   return (
-    <div className="p-6 max-w-6xl mx-auto">
-      <div className="flex flex-wrap gap-4 mb-6 border-b pb-2">
-        {Object.keys(tabData).map((tab) => (
-          <button
-            key={tab}
-            onClick={() => {
-              setActiveTab(tab);
-              setCurrentPage(0);
-            }}
-            className={`py-2 px-4 font-semibold border-b-2 ${
-              activeTab === tab
-                ? "border-[#c90107] text-[#c90107]"
-                : "border-transparent text-gray-500 hover:text-[#c90107]"
-            } transition duration-200`}
-          >
-            {tab}
-          </button>
-        ))}
+    <div className="p-10 max-w-[85rem]  mx-auto">
+      <div className="items-center   flex-wrap  mb-6 border-b pb-2 ">
+        <h1 className="text-xl sm:text-2xl lg:text-3xl font-bold">
+          Search Your Dream Car
+        </h1>
       </div>
+      <div className="grid grid-cols-1  lg:grid-cols-4 gap-4">
+        <Options
+          datas={cityData}
+          placeHolder="Please Select City"
+          name="city"
+          onChange={handleChange}
+          value={filterData.city}
+        />
 
-      <div
-        className={
-          isImageTab
-            ? "grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-6 gap-4"
-            : "grid grid-cols-2 md:grid-cols-4 gap-2"
-        }
-      >
-        {isImageTab
-          ? paginatedItems.map((item, index) => (
-              <div
-                onClick={() => navigate(`/filterprice/${item.name}`)}
-                key={index}
-                className={
-                  isImageTab
-                    ? "text-center bg-white p-2 rounded shadow-sm mx-auto sm:w-[90%] md:w-[85%] lg:w-[80%] transition-all duration-200"
-                    : ""
-                }
-              >
-                {item.image ? (
-                  <img
-                    src={item.image}
-                    alt={item.name}
-                    className="w-full h-18 sm:h-14 object-contain mx-auto"
-                  />
-                ) : (
-                  <span
-                    // onClick={() => navigate(`/userCar$`)}
-                    className="text-gray-700 hover:text-[#c90107] underline transition duration-150"
-                  >
-                    {item}
-                  </span>
-                )}
-                <p className="mt-2 text-gray-700 text-sm sm:text-base font-medium">
-                  {item.name}
-                </p>
-              </div>
-            ))
-          : paginatedItems.map((text, index) => (
-              <span
-                onClick={() => navigate(`/filterprice/${text}`)}
-                key={index}
-                className="text-gray-700 hover:text-[#c90107] hover:cursor-pointer underline transition duration-150"
-              >
-                {text}
-              </span>
-            ))}
+        <Options
+          datas={allMakes}
+          placeHolder="Please Select Make"
+          name="make"
+          onChange={handleChange}
+          value={filterData.make}
+        />
+
+        <Options
+          datas={auctionData?.BodyType}
+          placeHolder="Please Select BodyType"
+          name="bodyStyle"
+          onChange={handleChange}
+          value={filterData.bodyStyle}
+        />
+
+        <select
+          name="budget"
+          className="border p-2 rounded w-full"
+          onChange={handleFilterPrice}
+          value={
+            filterData.budget.min
+              ? `${filterData.budget.min}-${filterData.budget.max}`
+              : ""
+          }
+        >
+          <option value="">Please select Budget</option>
+          {auctionData.budgets.map((price) => (
+            <option key={price.label} value={`${price.min}-${price.max}`}>
+              {price.label}
+            </option>
+          ))}
+        </select>
       </div>
-
-      {isImageTab && (
-        <div className="flex justify-center mt-6 gap-4">
-          <button
-            onClick={handlePrev}
-            disabled={currentPage === 0}
-            className="w-[100px] text-white px-4 py-2 bg-[#b73439] rounded hover:[#b73439] disabled:hidden"
-          >
-            Previous
-          </button>
-          <button
-            onClick={handleNext}
-            disabled={currentPage >= totalPages - 1}
-            className="w-[100px] px-4 py-2 bg-[#518ecb] text-white rounded hover:bg-[#518ecb] disabled:hidden"
-          >
-            Next
-          </button>
-        </div>
-      )}
     </div>
   );
 };

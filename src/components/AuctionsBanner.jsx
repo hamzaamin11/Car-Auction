@@ -1,12 +1,12 @@
 import React from "react";
 import { Link } from "react-router-dom";
 import { FaAngleRight } from "react-icons/fa";
-import bannerImage from "../../src/assets/car 1.jpg";
+import bannerImage from "../../src/assets/funtner.jpg";
 
 const AuctionsBanner = () => {
   return (
     <section
-      className="relative bg-cover bg-center bg-no-repeat h-[350px] md:h-[450px] flex items-center justify-center text-center"
+      className="relative bg-cover bg-center bg-no-repeat lg:h-[350px] h-[150px] md:h-[450px] flex items-center justify-center text-start"
       style={{
         backgroundImage: `url(${bannerImage})`,
       }}
@@ -17,10 +17,6 @@ const AuctionsBanner = () => {
         <h1 className="text-3xl md:text-5xl font-bold text-white animate-fade-in">
           Today's Auctions
         </h1>
-        <p className="text-white mt-4 text-sm md:text-lg max-w-2xl mx-auto block text-center hover:text-[#FFDAB9] transition-colors duration-300">
-          Check out Today’s Auctions to see auctions.{" "}
-          <FaAngleRight className="inline-block ml-1" />
-        </p>
       </div>
     </section>
   );

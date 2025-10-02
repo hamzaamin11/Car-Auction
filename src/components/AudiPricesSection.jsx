@@ -52,7 +52,7 @@ const AudiPricesSection = () => {
             Pakistan. Audi Cars are also widely available in used conditions
             starting from PKR 550,000 for a used Audi A1 to PKR 60,000,000 for a
             used Audi A8. There are a total of 279 Audi Cars available for sale
-            in Pakistan on CHAUDHRY Cars Auction.
+            in Pakistan on WheelBidz.
             {!showFullInfo && (
               <button
                 onClick={() => setShowFullInfo(true)}

@@ -5,6 +5,7 @@ import RegisterDialog from "../components/RegisterDialog";
 import axios from "axios";
 import { BASE_URL } from "../components/Contant/URL";
 import UpcomingAuctions from "../admin/pages/UpcomingAuctions";
+import { useSelector } from "react-redux";
 
 const JoinAuctions = () => {
   const [tableSize, setTableSize] = useState("small");
@@ -13,6 +14,10 @@ const JoinAuctions = () => {
   const [allLive, setAllLive] = useState([]);
 
   const [upComing, setUpComing] = useState([]);
+
+  const { currentUser } = useSelector((state) => state.auth);
+
+  const id = currentUser?.id;
 
   const handleAddAuctionClick = () => {
     setIsAddAuction(true);
@@ -25,7 +30,7 @@ const JoinAuctions = () => {
 
   const handleGetLive = async () => {
     try {
-      const res = await axios.get(`${BASE_URL}/liveAuctions`);
+      const res = await axios.get(`${BASE_URL}/admin/liveAuctionsForAdmin`);
       setAllLive(res.data);
     } catch (error) {
       console.log(error);
@@ -34,7 +39,7 @@ const JoinAuctions = () => {
 
   const handleGetUpcoming = async () => {
     try {
-      const res = await axios.get(`${BASE_URL}/seller/upcomingAuctions`);
+      const res = await axios.get(`${BASE_URL}/admin/upcomingAuctionsForAdmin`);
       setUpComing(res.data);
     } catch (error) {
       console.log(error);
@@ -45,15 +50,8 @@ const JoinAuctions = () => {
     handleGetUpcoming();
   }, []);
 
-  console.log("sadgi live", allLive);
-  console.log("sadgi coming", upComing);
-
   return (
     <>
-      <TopBreadcrumb
-        onAddAuctionClick={handleAddAuctionClick}
-        onSizeChange={handleSizeChange}
-      />
       <JoinAuctionTable
         size={tableSize}
         allLive={allLive}
@@ -64,8 +62,6 @@ const JoinAuctions = () => {
         onClose={() => setShowDialog(false)}
         isAddAuction={isAddAuction}
       />
-
-      
     </>
   );
 };

@@ -128,7 +128,7 @@ const EditUserModal = ({ Open, setOpen, selectedUser }) => {
               <Dialog.Panel className="w-full max-w-3xl transform overflow-hidden rounded-3xl bg-white p-8 text-left align-middle shadow-2xl transition-all">
                 <Dialog.Title
                   as="h3"
-                  className="text-2xl flex flex-row justify-between items-center font-bold leading-6 text-red-500 mb-4"
+                  className="text-2xl flex flex-row justify-between items-center font-bold leading-6  mb-4"
                 >
                   Edit User
                   <div>
@@ -183,45 +183,6 @@ const EditUserModal = ({ Open, setOpen, selectedUser }) => {
                         onChange={handleChange}
                         className="mt-1 w-full rounded-xl border border-gray-300 p-3 focus:outline-none focus:ring-2 focus:ring-blue-500"
                         placeholder="+123456789"
-                      />
-                    </div>
-
-                    <div>
-                      <label className="block text-sm font-medium text-gray-700">
-                        Address
-                      </label>
-                      <input
-                        type="text"
-                        name="address"
-                        value={user.address}
-                        onChange={handleChange}
-                        className="mt-1 w-full rounded-xl border border-gray-300 p-3 focus:outline-none focus:ring-2 focus:ring-blue-500"
-                      />
-                    </div>
-
-                    <div>
-                      <label className="block text-sm font-medium text-gray-700">
-                        Postcode
-                      </label>
-                      <input
-                        type="text"
-                        name="postcode"
-                        value={user.postcode}
-                        onChange={handleChange}
-                        className="mt-1 w-full rounded-xl border border-gray-300 p-3 focus:outline-none focus:ring-2 focus:ring-blue-500"
-                      />
-                    </div>
-
-                    <div>
-                      <label className="block text-sm font-medium text-gray-700">
-                        CNIC
-                      </label>
-                      <input
-                        type="text"
-                        name="cnic"
-                        value={user.cnic}
-                        onChange={handleChange}
-                        className="mt-1 w-full rounded-xl border border-gray-300 p-3 focus:outline-none focus:ring-2 focus:ring-blue-500"
                       />
                     </div>
 

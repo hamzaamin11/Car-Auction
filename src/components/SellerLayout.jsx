@@ -9,7 +9,7 @@ const SellerLayout = () => {
       <Topbar />
       <div className="flex flex-1 h-full">
         {/* Sidebar - Fixed width */}
-        <div className="w-64 flex-shrink-0 border-r bg-white">
+        <div className="w-64 flex-shrink-0 hidden lg:block border-r bg-white">
           <SellerSidebar />
         </div>
 

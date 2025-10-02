@@ -1,9 +1,5 @@
 import { useEffect, useState } from "react";
-import BreadCrumb from "../components/BreadCrumb";
-import CarColors from "../components/CarColors";
 import CarOverview from "../components/CarOverview";
-import FAQAcordian from "../components/FAQAcordian";
-import PriceBlock from "../components/PriceBlock";
 import SpecificationSection from "../components/SpecificationSection";
 import TabsComponents from "../components/TabsComponents";
 import axios from "axios";
@@ -34,10 +30,7 @@ const AudiStandardLine = () => {
 
   return (
     <>
-      <TabsComponents selectedPrice={selectedPrice} />
       <CarOverview selectedPrice={selectedPrice} vehicleId={vehicleId} />
-      <PriceBlock selectedPrice={selectedPrice} />
-      <CarColors selectedPrice={selectedPrice} />
       <SpecificationSection selectedPrice={selectedPrice} />
     </>
   );

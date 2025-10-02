@@ -1,17 +1,13 @@
-import ContactDetails from "../components/ContactDetails";
 import ContactForm from "../components/ContactForm";
+
 import ContactHero from "../components/ContactHero";
 
-
 const ContactUs = () => {
-    return (
-        <>
-        <ContactHero />
-        <ContactDetails />
-        <ContactForm />
-       
-        </>
-    );
+  return (
+    <>
+      <ContactForm />
+    </>
+  );
 };
 
 export default ContactUs;

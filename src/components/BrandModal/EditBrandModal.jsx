@@ -2,7 +2,11 @@ import axios from "axios";
 import { useEffect, useState } from "react";
 import { BASE_URL } from "../Contant/URL";
 
-export const EditBrandModal = ({ handleClose, seleteBrand }) => {
+export const EditBrandModal = ({
+  handleClose,
+  seleteBrand,
+  handleGetAllBrands,
+}) => {
   const [updateName, setUpdateName] = useState("");
   const [logo, setLogo] = useState(null);
 
@@ -30,6 +34,7 @@ export const EditBrandModal = ({ handleClose, seleteBrand }) => {
 
       console.log(res.data);
       handleClose();
+      handleGetAllBrands();
     } catch (error) {
       console.log("Error updating brand:", error);
     }

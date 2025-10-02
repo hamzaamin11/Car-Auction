@@ -67,20 +67,19 @@ const ViewUserModal = ({ isOpen, closeModal }) => {
                     {userbyId ? (
                       <div className="space-y-3 text-gray-800">
                         <p>
-                          <strong>Name:</strong> {userbyId.name || "N/A"}
+                          <strong>Name:</strong>{" "}
+                          {userbyId.name.charAt(0).toUpperCase() +
+                            userbyId.name.slice(1) || "N/A"}
                         </p>
                         <p>
-                          <strong>Contact:</strong> {userbyId.contact || "N/A"}
+                          <strong>Contact:</strong>{" "}
+                          {userbyId.contact.slice(0, 13) || "N/A"}
                         </p>
+
                         <p>
-                          <strong>Address:</strong> {userbyId.address || "N/A"}
-                        </p>
-                        <p>
-                          <strong>Email:</strong> {userbyId.email || "N/A"}
-                        </p>
-                        <p>
-                          <strong>Postcode:</strong>{" "}
-                          {userbyId.postcode || "N/A"}
+                          <strong>Email:</strong>{" "}
+                          {userbyId.email.charAt(0).toUpperCase() +
+                            userbyId.email.slice(1) || "N/A"}
                         </p>
                       </div>
                     ) : (

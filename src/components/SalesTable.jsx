@@ -1,193 +1,197 @@
+import { useEffect } from "react";
+import { useDispatch, useSelector } from "react-redux";
 import { useNavigate } from "react-router-dom";
+import { navigationStart, navigationSuccess } from "./Redux/NavigationSlice";
+import { RotateLoader } from "./Loader/RotateLoader";
 const carBrands = [
   {
-    name: "Audi Pricelist",
+    name: "Audi Car Listings",
     image: "/images/Audi.png",
     link: "/audi",
     type: "Audi",
   },
   {
-    name: "Baic Pricelist",
+    name: "Baic Car Listings",
     image: "/images/baic.png",
     link: "/details",
     type: "Baic",
   },
   {
-    name: "BAW Pricelist",
+    name: "BAW Car Listingst",
     image: "/images/BAW.png",
     link: "/details",
     type: "BAW",
   },
   {
-    name: "BMW Pricelist",
+    name: "BMW Car Listings",
     image: "/images/BMW.png",
     link: "/details",
     type: "BMW",
   },
   {
-    name: "BYD Pricelist",
+    name: "BYD Car Listings",
     image: "/images/BYD.png",
     link: "/details",
     type: "BYD",
   },
   {
-    name: "Changan Pricelist",
+    name: "Changan Car Listings",
     image: "/images/changan.png",
     link: "/details",
     type: "Changan",
   },
   {
-    name: "Chery Pricelist",
+    name: "Chery Car Listings",
     image: "/images/chery.png",
     link: "/details",
     type: "Chery",
   },
   {
-    name: "Daehan Pricelist",
+    name: "Daehan Car Listings",
     image: "/images/Daehan.png",
     link: "/details",
     type: "Daehan",
   },
   {
-    name: "Deepal Pricelist",
+    name: "Deepal Car Listings",
     image: "/images/Deepal.png",
     link: "/details",
     type: "Deepal",
   },
   {
-    name: "DFSK Pricelist",
+    name: "DFSK PCar Listings",
     image: "/images/DFSK.png",
     link: "/details",
     type: "DFSK",
   },
   {
-    name: "Dongfeng Pricelist",
+    name: "Dongfeng Car Listings",
     image: "/images/Dongfeng.png",
     link: "/details",
     type: "Dongfeng",
   },
   {
-    name: "GUGO Pricelist",
+    name: "GUGO PCar Listingst",
     image: "/images/gugo.png",
     link: "/details",
     type: "GUGO",
   },
   {
-    name: "Haval Pricelist",
+    name: "Haval Car Listings",
     image: "/images/haval.png",
     link: "/details",
     type: "Haval",
   },
   {
-    name: "Honda Pricelist",
+    name: "Honda Car Listings",
     image: "/images/Honda.png",
     link: "/details",
     type: "Honda",
   },
   {
-    name: "Honri Pricelist",
+    name: "Honri Car Listings",
     image: "/images/honri.png",
     link: "/details",
     type: "Honri",
   },
   {
-    name: "Hyundai Pricelist",
+    name: "Hyundai Car Listings",
     image: "/images/hyundai.png",
     link: "/details",
     type: "Hyundai",
   },
   {
-    name: "Isuzu Pricelist",
+    name: "Isuzu Car Listings",
     image: "/images/Isuzu.png",
     link: "/details",
     type: "Isuzu",
   },
   {
-    name: "JAC Pricelist",
+    name: "JAC Car Listings",
     image: "/images/jac.png",
     link: "/details",
     type: "JAC",
   },
   {
-    name: "Jetour Pricelist",
+    name: "Jetour Car Listings",
     image: "/images/jetour.png",
     link: "/details",
     type: "Jetour",
   },
   {
-    name: "JMC Pricelist",
+    name: "JMC Car Listings",
     image: "/images/jmc.png",
     link: "/details",
     type: "JMC",
   },
   {
-    name: "JW-Forland Pricelist",
+    name: "JW-Forland Car Listings",
     image: "/images/JW-Forland.png",
     link: "//details",
     type: "JW-Forland",
   },
   {
-    name: "KIA Pricelist",
+    name: "KIA Car Listings",
     image: "/images/kia.png",
     link: "/details",
     type: "KIA",
   },
   {
-    name: "Mercedes Pricelist",
+    name: "Mercedes Car Listings",
     image: "/images/mercedes.png",
     link: "/details",
     type: "Mercedes",
   },
   {
-    name: "MG Pricelist",
+    name: "MG Car Listings",
     image: "/images/MG.png",
     link: "/details",
     type: "MG",
   },
   {
-    name: "Peugeot Pricelist",
+    name: "Peugeot Car Listings",
     image: "/images/peugeot.png",
     link: "/details",
     type: "Peugeot",
   },
   {
-    name: "Porche Pricelist",
+    name: "Porche Car Listings",
     image: "/images/porche.png",
     link: "/details",
     type: "Porche",
   },
   {
-    name: "Prince Pricelist",
+    name: "Prince Car Listings",
     image: "/images/prince.png",
     link: "/details",
     type: "Prince",
   },
   {
-    name: "Proton Pricelist",
+    name: "Proton Car Listings",
     image: "/images/proton.png",
     link: "/details",
     type: "Proton",
   },
   {
-    name: "Seres Pricelist",
+    name: "Seres Car Listings",
     image: "/images/seres.png",
     link: "/details",
     type: "Seres",
   },
   {
-    name: "Tank Pricelist",
+    name: "TANK Car Listings",
     image: "/images/tank.png",
     link: "/details",
     type: "Tank",
   },
   {
-    name: "Tesla Pricelist",
+    name: "TESLA Car Listings",
     image: "/images/Tesla.png",
     link: "/details",
     type: "Tesla",
   },
   {
-    name: "TOYOTA Pricelist",
+    name: "TOYOTA Car Listings",
     image: "/images/Tyota.png",
     link: "/details",
     type: "Toyota",
@@ -198,29 +202,35 @@ const SalesTable = () => {
   const navigate = useNavigate();
 
   return (
-    <div className="w-full bg-[#ededed] p-5">
-      <h2 className="text-[#416eb7] text-2xl font-bold font-sans ml-3">
-        New Car Prices in Pakistan
+    <div className="w-full bg-gradient-to-b from-[#f9f9f9] to-[#ededed] p-6">
+      <h2 className="text-[#233D7B] text-3xl font-bold font-sans mb-6 text-center">
+        Explore Car Brands in Pakistan
       </h2>
-      <div className="flex flex-wrap -mx-2 mt-4">
+
+      <div className="grid grid-cols-1 sm:grid-cols-3 md:grid-cols-4 gap-6">
         {carBrands.map((brand, index) => (
           <div
-            onClick={() => navigate(`/carPrice/${brand.type}`)}
             key={index}
-            className="w-full sm:w-1/2 md:w-1/3 lg:w-1/4 p-2"
+            onClick={() => navigate(`/carPrice/${brand.type}`)}
+            className="group bg-white rounded-xl shadow-md hover:shadow-xl 
+                       transition-all duration-300 cursor-pointer border border-gray-100 
+                       hover:border-[#518ecb] flex flex-col items-center p-5"
           >
-            <div className="bg-white rounded-sm p-3 shadow-sm hover:shadow-md transition-shadow duration-300 flex flex-col items-center">
-              <img
-                src={brand.image}
-                alt={brand.name}
-                className="w-28 h-20 object-contain mx-auto"
-              />
+            <img
+              src={brand.image}
+              alt={brand.name}
+              className="w-24 h-20 object-contain transition-transform duration-300 group-hover:scale-110"
+            />
 
-              <div className="border-t border-[#ededed] mt-3 pt-2 w-full text-center">
-                <span className="text-[#518ecb] hover:text-[#233D7B] text-sm font-semibold font-sans">
-                  {brand.name}
-                </span>
-              </div>
+            <div className="mt-3 w-full text-center">
+              <span
+                className="inline-block text-[#416eb7] group-hover:text-white 
+                           text-sm font-semibold px-3 py-1 rounded-md 
+                           transition-all duration-300 
+                           group-hover:bg-[#416eb7]"
+              >
+                {brand.name.toUpperCase()}
+              </span>
             </div>
           </div>
         ))}

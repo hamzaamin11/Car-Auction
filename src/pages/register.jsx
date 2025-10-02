@@ -9,22 +9,8 @@ import {
 import { RotateLoader } from "../components/Loader/RotateLoader";
 
 const register = () => {
-  const { loader } = useSelector((state) => state?.navigateState);
-
-  const dispatch = useDispatch();
-
-  useEffect(() => {
-    dispatch(navigationStart());
-    setTimeout(() => {
-      dispatch(navigationSuccess("register"));
-    }, 1000);
-  }, []);
-
-  if (loader) return <RotateLoader />;
-
   return (
     <>
-      <RegistrationBanner />
       <RegistrationPage />
     </>
   );

@@ -5,141 +5,101 @@ import { BASE_URL } from "./Contant/URL";
 import { useDispatch, useSelector } from "react-redux";
 import { authSuccess } from "./Redux/UserSlice";
 import axios from "axios";
-import { RotateLoader } from "./Loader/RotateLoader";
 import { toast, ToastContainer } from "react-toastify";
-import { navigationStart, navigationSuccess } from "./Redux/NavigationSlice";
-import LoginImage from "../../src/assets/c5.jpg";
+import LoginImage from "../../src/assets/copart1.jpg";
+import { FaEnvelope, FaGoogle, FaPhoneAlt } from "react-icons/fa";
+import googleIcon from "../../src/assets/google.png";
+import PhoneModal from "./PhoneModal";
+import { EmailLoginModal } from "./EmailLoginModal";
+import { EmailSignUpModal } from "./EmailSignUpModal";
 
 const SignInPage = () => {
   const [formData, setFormData] = useState({ email: "", password: "" });
-
   const [loading, setLoading] = useState(false);
+  const [isOPen, setIsOpen] = useState("");
 
-  const [navLoader, setNavLoader] = useState(false);
-
-  const { login } = useAuth(); // Using login from AuthContext
-
+  const navigate = useNavigate();
   const dispatch = useDispatch();
-
   const { currentUser } = useSelector((state) => state?.auth);
-
-  const { loader } = useSelector((state) => state?.navigateState);
-
-  useEffect(() => {
-    dispatch(navigationStart());
-    setTimeout(() => {
-      dispatch(navigationSuccess("login"));
-    }, 1000);
-  }, []);
+  const { login } = useAuth(); // AuthContext
 
   const handleChange = (e) => {
     const { name, value } = e.target;
     setFormData((prev) => ({ ...prev, [name]: value }));
   };
 
-  // const handleSubmit = async (e) => {
-  //   e.preventDefault();
-  //   setLoading(true);
-
-  //   try {
-  //     const res = await fetch("http://localhost:3001/login", {
-  //       method: "POST",
-  //       headers: { "Content-Type": "application/json" },
-  //       body: JSON.stringify({ ...formData }),
-  //     });
-
-  //     const data = await res.json();
-
-  //     if (!res.ok) {
-  //       throw new Error(data.message || "Login failed");
-  //     }
-
-  //     if (!data.user) {
-  //       throw new Error("User data not received");
-  //     }
-
-  //     // Extract role first from the response
-  //     const userRole = data.user.role || "user";
-
-  //     // Structure user data
-  //     const userData = {
-  //       id: data.user.id || data.user._id,
-  //       email: data.user.email,
-  //       role: userRole,
-  //       name: data.user.name || formData.email.split("@")[0],
-  //       token: data.token,
-  //     };
-
-  //     // Save to localStorage and AuthContext
-  //     localStorage.setItem("user", JSON.stringify(userData));
-  //     login(userData); // Only call once
-
-  //     // Handle seller flag
-  //     if (userRole === "seller") {
-  //       localStorage.setItem("isSeller", "true");
-  //     } else {
-  //       localStorage.removeItem("isSeller");
-  //     }
-
-  //     // Redirect based on role
-  //     const redirectPath = userRole === "admin" ? "/admin" : "/seller";
-  //     navigate(redirectPath);
-  //   } catch (err) {
-  //     console.error("Login error:", err);
-  //     alert(err.message || "Login failed. Please try again.");
-  //   } finally {
-  //     setLoading(false);
-  //   }
-  // };
+  const handleToggleModal = (active) => {
+    setIsOpen((prev) => (prev === active ? "" : active));
+  };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
     setLoading(true);
     try {
       const res = await axios.post(`${BASE_URL}/login`, formData);
+      localStorage.setItem("user", JSON.stringify(res.data));
       dispatch(authSuccess(res.data));
-      setLoading(false);
+      login(res.data);
+      toast.success("Login successful!");
     } catch (error) {
-      console.log(error?.response?.data?.message);
+      toast.error(error?.response?.data?.message || "Login failed");
+    } finally {
       setLoading(false);
-      toast.error(error?.response?.data?.message);
+      setFormData({ email: "", password: "" });
     }
-    setFormData({ email: "", password: "" });
   };
 
-  if (currentUser?.role === "seller") return <Navigate to={"/seller"} />;
+  const handleAuthGoogle = () => {
+    window.location.href = `${BASE_URL}/google`;
+  };
+
+  useEffect(() => {
+    const params = new URLSearchParams(window.location.search);
+    const token = params.get("token");
+    if (token) {
+      const userData = { token };
+      localStorage.setItem("user", JSON.stringify(userData));
+      dispatch(authSuccess(userData));
+      login(userData);
+      navigate("/");
+    }
+  }, [dispatch, login, navigate]);
+
+  if (currentUser?.role === "seller")
+    return <Navigate to={"/seller/dashboard"} />;
   if (currentUser?.role === "admin") return <Navigate to={"/admin"} />;
   if (currentUser?.role === "customer") return <Navigate to={"/"} />;
 
-  if (loader) {
-    return <RotateLoader />;
-  }
-
   return (
     <div
-      className="min-h-screen flex items-center justify-center bg-cover bg-center"
+      className="min-h-screen flex items-center justify-center bg-cover bg-center px-4"
       style={{ backgroundImage: `url(${LoginImage})` }}
     >
-      <div className=" bg-black/20 rounded-xl shadow-xl max-w-md w-full p-8 mx-4">
-        <h2 className="text-3xl font-bold text-white mb-6 text-center">
+      {/* Form Box */}
+      <div className="bg-white/90 backdrop-blur-md rounded-2xl shadow-2xl max-w-md w-full p-8">
+        <h2 className="text-3xl font-extrabold text-gray-800 mb-6 text-center">
           Sign In
         </h2>
-        <form onSubmit={handleSubmit} className="space-y-6">
+
+        {/* Login Form */}
+        <form onSubmit={handleSubmit} className="space-y-2">
           <div>
-            <label className="block mb-2 font-semibold text-white">Email</label>
+            <label className="block mb-2 font-bold text-gray-700">
+              Email / Phone Number
+            </label>
             <input
-              type="email"
+              type="text"
               name="email"
               value={formData.email}
               onChange={handleChange}
               required
-              placeholder="you@example.com"
-              className="w-full p-3 rounded-lg border border-gray-300 bg-black text-white placeholder:text-gray-400"
+              placeholder="Enter Email or Phone Number"
+              className="w-full p-3 rounded-lg border border-gray-300 bg-white text-gray-800 placeholder-gray-400 focus:ring-2 focus:ring-blue-500 outline-none"
             />
           </div>
 
           <div>
-            <label className="block mb-2 font-semibold text-white">
+            <label className="block mb-2 font-bold text-gray-700">
               Password
             </label>
             <input
@@ -148,8 +108,8 @@ const SignInPage = () => {
               value={formData.password}
               onChange={handleChange}
               required
-              placeholder="Your password"
-              className="w-full p-3 rounded-lg border border-gray-300 bg-black text-white placeholder:text-gray-400"
+              placeholder="Enter Password"
+              className="w-full p-3 rounded-lg border border-gray-300 bg-white text-gray-800 placeholder-gray-400 focus:ring-2 focus:ring-blue-500 outline-none"
             />
           </div>
 
@@ -157,23 +117,70 @@ const SignInPage = () => {
             type="submit"
             disabled={loading}
             className={`w-full ${
-              loading ? "bg-gray-500" : "bg-[#518ecb] hover:bg-[#b73439]"
-            } text-white font-bold py-3 rounded-lg shadow-lg transition`}
+              loading
+                ? "bg-gray-400"
+                : "bg-gradient-to-r from-blue-800 to-blue-800 hover:from-blue-700 hover:to-blue-900"
+            } text-white font-semibold py-3 rounded-lg shadow-md transition`}
           >
             {loading ? "Signing In..." : "Sign In"}
           </button>
         </form>
 
-        <p className="mt-6 text-center text-white">
-          Don't have an account?{" "}
+        {/* Divider */}
+        <p className="text-gray-600 text-center my-2">or</p>
+
+        {/* Auth Options */}
+        <div className="space-y-2">
+          {/* Google */}
+          <button
+            onClick={handleAuthGoogle}
+            className="w-full flex items-center gap-3 py-3 rounded-lg shadow-md transition border border-gray-500 text-gray-800 font-semibold hover:scale-105 duration-500 hover:cursor-pointer"
+          >
+            {/* Google Icon */}
+            <img
+              src={googleIcon}
+              alt="google"
+              className="h-7 w-7 object-cover pl-3"
+            />
+
+            {/* Vertical Divider */}
+            <div className="w-px h-6 bg-gray-400"></div>
+
+            {/* Text */}
+            <span className="flex-1 text-center">Continue with Google</span>
+          </button>
+
+          {/* Register with Email */}
+          <button
+            onClick={() => handleToggleModal("email")}
+            className="w-full flex items-center gap-3 py-3 rounded-lg shadow-md transition border border-gray-500 text-gray-800 font-semibold  hover:scale-105 duration-500 hover:cursor-pointer"
+          >
+            {/* Email Icon */}
+            <FaEnvelope className="text-lg ml-3" />
+
+            {/* Vertical Divider */}
+            <div className="w-px h-6 bg-gray-400"></div>
+
+            {/* Text */}
+            <span className="flex-1 text-center">Register with Email</span>
+          </button>
+        </div>
+
+        {/* Register Link */}
+        <p className="mt-6 text-center text-gray-700">
+          Don&apos;t have an account?{" "}
           <Link
             to="/register"
-            className="text-yellow-400 underline font-semibold"
+            className="text-blue-600 hover:underline font-medium "
           >
             Register here
           </Link>
         </p>
       </div>
+
+      {isOPen === "email" && (
+        <EmailSignUpModal handleModal={() => handleToggleModal("")} />
+      )}
 
       <ToastContainer />
     </div>

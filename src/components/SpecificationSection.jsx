@@ -173,6 +173,8 @@ const SpecificationSection = ({ selectedPrice }) => {
   const [activeTab, setActiveTab] = useState("specs");
   const [comment, setComment] = useState("");
 
+  console.log("selectedPrice =>", selectedPrice);
+
   const handleReport = () => {
     toast(
       <div className="bg-white rounded-xl shadow-lg p-4 text-gray-700 space-y-2">
@@ -227,7 +229,7 @@ const SpecificationSection = ({ selectedPrice }) => {
                 : "text-gray-500 hover:text-[#233D7B]"
             }`}
           >
-            {tab === "specs" ? "Specifications" : "Features"}
+            {tab === "specs" && "Specifications"}
           </button>
         ))}
       </div>
@@ -236,289 +238,78 @@ const SpecificationSection = ({ selectedPrice }) => {
         <>
           <div className="bg-white/40 backdrop-blur-md p-6 rounded-xl shadow-xl space-y-4">
             <h3 className="text-2xl font-semibold text-gray-800">
-              Engine Specifications
+              Vehicle Specifications
             </h3>
 
             <div className="grid md:grid-cols-2 gap-6">
               <div className="flex justify-between bg-white rounded-lg shadow-sm p-4 border border-gray-100 hover:shadow-md transition">
-                <span className="text-sm text-gray-600">Engine Type</span>
+                <span className="text-sm text-gray-600">Vehicle Make</span>
                 <span className="text-[#233D7B] font-semibold text-sm">
-                  {selectedPrice && selectedPrice?.engineType}
+                  {selectedPrice && selectedPrice?.make}
                 </span>
               </div>
 
               <div className="flex justify-between bg-white rounded-lg shadow-sm p-4 border border-gray-100 hover:shadow-md transition">
-                <span className="text-sm text-gray-600">Turbo Charger</span>
+                <span className="text-sm text-gray-600">Vehicle Model</span>
                 <span className="text-[#233D7B] font-semibold text-sm">
-                  {selectedPrice && selectedPrice?.turboCharger}
+                  {selectedPrice && selectedPrice?.model}
                 </span>
               </div>
 
               <div className="flex justify-between bg-white rounded-lg shadow-sm p-4 border border-gray-100 hover:shadow-md transition">
-                <span className="text-sm text-gray-600">Displacement(cc)</span>
+                <span className="text-sm text-gray-600">Vehicle Series</span>
                 <span className="text-[#233D7B] font-semibold text-sm">
-                  {selectedPrice && selectedPrice?.displacement}
-                </span>
-              </div>
-
-              <div className="flex justify-between bg-white rounded-lg shadow-sm p-4 border border-gray-100 hover:shadow-md transition">
-                <span className="text-sm text-gray-600">Drive Train (cc)</span>
-                <span className="text-[#233D7B] font-semibold text-sm">
-                  {selectedPrice && selectedPrice?.driveTrain}
+                  {selectedPrice && selectedPrice?.series}
                 </span>
               </div>
 
               <div className="flex justify-between bg-white rounded-lg shadow-sm p-4 border border-gray-100 hover:shadow-md transition">
                 <span className="text-sm text-gray-600">
-                  Number of Cylinder
+                  Vehicle Drive Type
                 </span>
                 <span className="text-[#233D7B] font-semibold text-sm">
-                  {selectedPrice && selectedPrice?.numberOfCylinders}
+                  {selectedPrice && selectedPrice?.driveType}
                 </span>
               </div>
 
               <div className="flex justify-between bg-white rounded-lg shadow-sm p-4 border border-gray-100 hover:shadow-md transition">
-                <span className="text-sm text-gray-600">
-                  Cylinder Configuartion
-                </span>
+                <span className="text-sm text-gray-600">Body Style</span>
                 <span className="text-[#233D7B] font-semibold text-sm">
-                  {selectedPrice && selectedPrice?.cylinderConfiguration}
+                  {selectedPrice && selectedPrice?.bodyStyle}
                 </span>
               </div>
 
               <div className="flex justify-between bg-white rounded-lg shadow-sm p-4 border border-gray-100 hover:shadow-md transition">
-                <span className="text-sm text-gray-600">Horse Power(HP)</span>
+                <span className="text-sm text-gray-600">Mileage(KM)</span>
                 <span className="text-[#233D7B] font-semibold text-sm">
-                  {selectedPrice && selectedPrice?.horsePower}
+                  {selectedPrice && selectedPrice?.mileage}
                 </span>
               </div>
 
               <div className="flex justify-between bg-white rounded-lg shadow-sm p-4 border border-gray-100 hover:shadow-md transition">
-                <span className="text-sm text-gray-600">Compression Ratio</span>
+                <span className="text-sm text-gray-600">Vehicle Color</span>
                 <span className="text-[#233D7B] font-semibold text-sm">
-                  {selectedPrice && selectedPrice?.compressionRatio}
-                </span>
-              </div>
-            </div>
-          </div>
-
-          <div className="bg-white/40 backdrop-blur-md p-6 rounded-xl shadow-xl space-y-4">
-            <h3 className="text-2xl font-semibold text-gray-800">
-              Perfermance & Transmission
-            </h3>
-
-            <div className="grid md:grid-cols-2 gap-6">
-              <div className="flex justify-between bg-white rounded-lg shadow-sm p-4 border border-gray-100 hover:shadow-md transition">
-                <span className="text-sm text-gray-600">{"Torque"}</span>
-                <span className="text-[#233D7B] font-semibold text-sm">
-                  {selectedPrice && selectedPrice?.torque}
+                  {selectedPrice && selectedPrice?.color}
                 </span>
               </div>
 
               <div className="flex justify-between bg-white rounded-lg shadow-sm p-4 border border-gray-100 hover:shadow-md transition">
-                <span className="text-sm text-gray-600">
-                  {"Valves Per Cylinder"}
-                </span>
+                <span className="text-sm text-gray-600">Fuel Type</span>
                 <span className="text-[#233D7B] font-semibold text-sm">
-                  {selectedPrice && selectedPrice?.valvesPerCylinder}
+                  {selectedPrice && selectedPrice?.fuelType}
                 </span>
               </div>
 
               <div className="flex justify-between bg-white rounded-lg shadow-sm p-4 border border-gray-100 hover:shadow-md transition">
-                <span className="text-sm text-gray-600">{"Fuel System"}</span>
+                <span className="text-sm text-gray-600">Transmission</span>
                 <span className="text-[#233D7B] font-semibold text-sm">
-                  {selectedPrice && selectedPrice?.valvesPerCylinder}
+                  {selectedPrice && selectedPrice?.transmission}
                 </span>
               </div>
-
               <div className="flex justify-between bg-white rounded-lg shadow-sm p-4 border border-gray-100 hover:shadow-md transition">
-                <span className="text-sm text-gray-600">{"Fuel System"}</span>
+                <span className="text-sm text-gray-600">Certified Status</span>
                 <span className="text-[#233D7B] font-semibold text-sm">
-                  {selectedPrice && selectedPrice?.fuelSystem}
-                </span>
-              </div>
-
-              <div className="flex justify-between bg-white rounded-lg shadow-sm p-4 border border-gray-100 hover:shadow-md transition">
-                <span className="text-sm text-gray-600">
-                  {"Valve Mechanism"}
-                </span>
-                <span className="text-[#233D7B] font-semibold text-sm">
-                  {selectedPrice && selectedPrice?.valveMechanism}
-                </span>
-              </div>
-
-              <div className="flex justify-between bg-white rounded-lg shadow-sm p-4 border border-gray-100 hover:shadow-md transition">
-                <span className="text-sm text-gray-600">
-                  {"Max Speed (km/h)"}
-                </span>
-                <span className="text-[#233D7B] font-semibold text-sm">
-                  {selectedPrice && selectedPrice?.maxSpeed}
-                </span>
-              </div>
-
-              <div className="flex justify-between bg-white rounded-lg shadow-sm p-4 border border-gray-100 hover:shadow-md transition">
-                <span className="text-sm text-gray-600">
-                  {"Transmission Type"}
-                </span>
-                <span className="text-[#233D7B] font-semibold text-sm">
-                  {selectedPrice && selectedPrice?.transmissionType}
-                </span>
-              </div>
-
-              <div className="flex justify-between bg-white rounded-lg shadow-sm p-4 border border-gray-100 hover:shadow-md transition">
-                <span className="text-sm text-gray-600">{"GearBox"}</span>
-                <span className="text-[#233D7B] font-semibold text-sm">
-                  {selectedPrice && selectedPrice?.gearbox}
-                </span>
-              </div>
-            </div>
-          </div>
-          <div className="bg-white/40 backdrop-blur-md p-6 rounded-xl shadow-xl space-y-4 mt-8">
-            <h3 className="text-2xl font-semibold text-gray-800">
-              Chassis & Suspension
-            </h3>
-
-            <div className="grid md:grid-cols-2 gap-6">
-              <div className="flex justify-between bg-white rounded-lg shadow-sm p-4 border border-gray-100 hover:shadow-md transition">
-                <span className="text-sm text-gray-700">{"Steering Type"}</span>
-                <span className="text-[#233D7B] font-semibold text-sm">
-                  {selectedPrice && selectedPrice?.steeringType}
-                </span>
-              </div>
-
-              <div className="flex justify-between bg-white rounded-lg shadow-sm p-4 border border-gray-100 hover:shadow-md transition">
-                <span className="text-sm text-gray-700">
-                  {"Min Turning Radius(m)"}
-                </span>
-                <span className="text-[#233D7B] font-semibold text-sm">
-                  {selectedPrice && selectedPrice?.minTurningRadius}
-                </span>
-              </div>
-
-              <div className="flex justify-between bg-white rounded-lg shadow-sm p-4 border border-gray-100 hover:shadow-md transition">
-                <span className="text-sm text-gray-700">
-                  {"Power Assisted"}
-                </span>
-                <span className="text-[#233D7B] font-semibold text-sm">
-                  {selectedPrice && selectedPrice?.powerAssisted}
-                </span>
-              </div>
-
-              <div className="flex justify-between bg-white rounded-lg shadow-sm p-4 border border-gray-100 hover:shadow-md transition">
-                <span className="text-sm text-gray-700">
-                  {"Front Suspension"}
-                </span>
-                <span className="text-[#233D7B] font-semibold text-sm">
-                  {selectedPrice && selectedPrice?.frontSuspension}
-                </span>
-              </div>
-
-              <div className="flex justify-between bg-white rounded-lg shadow-sm p-4 border border-gray-100 hover:shadow-md transition">
-                <span className="text-sm text-gray-700">
-                  {"Rear Suspension"}
-                </span>
-                <span className="text-[#233D7B] font-semibold text-sm">
-                  {selectedPrice && selectedPrice?.rearSuspension}
-                </span>
-              </div>
-
-              <div className="flex justify-between bg-white rounded-lg shadow-sm p-4 border border-gray-100 hover:shadow-md transition">
-                <span className="text-sm text-gray-700">{"Front Brakes"}</span>
-                <span className="text-[#233D7B] font-semibold text-sm">
-                  {selectedPrice && selectedPrice?.frontBrakes}
-                </span>
-              </div>
-
-              <div className="flex justify-between bg-white rounded-lg shadow-sm p-4 border border-gray-100 hover:shadow-md transition">
-                <span className="text-sm text-gray-700">{"Rear Brakes"}</span>
-                <span className="text-[#233D7B] font-semibold text-sm">
-                  {selectedPrice && selectedPrice?.rearBrakes}
-                </span>
-              </div>
-            </div>
-          </div>
-
-          <div className="bg-white/40 backdrop-blur-md p-6 rounded-xl shadow-xl space-y-4 mt-8">
-            <h3 className="text-2xl font-semibold text-gray-800">
-              Wheels & Tires{" "}
-            </h3>
-
-            <div className="grid md:grid-cols-2 gap-6">
-              <div className="flex justify-between bg-white rounded-lg shadow-sm p-4 border border-gray-100 hover:shadow-md transition">
-                <span className="text-sm text-gray-700">{"Wheel Type"}</span>
-                <span className="text-[#233D7B] font-semibold text-sm">
-                  {selectedPrice && selectedPrice?.wheelType}
-                </span>
-              </div>
-
-              <div className="flex justify-between bg-white rounded-lg shadow-sm p-4 border border-gray-100 hover:shadow-md transition">
-                <span className="text-sm text-gray-700">{"Tyre Size"}</span>
-                <span className="text-[#233D7B] font-semibold text-sm">
-                  {selectedPrice && selectedPrice?.tyreSize}
-                </span>
-              </div>
-
-              <div className="flex justify-between bg-white rounded-lg shadow-sm p-4 border border-gray-100 hover:shadow-md transition">
-                <span className="text-sm text-gray-700">{"Wheel Size"}</span>
-                <span className="text-[#233D7B] font-semibold text-sm">
-                  {selectedPrice && selectedPrice?.wheelSize}
-                </span>
-              </div>
-
-              <div className="flex justify-between bg-white rounded-lg shadow-sm p-4 border border-gray-100 hover:shadow-md transition">
-                <span className="text-sm text-gray-700">{"Spare Tyre"}</span>
-                <span className="text-[#233D7B] font-semibold text-sm">
-                  {selectedPrice && selectedPrice?.spareTyre}
-                </span>
-              </div>
-
-              <div className="flex justify-between bg-white rounded-lg shadow-sm p-4 border border-gray-100 hover:shadow-md transition">
-                <span className="text-sm text-gray-700">{"PCD"}</span>
-                <span className="text-[#233D7B] font-semibold text-sm">
-                  {selectedPrice && selectedPrice?.pcd}
-                </span>
-              </div>
-
-              <div className="flex justify-between bg-white rounded-lg shadow-sm p-4 border border-gray-100 hover:shadow-md transition">
-                <span className="text-sm text-gray-700">
-                  {"Spare Tyre Size"}
-                </span>
-                <span className="text-[#233D7B] font-semibold text-sm">
-                  {selectedPrice && selectedPrice?.spareTyreSize}
-                </span>
-              </div>
-            </div>
-          </div>
-          <div className="bg-white/40 backdrop-blur-md p-6 rounded-xl shadow-xl space-y-4 mt-8">
-            <h3 className="text-2xl font-semibold text-gray-800">
-              Feul Economy
-            </h3>
-
-            <div className="grid md:grid-cols-2 gap-6">
-              <div className="flex justify-between bg-white rounded-lg shadow-sm p-4 border border-gray-100 hover:shadow-md transition">
-                <span className="text-sm text-gray-700">
-                  {"Mileage City (km/l)"}
-                </span>
-                <span className="text-[#233D7B] font-semibold text-sm">
-                  {selectedPrice && selectedPrice?.mileageCity}
-                </span>
-              </div>
-
-              <div className="flex justify-between bg-white rounded-lg shadow-sm p-4 border border-gray-100 hover:shadow-md transition">
-                <span className="text-sm text-gray-700">
-                  {"Mileage Highway (km/l)"}
-                </span>
-                <span className="text-[#233D7B] font-semibold text-sm">
-                  {selectedPrice && selectedPrice?.mileageHighway}
-                </span>
-              </div>
-
-              <div className="flex justify-between bg-white rounded-lg shadow-sm p-4 border border-gray-100 hover:shadow-md transition">
-                <span className="text-sm text-gray-700">
-                  {"Fuel tank capacity"}
-                </span>
-                <span className="text-[#233D7B] font-semibold text-sm">
-                  {selectedPrice && selectedPrice?.fuelTankCapacity}
+                  {selectedPrice && selectedPrice?.certifyStatus}
                 </span>
               </div>
             </div>

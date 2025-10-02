@@ -72,7 +72,7 @@ const PopularMakes = () => {
               <img src={brand.image} alt={brand.name} className="w-full" />
 
               <div className="border-t border-[#ededed] mt-3 pt-2">
-                <span className="text-gray-600 text-lg font-bold font-sans">
+                <span className="text-red-600 text-center text-lg font-bold font-sans">
                   {brand.name}
                 </span>
               </div>

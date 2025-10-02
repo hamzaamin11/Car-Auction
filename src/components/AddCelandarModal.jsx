@@ -64,9 +64,9 @@ export const AddCelandarModal = ({
 
   return (
     <div className="fixed inset-0 z-50  backdrop-blur-lg ">
-      <div className=" bg-white p-10 mx-auto mt-16">
+      <div className=" bg-white p-10 mx-auto mt-12">
         <div className="text-xl sm:text-2xl font-bold text-[#233D7B] mb-6 leading-snug flex items-center justify-between ">
-          <span>View Car</span>
+          <span>View Vehicle</span>
           <MdClose
             size={24}
             className="text-rose-800 hover:cursor-pointer"

@@ -7,6 +7,7 @@ import {
   FaHistory,
 } from "react-icons/fa";
 import { FaMessage } from "react-icons/fa6";
+import { FiHelpCircle } from "react-icons/fi";
 
 const Sidebar = () => {
   const menuItems = [
@@ -20,11 +21,13 @@ const Sidebar = () => {
       name: "Vehicles",
       icon: <FaCar />,
       children: [
-        { name: "Add Vehicle", path: "/admin/vehicles" },
-        { name: "Add Vehicles Brand", path: "/admin/addbrand" },
-        { name: "Add Prices", path: "/admin/vehicle-prices" },
-        { name: "Add Specs", path: "/admin/vehicle-spects" },
-        { name: "View Details", path: "/admin/vehicle-details" },
+        { name: "Vehicle List", path: "/admin/vehicles" },
+        { name: "Vehicle Make List", path: "/admin/addbrand" },
+        { name: "Vehicle Model List", path: "/admin/addmodel" },
+        { name: "Vehicle Series List", path: "/admin/addseries" },
+        { name: "Add City", path: "/admin/city" },
+        // { name: "Add Specs", path: "/admin/vehicle-spects" },
+        // { name: "View Details", path: "/admin/vehicle-details" },
       ],
     },
     {
@@ -45,10 +48,15 @@ const Sidebar = () => {
       path: "/admin/manage-users",
       icon: <FaUsers />,
     },
+
     {
-      name: "Customers List",
-      path: "/admin/customerlist",
-      icon: <FaMessage />,
+      name: "Support Center",
+      icon: <FiHelpCircle />,
+      children: [
+        { name: "Suggestions", path: "/admin/suggestionlist" },
+        { name: "Partnership Opportunities", path: "/admin/becomepartnerlist" },
+        { name: "Get in Touch", path: "/admin/contactlist" },
+      ],
     },
   ];
 

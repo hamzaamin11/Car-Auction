@@ -11,7 +11,7 @@ const AuctionHero = () => {
       />
       <div className="relative z-10 text-center py-20 px-6">
         <h1 className="text-4xl md:text-5xl font-bold mb-4">Sell Your Car in Our Auction</h1>
-        <p className="text-lg md:text-xl">Get the highest bid with a hassle-free process at CHAUDHRY Cars Auction</p>
+        <p className="text-lg md:text-xl">Get the highest bid with a hassle-free process at WheelBidz</p>
       </div>
     </section>
   );

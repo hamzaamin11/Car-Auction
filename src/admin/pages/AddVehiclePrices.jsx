@@ -183,7 +183,7 @@ const AddVehiclePrices = () => {
                   getVehicles?.map((vehicle) => (
                     <option key={vehicle.id} value={vehicle.id}>
                       {vehicle.make} {vehicle.model} ({vehicle.year}) -{" "}
-                      {vehicle.vin}
+                      {vehicle.series}
                     </option>
                   ))}
               </select>
@@ -200,10 +200,15 @@ const AddVehiclePrices = () => {
                   Ex-Factory Price *
                 </label>
                 <input
-                  type="number"
                   name="exFactoryPrice"
                   value={formData.exFactoryPrice}
-                  onChange={handleChange}
+                  onChange={(e) => {
+                    const value = e.target.value;
+
+                    if (/^\d*$/.test(value) && value.length <= 9) {
+                      handleChange(e);
+                    }
+                  }}
                   className="w-full px-4 py-2 border border-gray-300 rounded-md focus:ring-indigo-500 focus:border-indigo-500"
                   required
                   step="0.01"
@@ -216,10 +221,15 @@ const AddVehiclePrices = () => {
                   Withholding Tax (Filer)
                 </label>
                 <input
-                  type="number"
                   name="withholdingTaxFiler"
                   value={formData.withholdingTaxFiler}
-                  onChange={handleChange}
+                  onChange={(e) => {
+                    const value = e.target.value;
+
+                    if (/^\d*$/.test(value) && value.length <= 9) {
+                      handleChange(e);
+                    }
+                  }}
                   className="w-full px-4 py-2 border border-gray-300 rounded-md focus:ring-indigo-500 focus:border-indigo-500"
                   step="0.01"
                   min="0"
@@ -231,10 +241,14 @@ const AddVehiclePrices = () => {
                   Withholding Tax (Non-Filer)
                 </label>
                 <input
-                  type="number"
                   name="withholdingTaxNonFiler"
                   value={formData.withholdingTaxNonFiler}
-                  onChange={handleChange}
+                  onChange={(e) => {
+                    const value = e.target.value;
+                    if (/^\d*$/.test(value) && value.length <= 9) {
+                      handleChange(e);
+                    }
+                  }}
                   className="w-full px-4 py-2 border border-gray-300 rounded-md focus:ring-indigo-500 focus:border-indigo-500"
                   step="0.01"
                   min="0"
@@ -246,10 +260,14 @@ const AddVehiclePrices = () => {
                   Pay Order Price (Filer)
                 </label>
                 <input
-                  type="number"
                   name="payorderPriceFiler"
                   value={formData.payorderPriceFiler}
-                  onChange={handleChange}
+                  onChange={(e) => {
+                    const value = e.target.value;
+                    if (/^\d*$/.test(value) && value.length <= 9) {
+                      handleChange(e);
+                    }
+                  }}
                   className="w-full px-4 py-2 border border-gray-300 rounded-md focus:ring-indigo-500 focus:border-indigo-500"
                   step="0.01"
                   min="0"
@@ -261,10 +279,15 @@ const AddVehiclePrices = () => {
                   Pay Order Price (Non-Filer)
                 </label>
                 <input
-                  type="number"
                   name="payorderPriceNonFiler"
                   value={formData.payorderPriceNonFiler}
-                  onChange={handleChange}
+                  onChange={(e) => {
+                    const value = e.target.value;
+
+                    if (/^\d*$/.test(value) && value.length <= 9) {
+                      handleChange(e);
+                    }
+                  }}
                   className="w-full px-4 py-2 border border-gray-300 rounded-md focus:ring-indigo-500 focus:border-indigo-500"
                   step="0.01"
                   min="0"
@@ -283,10 +306,15 @@ const AddVehiclePrices = () => {
                   Token Tax
                 </label>
                 <input
-                  type="number"
                   name="tokenTax"
                   value={formData.tokenTax}
-                  onChange={handleChange}
+                  onChange={(e) => {
+                    const value = e.target.value;
+
+                    if (/^\d*$/.test(value) && value.length <= 9) {
+                      handleChange(e);
+                    }
+                  }}
                   className="w-full px-4 py-2 border border-gray-300 rounded-md focus:ring-indigo-500 focus:border-indigo-500"
                   step="0.01"
                   min="0"
@@ -298,10 +326,15 @@ const AddVehiclePrices = () => {
                   Income Tax (Filer)
                 </label>
                 <input
-                  type="number"
                   name="incomeTaxFiler"
                   value={formData.incomeTaxFiler}
-                  onChange={handleChange}
+                  onChange={(e) => {
+                    const value = e.target.value;
+
+                    if (/^\d*$/.test(value) && value.length <= 9) {
+                      handleChange(e);
+                    }
+                  }}
                   className="w-full px-4 py-2 border border-gray-300 rounded-md focus:ring-indigo-500 focus:border-indigo-500"
                   step="0.01"
                   min="0"
@@ -313,10 +346,15 @@ const AddVehiclePrices = () => {
                   Registration Fee
                 </label>
                 <input
-                  type="number"
                   name="registrationFee"
                   value={formData.registrationFee}
-                  onChange={handleChange}
+                  onChange={(e) => {
+                    const value = e.target.value;
+
+                    if (/^\d*$/.test(value) && value.length <= 9) {
+                      handleChange(e);
+                    }
+                  }}
                   className="w-full px-4 py-2 border border-gray-300 rounded-md focus:ring-indigo-500 focus:border-indigo-500"
                   step="0.01"
                   min="0"
@@ -328,10 +366,15 @@ const AddVehiclePrices = () => {
                   Registration Book
                 </label>
                 <input
-                  type="number"
                   name="registrationBook"
                   value={formData.registrationBook}
-                  onChange={handleChange}
+                  onChange={(e) => {
+                    const value = e.target.value;
+
+                    if (/^\d*$/.test(value) && value.length <= 9) {
+                      handleChange(e);
+                    }
+                  }}
                   className="w-full px-4 py-2 border border-gray-300 rounded-md focus:ring-indigo-500 focus:border-indigo-500"
                   step="0.01"
                   min="0"
@@ -343,10 +386,15 @@ const AddVehiclePrices = () => {
                   Scanning & Archiving Fee
                 </label>
                 <input
-                  type="number"
                   name="scanningArchivingFee"
                   value={formData.scanningArchivingFee}
-                  onChange={handleChange}
+                  onChange={(e) => {
+                    const value = e.target.value;
+
+                    if (/^\d*$/.test(value) && value.length <= 9) {
+                      handleChange(e);
+                    }
+                  }}
                   className="w-full px-4 py-2 border border-gray-300 rounded-md focus:ring-indigo-500 focus:border-indigo-500"
                   step="0.01"
                   min="0"
@@ -361,10 +409,15 @@ const AddVehiclePrices = () => {
                   Sticker Fee
                 </label>
                 <input
-                  type="number"
                   name="stickerFee"
                   value={formData.stickerFee}
-                  onChange={handleChange}
+                  onChange={(e) => {
+                    const value = e.target.value;
+
+                    if (/^\d*$/.test(value) && value.length <= 9) {
+                      handleChange(e);
+                    }
+                  }}
                   className="w-full px-4 py-2 border border-gray-300 rounded-md focus:ring-indigo-500 focus:border-indigo-500"
                   step="0.01"
                   min="0"
@@ -376,10 +429,15 @@ const AddVehiclePrices = () => {
                   Number Plate Charges
                 </label>
                 <input
-                  type="number"
                   name="numberPlateCharges"
                   value={formData.numberPlateCharges}
-                  onChange={handleChange}
+                  onChange={(e) => {
+                    const value = e.target.value;
+
+                    if (/^\d*$/.test(value) && value.length <= 9) {
+                      handleChange(e);
+                    }
+                  }}
                   className="w-full px-4 py-2 border border-gray-300 rounded-md focus:ring-indigo-500 focus:border-indigo-500"
                   step="0.01"
                   min="0"

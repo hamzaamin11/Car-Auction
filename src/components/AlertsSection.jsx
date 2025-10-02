@@ -133,7 +133,7 @@ const handleCategorySelect = (category) => {
     <div className="flex flex-col md:flex-row bg-gray-100 p-8 rounded-lg shadow-md">
       <div className="md:w-1/2 mb-6 md:mb-0 md:pr-8">
   <h2 className="text-2xl text-gray-600 font-bold mb-6 mt-6">
-    Don’t see the vehicle you want? Sign up for Chaudhry Car Auctions Vehicle Alerts.
+    Don’t see the vehicle you want? Sign up for WheelBidz Vehicle Alerts.
   </h2>
   <p className="mb-6 text-1xl text-gray-500">
     Vehicle Alerts are emails notifying you of the latest vehicles we add to our inventory based on what you're looking for.
@@ -470,7 +470,7 @@ const handleCategorySelect = (category) => {
               className="mt-1 h-4 w-4 text-red-600 focus:ring-red-500 border-gray-300 rounded"
             />
             <label htmlFor="agree" className="ml-2 text-sm text-gray-900">
-              Yes, I consent to Chaudhry Cars Auction Limited sending me Vehicle Alert emails. I may cancel the sending of the Vehicle Alerts at any time using unsubscribe function in emails.
+              Yes, I consent to WheelBidz Limited sending me Vehicle Alert emails. I may cancel the sending of the Vehicle Alerts at any time using unsubscribe function in emails.
             </label>
           </div>
 

@@ -1,27 +1,20 @@
 import { Link } from "react-router-dom";
 import { FaAngleRight } from "react-icons/fa";
-import bannerImage from "../../src/assets/banner 4.jpg";
+import bannerImage from "../../src/assets/copart2.jpg";
 const SalesBanner = () => {
   return (
     <section
-      className="relative bg-cover bg-center bg-no-repeat h-[350px] md:h-[450px] flex items-center justify-center text-center"
+      className="relative bg-cover bg-center bg-no-repeat lg:h-[350px] h-[150px] md:h-[450px] flex items-center justify-center text-start"
       style={{
         backgroundImage: `url(${bannerImage})`,
       }}
     >
-      <div className="absolute inset-0 "></div>
+      <div className="absolute inset-0 bg-black/30"></div>
 
       <div className="relative z-10 px-4">
         <h1 className="text-3xl md:text-5xl font-bold text-white animate-fade-in">
-          Pricelist of All Cars
+          All Car Companies
         </h1>
-        <Link
-          to="#"
-          className="text-white mt-4 text-sm md:text-lg max-w-2xl mx-auto block text-center hover:text-[#FFDAB9] transition-colors duration-300"
-        >
-          View Prices of All New Cars{" "}
-          <FaAngleRight className="inline-block ml-1" />
-        </Link>
       </div>
     </section>
   );

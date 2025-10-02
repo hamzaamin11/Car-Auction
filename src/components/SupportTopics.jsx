@@ -103,12 +103,7 @@ const SupportTopics = () => {
           </div>
         ))}
       </div>
-      {selectedTopic && (
-        <SupportModal
-          topic={selectedTopic}
-          onClose={() => setSelectedTopic(null)}
-        />
-      )}
+    
     </section>
   );
 };

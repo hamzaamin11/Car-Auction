@@ -1,7 +1,7 @@
-import React, { useEffect } from 'react';
-import AOS from 'aos';
-import 'aos/dist/aos.css';
-import { Link } from 'react-router-dom';
+import React, { useEffect } from "react";
+import AOS from "aos";
+import "aos/dist/aos.css";
+import { Link } from "react-router-dom";
 
 const IntroSection = () => {
   useEffect(() => {
@@ -11,7 +11,6 @@ const IntroSection = () => {
   return (
     <section className="w-full bg-[#f9fbff] py-16 overflow-hidden">
       <div className="max-w-7xl mx-auto px-4 md:px-8 flex flex-col md:flex-row items-center justify-between gap-12">
-       
         <div className="md:w-1/2" data-aos="fade-right">
           <h1 className="text-4xl sm:text-5xl font-bold text-blue-900 mb-8 leading-tight">
             How it Works
@@ -23,7 +22,9 @@ const IntroSection = () => {
                 Over 500,000 Cars, Vans, HGVs and More for Sale
               </h4>
               <p>
-                CHAUDHRY car auctions have something for everyone — used car buyers, dismantlers, dealers, body shops, New buyers and individuals.
+                WheelBidz have something for everyone — used car
+                buyers, dismantlers, dealers, body shops, New buyers and
+                individuals.
               </p>
             </div>
 
@@ -32,16 +33,17 @@ const IntroSection = () => {
                 A Better Way to Buy
               </h4>
               <p>
-                Buy your next car from the comfort of your own home. Win your car at an online auction, or let our proprietary software do the bidding for you.
+                Buy your next car from the comfort of your own home. Win your
+                car at an online auction, or let our proprietary software do the
+                bidding for you.
               </p>
             </div>
 
             <div>
-              <h4 className="text-xl font-semibold  mb-1">
-                Global Leader
-              </h4>
+              <h4 className="text-xl font-semibold  mb-1">Global Leader</h4>
               <p>
-                CHAUDHRY Cars Auction is a global leader in 100% online car auctions featuring used and New vehicles.
+                WheelBidz is a global leader in 100% online car auctions
+                featuring used and New vehicles.
               </p>
             </div>
 
@@ -51,12 +53,11 @@ const IntroSection = () => {
                 className="inline-block bg-blue-700 text-white font-semibold py-2.5 px-6 rounded-lg hover:bg-blue-800 transition duration-300 shadow"
               >
                 Search Stock
-              </Link> 
+              </Link>
             </div>
           </div>
         </div>
 
-     
         <div className="md:w-1/2" data-aos="fade-left">
           <img
             src="/images/work.avif"

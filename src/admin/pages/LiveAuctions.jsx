@@ -11,35 +11,64 @@ import {
 } from "../../components/Redux/NavigationSlice";
 import { RotateLoader } from "../../components/Loader/RotateLoader";
 import { ViewBrandModal } from "../../components/BrandModal/ViewBrandModal";
+import moment from "moment/moment";
+import axios from "axios";
+import { BASE_URL } from "../../components/Contant/URL";
 
 export default function LiveAuctions() {
-  // const [users, setUsers] = useState(initialUsers);
-
   const { getLiveAuctions, AllLiveAuctions, AuctionById } =
     useContext(AuctionsContext);
 
-  const { loader } = useSelector((state) => state.navigateState);
-
-  const dispatch = useDispatch();
-
   const [selectedVehicle, setselectedVehicle] = useState(null);
+
+  const { currentUser } = useSelector((state) => state.auth);
 
   const [selectedAuctionId, setSelectedAuctionId] = useState(null);
 
-  //   const handleView = async (user) => {
-  //     await getUserbyId(user.id); // ✅ correct function call
-  //     setIsViewModalOpen(true);
-  //   };
+  const [allLiveAuction, setAllLiveAuction] = useState([]);
+
+  const id = currentUser?.id;
+
+  const [pageNo, setPageNo] = useState(1);
+
+  console.log(pageNo);
+
+  const handleNextPage = () => {
+    setPageNo(pageNo + 1);
+  };
+
+  const handlePrevPage = () => {
+    setPageNo(pageNo > 1 ? pageNo - 1 : 1);
+  };
+
+  const handleGetAllLive = async () => {
+    try {
+      const res = await axios.get(
+        `${BASE_URL}/admin/liveAuctionsForAdmin?entry=${10}&page=${pageNo}`
+      );
+      setAllLiveAuction(res.data);
+    } catch (error) {
+      console.log(error);
+    }
+  };
+
+  const handleGetAllLivebySeller = async () => {
+    try {
+      const res = await axios.get(`${BASE_URL}/liveAuctions/${id}`);
+      setAllLiveAuction(res.data);
+    } catch (error) {
+      console.log(error);
+    }
+  };
 
   useEffect(() => {
-    AllLiveAuctions();
-    dispatch(navigationStart());
-    setTimeout(() => {
-      dispatch(navigationSuccess("live"));
-    }, 1000);
-  }, []);
-
-  if (loader) return <RotateLoader />;
+    if (currentUser.role === "admin") {
+      handleGetAllLive();
+    }
+    if (currentUser.role === "seller") {
+      handleGetAllLivebySeller();
+    }
+  }, [pageNo]);
 
   return (
     <>
@@ -51,63 +80,158 @@ export default function LiveAuctions() {
         </h1>
 
         <div className="overflow-x-auto shadow ring-1 ring-gray-300 rounded-lg">
-          <table className="min-w-full divide-y divide-gray-200">
-            <thead className="bg-[#191970] text-white">
-              <tr>
-                <th className="px-4 py-3 text-left text-sm font-semibold">
-                  Name
-                </th>
-                <th className="px-4 py-3 text-left text-sm font-semibold">
-                  Vehicle
-                </th>
-
-                <th className="px-4 py-3 text-left text-sm font-semibold">
-                  Condition
-                </th>
-
-                <th className="px-4 py-3 text-left text-sm font-semibold">
-                  Seller Offer
-                </th>
-                <th className="px-4 py-3 text-left text-sm font-semibold">
-                  Max. Bid
-                </th>
-
-                <th className="px-4 py-3 text-left text-sm font-semibold">
-                  Date
-                </th>
-              </tr>
-            </thead>
-            <tbody className="bg-white divide-y divide-gray-100">
-              {getLiveAuctions?.map((user, idx) => (
-                <tr
-                  onClick={() => setselectedVehicle(user)}
-                  key={user.id}
-                  className={`idx % 2 === 0 ? "bg-gray-50" : "" cursor-pointer  hover:bg-gray-100 `}
-                >
-                  <td className="px-4 py-3 font-medium text-gray-900">
-                    {user?.name}
-                  </td>
-                  <td className="px-4 py-3 text-gray-700">{user.model}</td>
-                  <td className="px-4 py-3 text-gray-700">
-                    {user?.vehicleCondition}
-                  </td>
-                  <td className="px-4 py-3 text-gray-700">
-                    {user.sellerOffer}
-                  </td>
-                  <td className="px-4 py-3 text-gray-700">{"Pending"}</td>
-                  <td className="px-4 py-3 text-gray-700">
-                    {user.date?.slice(0, 10)}
-                  </td>
+          {/* Desktop Table */}
+          <div className="hidden md:block">
+            <table className="min-w-full divide-y divide-gray-200">
+              <thead className="bg-[#191970] text-white">
+                <tr>
+                  <th className="px-4 py-3 text-left text-sm font-semibold">
+                    Owner Name
+                  </th>
+                  <th className="px-4 py-3 text-left text-sm font-semibold">
+                    Make
+                  </th>
+                  <th className="px-4 py-3 text-left text-sm font-semibold">
+                    Model
+                  </th>
+                  <th className="px-4 py-3 text-left text-sm font-semibold">
+                    Condition
+                  </th>
+                  <th className="px-4 py-3 text-left text-sm font-semibold">
+                    Seller Offer
+                  </th>
+                  <th className="px-4 py-3 text-left text-sm font-semibold">
+                    End Time
+                  </th>
+                  <th className="px-4 py-3 text-left text-sm font-semibold">
+                    Date
+                  </th>
                 </tr>
-              ))}
-            </tbody>
-          </table>
+              </thead>
+              <tbody className="bg-white divide-y divide-gray-100 ">
+                {allLiveAuction?.map((user, idx) => (
+                  <tr
+                    key={user.id}
+                    onClick={() => setselectedVehicle(user)}
+                    className={`${
+                      idx % 2 === 0 ? "bg-gray-50" : ""
+                    } cursor-pointer hover:bg-gray-100`}
+                  >
+                    <td className="px-4 py-3 font-medium text-gray-900">
+                      {user?.name}
+                    </td>
+                    <td className="px-4 py-3 text-gray-700">{user?.make}</td>
+
+                    <td className="px-4 py-3 text-gray-700">{user?.model}</td>
+
+                    <td className="px-4 py-3 text-gray-700">
+                      {user?.vehicleCondition}
+                    </td>
+                    <td className="px-4 py-3 text-gray-700">
+                      {user?.sellerOffer}
+                    </td>
+                    <td className="px-4 py-3 text-gray-700">
+                      {user.endTime
+                        ? moment(user.endTime).local().format("HH:mm:ss")
+                        : "--"}
+                    </td>
+                    <td className="px-4 py-3 text-gray-700">
+                      {user?.endTime?.slice(0, 10)}
+                    </td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
+
+          {/* Mobile Cards */}
+          <div className="block md:hidden space-y-4 p-3">
+            {allLiveAuction?.map((user) => (
+              <div
+                key={user.id}
+                onClick={() => setselectedVehicle(user)}
+                className="bg-white rounded-xl shadow-md border border-gray-200 p-4 cursor-pointer hover:shadow-lg hover:border-indigo-300 hover:bg-indigo-50/30 transition-all duration-300"
+              >
+                {/* Header */}
+                <div className="flex justify-between items-center mb-3">
+                  <span className="text-gray-900 font-bold">Seller Name</span>
+                  <span className="text-gray-500">{user?.name}</span>
+                </div>
+
+                {/* Vehicle Info */}
+                <div className="space-y-2 text-sm">
+                  <p className="flex justify-between">
+                    <span className="text-gray-900 font-bold">
+                      Vehicle Model
+                    </span>
+                    <span className="text-gray-500">
+                      {user?.make} / {user?.model}
+                    </span>
+                  </p>
+
+                  <p className="flex justify-between">
+                    <span className="text-gray-900 font-bold">Condition</span>
+                    <span className="text-gray-500">
+                      {user?.vehicleCondition}
+                    </span>
+                  </p>
+
+                  <p className="flex justify-between">
+                    <span className="text-gray-900 font-bold">
+                      Demand Price
+                    </span>
+                    <span className="text-gray-500">{user?.sellerOffer}</span>
+                  </p>
+
+                  <p className="flex justify-between">
+                    <span className="text-gray-900 font-bold">End Time</span>
+                    <span className="text-gray-500">
+                      {user.endTime
+                        ? moment(user.endTime).local().format("HH:mm:ss")
+                        : "--"}
+                    </span>
+                  </p>
+
+                  <p className="flex justify-between">
+                    <span className="text-gray-900 font-bold">Date</span>
+                    <span className="text-gray-500">
+                      {user?.endTime?.slice(0, 10)}
+                    </span>
+                  </p>
+                </div>
+              </div>
+            ))}
+          </div>
         </div>
-        {getLiveAuctions.length === 0 && (
-          <div className="flex items-center justify-center mt-1 font-medium text-xl">
+
+        {allLiveAuction?.length === 0 && (
+          <div className="flex items-center justify-center mt-1 font-medium lg:text-xl text:sm">
             No Live Bid yet!
           </div>
         )}
+
+        <div className="flex justify-between  mt-6">
+          {/* Prev Button */}
+          <button
+            className={`bg-[#518ecb] text-white px-5 py-2 rounded hover:bg-[#518ecb] ${
+              pageNo > 1 ? "block" : "hidden"
+            }`}
+            onClick={handlePrevPage}
+          >
+            ‹ Prev
+          </button>
+
+          {/* Next Button */}
+          <div></div>
+          <button
+            className={`bg-[#518ecb] text-white px-5 py-2 rounded hover:bg-[#518ecb] ${
+              allLiveAuction.length === 0 ? "hidden" : "block"
+            }`}
+            onClick={handleNextPage}
+          >
+            Next ›
+          </button>
+        </div>
 
         {selectedAuctionId && (
           <ViewAuctionModal

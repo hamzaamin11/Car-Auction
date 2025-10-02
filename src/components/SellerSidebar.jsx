@@ -11,7 +11,7 @@ const SellerSidebar = () => {
   const menuItems = [
     {
       name: "Dashboard",
-      path: "/seller", // Matches index route
+      path: "/seller/dashboard", // Matches index route
       icon: <FaTachometerAlt />,
       end: true,
     },
@@ -19,10 +19,10 @@ const SellerSidebar = () => {
       name: "Vehicles",
       icon: <FaCar />,
       children: [
-        // { name: "Add Vehicle", path: "/seller/vehicles" },  // Matches <AddAdminVehicle />
-        { name: "Add Prices", path: "/seller/vehicle-prices" }, // Matches <SellerVehiclePrices />
-        { name: "Add Specs", path: "/seller/vehicle-spects" }, // Matches <SellerVehicleSpects />
-        { name: "View Details", path: "/seller/vehicle-details" }, // Matches <SellerVehicleDetails />
+        { name: "Add Vehicle", path: "/seller/addVehicle" }, // Matches <AddAdminVehicle />
+        // { name: "Add Prices", path: "/seller/vehicle-prices" }, // Matches <SellerVehiclePrices />
+        // { name: "Add Specs", path: "/seller/vehicle-spects" }, // Matches <SellerVehicleSpects />
+        // { name: "View Details", path: "/seller/vehicle-details" }, // Matches <SellerVehicleDetails />
       ],
     },
     {

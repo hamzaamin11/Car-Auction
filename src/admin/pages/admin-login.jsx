@@ -104,7 +104,7 @@ const AdminLogin = ({ children }) => {
         </form>
 
         <div className="mt-6 text-center text-sm text-white/80">
-          &copy; {new Date().getFullYear()} Chaudhry Cars Auction Admin Panel
+          &copy; {new Date().getFullYear()} WheelBidz Admin Panel
         </div>
       </div>
     </div>

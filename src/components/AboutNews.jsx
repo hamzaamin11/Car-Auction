@@ -15,10 +15,10 @@ const AboutNews = () => {
 
          
           <div className="md:col-span-6" data-aos="fade-right">
-            <h2 className="text-3xl font-bold text-blue-900 mb-4">What's Going on at CHAUDHRY Cars Auction</h2>
+            <h2 className="text-3xl font-bold text-blue-900 mb-4">What's Going on at WheelBidz</h2>
 
             <p className="text-black mb-4">
-            <strong>At CHAUDHRY Cars Auction, we’re always on the move</strong>. That’s why we’ve created a dedicated Member News 
+            <strong>At WheelBidz, we’re always on the move</strong>. That’s why we’ve created a dedicated Member News 
             section which features vehicle highlights, helpful hints and tips, exciting announcements and more.
             </p>
 
