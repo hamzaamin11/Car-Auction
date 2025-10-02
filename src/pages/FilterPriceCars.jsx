@@ -1,7 +1,9 @@
 import axios from "axios";
 import React, { useEffect, useState, useMemo } from "react";
 import { useNavigate, useParams } from "react-router-dom";
+import Select from "react-select"; // Import react-select for searchable dropdowns
 import { BASE_URL } from "../components/Contant/URL";
+import numberToWords from "number-to-words"; // Import number-to-words for basic number conversion
 
 const BodyType = [
   { label: "Mini Vehicles", value: "Mini Vehicles" },
@@ -29,205 +31,29 @@ const BodyType = [
 ];
 
 const Cities = [
-  // A
-  "Abbottabad",
-  "Addul Hakeem",
-  "Ahmadpur East",
-  "Ahmednagar",
-  "Alipur",
-  "Arandu",
-  "Arifwala",
-  "Atharan Hazari",
-  "Attock",
-
-  // B
-  "Badah",
-  "Badin",
-  "Bahawalnagar",
-  "Bahawalpur",
-  "Balakot",
-  "Bannu",
-  "Barkhan",
-  "Basirpur",
-  "Basti Maluk",
-  "Bela",
-  "Bhag",
-  "Bhakkar",
-  "Bhan",
-  "Bhera",
-  "Bucheki",
-
-  // C
-  "Chacharan Sharif",
-  "Chak Jhumra",
-  "Chakwal",
-  "Chaman",
-  "Charsadda",
-  "Chawinda",
-  "Chichawatni",
-  "Chiniot",
-  "Chitral",
-  "Choubara",
-  "Chunian",
-
-  // D
-  "Dadu",
-  "Daira Din Panah",
-  "Dalbandin",
-  "Daulatpur",
-  "Daur",
-  "Depalpur",
-  "Dera Bugti",
-  "Dera Ghazi Khan",
-  "Dera Ismail Khan",
-  "Dhadar",
-  "Digri",
-  "Dijkot",
-  "Dinga",
-  "Diplo",
-  "Dir",
-  "Drosh",
-  "Dudhial",
-  "Duki",
-  "Dunyapur",
-
-  // E
+  "Abbottabad", "Addul Hakeem", "Ahmadpur East", "Ahmednagar", "Alipur", "Arandu", "Arifwala", "Atharan Hazari", "Attock",
+  "Badah", "Badin", "Bahawalnagar", "Bahawalpur", "Balakot", "Bannu", "Barkhan", "Basirpur", "Basti Maluk", "Bela", "Bhag", "Bhakkar", "Bhan", "Bhera", "Bucheki",
+  "Chacharan Sharif", "Chak Jhumra", "Chakwal", "Chaman", "Charsadda", "Chawinda", "Chichawatni", "Chiniot", "Chitral", "Choubara", "Chunian",
+  "Dadu", "Daira Din Panah", "Dalbandin", "Daulatpur", "Daur", "Depalpur", "Dera Bugti", "Dera Ghazi Khan", "Dera Ismail Khan", "Dhadar", "Digri", "Dijkot", "Dinga", "Diplo", "Dir", "Drosh", "Dudhial", "Duki", "Dunyapur",
   "Eminabad",
-
-  // F
-  "Faisalabad",
-  "Fateh Jang",
-  "Fateh Pur",
-  "Firozwala",
-  "Fort Abbas",
-
-  // G
-  "Gaddani",
-  "Gambat",
-  "Garhi Khairo",
-  "Gharibwal",
-  "Gharo",
-  "Gilgit",
-  "Gojra",
-  "Gujranwala",
-  "Gujrat",
-  "Gwadar",
-
-  // H
-  "Hafizabad",
-  "Hala",
-  "Hangu",
-  "Haripur",
-  "Harnai",
-  "Haroonabad",
-  "Hasilpur",
-  "Havelian",
-  "Hoshab",
-  "Hyderabad",
-
-  // I
-  "Isa Khel",
-  "Islamabad",
-
-  // J
-  "Jacobabad",
-  "Jaranwala",
-  "Jhang",
-  "Jhelum",
-  "Jamshoro",
-
-  // K
-  "Karachi",
-  "Kamalia",
-  "Kamoke",
-  "Kandhkot",
-  "Kasur",
-  "Khairpur",
-  "Khushab",
-  "Khuzdar",
-  "Kohat",
-  "Kot Abdul Malik",
-  "Kot Addu",
-  "Kotri",
-
-  // L
-  "Lahore",
-  "Larkana",
-  "Layyah",
-  "Lodhran",
-
-  // M
-  "Mandi Bahauddin",
-  "Mansehra",
-  "Mardan",
-  "Mianwali",
-  "Mirpur Khas",
-  "Mirpur (Azad Kashmir)",
-  "Mingora",
-  "Muzaffarabad",
-  "Muzaffargarh",
-  "Multan",
-  "Muridke",
-
-  // N
-  "Nawabshah",
-  "Narowal",
-  "Nowshera",
-
-  // O
+  "Faisalabad", "Fateh Jang", "Fateh Pur", "Firozwala", "Fort Abbas",
+  "Gaddani", "Gambat", "Garhi Khairo", "Gharibwal", "Gharo", "Gilgit", "Gojra", "Gujranwala", "Gujrat", "Gwadar",
+  "Hafizabad", "Hala", "Hangu", "Haripur", "Harnai", "Haroonabad", "Hasilpur", "Havelian", "Hoshab", "Hyderabad",
+  "Isa Khel", "Islamabad",
+  "Jacobabad", "Jaranwala", "Jhang", "Jhelum", "Jamshoro",
+  "Karachi", "Kamalia", "Kamoke", "Kandhkot", "Kasur", "Khairpur", "Khushab", "Khuzdar", "Kohat", "Kot Abdul Malik", "Kot Addu", "Kotri",
+  "Lahore", "Larkana", "Layyah", "Lodhran",
+  "Mandi Bahauddin", "Mansehra", "Mardan", "Mianwali", "Mirpur Khas", "Mirpur (Azad Kashmir)", "Mingora", "Muzaffarabad", "Muzaffargarh", "Multan", "Muridke",
+  "Nawabshah", "Narowal", "Nowshera",
   "Okara",
-
-  // P
-  "Pakpattan",
-  "Parachinar",
-
-  // Q
-  "Quetta",
-  "Qambar Shahdadkot",
-
-  // R
-  "Rahim Yar Khan",
-  "Rawalpindi",
-  "Rabwah",
-
-  // S
-  "Sadiqabad",
-  "Sahiwal",
-  "Sambrial",
-  "Sanghar",
-  "Sargodha",
-  "Shaheed Benazirabad (Nawabshah)",
-  "Sheikhupura",
-  "Shikarpur",
-  "Sialkot",
-  "Sukkur",
-  "Swabi",
-
-  // T
-  "Taxila",
-  "Tando Adam",
-  "Tando Allahyar",
-  "Tando Muhammad Khan",
-  "Talagang",
-  "Tharparkar",
-  "Thatta",
-  "Turβat",
-
-  // V
+  "Pakpattan", "Parachinar",
+  "Quetta", "Qambar Shahdadkot",
+  "Rahim Yar Khan", "Rawalpindi", "Rabwah",
+  "Sadiqabad", "Sahiwal", "Sambrial", "Sanghar", "Sargodha", "Shaheed Benazirabad (Nawabshah)", "Sheikhupura", "Shikarpur", "Sialkot", "Sukkur", "Swabi",
+  "Taxila", "Tando Adam", "Tando Allahyar", "Tando Muhammad Khan", "Talagang", "Tharparkar", "Thatta", "Turbat",
   "Vehari",
-
-  // W
-  "Wah Cantonment",
-  "Wazirabad",
-  "WeTa? (ignore)",
-
-  // Z
-  "Zabād",
-  "Zafarke",
-  "Zafarwal",
-  "Zahir Pir",
-  "Zahri",
-  "Zaida",
+  "Wah Cantonment", "Wazirabad", "WeTa?",
+  "Zabad", "Zafarke", "Zafarwal", "Zahir Pir", "Zahri", "Zaida",
 ];
 
 const FilterPriceCars = () => {
@@ -237,55 +63,64 @@ const FilterPriceCars = () => {
   const navigate = useNavigate();
 
   const [allMake, setAllMake] = useState([]);
-
   const [selectMake, setSelectMake] = useState();
-
-  console.log("all makes =>>>>>", selectMake);
-
-  console.log({ name, value });
-
-  let fromCash = "";
-  let toCash = "";
-
-  if (name === "budget") {
-    [fromCash, toCash] = value.split("-");
-  }
-
-  const initialState = {
+  const [filterData, setFilterData] = useState({
     vehicleType: name === "bodyStyle" ? value : "",
     selectYear: "",
     allMakes: name === "make" ? value : "",
     allModels: name === "model" ? value : "",
     location: name === "city" ? value : "",
-    formCash: name === "budget" ? fromCash : "",
-    toCash: name === "budget" ? toCash : "",
-  };
-
-  const [filterData, setFilterData] = useState(initialState);
-
+    formCash: name === "budget" ? (value.split("-")[0] || "") : "",
+    toCash: name === "budget" ? (value.split("-")[1] || "") : "",
+  });
   const [allFilterCars, setAllFilterCars] = useState([]);
-
   const [filterModel, setFilterModel] = useState([]);
-
   const [allCities, setAllCities] = useState([]);
-
   const [activeTab, setActiveTab] = useState("all");
-
   const [sorting, setSorting] = useState("");
-
   const [loading, setLoading] = useState(false);
 
-  // ✅ Generate years only once
+  // Generate years
   const currentYear = useMemo(() => {
     const year = new Date().getFullYear();
     const years = [];
     for (let i = 1970; i <= year; i++) {
-      years.unshift(i);
+      years.unshift({ label: i.toString(), value: i.toString() });
     }
     return years;
   }, []);
 
-  // ✅ Fetch vehicles with all filters
+  // Transform cities for react-select
+  const cityOptions = useMemo(
+    () =>
+      allCities.map((city) => ({
+        label: city.cityName,
+        value: city.id,
+      })),
+    [allCities]
+  );
+
+  // Transform makes for react-select
+  const allMakes = useMemo(
+    () =>
+      allMake.map((make) => ({
+        label: make.brandName,
+        value: make.id,
+      })),
+    [allMake]
+  );
+
+  // Transform models for react-select
+  const allModels = useMemo(
+    () =>
+      filterModel.map((m) => ({
+        label: m.modelName,
+        value: m.modelName,
+      })),
+    [filterModel]
+  );
+
+  // Fetch vehicles with all filters
   const handleGetFilterByVehicle = async () => {
     setLoading(true);
     try {
@@ -294,7 +129,7 @@ const FilterPriceCars = () => {
           locationId: filterData?.location || "",
           make: selectMake?.brandName || filterData.allMakes || "",
           model: filterData?.allModels || "",
-          bodyStyle: filterData.vehicleType || filterData.vehicleType || "",
+          bodyStyle: filterData.vehicleType || "",
           minPrice: filterData.formCash || "",
           maxPrice: filterData.toCash || "",
           sortType: sorting || "",
@@ -310,7 +145,7 @@ const FilterPriceCars = () => {
     }
   };
 
-  // ✅ Fetch models when make changes
+  // Fetch models when make changes
   const handleGetFilterModel = async () => {
     if (!filterData.allMakes) {
       setFilterModel([]);
@@ -331,7 +166,6 @@ const FilterPriceCars = () => {
       const res = await axios.get(
         `${BASE_URL}/getBrandById/${filterData.allMakes}`
       );
-      console.log(res.data);
       setSelectMake(res.data);
     } catch (error) {
       console.log(error);
@@ -350,56 +184,63 @@ const FilterPriceCars = () => {
   const handleGetAllCities = async () => {
     try {
       const res = await axios.get(`${BASE_URL}/getCitites`);
-
       setAllCities(res.data);
     } catch (error) {
       console.log(error);
     }
   };
 
-  useEffect(() => {
-    handleGetAllCities();
-  }, []);
-
-  // ✅ update state from form
-  const handleChange = (e) => {
-    const { name, value } = e.target;
-    setFilterData({ ...filterData, [name]: value });
+  // Update state from form
+  const handleChange = (name, value) => {
+    setFilterData((prev) => ({ ...prev, [name]: value }));
   };
 
-  const allMakes = [
-    ...allMake.map((make) => ({
-      label: make?.brandName,
-      value: make?.id,
-    })),
-  ];
+  useEffect(() => {
+    handleGetAllCities();
+    handleGetAllMakes();
+  }, []);
 
-  const allModels = [
-    ...filterModel.map((m) => ({
-      label: m.modelName,
-      value: m.modelName,
-    })),
-  ];
-
-  // ✅ Run once on mount (default fetch)
   useEffect(() => {
     handleGetFilterByVehicle();
-  }, [activeTab]);
+  }, [activeTab, sorting, filterData.location]);
 
-  // ✅ Update on make change
   useEffect(() => {
     handleGetFilterModel();
     handleSelectMake();
   }, [filterData.allMakes]);
 
-  // ✅ Update on sorting change
-  useEffect(() => {
-    handleGetFilterByVehicle();
-  }, [sorting, filterData.location]);
+  // Convert number to Pakistani words (e.g., 2600000 -> "twenty-six lakhs")
+  const convertToPakistaniWords = (number) => {
+    if (!number || isNaN(number)) return "";
+    const num = Number(number);
 
-  useEffect(() => {
-    handleGetAllMakes();
-  }, []);
+    // Helper function to convert numbers less than 1000 to words
+    const toWords = (n) => (n === 0 ? "" : numberToWords.toWords(n));
+
+    // Break down the number into crores, lakhs, thousands, and remainder
+    const crore = Math.floor(num / 10000000);
+    const lakh = Math.floor((num % 10000000) / 100000);
+    const thousand = Math.floor((num % 100000) / 1000);
+    const remainder = num % 1000;
+
+    let result = [];
+    if (crore > 0) {
+      result.push(`${toWords(crore)} crore${crore > 1 ? "s" : ""}`);
+    }
+    if (lakh > 0) {
+      result.push(`${toWords(lakh)} lakh${lakh > 1 ? "s" : ""}`);
+    }
+    if (thousand > 0) {
+      result.push(`${toWords(thousand)} thousand`);
+    }
+    if (remainder > 0) {
+      result.push(toWords(remainder));
+    }
+
+    // Join parts with proper formatting
+    if (result.length === 0) return "";
+    return result.join(" ");
+  };
 
   return (
     <div className="flex flex-col lg:flex-row min-h-screen bg-gray-100 p-4 gap-4">
@@ -429,107 +270,106 @@ const FilterPriceCars = () => {
           <label className="block text-sm font-medium text-gray-700">
             Select Body Style
           </label>
-          <select
-            className="border w-full p-1.5 rounded"
-            name="vehicleType"
-            onChange={handleChange}
-            value={filterData.vehicleType}
-          >
-            <option value="">Select All Type</option>
-            {BodyType.map((body) => (
-              <option
-                onClick={() => navigate(`/filterprice/bodyStyle/${body.value}`)}
-                key={body.value}
-                value={body.value}
-              >
-                {body.label}
-              </option>
-            ))}
-          </select>
+          <Select
+            options={[{ label: "Select All Type", value: "" }, ...BodyType]}
+            value={BodyType.find(
+              (option) => option.value === filterData.vehicleType
+            ) || { label: "Select All Type", value: "" }}
+            onChange={(selected) => {
+              handleChange("vehicleType", selected.value);
+              if (selected.value) {
+                navigate(`/filterprice/bodyStyle/${selected.value}`);
+              }
+            }}
+            placeholder="Select Body Style"
+            isSearchable
+            className="w-full"
+          />
         </div>
 
         <div className="relative w-full max-w-sm">
           <label className="block text-sm font-medium text-gray-700">
             Select Year
           </label>
-          <select
-            className="border w-full p-1.5 rounded"
-            value={filterData.selectYear}
-            name="selectYear"
-            onChange={handleChange}
-          >
-            <option value="">Select Model Year</option>
-            {currentYear.map((year) => (
-              <option key={year} value={year}>
-                {year}
-              </option>
-            ))}
-          </select>
+          <Select
+            options={[{ label: "Select Model Year", value: "" }, ...currentYear]}
+            value={
+              currentYear.find(
+                (option) => option.value === filterData.selectYear
+              ) || { label: "Select Model Year", value: "" }
+            }
+            onChange={(selected) => handleChange("selectYear", selected.value)}
+            placeholder="Select Year"
+            isSearchable
+            className="w-full"
+          />
         </div>
 
         <div className="relative w-full max-w-sm">
           <label className="block text-sm font-medium text-gray-700">
             Select Make
           </label>
-          <select
-            className="border w-full p-1.5 rounded"
-            value={filterData && filterData?.allMakes}
-            name="allMakes"
-            onChange={handleChange}
-          >
-            <option value="">Select Vehicle Make</option>
-            {allMakes.map((body) => (
-              <option
-                onClick={() => navigate(`/filterprice/make/${body.label}`)}
-                key={body.value}
-                value={body.label && body.value}
-              >
-                {body.label}
-              </option>
-            ))}
-          </select>
+          <Select
+            options={[{ label: "Select Vehicle Make", value: "" }, ...allMakes]}
+            value={
+              allMakes.find((option) => option.value === filterData.allMakes) || {
+                label: "Select Vehicle Make",
+                value: "",
+              }
+            }
+            onChange={(selected) => {
+              handleChange("allMakes", selected.value);
+              if (selected.value) {
+                navigate(`/filterprice/make/${selected.label}`);
+              }
+            }}
+            placeholder="Select Make"
+            isSearchable
+            className="w-full"
+          />
         </div>
 
         <div className="relative w-full max-w-sm">
           <label className="block text-sm font-medium text-gray-700">
             Select Model
           </label>
-          <select
-            className="border w-full p-1.5 rounded"
-            name="allModels"
-            value={filterData.allModels}
-            onChange={handleChange}
-          >
-            <option value="">Select Vehicle Model</option>
-            {allModels.map((body, index) => (
-              <option key={index} value={body.label}>
-                {body.label}
-              </option>
-            ))}
-          </select>
+          <Select
+            options={[{ label: "Select Vehicle Model", value: "" }, ...allModels]}
+            value={
+              allModels.find((option) => option.value === filterData.allModels) || {
+                label: "Select Vehicle Model",
+                value: "",
+              }
+            }
+            onChange={(selected) => handleChange("allModels", selected.value)}
+            placeholder="Select Model"
+            isSearchable
+            className="w-full"
+          />
         </div>
 
         <div className="relative w-full max-w-sm">
           <label className="block text-sm font-medium text-gray-700">
             Select Location
           </label>
-          <select
-            className="border w-full p-1.5 rounded"
-            name="location"
-            value={filterData.location}
-            onChange={handleChange}
-          >
-            <option value="">Select Vehicle location</option>
-            {allCities.map((body) => (
-              <option
-                onClick={() => navigate(`/filterprice/city/${body.id}`)}
-                key={body.cityName}
-                value={body.id}
-              >
-                {body.cityName}
-              </option>
-            ))}
-          </select>
+          <Select
+            options={[{ label: "Select Vehicle Location", value: "" }, ...cityOptions]}
+            value={
+              cityOptions.find((option) => option.value === filterData.location) || {
+                label: "Select Vehicle Location",
+                value: "",
+              }
+            }
+            onChange={(selected) => {
+              handleChange("location", selected.value);
+              if (selected.value) {
+                navigate(`/filterprice/city/${selected.value}`);
+              }
+            }}
+            placeholder="Select Location"
+            isSearchable
+            className="w-full"
+          />
         </div>
 
         {/* Price Filter */}
@@ -538,32 +378,44 @@ const FilterPriceCars = () => {
             Filter Price
           </label>
           <div className="flex flex-col md:flex-col lg:flex-row w-full gap-2">
-            <input
-              className="border p-2 rounded   w-full"
-              name="formCash"
-              value={filterData.formCash}
-              onChange={(e) => {
-                const value = e.target.value;
-                // sirf digits aur max 9 digits allow karo
-                if (/^\d*$/.test(value) && value.length <= 9) {
-                  handleChange(e);
-                }
-              }}
-              placeholder="From"
-            />
-            <input
-              className="border p-2 rounded  w-full "
-              name="toCash"
-              value={filterData.toCash}
-              onChange={(e) => {
-                const value = e.target.value;
-                // sirf digits aur max 9 digits allow karo
-                if (/^\d*$/.test(value) && value.length <= 9) {
-                  handleChange(e);
-                }
-              }}
-              placeholder="To"
-            />
+            <div className="w-full">
+              <input
+                className="border p-2 rounded w-full"
+                name="formCash"
+                value={filterData.formCash}
+                onChange={(e) => {
+                  const value = e.target.value;
+                  if (/^\d*$/.test(value) && value.length <= 9) {
+                    handleChange("formCash", value);
+                  }
+                }}
+                placeholder="From"
+              />
+              {filterData.formCash && (
+                <p className="text-sm text-red-500 font-semibold mt-1 capitalize">
+                  {convertToPakistaniWords(filterData.formCash)}
+                </p>
+              )}
+            </div>
+            <div className="w-full">
+              <input
+                className="border p-2 rounded w-full"
+                name="toCash"
+                value={filterData.toCash}
+                onChange={(e) => {
+                  const value = e.target.value;
+                  if (/^\d*$/.test(value) && value.length <= 9) {
+                    handleChange("toCash", value);
+                  }
+                }}
+                placeholder="To"
+              />
+              {filterData.toCash && (
+                <p className="text-sm text-red-500 font-semibold mt-1 capitalize">
+                  {convertToPakistaniWords(filterData.toCash)}
+                </p>
+              )}
+            </div>
           </div>
         </div>
 
@@ -571,7 +423,7 @@ const FilterPriceCars = () => {
           <button
             disabled={loading}
             onClick={handleGetFilterByVehicle}
-            className="bg-green-500 p-2  px-10  text-white rounded hover:cursor-pointer "
+            className="bg-green-500 p-2 px-10 text-white rounded hover:cursor-pointer"
           >
             {loading ? "Loading..." : "Search Vehicle"}
           </button>
@@ -580,7 +432,7 @@ const FilterPriceCars = () => {
 
       {/* Car List */}
       <div className="w-full lg:w-3/4">
-        <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center mb-4 gap-2 ">
+        <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center mb-4 gap-2">
           <h1 className="text-sm text-gray-700">
             1 - 25 of {allFilterCars.length} Results
           </h1>
@@ -590,9 +442,9 @@ const FilterPriceCars = () => {
             name="sorting"
             value={sorting}
           >
-            <option value={""}>Updated Date: Recent First</option>
-            <option value={"low"}>Price: Low to High</option>
-            <option value={"high"}>Price: High to Low</option>
+            <option value="">Updated Date: Recent First</option>
+            <option value="low">Price: Low to High</option>
+            <option value="high">Price: High to Low</option>
           </select>
         </div>
 
@@ -601,7 +453,7 @@ const FilterPriceCars = () => {
             <div
               key={car.id}
               onClick={() => navigate(`/detailbid/${car.id}`)}
-              className={`relative rounded-lg shadow p-4 mb-4 flex flex-col md:flex-row hover:shadow-lg transition-shadow hover:cursor-pointer  ${
+              className={`relative rounded-lg shadow p-4 mb-4 flex flex-col md:flex-row hover:shadow-lg transition-shadow hover:cursor-pointer ${
                 car.certifyStatus === "Certified"
                   ? "bg-gradient-to-r from-green-50 to-green-100 border border-green-400"
                   : "bg-white"
@@ -650,11 +502,10 @@ const FilterPriceCars = () => {
                   <span className="px-3 py-1 bg-gray-100 text-xs font-medium rounded-full shadow-sm">
                     {car.fuelType}
                   </span>
-
-                  <span className="px-3 py-1 bg-gray-100  text-xs font-medium rounded-full shadow-sm">
+                  <span className="px-3 py-1 bg-gray-100 text-xs font-medium rounded-full shadow-sm">
                     {car.bodyStyle}
                   </span>
-                  <span className="px-3 py-1 bg-gray-100  text-xs font-medium rounded-full shadow-sm">
+                  <span className="px-3 py-1 bg-gray-100 text-xs font-medium rounded-full shadow-sm">
                     {car.color}
                   </span>
                   <span className="px-3 py-1 bg-gray-100 text-xs font-medium rounded-full shadow-sm">
