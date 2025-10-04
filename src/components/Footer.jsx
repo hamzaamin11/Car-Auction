@@ -28,6 +28,7 @@ const Footer = () => {
             with top-quality cars at competitive prices.
           </p>
         </div>
+        
 
         {/* Quick Links */}
         <div>
@@ -70,6 +71,7 @@ const Footer = () => {
                 Support Center
               </Link>
             </li>
+            
             <li>
               <Link to="/delivery" className="hover:text-[#b73439]">
                 Vehicle Delivery
@@ -82,8 +84,9 @@ const Footer = () => {
                     Register
                   </Link>
                 </li>
+                
                 <li>
-                  <Link to="/login" className="hover:text-[#b73439]">
+                  <Link to="/login" className="hover:text-[#b73439] ">
                     Sign In
                   </Link>
                 </li>

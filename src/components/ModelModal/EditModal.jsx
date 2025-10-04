@@ -127,7 +127,7 @@ export const EditModal = ({ handleClose, seleteModel, handleGetAllModels }) => {
           <div className="flex justify-center">
             <button
               type="submit"
-              className="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700 transition duration-200 hover:cursor-pointer"
+              className="bg-blue-950 text-white px-4 py-2 rounded  hover:cursor-pointer"
             >
               Update Model
             </button>

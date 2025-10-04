@@ -184,7 +184,7 @@ export const EditSeries = ({
             <button
               disabled={loading}
               type="submit"
-              className="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700 transition duration-200"
+              className="bg-blue-950 text-white px-4 py-2 rounded hover:cursor-pointer"
             >
               {loading ? "Loading..." : "Update Series"}
             </button>

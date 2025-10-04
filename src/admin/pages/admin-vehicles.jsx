@@ -651,28 +651,28 @@ function AddAdminVehicle({ open, setOpen, onVehicleUpdated }) {
     <>
       {/* <Topbar />
       <Sidebar /> */}
-      <div className="min-h-screen bg-gray-100 p-6">
-        <h2 className="text-3xl font-bold text-gray-800 block sm:hidden">
+      <div className="min-h-screen bg-gray-100 p-4 sm:p-6">
+        <h2 className="text-2xl sm:text-3xl font-bold text-gray-800 block sm:hidden mb-4">
           Vehicle List
         </h2>
-        <div className="flex justify-between items-center w-full gap-2">
-          <h2 className="text-3xl font-bold text-gray-800 hidden lg:block">
-            Vehicle List{" "}
+        <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center w-full gap-4 mb-6">
+          <h2 className="text-2xl sm:text-3xl font-bold text-gray-800 hidden sm:block">
+            Vehicle List
           </h2>
 
-          <div class="relative w-full max-w-md mt-4 lg:mt-0">
-            <span class="absolute inset-y-0 left-0 flex items-center pl-3 text-gray-400">
+          <div className="relative w-full max-w-md">
+            <span className="absolute inset-y-0 left-0 flex items-center pl-3 text-gray-400">
               <svg
                 xmlns="http://www.w3.org/2000/svg"
-                class="h-5 w-5"
+                className="h-5 w-5"
                 fill="none"
                 viewBox="0 0 24 24"
                 stroke="currentColor"
               >
                 <path
-                  stroke-linecap="round"
-                  stroke-linejoin="round"
-                  stroke-width="2"
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  strokeWidth="2"
                   d="M21 21l-4.35-4.35m0 0A7.5 7.5 0 104.5 4.5a7.5 7.5 0 0012.15 12.15z"
                 />
               </svg>
@@ -680,9 +680,9 @@ function AddAdminVehicle({ open, setOpen, onVehicleUpdated }) {
 
             <input
               type="text"
-              placeholder="Search by car name..."
+              placeholder="Search By Car Name..."
               onChange={(e) => setSearch(e.target.value)}
-              class="w-full pl-10 pr-4 py-2 placeholder:text-xs lg:placeholder:text-lg rounded-lg border border-gray-300 shadow-sm placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500"
+              className="w-full pl-10 pr-4 py-2 placeholder:text-xs sm:placeholder:text-sm rounded-lg border border-gray-300 shadow-sm placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500"
             />
           </div>
           <button
@@ -692,7 +692,7 @@ function AddAdminVehicle({ open, setOpen, onVehicleUpdated }) {
               dispatch(addModel(""));
               dispatch(addSeries(""));
             }}
-            className="bg-[#191970] hover:bg-blue-900 text-white font-medium lg:py-2 py-1  px-4 lg:text-sm text-xs rounded shadow transition-all duration-200 mt-4"
+            className="bg-[#191970] hover:bg-blue-900 text-white font-medium py-2 px-4 text-sm rounded shadow transition-all duration-200 w-full sm:w-auto"
           >
             Add Vehicle
           </button>
@@ -702,23 +702,23 @@ function AddAdminVehicle({ open, setOpen, onVehicleUpdated }) {
 
         {/* Vehicle Form Modal */}
         {showModal && (
-          <div className="fixed inset-0 z-50 flex items-center justify-center backdrop-blur-sm bg-opacity-30  px-4">
-            <div className="bg-white w-full max-w-5xl max-h-[95vh] overflow-y-auto p-6 rounded-lg relative">
+          <div className="fixed inset-0 z-50 flex items-center justify-center backdrop-blur-sm bg-opacity-30 px-4 sm:px-6">
+            <div className="bg-white w-full max-w-5xl max-h-[95vh] overflow-y-auto p-4 sm:p-6 rounded-lg relative">
               {/* Header */}
               <div className="flex justify-between items-center border-b pb-3 mb-4">
-                <h2 className="text-2xl font-bold text-gray-800">
+                <h2 className="text-xl sm:text-2xl font-bold text-gray-800">
                   Add a New Vehicle
                 </h2>
                 <button
                   onClick={() => setShowModal(false)}
-                  className="text-red-700   text-3xl"
+                  className="text-red-700 text-3xl"
                 >
                   &times;
                 </button>
               </div>
 
               {/* Form Starts */}
-              <form onSubmit={handleSubmit} className="space-y-2">
+              <form onSubmit={handleSubmit} className="space-y-4">
                 <div>
                   <label className="block text-sm font-medium text-gray-700 mb-1">
                     City <span className="text-red-500">*</span>
@@ -726,8 +726,8 @@ function AddAdminVehicle({ open, setOpen, onVehicleUpdated }) {
 
                   <Select onChange={handleSearchable} options={cityData} />
 
-                  <div>
-                    <label className=" block text-sm font-medium text-gray-700 my-1">
+                  <div className="mt-4">
+                    <label className="block text-sm font-medium text-gray-700 mb-1">
                       Car Info <span className="text-red-500">*</span>
                     </label>
                     <input
@@ -780,7 +780,7 @@ function AddAdminVehicle({ open, setOpen, onVehicleUpdated }) {
                       <option value={""}>Please Select BodyStyle</option>
 
                       {bodyStyles?.map((body) => (
-                        <option id={body} value={body}>
+                        <option key={body} value={body}>
                           {body}
                         </option>
                       ))}
@@ -808,7 +808,7 @@ function AddAdminVehicle({ open, setOpen, onVehicleUpdated }) {
                   </div>
 
                   <div>
-                    <label className=" block text-sm font-medium text-gray-700 mb-1">
+                    <label className="block text-sm font-medium text-gray-700 mb-1">
                       Vehicle Meter Reading
                       <span className="text-red-500">*</span>
                     </label>
@@ -840,7 +840,7 @@ function AddAdminVehicle({ open, setOpen, onVehicleUpdated }) {
                       <option value={""}>Please Select Color</option>
 
                       {carColors?.map((color) => (
-                        <option id={color} value={color}>
+                        <option key={color} value={color}>
                           {color}
                         </option>
                       ))}
@@ -1011,7 +1011,7 @@ function AddAdminVehicle({ open, setOpen, onVehicleUpdated }) {
             {/* Car Selector Modal */}
             {isOpen === "selector" && (
               <div className="fixed inset-0 bg-opacity-40 flex items-center justify-center z-50">
-                <div className="w-full max-w-5xl bg-white p-6 rounded-lg shadow-lg relative">
+                <div className="w-full max-w-5xl bg-white p-4 sm:p-6 rounded-lg shadow-lg relative">
                   <CarSelector
                     handleIsOpenToggle={() => handleIsOpenToggle("")}
                   />
@@ -1026,10 +1026,10 @@ function AddAdminVehicle({ open, setOpen, onVehicleUpdated }) {
           {allVehicles?.length > 0 ? (
             allVehicles.map((vehicle, index) => (
               <div key={index}>
-                {/* ✅ Desktop: Card View */}
-                <div className="hidden lg:flex flex-col lg:flex-row md:items-center md:justify-between border rounded-lg hover:shadow-md transition-all duration-200 p-3 gap-4">
+                {/*  Desktop: Card View */}
+                <div className="hidden lg:flex flex-col lg:flex-row items-start lg:items-center justify-between border rounded-lg hover:shadow-md transition-all duration-200 p-4 gap-4">
                   {/* Left: Image */}
-                  <div className="relative w-full md:w-40 h-40 md:h-24 flex-shrink-0 rounded-md overflow-hidden">
+                  <div className="relative w-full lg:w-40 h-40 lg:h-24 flex-shrink-0 rounded-md overflow-hidden">
                     {vehicle.images ? (
                       <img
                         src={vehicle.images[0]}
@@ -1044,7 +1044,7 @@ function AddAdminVehicle({ open, setOpen, onVehicleUpdated }) {
                   </div>
 
                   {/* Middle: Info */}
-                  <div className="flex-1 px-0 md:px-4">
+                  <div className="flex-1 px-0 lg:px-4">
                     <h2 className="text-base font-bold text-gray-800">
                       {vehicle.make.charAt(0).toUpperCase() +
                         vehicle.make.slice(1)}{" "}
@@ -1052,7 +1052,7 @@ function AddAdminVehicle({ open, setOpen, onVehicleUpdated }) {
                         vehicle.model.slice(1)}{" "}
                       {vehicle.series.charAt(0).toUpperCase() +
                         vehicle.series.slice(1)}{" "}
-                      for sale | {vehicle.year}
+                      For Sale | {vehicle.year}
                     </h2>
                     <p className="text-lg font-bold text-gray-800">
                       PKR {vehicle.buyNowPrice}
@@ -1083,21 +1083,21 @@ function AddAdminVehicle({ open, setOpen, onVehicleUpdated }) {
                   </div>
 
                   {/* Right: Actions */}
-                  <div className="w-full md:w-56 text-left md:text-right">
-                    <div className="flex flex-wrap md:flex-nowrap gap-2 justify-start md:justify-end mt-4 md:mt-12">
+                  <div className="w-full lg:w-auto text-left lg:text-right">
+                    <div className="flex flex-wrap lg:flex-nowrap gap-2 justify-start lg:justify-end mt-4 lg:mt-0">
                       <button
                         onClick={() => {
                           setSelectedVehicle(vehicle);
                           setEditModalOpen(true);
                         }}
-                        className="px-2 py-1 text-xs font-medium border border-yellow-500 text-yellow-600 rounded-md hover:bg-yellow-500 hover:text-white transition-all"
+                        className="w-20 px-2 py-1 text-xs font-medium border border-yellow-500 text-yellow-600 rounded-lg hover:bg-yellow-500 hover:text-white transition-all text-center"
                       >
                         Edit
                       </button>
 
                       {vehicle.saleStatus === "upcoming" ||
                       vehicle.saleStatus === "sold" ? (
-                        <button className="px-4 py-1 text-xs font-medium border border-green-500 text-green-600 rounded-md cursor-not-allowed">
+                        <button className="w-20 px-2 py-1 text-xs font-medium border border-green-500 text-green-600 rounded-lg cursor-not-allowed text-center">
                           Bid Added
                         </button>
                       ) : (
@@ -1106,7 +1106,7 @@ function AddAdminVehicle({ open, setOpen, onVehicleUpdated }) {
                             setSelectedVehicle(vehicle);
                             setIsOpenBid(true);
                           }}
-                          className="px-2 py-1 text-xs font-medium border border-green-500 text-green-600 rounded-md hover:bg-green-500 hover:text-white transition-all"
+                          className="w-20 px-2 py-1 text-xs font-medium border border-green-500 text-green-600 rounded-lg hover:bg-green-500 hover:text-white transition-all text-center"
                         >
                           Add Bid
                         </button>
@@ -1117,14 +1117,14 @@ function AddAdminVehicle({ open, setOpen, onVehicleUpdated }) {
                           setSelectedVehicle(vehicle);
                           setViewModal(true);
                         }}
-                        className="px-2 py-1 text-xs font-medium border border-indigo-700 text-indigo-700 rounded-md hover:bg-indigo-700 hover:text-white transition-all"
+                        className="w-20 px-2 py-1 text-xs font-medium border border-indigo-700 text-indigo-700 rounded-lg hover:bg-indigo-700 hover:text-white transition-all text-center"
                       >
                         View
                       </button>
 
                       <button
                         onClick={() => handleDeleteVehicle(vehicle.id)}
-                        className="px-2 py-1 text-xs font-medium border border-red-500 text-red-600 rounded-md hover:bg-red-500 hover:text-white transition-all"
+                        className="w-20 px-2 py-1 text-xs font-medium border border-red-500 text-red-600 rounded-lg hover:bg-red-500 hover:text-white transition-all text-center"
                       >
                         Delete
                       </button>
@@ -1133,7 +1133,7 @@ function AddAdminVehicle({ open, setOpen, onVehicleUpdated }) {
                 </div>
 
                 {/* ✅ Mobile: List View */}
-                <div className="md:block lg:hidden border-b py-3">
+                <div className="lg:hidden border-b py-4">
                   <div className="flex items-center gap-3">
                     {/* 🚗 Thumbnail Image */}
                     <div
@@ -1192,20 +1192,14 @@ function AddAdminVehicle({ open, setOpen, onVehicleUpdated }) {
                           setSelectedVehicle(vehicle);
                           setEditModalOpen(true);
                         }}
-                        className="px-2 py-1 text-[10px] font-medium border border-yellow-500 text-yellow-600 rounded-md hover:bg-yellow-500 hover:text-white transition-all"
+                        className="w-20 px-2 py-1 text-xs font-medium border border-yellow-500 text-yellow-600 rounded-lg hover:bg-yellow-500 hover:text-white transition-all text-center"
                       >
                         Edit
                       </button>
 
-                      <button
-                        onClick={() => handleDeleteVehicle(vehicle.id)}
-                        className="px-2 py-1 text-xs font-medium border border-red-500 text-red-600 rounded-md hover:bg-red-500 hover:text-white transition-all"
-                      >
-                        Delete
-                      </button>
                       {vehicle.saleStatus === "upcoming" ||
                       vehicle.saleStatus === "sold" ? (
-                        <button className="px-4 py-1 text-xs font-medium border border-green-500 text-green-600 rounded-md cursor-not-allowed">
+                        <button className="w-20 px-2 py-1 text-xs font-medium border border-green-500 text-green-600 rounded-lg cursor-not-allowed text-center">
                           Bid Added
                         </button>
                       ) : (
@@ -1214,11 +1208,28 @@ function AddAdminVehicle({ open, setOpen, onVehicleUpdated }) {
                             setSelectedVehicle(vehicle);
                             setIsOpenBid(true);
                           }}
-                          className="px-2 py-1 text-xs font-medium border border-green-500 text-green-600 rounded-md hover:bg-green-500 hover:text-white transition-all"
+                          className="w-20 px-2 py-1 text-xs font-medium border border-green-500 text-green-600 rounded-lg hover:bg-green-500 hover:text-white transition-all text-center"
                         >
                           Add Bid
                         </button>
                       )}
+
+                      <button
+                        onClick={() => {
+                          setSelectedVehicle(vehicle);
+                          setViewModal(true);
+                        }}
+                        className="w-20 px-2 py-1 text-xs font-medium border border-indigo-700 text-indigo-700 rounded-lg hover:bg-indigo-700 hover:text-white transition-all text-center"
+                      >
+                        View
+                      </button>
+
+                      <button
+                        onClick={() => handleDeleteVehicle(vehicle.id)}
+                        className="w-20 px-2 py-1 text-xs font-medium border border-red-500 text-red-600 rounded-lg hover:bg-red-500 hover:text-white transition-all text-center"
+                      >
+                        Delete
+                      </button>
                     </div>
                   </div>
                 </div>
@@ -1231,7 +1242,7 @@ function AddAdminVehicle({ open, setOpen, onVehicleUpdated }) {
           )}
         </div>
 
-        <div className="flex justify-between  mt-6">
+        <div className="flex justify-between mt-6 px-2 sm:px-4">
           {/* Prev Button */}
           <button
             className={`bg-[#518ecb] text-white px-5 py-2 rounded hover:bg-[#518ecb] ${
@@ -1245,7 +1256,7 @@ function AddAdminVehicle({ open, setOpen, onVehicleUpdated }) {
           {/* Next Button */}
           <div></div>
           <button
-            className={`bg-[#518ecb] text-white px-5 py-2 rounded hover:bg-[#518ecb] ${
+            className={`bg-blue-950 text-white px-5 py-2 rounded  ${
               allVehicles.length === 0 ? "hidden" : "block"
             }`}
             onClick={handleNextPage}

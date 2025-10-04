@@ -180,51 +180,60 @@ const TabsSection = () => {
   ];
 
   return (
-    <div className="p-10 max-w-[85rem] mx-auto">
-      <div className="items-center flex-wrap mb-6 border-b pb-2">
-        <h1 className="text-xl sm:text-2xl lg:text-3xl font-bold">
-          Search Your Dream Car
-        </h1>
-      </div>
+   <div className="p-10 max-w-6xl mx-auto">
+  <div className="items-center flex-wrap mb-6 border-b pb-2">
+    <h1 className="text-xl sm:text-2xl lg:text-3xl font-bold">
+      Search Your Dream Car
+    </h1>
+  </div>
 
-      <div className="grid grid-cols-1 lg:grid-cols-4 gap-4">
-        <SearchableOption
-          datas={cityData}
-          placeholder="Search City"
-          name="city"
-          value={filterData.city}
-          onChange={handleChange}
-        />
-        <SearchableOption
-          datas={makeData}
-          placeholder="Search Make"
-          name="make"
-          value={filterData.make}
-          onChange={handleChange}
-        />
-        <SearchableOption
-          datas={bodyData}
-          placeholder="Search BodyStyle"
-          name="bodyStyle"
-          value={filterData.bodyStyle}
-          onChange={handleChange}
-        />
-        <SearchableOption
-          datas={budgetData.map((b) => ({
-            label: b.label,
-            value: `${b.min}-${b.max}`,
-          }))}
-          placeholder="Search Budget"
-          name="budget"
-          value={
-            filterData.budget.min
-              ? `${filterData.budget.min}-${filterData.budget.max}`
-              : ""
-          }
-          onChange={handleFilterPrice}
-        />
-      </div>
+  <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+    <div className="max-w-xs">
+      <SearchableOption
+        datas={cityData}
+        placeholder="Search City"
+        name="city"
+        value={filterData.city}
+        onChange={handleChange}
+      />
     </div>
+    <div className="max-w-xs">
+      <SearchableOption
+        datas={makeData}
+        placeholder="Search Make"
+        name="make"
+        value={filterData.make}
+        onChange={handleChange}
+      />
+    </div>
+    <div className="max-w-xs">
+      <SearchableOption
+        datas={bodyData}
+        placeholder="Search BodyStyle"
+        name="bodyStyle"
+        value={filterData.bodyStyle}
+        onChange={handleChange}
+      />
+    </div>
+    <div className="max-w-xs">
+      <SearchableOption
+        datas={budgetData.map((b) => ({
+          label: b.label,
+          value: `${b.min}-${b.max}`,
+        }))}
+        placeholder="Search Budget"
+        name="budget"
+        value={
+          filterData.budget.min
+            ? `${filterData.budget.min}-${filterData.budget.max}`
+            : ""
+        }
+        onChange={handleFilterPrice}
+      />
+    </div>
+  </div>
+</div>
+
   );
 };
 

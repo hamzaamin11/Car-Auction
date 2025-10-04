@@ -40,7 +40,7 @@ export const ViewAdminCar = ({ selectedVehicle, handleClick }) => {
         </button>
 
         {/* Header */}
-        <h2 className="text-xl font-semibold text-blue-700 mb-6">
+        <h2 className="text-xl font-semibold text-blue-950 mb-6">
           View Vehicle
         </h2>
 
@@ -132,7 +132,7 @@ export const ViewAdminCar = ({ selectedVehicle, handleClick }) => {
             <div className="flex items-center justify-center mt-6 gap-2">
               <button
                 onClick={handlePreviousImage}
-                className="w-8 h-8 flex items-center justify-center rounded-full bg-gradient-to-r from-blue-500 to-blue-600 text-white shadow-lg hover:scale-110 transition-transform duration-200"
+                className="w-8 h-8 flex items-center justify-center rounded-full bg-red-500 text-white shadow-lg hover:scale-110 transition-transform duration-200"
               >
                 <FaArrowLeft size={20} />
               </button>
@@ -151,7 +151,7 @@ export const ViewAdminCar = ({ selectedVehicle, handleClick }) => {
               ))}
               <button
                 onClick={handleNextImage}
-                className="w-8 h-8 flex items-center justify-center rounded-full bg-gradient-to-r from-blue-500 to-blue-600 text-white shadow-lg hover:scale-110 transition-transform duration-200"
+                className="w-8 h-8 flex items-center justify-center rounded-full bg-red-500 text-white shadow-lg hover:scale-110 transition-transform duration-200"
               >
                 <FaArrowRight size={20} />
               </button>

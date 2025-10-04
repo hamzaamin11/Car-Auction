@@ -640,7 +640,7 @@ function EditAdminVehicle({
               <button
                 type="submit"
                 disabled={loading}
-                className="bg-indigo-600 text-white px-5 py-2 rounded-lg shadow-md hover:bg-indigo-700 transition"
+                className="bg-blue-950 text-white px-5 py-2 rounded-lg shadow-md hover:cursor-pointer"
               >
                 {loading ? "loading..." : "Submit Vehicle"}
               </button>

@@ -216,7 +216,7 @@ export default function UpcomingAuctions() {
                           handleToggleModel("update"), setselectedVehicle(user);
                         }}
                       >
-                        <span className="px-3 py-1 bg-blue-500 text-white text-xs rounded cursor-pointer hover:bg-blue-600 transition">
+                        <span className="px-3 py-1 text-sm border border-yellow-500 text-yellow-500 rounded-md hover:bg-yellow-500 hover:text-white transition hover:cursor-pointer">
                           Edit
                         </span>
                       </td>
@@ -286,7 +286,7 @@ export default function UpcomingAuctions() {
                     onClick={(e) => {
                       handleToggleModel("update"), setselectedVehicle(user);
                     }}
-                    className="w-full py-2.5 bg-blue-600 text-white text-sm font-medium rounded-lg hover:bg-blue-700 transition-colors duration-300 hover:cursor-pointer"
+                    className="w-full py-2.5 bg-blue-950 text-white text-sm font-medium rounded-lg hover:cursor-pointer"
                   >
                     Edit
                   </button>
@@ -305,7 +305,7 @@ export default function UpcomingAuctions() {
         <div className="flex justify-between  mt-6">
           {/* Prev Button */}
           <button
-            className={`bg-[#518ecb] text-white px-5 py-2 rounded hover:bg-[#518ecb] ${
+            className={`bg-blue-950 text-white px-5 py-2 rounded  ${
               pageNo > 1 ? "block" : "hidden"
             }`}
             onClick={handlePrevPage}
@@ -316,7 +316,7 @@ export default function UpcomingAuctions() {
           {/* Next Button */}
           <div></div>
           <button
-            className={`bg-[#518ecb] text-white px-5 py-2 rounded hover:bg-[#518ecb] ${
+            className={`bg-blue-950 text-white px-5 py-2 rounded  ${
               allUpcoming.length === 0 ? "hidden" : "block"
             }`}
             onClick={handleNextPage}

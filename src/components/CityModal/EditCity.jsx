@@ -66,7 +66,7 @@ export const EditCityModal = ({
             <button
               disabled={loading}
               type="submit"
-              className="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700 transition duration-200"
+              className="bg-blue-950 text-white px-4 py-2 rounded hover:cursor-pointer"
             >
               {loading ? "loading..." : "Update City"}
             </button>

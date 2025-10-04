@@ -305,13 +305,13 @@ const VehicleFinderSection = () => {
       <div className="flex justify-between mt-6">
         <button
           onClick={prevCards}
-          className="bg-[#518ecb] text-white px-5 py-2 rounded hover:bg-[#518ecb]"
+          className="bg-blue-950 text-white px-5 py-2 rounded "
         >
           ‹ Prev
         </button>
         <button
           onClick={nextCards}
-          className="bg-[#518ecb] text-white px-5 py-2 rounded hover:bg-[#518ecb]"
+          className="bg-blue-950 text-white px-5 py-2 rounded "
         >
           Next ›
         </button>
