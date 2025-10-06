@@ -180,14 +180,14 @@ const TabsSection = () => {
   ];
 
   return (
-   <div className="p-10 max-w-6xl mx-auto">
-  <div className="items-center flex-wrap mb-6 border-b pb-2">
-    <h1 className="text-xl sm:text-2xl lg:text-3xl font-bold">
+   <div className="p-10  max-w-screen mx-auto">
+  <div className="items-center flex-wrap pb-2">
+    <h1 className="text-xl sm:text-2xl lg:text-3xl font-bold mx-6">
       Search Your Dream Car
     </h1>
   </div>
 
-  <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+  <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 mx-6">
     <div className="max-w-xs">
       <SearchableOption
         datas={cityData}

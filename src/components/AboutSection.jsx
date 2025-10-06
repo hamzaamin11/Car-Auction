@@ -8,13 +8,13 @@ const AboutSection = () => {
   return (
   <section
   id="about"
-  className="w-full py-16 px-4 bg-gray-100 overflow-hidden"
+  className="w-full py-16 px-4 bg-gray-100 overflow-hidden hidden md:block "
 >
 
-      <div className="max-w-7xl mx-auto text-left ">
+      <div className="max-w-7xl mx-auto text-left  ">
         {/* Heading */}
         <motion.h2
-          className="lg:text-4xl text-xl font-extrabold text-gray-900"
+          className="lg:text-4xl text-xl font-extrabold text-gray-900 mx-12"
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
           transition={transition}
@@ -23,7 +23,7 @@ const AboutSection = () => {
         </motion.h2>
 
         {/* Grid Section */}
-        <div className="mt-12 grid grid-cols-1 md:grid-cols-2 gap-10 items-center">
+        <div className="mt-12 grid grid-cols-1 md:grid-cols-2 gap-10 items-center mx-12">
           {/* Left Image */}
           <motion.div
             className="w-full "
@@ -45,7 +45,7 @@ const AboutSection = () => {
             animate={{ opacity: 1, x: 0 }}
             transition={transition}
           >
-            <div className="text-gray-700 text-base sm:text-lg lg:text-xl space-y-4">
+            <div className="text-gray-700 text-base sm:text-lg lg:text-[17px]  space-y-4 ">
               <p>
                 Welcome to
                 <span className="font-semibold">WheelBidz Pakistan</span> – the

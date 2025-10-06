@@ -357,7 +357,7 @@ const CarCardSlider = () => {
       </div>
 
       {/* Progress Dots for Cars */}
-      {allCars.length > visibleCards && (
+      {/* {allCars.length > visibleCards && (
         <div className="flex justify-center gap-2 mt-6">
           {Array.from({ length: Math.ceil(allCars.length / visibleCards) }).map((_, idx) => (
             <button
@@ -375,7 +375,7 @@ const CarCardSlider = () => {
             />
           ))}
         </div>
-      )}
+      )} */}
 
       {/* Upcoming Auctions */}
       <div className="mt-16">
@@ -420,7 +420,7 @@ const CarCardSlider = () => {
             </div>
 
             {/* Progress Dots for Auctions */}
-            {allUpcoming.length > visibleCards && (
+            {/* {allUpcoming.length > visibleCards && (
               <div className="flex justify-center gap-2 mt-6">
                 {Array.from({ length: Math.ceil(allUpcoming.length / visibleCards) }).map((_, idx) => (
                   <button
@@ -438,7 +438,7 @@ const CarCardSlider = () => {
                   />
                 ))}
               </div>
-            )}
+            )} */}
           </>
         ) : (
           <p className="text-center text-gray-600">No upcoming auctions yet!</p>
@@ -488,7 +488,7 @@ const CarCardSlider = () => {
             </div>
 
             {/* Progress Dots for Live Auctions */}
-            {allLiveAuctions.length > visibleCards && (
+            {/* {allLiveAuctions.length > visibleCards && (
               <div className="flex justify-center gap-2 mt-6">
                 {Array.from({ length: Math.ceil(allLiveAuctions.length / visibleCards) }).map((_, idx) => (
                   <button
@@ -506,7 +506,7 @@ const CarCardSlider = () => {
                   />
                 ))}
               </div>
-            )}
+            )} */}
           </>
         ) : (
           <p className="text-center text-gray-600">No live auctions yet! API response will populate this section later.</p>
