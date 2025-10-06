@@ -12,6 +12,9 @@ export default function Topbar() {
   const [passwordModalOpen, setPasswordModalOpen] = useState(false);
   const [profileModalOpen, setProfileModalOpen] = useState(false);
   const dropdownRef = useRef(null);
+  const countryDropdownRef = useRef(null);
+  const cityDropdownRef = useRef(null);
+  const genderDropdownRef = useRef(null);
   const navigate = useNavigate();
   const location = useLocation();
   const dispatch = useDispatch();
@@ -45,7 +48,7 @@ export default function Topbar() {
   });
 
   // Options lists
-  const countries = ["Pakistan", "India", "Bangladesh", "UAE", "Saudi Arabia", "United States", "United Kingdom", "Canada", "Australia"];
+  const countries = ["Pakistan"];
   const cities = ["Karachi", "Lahore", "Islamabad", "Rawalpindi", "Faisalabad", "Multan", "Gujranwala", "Peshawar", "Quetta", "Sialkot", "Hyderabad"];
   const genders = ["Male", "Female", "Other"];
 
@@ -145,11 +148,24 @@ export default function Topbar() {
     }
   }, [profileModalOpen]);
 
-  // Outside click detection
+  // Outside click detection for all dropdowns
   useEffect(() => {
     function handleClickOutside(event) {
+      // Close profile dropdown
       if (dropdownRef.current && !dropdownRef.current.contains(event.target)) {
         setDropdownOpen(false);
+      }
+      // Close country dropdown
+      if (countryDropdownRef.current && !countryDropdownRef.current.contains(event.target)) {
+        setShowCountryDropdown(false);
+      }
+      // Close city dropdown
+      if (cityDropdownRef.current && !cityDropdownRef.current.contains(event.target)) {
+        setShowCityDropdown(false);
+      }
+      // Close gender dropdown
+      if (genderDropdownRef.current && !genderDropdownRef.current.contains(event.target)) {
+        setShowGenderDropdown(false);
       }
     }
     document.addEventListener("mousedown", handleClickOutside);
@@ -277,7 +293,7 @@ export default function Topbar() {
                 </button>
                 <button
                   onClick={handlePasswordSubmit}
-                  className="px-4 py-2 bg-blue-950 text-white rounded-md "
+                  className="px-4 py-2 bg-blue-950 text-white rounded-md"
                 >
                   Change
                 </button>
@@ -292,15 +308,15 @@ export default function Topbar() {
         <div className="fixed inset-0 bg-blur-sm backdrop-blur-md flex items-center justify-center z-50">
           <div className="bg-white rounded-lg p-8 w-full max-w-2xl shadow-xl max-h-[90vh] overflow-y-auto">
             <h2 className="text-2xl font-semibold mb-6">My Profile</h2>
-            
+
             {/* Profile Picture */}
             <div className="flex justify-center mb-6">
               <div className="relative">
                 <div className="w-32 h-32 rounded-full bg-gray-200 flex items-center justify-center overflow-hidden">
                   {profileForm.profileImage ? (
-                    <img 
-                      src={profileForm.profileImage} 
-                      alt="Profile" 
+                    <img
+                      src={profileForm.profileImage}
+                      alt="Profile"
                       className="w-full h-full object-cover"
                     />
                   ) : (
@@ -319,7 +335,12 @@ export default function Topbar() {
                   className="absolute bottom-0 right-0 bg-blue-600 text-white p-2 rounded-full cursor-pointer hover:bg-blue-700 transition-colors"
                   title="Change profile picture"
                 >
-                  <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
+                  <svg
+                    xmlns="http://www.w3.org/2000/svg"
+                    className="h-5 w-5"
+                    viewBox="0 0 20 20"
+                    fill="currentColor"
+                  >
                     <path d="M13.586 3.586a2 2 0 112.828 2.828l-.793.793-2.828-2.828.793-.793zM11.379 5.793L3 14.172V17h2.828l8.38-8.379-2.83-2.828z" />
                   </svg>
                 </label>
@@ -350,7 +371,7 @@ export default function Topbar() {
                 </div>
 
                 {/* Gender - Searchable */}
-                <div className="mb-4 relative">
+                <div className="mb-4 relative" ref={genderDropdownRef}>
                   <label className="block text-sm font-medium text-gray-700 mb-2">
                     Gender
                   </label>
@@ -396,7 +417,7 @@ export default function Topbar() {
                 </div>
 
                 {/* Country - Searchable */}
-                <div className="mb-4 relative">
+                <div className="mb-4 relative" ref={countryDropdownRef}>
                   <label className="block text-sm font-medium text-gray-700 mb-2">
                     Country
                   </label>
@@ -427,7 +448,7 @@ export default function Topbar() {
                 </div>
 
                 {/* City - Searchable */}
-                <div className="mb-4 relative">
+                <div className="mb-4 relative" ref={cityDropdownRef}>
                   <label className="block text-sm font-medium text-gray-700 mb-2">
                     City
                   </label>
@@ -503,7 +524,7 @@ export default function Topbar() {
                   />
                   <button
                     type="button"
-                    className="px-4 py-2 bg-blue-950 text-white rounded-md  "
+                    className="px-4 py-2 bg-blue-950 text-white rounded-md"
                   >
                     Add Number
                   </button>

@@ -3,6 +3,7 @@ import {
   Routes,
   Route,
   useLocation,
+  Navigate,
 } from "react-router-dom";
 
 import "./App.css";
@@ -101,6 +102,8 @@ function Layout() {
   const isAdminLogin = location.pathname === "/admin-login";
 
   const hideNavbarFooter = isAdminRoute || isAdminLogin;
+
+
 
   return (
     <>

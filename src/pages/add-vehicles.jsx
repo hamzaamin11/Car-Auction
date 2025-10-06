@@ -51,20 +51,11 @@ const carColors = [
 
 const AddVehicles = () => {
   const { user } = useAuth();
-
   const isCustomer = user?.role === "customer";
-
   const { currentUser } = useSelector((state) => state?.auth);
-
-  console.log(currentUser.id);
-
   const [isSellerBidModalOpen, setIsSellerBidModalOpen] = useState(false);
   const [sellerBidData, setSellerBidData] = useState(null);
-
   const [isCustomerBidModalOpen, setIsCustomerBidModalOpen] = useState(false);
-
-  console.log(isCustomerBidModalOpen);
-
   const [customerBidData, setCustomerBidData] = useState({
     userId: "",
     vehicleId: "",
@@ -115,51 +106,27 @@ const AddVehicles = () => {
   };
 
   const [vehicleData, setVehicleData] = useState(initialFields);
-
   const selected = useSelector((state) => state.carSelector);
-
-  console.log(" =>>>", vehicleData);
-
   const [vehicles, setVehicles] = useState([]);
-
   const [allVehicles, setAllVehicles] = useState([]);
-
   const [selectVehicle, setSelectVehicle] = useState();
-
-  console.log("all vehicle  =>", allVehicles);
-
-  const [auctionVehicles, setAuctionVehicles] = useState([]);
-
   const [image, setImage] = useState(null);
-
   const [imagePreview, setImagePreview] = useState(null);
-
   const [isOpen, setIsOpen] = useState("");
-
   const [search, setSearch] = useState("");
-
   const [formOpen, setFormOpen] = useState(false);
-
   const [loading, setLoading] = useState(false);
-
   const [editId, setEditId] = useState(null);
-
   const [errorMsg, setErrorMsg] = useState("");
-
   const [successMsg, setSuccessMsg] = useState("");
-
   const [allCities, setAllCities] = useState([]);
-
   const dispatch = useDispatch();
-
   const [selectedCount, setSelectedCount] = useState(0);
-
   const [price, setPrice] = useState(vehicleData?.buyNowPrice || "");
-
+  const [isDropdownOpen, setIsDropdownOpen] = useState(null);
 
   const numberToIndianWords = (num) => {
     if (!num) return "";
-
     const ones = [
       "",
       "One",
@@ -182,7 +149,6 @@ const AddVehicles = () => {
       "Eighteen",
       "Nineteen",
     ];
-
     const tens = [
       "",
       "",
@@ -195,54 +161,45 @@ const AddVehicles = () => {
       "Eighty",
       "Ninety",
     ];
-
     const twoDigits = (n) => {
       if (n < 20) return ones[n];
       const t = Math.floor(n / 10);
       const o = n % 10;
       return tens[t] + (o ? " " + ones[o] : "");
     };
-
     const threeDigits = (n) => {
       const h = Math.floor(n / 100);
       const r = n % 100;
       return (h ? ones[h] + " Hundred " : "") + (r ? twoDigits(r) : "");
     };
-
     let words = "";
-
     if (Math.floor(num / 10000000) > 0) {
       words += numberToIndianWords(Math.floor(num / 10000000)) + " Crore ";
       num %= 10000000;
     }
-
     if (Math.floor(num / 100000) > 0) {
       words += numberToIndianWords(Math.floor(num / 100000)) + " Lac ";
       num %= 100000;
     }
-
     if (Math.floor(num / 1000) > 0) {
       words += numberToIndianWords(Math.floor(num / 1000)) + " Thousand ";
       num %= 1000;
     }
-
     if (num > 0) {
       words += threeDigits(num);
     }
-
     return words.trim();
   };
 
   const handleFileChange = (e) => {
     const files = e.target.files;
-    setSelectedCount(files.length); // kitni images select hui hain
-    handleAddedImage(e); // aapka existing handler call karna
+    setSelectedCount(files.length);
+    handleAddedImage(e);
   };
 
   const handleGetAllCities = async () => {
     try {
       const res = await axios.get(`${BASE_URL}/getCitites`);
-
       setAllCities(res.data);
     } catch (error) {
       console.log(error);
@@ -265,7 +222,6 @@ const AddVehicles = () => {
         `${BASE_URL}/getVehiclesByUser/${currentUser?.id}?search=${search}`
       );
       setAllVehicles(res.data);
-      console.log(res.data);
     } catch (error) {
       console.log(error);
     }
@@ -280,12 +236,11 @@ const AddVehicles = () => {
     try {
       const res = await fetch(`${BASE_URL}/getVehiclesByUser/:id`);
       const data = await res.json();
-      // Ensure we always set an array
       setVehicles(data);
       setLoading(false);
     } catch {
       setErrorMsg("Failed to fetch vehicles.");
-      setVehicles([]); // Set empty array on error
+      setVehicles([]);
     } finally {
       setLoading(false);
     }
@@ -293,20 +248,14 @@ const AddVehicles = () => {
 
   const parsePrice = (priceStr) => {
     if (!priceStr) return "";
-
-    // Agar "Lac" likha ho
     if (priceStr.toLowerCase().includes("lac")) {
       const num = parseFloat(priceStr);
-      return num * 100000; // 1 Lac = 100000
+      return num * 100000;
     }
-
-    // Agar "Crore" likha ho (optional handling)
     if (priceStr.toLowerCase().includes("crore")) {
       const num = parseFloat(priceStr);
-      return num * 10000000; // 1 Crore = 10000000
+      return num * 10000000;
     }
-
-    // Warna jo aaya usi ko return karo
     return priceStr;
   };
 
@@ -327,7 +276,6 @@ const AddVehicles = () => {
 
   const handleChange = (e) => {
     const { name, value } = e.target;
-    console.log("name =>", name, value);
     setVehicleData((prev) => ({ ...prev, [name]: value }));
   };
 
@@ -345,16 +293,13 @@ const AddVehicles = () => {
 
   const handleEdit = (vehicle) => {
     setVehicleData(vehicle);
-    setImagePreview(vehicle.image || null); // preview ke liye URL
+    setImagePreview(vehicle.image || null);
     setFormOpen(true);
-    console.log("iddddddd=>", vehicle);
-    setEditId(vehicle.newVehicleId); // ✅ yeh decide karega add/update
+    setEditId(vehicle.newVehicleId);
   };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-
-    // ✅ Required fields
     const requiredFields = {
       year: "Year",
       make: "Make",
@@ -384,26 +329,20 @@ const AddVehicles = () => {
     }
 
     setLoading(true);
-
     const formData = new FormData();
     formData.append("userId", currentUser?.id);
-
     Object.entries(vehicleData).forEach(([key, value]) => {
-      if (key === "userId") return; // 🚫 skip
-
+      if (key === "userId") return;
       if (key === "image") {
-        // ✅ Agar new image upload hui hai to array hoga
         if (Array.isArray(value)) {
           value.forEach((file) => {
             formData.append("image", file);
           });
         } else if (!editId) {
-          // ✅ Add ke case me image required hai
           formData.append("image", value);
         }
       } else if (value !== null && value !== undefined) {
         if (key === "buyNowPrice") {
-          // ✅ parsePrice lagao
           const parsed = parsePrice(value.toString());
           formData.append("buyNowPrice", parsed.toString());
         } else {
@@ -420,17 +359,14 @@ const AddVehicles = () => {
     try {
       const res = await fetch(url, { method, body: formData });
       if (!res.ok) throw new Error("Submission failed.");
-
       setVehicleData(initialFields);
       setImage(null);
       setImagePreview(null);
       setFormOpen(false);
       setEditId(null);
-
       toast.success(
         editId ? "Vehicle updated successfully" : "Vehicle added successfully"
       );
-
       handleGetAllVehicleById();
     } catch (err) {
       setErrorMsg(err.message);
@@ -483,7 +419,6 @@ const AddVehicles = () => {
       }
 
       const data = await response.json();
-      console.log("Seller bid created:", data);
       setIsSellerBidModalOpen(false);
     } catch (error) {
       console.error("Error submitting seller bid:", error);
@@ -498,18 +433,15 @@ const AddVehicles = () => {
     })) || []),
   ];
 
-  /* End Bidding */
   const handleEndBidding = async (bidId) => {
     handleIsOpenToggle("bid");
     try {
       const res = await fetch(`${BASE_URL}/seller/endBidding/${bidId}`, {
         method: "PUT",
       });
-
       if (!res.ok) throw new Error("Failed to end bidding");
-
       alert(`Bidding ended for bid ID: ${bidId}`);
-      fetchVehicles(); // Refresh data
+      fetchVehicles();
     } catch (err) {
       console.error("End bidding error:", err);
       alert("Error: " + err.message);
@@ -532,43 +464,48 @@ const AddVehicles = () => {
 
   useEffect(() => {
     document.body.style.overflow = "hidden";
-
     return () => {
       document.body.style.overflow = "auto";
     };
   }, []);
 
+  const toggleDropdown = (vehicleId) => {
+    setIsDropdownOpen((prev) => (prev === vehicleId ? null : vehicleId));
+  };
+
+  const handleDropdownClose = () => {
+    setIsDropdownOpen(null);
+  };
+
   return (
-    <div className="min-h-screen p-6 bg-gradient-to-br from-gray-100 to-blue-50">
+    <div className="min-h-screen p-6 bg-gradient-to-br from-gray-100 to-blue-50" onClick={handleDropdownClose}>
       <div className="max-w-7xl mx-auto">
         <header className="flex flex-col md:flex-row justify-between items-center mb-8">
           <h1 className="text-3xl font-bold text-gray-800">All Vehicles</h1>
-          <div class="relative w-full max-w-md mt-4 lg:mt-0 md:mt-0 lg:ml-[-100px] ml-0 ">
-            <span class="absolute inset-y-0 left-0 flex items-center pl-3 text-gray-400">
+          <div className="relative w-full max-w-md mt-4 lg:mt-0 md:mt-0 lg:ml-[-100px] ml-0">
+            <span className="absolute inset-y-0 left-0 flex items-center pl-3 text-gray-400">
               <svg
                 xmlns="http://www.w3.org/2000/svg"
-                class="h-5 w-5"
+                className="h-5 w-5"
                 fill="none"
                 viewBox="0 0 24 24"
                 stroke="currentColor"
               >
                 <path
-                  stroke-linecap="round"
-                  stroke-linejoin="round"
-                  stroke-width="2"
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  strokeWidth="2"
                   d="M21 21l-4.35-4.35m0 0A7.5 7.5 0 104.5 4.5a7.5 7.5 0 0012.15 12.15z"
                 />
               </svg>
             </span>
-
             <input
               type="text"
               placeholder="Search by car name, location, vehicle ID"
               onChange={(e) => setSearch(e.target.value)}
-              class="w-full pl-10 pr-4 py-2 rounded-lg border border-gray-300 shadow-sm placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500"
+              className="w-full pl-10 pr-4 py-2 rounded-lg border border-gray-300 shadow-sm placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500"
             />
           </div>
-
           {!isCustomer && (
             <button
               onClick={() => {
@@ -587,9 +524,9 @@ const AddVehicles = () => {
                 dispatch(addModel(""));
                 dispatch(addSeries(""));
               }}
-              className="mt-4 md:mt-0 px-6 py-2 bg-indigo-600 text-white rounded hover:bg-indigo-700"
+              className="mt-4 md:mt-0 px-6 py-2 bg-blue-950 text-white rounded"
             >
-              {"Add Vehicle"}
+              Add Vehicle
             </button>
           )}
         </header>
@@ -607,22 +544,19 @@ const AddVehicles = () => {
         )}
 
         {formOpen && (
-          <div className="fixed inset-0 z-50 flex items-center justify-center backdrop-blur-sm bg-opacity-30  px-4">
+          <div className="fixed inset-0 z-50 flex items-center justify-center backdrop-blur-sm bg-opacity-30 px-4">
             <div className="bg-white w-full max-w-5xl max-h-[95vh] overflow-y-auto p-6 rounded-lg relative">
-              {/* Header */}
               <div className="flex justify-between items-center border-b pb-3 mb-4">
                 <h2 className="text-2xl font-bold text-gray-800">
                   {editId ? "Update Vehicle" : "Add a New Vehicle"}
                 </h2>
                 <button
                   onClick={() => setFormOpen(false)}
-                  className="text-red-700   text-3xl"
+                  className="text-red-700 text-3xl"
                 >
                   &times;
                 </button>
               </div>
-
-              {/* Form Starts */}
               <form onSubmit={handleSubmit} className="space-y-2">
                 <div>
                   <label className="block text-sm font-medium text-gray-700 mb-1">
@@ -640,17 +574,16 @@ const AddVehicles = () => {
                     }
                     isClearable
                   />
-
                   <div>
-                    <label className=" block text-sm font-medium text-gray-700 my-1">
+                    <label className="block text-sm font-medium text-gray-700 my-1">
                       Car Info <span className="text-red-500">*</span>
                     </label>
                     <input
                       onClick={handleUpdateCarInfo}
-                      value={`${selected?.year || "" || vehicleData?.year} ${
-                        selected?.make || "" || vehicleData?.make
-                      } ${selected?.model || "" || vehicleData?.model} ${
-                        selected?.series || "" || vehicleData?.series
+                      value={`${selected?.year || vehicleData?.year} ${
+                        selected?.make || vehicleData?.make
+                      } ${selected?.model || vehicleData?.model} ${
+                        selected?.series || vehicleData?.series
                       }`}
                       placeholder="Year/Make/Model/Version"
                       readOnly
@@ -674,7 +607,6 @@ const AddVehicles = () => {
                     <label className="block text-sm font-medium text-gray-700 mb-1">
                       Vehicle Drive Type
                     </label>
-
                     <select
                       name="driveType"
                       value={vehicleData.driveType}
@@ -688,49 +620,41 @@ const AddVehicles = () => {
                       <option value="4wd">4WD (Four-Wheel Drive)</option>
                     </select>
                   </div>
-
                   <div>
                     <label className="block text-sm font-medium text-gray-700 mb-1">
                       Vehicle Body Style <span className="text-red-500">*</span>
                     </label>
-
                     <select
                       name="bodyStyle"
                       value={vehicleData.bodyStyle}
                       onChange={handleChange}
                       className="border border-gray-300 px-4 py-2 rounded focus:outline-none focus:ring-2 focus:ring-indigo-500 w-full"
                     >
-                      <option value={""}>Please Select BodyStyle</option>
-
+                      <option value="">Please Select BodyStyle</option>
                       {bodyStyles?.map((body) => (
-                        <option id={body} value={body}>
+                        <option key={body} value={body}>
                           {body}
                         </option>
                       ))}
                     </select>
                   </div>
-
                   <div>
                     <label className="block text-sm font-medium text-gray-700 mb-1">
                       Vehicle Transmission Type
                     </label>
-
                     <select
                       name="transmission"
                       value={vehicleData?.transmission || ""}
                       onChange={handleChange}
                       className="border border-gray-300 px-4 py-2 rounded focus:outline-none focus:ring-2 focus:ring-indigo-500 w-full"
                     >
-                      <option value={""}>
-                        Please Select Transmission Type
-                      </option>
-                      <option value={"Automatic"}>Automatic</option>
-                      <option value={"Manual"}>Manual</option>
+                      <option value="">Please Select Transmission Type</option>
+                      <option value="Automatic">Automatic</option>
+                      <option value="Manual">Manual</option>
                     </select>
                   </div>
-
                   <div>
-                    <label className=" block text-sm font-medium text-gray-700 mb-1"></label>
+                    <label className="block text-sm font-medium text-gray-700 mb-1"></label>
                     <input
                       name="mileage"
                       value={vehicleData?.mileage || ""}
@@ -744,28 +668,24 @@ const AddVehicles = () => {
                       className="border border-gray-300 px-4 py-2 rounded focus:outline-none focus:ring-2 focus:ring-indigo-500 w-full"
                     />
                   </div>
-
                   <div>
                     <label className="block text-sm font-medium text-gray-700 mb-1">
                       Vehicle Color <span className="text-red-500">*</span>
                     </label>
-
                     <select
                       name="color"
                       value={vehicleData.color || ""}
                       onChange={handleChange}
                       className="border border-gray-300 px-4 py-2 rounded focus:outline-none focus:ring-2 focus:ring-indigo-500 w-full"
                     >
-                      <option value={""}>Please Select Color</option>
-
+                      <option value="">Please Select Color</option>
                       {carColors?.map((color) => (
-                        <option id={color} value={color}>
+                        <option key={color} value={color}>
                           {color}
                         </option>
                       ))}
                     </select>
                   </div>
-
                   <div>
                     <label className="block text-sm font-medium text-gray-700 mb-1">
                       Vehicle Fuel Type
@@ -774,7 +694,6 @@ const AddVehicles = () => {
                       name="fuelType"
                       value={vehicleData.fuelType}
                       onChange={handleChange}
-                      placeholder="Fuel Type"
                       className="border border-gray-300 px-4 py-2 rounded focus:outline-none focus:ring-2 focus:ring-indigo-500 w-full"
                     >
                       <option value="">Select Fuel Type</option>
@@ -786,29 +705,25 @@ const AddVehicles = () => {
                       <option value="hybrid">Hybrid</option>
                     </select>
                   </div>
-
                   <div>
                     <label className="block text-sm font-medium text-gray-700 mb-1">
                       Vehicle Condition
                     </label>
-
                     <select
                       name="vehicleCondition"
                       value={vehicleData.vehicleCondition}
                       onChange={handleChange}
-                      placeholder="Vehicle Condition"
                       className="border border-gray-300 px-4 py-2 rounded focus:outline-none focus:ring-2 focus:ring-indigo-500 w-full"
                     >
                       <option value="">Select Vehicle Condition</option>
                       <option value="new">New</option>
                       <option value="used">Used</option>
-                      <option value="accidented">Accidented</option>
+                     
                     </select>
                   </div>
-
                   <div>
                     <label className="block text-sm font-medium text-gray-700 mb-1">
-                      Add Vehicle Price <span className="text-red-500">*</span>
+                      Add Price <span className="text-red-500">*</span>
                     </label>
                     <input
                       type="text"
@@ -817,15 +732,13 @@ const AddVehicles = () => {
                       onChange={(e) => {
                         const value = e.target.value;
                         if (/^\d*$/.test(value) && value.length <= 9) {
-                          setPrice(value); // Local state update
-                          handleChange(e); // Parent handler call
+                          setPrice(value);
+                          handleChange(e);
                         }
                       }}
                       placeholder="Add Price"
                       className="border border-gray-300 px-4 py-2 rounded focus:outline-none focus:ring-2 focus:ring-indigo-500 w-full"
                     />
-
-                    {/* Neeche number in words */}
                     {price && (
                       <p className="mt-2 text-sm text-red-500 font-semibold">
                         {numberToIndianWords(parseInt(price))}
@@ -833,17 +746,14 @@ const AddVehicles = () => {
                     )}
                   </div>
                 </div>
-
                 <div>
                   <label className="block text-sm font-medium text-gray-700 mb-1">
                     Certified Status <span className="text-red-500">*</span>
                   </label>
-
                   <select
                     name="certifyStatus"
                     value={vehicleData.certifyStatus}
                     onChange={handleChange}
-                    placeholder="Certify Status"
                     className="border border-gray-300 px-4 py-2 rounded focus:outline-none focus:ring-2 focus:ring-indigo-500 w-full"
                   >
                     <option value="">Please Select Certify Status</option>
@@ -851,16 +761,11 @@ const AddVehicles = () => {
                     <option value="Non-Certified">NonCertified</option>
                   </select>
                 </div>
-
-                {/* Image Upload */}
-
-                {/* Submit Button */}
                 <div className="col-span-1 sm:col-span-2 mt-4">
                   <div className="mb-6">
                     <label className="block text-sm font-medium text-gray-700 mb-2">
                       Vehicle Images <span className="text-red-500">*</span>
                     </label>
-
                     <div className="flex items-center justify-center w-full">
                       <label
                         htmlFor="vehicleImage"
@@ -892,8 +797,6 @@ const AddVehicles = () => {
                             You can add maximum 5 images and first image will be
                             used as front on the card
                           </p>
-
-                          {/* Selected images count show karega */}
                           {selectedCount > 0 && (
                             <p className="text-sm text-green-600 font-medium mt-2">
                               {selectedCount} image
@@ -901,7 +804,6 @@ const AddVehicles = () => {
                             </p>
                           )}
                         </div>
-
                         <input
                           id="vehicleImage"
                           type="file"
@@ -924,22 +826,19 @@ const AddVehicles = () => {
                   </div>
                 </div>
               </form>
-
-              {/* CarSelector Modal */}
-            </div>
-            {/* Car Selector Modal */}
-            {isOpen === "selector" && (
-              <div className="fixed inset-0 bg-opacity-40 flex items-center justify-center z-50">
-                <div className="w-full max-w-5xl bg-white p-6 rounded-lg shadow-lg relative">
-                  <CarSelector
-                    handleIsOpenToggle={() => handleIsOpenToggle("")}
-                  />
+              {isOpen === "selector" && (
+                <div className="fixed inset-0 bg-opacity-40 flex items-center justify-center z-50">
+                  <div className="w-full max-w-5xl bg-white p-6 rounded-lg shadow-lg relative">
+                    <CarSelector
+                      handleIsOpenToggle={() => handleIsOpenToggle("")}
+                    />
+                  </div>
                 </div>
-              </div>
-            )}
+              )}
+            </div>
           </div>
         )}
-        <section className="mt-10 space-y-4 max-h-[65vh] overflow-y-auto pr-2 md:hidden block">
+        <section className="mt-10 space-y-4 max-h-[55vh] overflow-y-auto pr-2 md:hidden block">
           {loading ? (
             <p className="text-center text-indigo-600 font-semibold">
               Loading vehicles...
@@ -952,7 +851,6 @@ const AddVehicles = () => {
                 key={vehicle.newVehicleId}
                 className="bg-white border rounded-xl shadow-sm hover:shadow-md transition p-4 flex items-center justify-between gap-4"
               >
-                {/* Vehicle Image */}
                 <div className="w-20 h-20 sm:w-28 sm:h-28 rounded-lg overflow-hidden bg-gray-100 flex-shrink-0">
                   <img
                     src={vehicle.images[0]}
@@ -963,8 +861,6 @@ const AddVehicles = () => {
                     )}
                   />
                 </div>
-
-                {/* Vehicle Info */}
                 <div className="flex-1 min-w-0">
                   <h2 className="font-bold text-sm sm:text-base truncate">
                     {vehicle.make || "—"} {vehicle.model || "—"}
@@ -977,71 +873,88 @@ const AddVehicles = () => {
                     {vehicle.transmission || "—"}
                   </p>
                 </div>
-
-                {/* Action Buttons (Right Side Column) */}
-                <div className="flex flex-col gap-2 flex-shrink-0">
-                  {!isCustomer ? (
-                    <>
-                      <button
-                        onClick={() => handleEdit(vehicle)}
-                        className="px-3 py-1 border border-yellow-500 text-yellow-500 rounded hover:bg-yellow-500 hover:text-white text-xs sm:text-sm"
-                      >
-                        Edit
-                      </button>
-
-                      {vehicle.bidId ? (
-                        <button
-                          onClick={() => (
-                            handleEndBidding(vehicle.bidId),
-                            handleIsOpenToggle("bid")
+                <div className="relative flex-shrink-0">
+                  <button
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      toggleDropdown(vehicle.newVehicleId);
+                    }}
+                    className="px-3 py-1 text-gray-600 text-xl"
+                  >
+                    ...
+                  </button>
+                  {isDropdownOpen === vehicle.newVehicleId && (
+                    <div className="absolute right-0 mt-2 w-32 bg-white border rounded-lg shadow-lg z-10">
+                      {!isCustomer ? (
+                        <>
+                          <button
+                            onClick={(e) => {
+                              e.stopPropagation();
+                              handleEdit(vehicle);
+                            }}
+                            className="block w-full text-left px-4 py-2 text-sm text-yellow-500 hover:bg-yellow-500 hover:text-white"
+                          >
+                            Edit
+                          </button>
+                          {vehicle.bidId ? (
+                            <button
+                              onClick={(e) => {
+                                e.stopPropagation();
+                                handleEndBidding(vehicle.bidId);
+                                handleIsOpenToggle("bid");
+                              }}
+                              className="block w-full text-left px-4 py-2 text-sm text-green-500 hover:bg-green-500 hover:text-white"
+                            >
+                              Bid Added
+                            </button>
+                          ) : (
+                            <button
+                              onClick={(e) => {
+                                e.stopPropagation();
+                                setSelectVehicle(vehicle);
+                                handleIsOpenToggle("View");
+                              }}
+                              className="block w-full text-left px-4 py-2 text-sm text-green-500 hover:bg-green-500 hover:text-white"
+                            >
+                              View
+                            </button>
                           )}
-                          className="px-3 py-1 border border-green-500 text-green-500 rounded hover:bg-green-500 hover:text-white text-xs sm:text-sm"
-                        >
-                          Bid Added
-                        </button>
+                          <button
+                            onClick={(e) => {
+                              e.stopPropagation();
+                              handleDelete(vehicle.newVehicleId);
+                            }}
+                            className="block w-full text-left px-4 py-2 text-sm text-red-500 hover:bg-red-500 hover:text-white"
+                          >
+                            Delete
+                          </button>
+                        </>
                       ) : (
                         <button
-                          onClick={() => (
-                            setSelectVehicle(vehicle),
-                            handleIsOpenToggle("View")
-                          )}
-                          className="px-3 py-1 border border-green-500 text-green-500 rounded hover:bg-green-500 hover:text-white text-xs sm:text-sm"
+                          onClick={(e) => {
+                            e.stopPropagation();
+                            setCustomerBidData({
+                              userId: user?.id,
+                              vehicleId: vehicle.id,
+                              maxBid: "",
+                              monsterBid: "",
+                            });
+                            setIsCustomerBidModalOpen(true);
+                          }}
+                          className="block w-full text-left px-4 py-2 text-sm text-blue-500 hover:bg-blue-500 hover:text-white"
                         >
-                          View
+                          Create Bid
                         </button>
                       )}
-
-                      <button
-                        onClick={() => handleDelete(vehicle.newVehicleId)}
-                        className="px-3 py-1 border border-red-500 text-red-500 rounded hover:bg-red-500 hover:text-white text-xs sm:text-sm"
-                      >
-                        Delete
-                      </button>
-                    </>
-                  ) : (
-                    <button
-                      onClick={() => {
-                        setCustomerBidData({
-                          userId: user?.id,
-                          vehicleId: vehicle.id,
-                          maxBid: "",
-                          monsterBid: "",
-                        });
-                        setIsCustomerBidModalOpen(true);
-                      }}
-                      className="px-3 py-1 border border-blue-500 text-blue-500 rounded hover:bg-blue-500 hover:text-white text-xs sm:text-sm"
-                    >
-                      Create Bid
-                    </button>
+                    </div>
                   )}
                 </div>
               </div>
             ))
           )}
         </section>
-
         <section
-          className="mt-10 space-y-4  overflow-y-auto pr-2 md:block hidden pb-10"
+          className="mt-10 space-y-4 overflow-y-auto pr-2 md:block hidden pb-10"
           style={{ maxHeight: "calc(100vh - 210px)" }}
         >
           {loading ? (
@@ -1054,11 +967,9 @@ const AddVehicles = () => {
             allVehicles?.map((vehicle) => (
               <div
                 key={vehicle.newVehicleId}
-                className="bg-white border rounded-xl shadow-sm hover:shadow-md transition p-4 
-        flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4"
+                className="bg-white border rounded-xl shadow-sm hover:shadow-md transition p-4 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4"
               >
-                {/* Vehicle Image */}
-                <div className="w-full h-40 sm:w-40 sm:h-28 rounded-lg overflow-hidden bg-gray-100">
+                <div className="w-full sm:w-40 sm:h-28 rounded-lg overflow-hidden bg-gray-100">
                   <img
                     src={vehicle.images[0]}
                     alt={`${vehicle.make} ${vehicle.model}`}
@@ -1068,8 +979,6 @@ const AddVehicles = () => {
                     )}
                   />
                 </div>
-
-                {/* Vehicle Info */}
                 <div className="flex-1 min-w-0 space-y-2">
                   <h2 className="font-bold text-lg">
                     {vehicle.make || "—"} {vehicle.model || "—"} for sale
@@ -1078,193 +987,119 @@ const AddVehicles = () => {
                     PKR {vehicle.buyNowPrice}
                   </p>
 
-                  {/* Mobile Full Specs like Card */}
-                  <div className="flex flex-wrap gap-2 text-xs sm:hidden">
-                    <span className="px-3 py-1 border rounded-full">
-                      <strong>Year:</strong> {vehicle.year || "—"}
-                    </span>
-                    <span className="px-3 py-1 border rounded-full">
-                      <strong>Mileage:</strong> {vehicle.mileage || "—"}
-                    </span>
-                    <span className="px-3 py-1 border rounded-full">
-                      <strong>Fuel:</strong> {vehicle.fuelType || "—"}
-                    </span>
-                    <span className="px-3 py-1 border rounded-full">
-                      <strong>Body:</strong> {vehicle.bodyStyle || "—"}
-                    </span>
-                    <span className="px-3 py-1 border rounded-full">
-                      <strong>Color:</strong> {vehicle.color || "—"}
-                    </span>
-                    <span className="px-3 py-1 border rounded-full">
-                      <strong>Transmission:</strong>{" "}
-                      {vehicle.transmission || "—"}
-                    </span>
-                    <span className="px-3 py-1 border rounded-full">
-                      <strong>City:</strong> {vehicle.cityName || "—"}
-                    </span>
-                  </div>
 
-                  {/* Desktop Specs Badges */}
-                  <div className="hidden sm:flex flex-wrap gap-2 mt-2 text-xs">
-                    <span className="px-3 py-1 border rounded-full">
-                      <strong>Year:</strong> {vehicle.year || "—"}
-                    </span>
-                    <span className="px-3 py-1 border rounded-full">
-                      <strong>Mileage:</strong> {vehicle.mileage || "—"}
-                    </span>
-                    <span className="px-3 py-1 border rounded-full">
-                      <strong>Fuel:</strong> {vehicle.fuelType || "—"}
-                    </span>
-                    <span className="px-3 py-1 border rounded-full">
-                      <strong>Body:</strong> {vehicle.bodyStyle || "—"}
-                    </span>
-                    <span className="px-3 py-1 border rounded-full">
-                      <strong>Color:</strong> {vehicle.color || "—"}
-                    </span>
-                    <span className="px-3 py-1 border rounded-full">
-                      <strong>Transmission:</strong>{" "}
+
+{/* 2006 | Petrol | Manual | 370000 KM | White | Lahore */}
+
+                  <div className="flex flex-wrap gap-2 text-sm">
+                    <span className=" ">
+                      {vehicle.year || "—"}
+                    </span>|
+                    <span className="">
+                      {vehicle.mileage || "—"}KM
+                    </span>|
+                    <span className=" ">
+                      {vehicle.fuelType || "—"}
+                    </span>|
+                   
+                    <span className=" ">
+                      {vehicle.color || "—"}
+                    </span>|
+                    <span className=" ">
                       {vehicle.transmission || "—"}
-                    </span>
-                    <span className="px-3 py-1 border rounded-full">
-                      <strong>City:</strong> {vehicle.cityName || "—"}
+                    </span>|
+                    <span className="">
+                      {vehicle.cityName || "—"}
                     </span>
                   </div>
                 </div>
-
-                {/* Action Buttons */}
-                <div className="flex flex-col sm:flex-row gap-2 mt-16">
-                  {!isCustomer ? (
-                    <>
-                      <button
-                        onClick={() => handleEdit(vehicle)}
-                        className="px-3 py-1 border border-yellow-500 text-yellow-500 rounded hover:bg-yellow-500 hover:text-white text-sm"
-                      >
-                        Edit
-                      </button>
-
-                      {vehicle.bidId ? (
-                        <button
-                          onClick={() => (
-                            handleEndBidding(vehicle.bidId),
-                            handleIsOpenToggle("bid")
+                <div className="relative flex-shrink-0">
+                  <button
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      toggleDropdown(vehicle.newVehicleId);
+                    }}
+                    className="px-3 py-1 text-gray-600 text-xl"
+                  >
+                    ...
+                  </button>
+                  {isDropdownOpen === vehicle.newVehicleId && (
+                    <div className="absolute right-0 mt-2 w-32 bg-white border rounded-lg shadow-lg z-10">
+                      {!isCustomer ? (
+                        <>
+                          <button
+                            onClick={(e) => {
+                              e.stopPropagation();
+                              handleEdit(vehicle);
+                            }}
+                            className="block w-full text-left px-4 py-2 text-sm text-yellow-500 hover:bg-yellow-500 hover:text-white"
+                          >
+                            Edit
+                          </button>
+                          {vehicle.bidId ? (
+                            <button
+                              onClick={(e) => {
+                                e.stopPropagation();
+                                handleEndBidding(vehicle.bidId);
+                                handleIsOpenToggle("bid");
+                              }}
+                              className="block w-full text-left px-4 py-2 text-sm text-green-500 hover:bg-green-500 hover:text-white"
+                            >
+                              Bid Added
+                            </button>
+                          ) : (
+                            <button
+                              onClick={(e) => {
+                                e.stopPropagation();
+                                setSelectVehicle(vehicle);
+                                handleIsOpenToggle("View");
+                              }}
+                              className="block w-full text-left px-4 py-2 text-sm text-green-500 hover:bg-green-500 hover:text-white"
+                            >
+                              View
+                            </button>
                           )}
-                          className="px-3 py-1 border border-green-500 text-green-500 rounded hover:bg-green-500 hover:text-white text-sm"
-                        >
-                          Bid Added
-                        </button>
+                          <button
+                            onClick={(e) => {
+                              e.stopPropagation();
+                              handleDelete(vehicle.newVehicleId);
+                            }}
+                            className="block w-full text-left px-4 py-2 text-sm text-red-500 hover:bg-red-500 hover:text-white"
+                          >
+                            Delete
+                          </button>
+                        </>
                       ) : (
                         <button
-                          onClick={() => (
-                            setSelectVehicle(vehicle),
-                            handleIsOpenToggle("View")
-                          )}
-                          className="px-3 py-1 border border-green-500 text-green-500 rounded hover:bg-green-500 hover:text-white text-sm"
+                          onClick={(e) => {
+                            e.stopPropagation();
+                            setCustomerBidData({
+                              userId: user?.id,
+                              vehicleId: vehicle.id,
+                              maxBid: "",
+                              monsterBid: "",
+                            });
+                            setIsCustomerBidModalOpen(true);
+                          }}
+                          className="block w-full text-left px-4 py-2 text-sm text-blue-500 hover:bg-blue-500 hover:text-white"
                         >
-                          View
+                          Create Bid
                         </button>
                       )}
-
-                      <button
-                        onClick={() => handleDelete(vehicle.newVehicleId)}
-                        className="px-3 py-1 border border-red-500 text-red-500 rounded hover:bg-red-500 hover:text-white text-sm"
-                      >
-                        Delete
-                      </button>
-                    </>
-                  ) : (
-                    <button
-                      onClick={() => {
-                        setCustomerBidData({
-                          userId: user?.id,
-                          vehicleId: vehicle.id,
-                          maxBid: "",
-                          monsterBid: "",
-                        });
-                        setIsCustomerBidModalOpen(true);
-                      }}
-                      className="px-3 py-1 border border-blue-500 text-blue-500 rounded hover:bg-blue-500 hover:text-white text-sm"
-                    >
-                      Create Bid
-                    </button>
+                    </div>
                   )}
                 </div>
               </div>
             ))
           )}
         </section>
-
-        {/*
-
-        <section className="mt-16">
-          <h2 className="text-2xl font-bold mb-6 text-indigo-800">
-            Auction Vehicles
-          </h2>
-          {auctionVehicles.length === 0 ? (
-            <p className="text-center text-gray-600">
-              No auction vehicles available.
-            </p>
-          ) : (
-            auctionVehicles.map((vehicle) => (
-              <div
-                key={vehicle.id || vehicle.vin}
-                className="flex flex-col sm:flex-row sm:items-center bg-white rounded-lg shadow px-4 py-3 mb-4 gap-3 overflow-x-auto text-sm text-gray-700"
-              >
-                {vehicle.image ? (
-                  <img
-                    src={vehicle.image}
-                    alt={`${vehicle.make} ${vehicle.model}`}
-                    className="w-28 h-20 object-cover rounded border flex-shrink-0"
-                  />
-                ) : (
-                  <div className="text-gray-400 italic w-28 h-20 flex items-center justify-center border rounded">
-                    No Image
-                  </div>
-                )}
-
-                <div className="flex flex-wrap items-center gap-x-4 gap-y-1">
-                  <span>
-                    <strong>VIN:</strong> {vehicle.vin || "—"}
-                  </span>{" "}
-                  |
-                  <span>
-                    <strong>Make:</strong> {vehicle.make || "—"}
-                  </span>{" "}
-                  |
-                  <span>
-                    <strong>Model:</strong> {vehicle.model || "—"}
-                  </span>{" "}
-                  |
-                  <span>
-                    <strong>Year:</strong> {vehicle.year || "—"}
-                  </span>{" "}
-                  |
-                  <span>
-                    <strong>Current Bid:</strong> ${vehicle.currentBid || "—"}
-                  </span>{" "}
-                  |
-                  <span>
-                    <strong>Buy Now Price:</strong> $
-                    {vehicle.buyNowPrice || "—"}
-                  </span>{" "}
-                  |
-                  <span>
-                    <strong>Auction Date:</strong> {vehicle.auctionDate || "—"}
-                  </span>
-                </div>
-              </div>
-            ))
-          )}
-        </section>
-        */}
       </div>
-
       {isOpen === "View" && (
         <ViewAdminCar
           handleClick={handleIsOpenToggle}
           selectedVehicle={selectVehicle}
         />
       )}
-
       {isOpen === "bid" && (
         <AdminAddBid
           selectedVehicle={sellerBidData}

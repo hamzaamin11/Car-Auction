@@ -85,9 +85,11 @@ export default function LiveAuctions() {
             <table className="min-w-full divide-y divide-gray-200">
               <thead className="bg-[#191970] text-white">
                 <tr>
+
+                  {currentUser.role === "admin" &&
                   <th className="px-4 py-3 text-left text-sm font-semibold">
                     Owner Name
-                  </th>
+                  </th>}
                   <th className="px-4 py-3 text-left text-sm font-semibold">
                     Image
                   </th>
@@ -120,9 +122,11 @@ export default function LiveAuctions() {
                       idx % 2 === 0 ? "bg-gray-50" : ""
                     } cursor-pointer hover:bg-gray-100`}
                   >
+                    {currentUser.role === "admin" &&
                     <td className="px-4 py-3 font-medium text-gray-900">
                       {user?.name}
                     </td>
+}
                     <td className="px-4 py-3">
                       <img
                         src={user?.images[0]}
@@ -223,7 +227,7 @@ export default function LiveAuctions() {
         <div className="flex justify-between  mt-6">
           {/* Prev Button */}
           <button
-            className={`bg-[#518ecb] text-white px-5 py-2 rounded hover:bg-[#518ecb] ${
+            className={`bg-blue-950 text-white px-5 py-2 rounded  ${
               pageNo > 1 ? "block" : "hidden"
             }`}
             onClick={handlePrevPage}
@@ -234,7 +238,7 @@ export default function LiveAuctions() {
           {/* Next Button */}
           <div></div>
           <button
-            className={`bg-[#518ecb] text-white px-5 py-2 rounded hover:bg-[#518ecb] ${
+            className={`bg-blue-950 text-white px-5 py-2 rounded  ${
               allLiveAuction.length === 0 ? "hidden" : "block"
             }`}
             onClick={handleNextPage}
