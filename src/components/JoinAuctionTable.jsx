@@ -80,10 +80,12 @@ const JoinAuctionTable = ({ allLive, upComing }) => {
           <thead className="bg-gray-200">
             <tr>
               <th className="p-2">SR#</th>
+              <th className="p-2">Image</th>
+              <th className="p-2">Model</th>
               <th className="p-2">Date</th>
               <th className="p-2">Start Time</th>
               <th className="p-2">End Time</th>
-              <th className="p-2">Model</th>
+
               <th className="p-2">Location</th>
               <th className="p-2">Action</th>
             </tr>
@@ -92,21 +94,29 @@ const JoinAuctionTable = ({ allLive, upComing }) => {
             {allLive?.map((auction, idx) => (
               <tr key={idx} className="border-b hover:bg-gray-50 text-center">
                 <td className="p-1">{idx + 1}</td>
+                <td className="p-1 text-center w-16 h-16 ">
+                  <img
+                    src={auction.images[0]}
+                    alt="auction image"
+                    className=" "
+                  />
+                </td>
+                <td className="p-1">
+                  {auction.make}/{auction.model}
+                </td>
                 <td className="p-1">{auction.startTime.slice(0, 10)}</td>
                 <td className="p-1">
                   {auction?.startTime
-                    ? moment(auction.startTime).local().format("HH:mm:ss")
+                    ? moment(auction.startTime).local().format("hh:mm A")
                     : "--"}
                 </td>
                 <td className="p-1">
                   {" "}
                   {auction?.endTime
-                    ? moment(auction?.endTime).local().format("HH:mm:ss")
+                    ? moment(auction?.endTime).local().format("hh:mm A")
                     : "--"}
                 </td>
-                <td className="p-1">
-                  {auction.make}/{auction.model}
-                </td>
+
                 <td className="p-1">{auction.locationId}</td>
                 <td className="p-1">
                   <button
@@ -179,9 +189,12 @@ const JoinAuctionTable = ({ allLive, upComing }) => {
           <thead className="bg-gray-200">
             <tr>
               <th className="p-2 text-center">Sr#</th>
-              <th className="p-2 text-center">Date</th>
-              <th className="p-2 text-center">Auction Live</th>
+
+              <th className=" text-center">Image</th>
               <th className="p-2 text-center">Model</th>
+
+              <th className="p-2 text-center">Date</th>
+              <th className="p-2 text-center">Auction Start</th>
               <th className="p-2 text-center">Location</th>
               <th className="p-2 text-center">Status</th>
             </tr>
@@ -191,18 +204,33 @@ const JoinAuctionTable = ({ allLive, upComing }) => {
             {upComing?.map((auction, idx) => (
               <tr key={idx} className="border-b hover:bg-gray-50">
                 <td className="p-1 text-center">{idx + 1}</td>
+                <td
+                  onClick={() => navigate(`/detailbid/${auction.vehicleId}`)}
+                  className="p-1 text-center w-16 h-16 hover:cursor-pointer "
+                >
+                  <img
+                    src={auction.images[0]}
+                    alt="auction image"
+                    className=" "
+                  />
+                </td>
+
+                <td
+                  onClick={() => navigate(`/detailbid/${auction.vehicleId}`)}
+                  className="p-1 text-center hover:cursor-pointer"
+                >
+                  {auction.make}/{auction.model}
+                </td>
                 <td className="p-1 text-center">
                   {auction?.startTime.slice(0, 10)}
                 </td>
 
                 <td className="p-1 text-center">
                   {auction?.startTime
-                    ? moment(auction.startTime).local().format("HH:mm:ss")
+                    ? moment(auction.startTime).local().format("hh:mm A")
                     : "--"}
                 </td>
-                <td className="p-1 text-center">
-                  {auction.make}/{auction.model}
-                </td>
+
                 <td className="p-1 text-center">{auction.locationId}</td>
                 <td className="p-1 text-center text-red-600 font-bold">
                   Pending

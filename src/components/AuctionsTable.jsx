@@ -1,105 +1,123 @@
 import axios from "axios";
 import { useState, useEffect } from "react";
-import { Link, useNavigate } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 import { BASE_URL } from "./Contant/URL";
 
 export default function AuctionsTable() {
   const navigate = useNavigate();
+
   const [searchTerm, setSearchTerm] = useState("");
-
-  const [expandedRow, setExpandedRow] = useState(null);
-
-  const [salesData, setSalesData] = useState([]);
-
   const [getAuctions, setGetAuctions] = useState([]);
 
-  console.log("get Auction =>", getAuctions);
-
-  useEffect(() => {
-    fetch(`${BASE_URL}/liveAuctions`)
-      .then((res) => res.json())
-      .then((data) => setSalesData(data))
-      .catch((err) => console.error("Error fetching auctions:", err));
-  }, []);
-
-  const filteredSales = salesData?.filter((sale) =>
-    sale.locationId.toLowerCase().includes(searchTerm.toLowerCase())
-  );
-
+  // ✅ Fetch all today's auctions initially
   const handleGetAuctions = async () => {
     try {
       const res = await axios.get(`${BASE_URL}/todayAuction`);
-      setGetAuctions(res.data);
+      setGetAuctions(res.data || []);
     } catch (error) {
-      console.log(error);
+      console.error("Error fetching auctions:", error);
     }
   };
 
+  // ✅ Fetch searched auctions when searchTerm changes
   const handleSearchAuction = async () => {
     try {
-      const res = await axios.get(
-        `${BASE_URL}/todayAuction?search=${searchTerm}`
-      );
-      setGetAuctions(res.data);
+      const res = await axios.get(`${BASE_URL}/todayAuction?search=${term}`);
+      setGetAuctions(res.data || []);
     } catch (error) {
-      console.log(error);
+      console.error("Error searching auctions:", error);
     }
   };
 
+  // ✅ Run on mount and when search term changes
   useEffect(() => {
-    handleGetAuctions();
-
-    if (searchTerm) {
-      handleSearchAuction();
+    if (searchTerm.trim() === "") {
+      handleGetAuctions();
+    } else {
+      handleSearchAuction(searchTerm);
     }
   }, [searchTerm]);
 
   return (
     <div className="px-6 pt-2">
+      {/* 🔍 Search Input */}
       <input
         type="text"
         placeholder="Search Auctions..."
         value={searchTerm}
         onChange={(e) => setSearchTerm(e.target.value)}
-        className="mb-4 px-4 py-2 border rounded"
+        className="mb-4 px-4 py-2 border rounded w-full max-w-md"
       />
+
+      {/* 🧾 Auctions Table */}
       <table className="min-w-full table-auto border border-gray-300 mb-2">
         <thead>
           <tr className="bg-gray-200 text-left">
             <th className="px-4 py-2 border-b">SR#</th>
+            <th className="px-4 py-2 border-b">Image</th>
+            <th></th>
+            <th className="px-4 py-2 border-b">Model</th>
             <th className="px-4 py-2 border-b">Location</th>
             <th className="px-4 py-2 border-b">Auction Date</th>
-            <th className="px-4 py-2 border-b">Auction Status</th>
+            <th className="px-4 py-2 border-b">Status</th>
           </tr>
         </thead>
+
         <tbody>
-          {getAuctions?.map((sale, index) => (
-            <tr
-              key={sale.userId}
-              className="border-b hover:bg-gray-50 text-left"
-              onClick={() => navigate(`/standardline/${sale.vehicleId}`)}
-            >
-              <td className="px-4 py-2">{index + 1}</td>
-              <td className="px-4 py-2 font-semibold">{sale.locationId}</td>
-              <td className="px-4 py-2">{sale.startTime.slice(0, 10)}</td>
-              <td
-                className={` lg:px-12 px-6 py-2  ${
-                  sale?.auctionStatus === "live"
-                    ? "text-green-500 font-bold "
-                    : "text-red-500 font-bold "
-                } `}
+          {getAuctions.length > 0 ? (
+            getAuctions.map((sale, index) => (
+              <tr
+                key={sale.vehicleId || index}
+                className="border-b hover:bg-gray-50 cursor-pointer"
+                onClick={() => navigate(`/detailbid/${sale.vehicleId}`)}
               >
-                {sale?.auctionStatus}
+                <td className="px-4 py-2">{index + 1}</td>
+
+                {/* 🖼️ Image */}
+                <td className="px-4 py-2 w-24 h-16 text-center">
+                  <img
+                    src={sale.images?.[0] || "/no-image.png"}
+                    alt={`${sale.make} ${sale.model}`}
+                    className="w-20 h-16 object-cover rounded mx-auto"
+                  />
+                </td>
+
+                <td></td>
+                <td className="py-2 px-6 font-semibold text-gray-800">
+                  {sale.make} {sale.model}
+                </td>
+                {/* 📍 Location */}
+                <td className="px-4 py-2 font-semibold">{sale.locationId}</td>
+
+                {/* 📅 Date */}
+                <td className="px-4 py-2">
+                  {sale.startTime?.slice(0, 10) || "N/A"}
+                </td>
+
+                {/* 🟢 Status */}
+                <td
+                  className={`px-4 py-2 font-bold ${
+                    sale.auctionStatus === "live"
+                      ? "text-green-500 "
+                      : "text-red-500"
+                  }`}
+                >
+                  {sale.auctionStatus || "N/A"}
+                </td>
+              </tr>
+            ))
+          ) : (
+            <tr>
+              <td
+                colSpan={6}
+                className="text-center py-4 font-semibold text-gray-500"
+              >
+                No auctions found!
               </td>
             </tr>
-          ))}
+          )}
         </tbody>
       </table>
-      {getAuctions.length === 0 && (
-        <div className="flex items-center justify-center font-bold py-1">
-          No data found!
-        </div>
-      )}
     </div>
   );
 }

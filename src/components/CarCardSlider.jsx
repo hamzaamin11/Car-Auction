@@ -15,7 +15,7 @@ const CarCard = ({ car }) => {
           src={car.images[0]}
           alt="car"
           className="w-full h-48 object-cover rounded-t-xl hover:cursor-pointer"
-          onClick={() => navigate(`/standardline/${car.id}`)}
+          onClick={() => navigate(`/detailbid/${car.id}`)}
         />
       </div>
 
@@ -30,7 +30,7 @@ const CarCard = ({ car }) => {
           <span className="font-bold">Location:</span> {car.cityName}
         </p>
         <span
-          onClick={() => navigate(`/standardline/${car.id}`)}
+          onClick={() => navigate(`/detailbid/${car.id}`)}
           className="block bg-[#ed3237] hover:bg-red-700 text-center text-sm font-semibold text-white py-2 rounded transition hover:cursor-pointer mt-auto"
         >
           View Details
@@ -58,7 +58,8 @@ const AuctionCard = ({ auction, onView }) => {
           {auction?.make}-{auction?.model}
         </h3>
         <p className="text-lg font-semibold text-gray-900">
-          <span className="font-bold">Seller Offer:</span> {auction?.sellerOffer}
+          <span className="font-bold">Seller Offer:</span>{" "}
+          {auction?.sellerOffer}
         </p>
         <p className="text-sm">
           <span className="font-bold">Location:</span> {auction?.cityName}
@@ -92,7 +93,8 @@ const LiveAuctionCard = ({ liveAuction, onView }) => {
           {liveAuction?.make}-{liveAuction?.model}
         </h3>
         <p className="text-lg font-semibold text-gray-900">
-          <span className="font-bold">Current Bid:</span> {liveAuction?.currentBid}
+          <span className="font-bold">Current Bid:</span>{" "}
+          {liveAuction?.currentBid}
         </p>
         <p className="text-sm">
           <span className="font-bold">Location:</span> {liveAuction?.cityName}
@@ -149,7 +151,9 @@ const CarCardSlider = () => {
       // Placeholder: Replace with actual API endpoint when provided
       // const res = await axios.get(`${BASE_URL}/liveAuctions?entry=8&page=1`);
       // setAllLiveAuctions(res.data);
-      console.log("Live Auction API will be added later. Waiting for response.");
+      console.log(
+        "Live Auction API will be added later. Waiting for response."
+      );
     } catch (error) {
       console.log(error);
     }
@@ -237,7 +241,10 @@ const CarCardSlider = () => {
   };
 
   const getVisibleLiveAuctions = () => {
-    return allLiveAuctions.slice(liveAuctionIndex, liveAuctionIndex + visibleCards);
+    return allLiveAuctions.slice(
+      liveAuctionIndex,
+      liveAuctionIndex + visibleCards
+    );
   };
 
   const nextCards = () => {
@@ -332,7 +339,7 @@ const CarCardSlider = () => {
             onClick={prevCards}
             disabled={currentIndex === 0}
             className="absolute left-0 md:-left-10 bg-white p-2 rounded-full shadow text-gray-700 z-10 hover:bg-gray-100 disabled:opacity-50 transition-transform hover:scale-110"
-            style={{ top: '50%', transform: 'translateY(-50%)' }}
+            style={{ top: "50%", transform: "translateY(-50%)" }}
           >
             <ChevronLeft size={24} className="md:w-7 md:h-7" />
           </button>
@@ -349,7 +356,7 @@ const CarCardSlider = () => {
             onClick={nextCards}
             disabled={currentIndex + visibleCards >= allCars.length}
             className="absolute right-0 md:-right-10 bg-white p-2 rounded-full shadow text-gray-700 z-10 hover:bg-gray-100 disabled:opacity-50 transition-transform hover:scale-110"
-            style={{ top: '50%', transform: 'translateY(-50%)' }}
+            style={{ top: "50%", transform: "translateY(-50%)" }}
           >
             <ChevronRight size={24} className="md:w-7 md:h-7" />
           </button>
@@ -359,21 +366,23 @@ const CarCardSlider = () => {
       {/* Progress Dots for Cars */}
       {allCars.length > visibleCards && (
         <div className="flex justify-center gap-2 mt-6">
-          {Array.from({ length: Math.ceil(allCars.length / visibleCards) }).map((_, idx) => (
-            <button
-              key={idx}
-              onClick={() => {
-                setIsAutoPlaying(false);
-                setCurrentIndex(idx * visibleCards);
-                setTimeout(() => setIsAutoPlaying(true), 5000);
-              }}
-              className={`h-2 rounded-full transition-all ${
-                Math.floor(currentIndex / visibleCards) === idx
-                  ? 'bg-[#ed3237] w-8'
-                  : 'bg-gray-300 w-2'
-              }`}
-            />
-          ))}
+          {Array.from({ length: Math.ceil(allCars.length / visibleCards) }).map(
+            (_, idx) => (
+              <button
+                key={idx}
+                onClick={() => {
+                  setIsAutoPlaying(false);
+                  setCurrentIndex(idx * visibleCards);
+                  setTimeout(() => setIsAutoPlaying(true), 5000);
+                }}
+                className={`h-2 rounded-full transition-all ${
+                  Math.floor(currentIndex / visibleCards) === idx
+                    ? "bg-[#ed3237] w-8"
+                    : "bg-gray-300 w-2"
+                }`}
+              />
+            )
+          )}
         </div>
       )}
 
@@ -391,7 +400,7 @@ const CarCardSlider = () => {
                   onClick={prevAuctions}
                   disabled={auctionIndex === 0}
                   className="absolute left-0 md:-left-10 bg-white p-2 rounded-full shadow text-gray-700 z-10 hover:bg-gray-100 disabled:opacity-50 transition-transform hover:scale-110"
-                  style={{ top: '50%', transform: 'translateY(-50%)' }}
+                  style={{ top: "50%", transform: "translateY(-50%)" }}
                 >
                   <ChevronLeft size={24} className="md:w-7 md:h-7" />
                 </button>
@@ -412,7 +421,7 @@ const CarCardSlider = () => {
                   onClick={nextAuctions}
                   disabled={auctionIndex + visibleCards >= allUpcoming.length}
                   className="absolute right-0 md:-right-10 bg-white p-2 rounded-full shadow text-gray-700 z-10 hover:bg-gray-100 disabled:opacity-50 transition-transform hover:scale-110"
-                  style={{ top: '50%', transform: 'translateY(-50%)' }}
+                  style={{ top: "50%", transform: "translateY(-50%)" }}
                 >
                   <ChevronRight size={24} className="md:w-7 md:h-7" />
                 </button>
@@ -422,7 +431,9 @@ const CarCardSlider = () => {
             {/* Progress Dots for Auctions */}
             {allUpcoming.length > visibleCards && (
               <div className="flex justify-center gap-2 mt-6">
-                {Array.from({ length: Math.ceil(allUpcoming.length / visibleCards) }).map((_, idx) => (
+                {Array.from({
+                  length: Math.ceil(allUpcoming.length / visibleCards),
+                }).map((_, idx) => (
                   <button
                     key={idx}
                     onClick={() => {
@@ -432,8 +443,8 @@ const CarCardSlider = () => {
                     }}
                     className={`h-2 rounded-full transition-all ${
                       Math.floor(auctionIndex / visibleCards) === idx
-                        ? 'bg-[#ed3237] w-8'
-                        : 'bg-gray-300 w-2'
+                        ? "bg-[#ed3237] w-8"
+                        : "bg-gray-300 w-2"
                     }`}
                   />
                 ))}
@@ -459,7 +470,7 @@ const CarCardSlider = () => {
                   onClick={prevLiveAuctions}
                   disabled={liveAuctionIndex === 0}
                   className="absolute left-0 md:-left-10 bg-white p-2 rounded-full shadow text-gray-700 z-10 hover:bg-gray-100 disabled:opacity-50 transition-transform hover:scale-110"
-                  style={{ top: '50%', transform: 'translateY(-50%)' }}
+                  style={{ top: "50%", transform: "translateY(-50%)" }}
                 >
                   <ChevronLeft size={24} className="md:w-7 md:h-7" />
                 </button>
@@ -478,9 +489,11 @@ const CarCardSlider = () => {
               {allLiveAuctions.length > visibleCards && (
                 <button
                   onClick={nextLiveAuctions}
-                  disabled={liveAuctionIndex + visibleCards >= allLiveAuctions.length}
+                  disabled={
+                    liveAuctionIndex + visibleCards >= allLiveAuctions.length
+                  }
                   className="absolute right-0 md:-right-10 bg-white p-2 rounded-full shadow text-gray-700 z-10 hover:bg-gray-100 disabled:opacity-50 transition-transform hover:scale-110"
-                  style={{ top: '50%', transform: 'translateY(-50%)' }}
+                  style={{ top: "50%", transform: "translateY(-50%)" }}
                 >
                   <ChevronRight size={24} className="md:w-7 md:h-7" />
                 </button>
@@ -490,7 +503,9 @@ const CarCardSlider = () => {
             {/* Progress Dots for Live Auctions */}
             {allLiveAuctions.length > visibleCards && (
               <div className="flex justify-center gap-2 mt-6">
-                {Array.from({ length: Math.ceil(allLiveAuctions.length / visibleCards) }).map((_, idx) => (
+                {Array.from({
+                  length: Math.ceil(allLiveAuctions.length / visibleCards),
+                }).map((_, idx) => (
                   <button
                     key={idx}
                     onClick={() => {
@@ -500,8 +515,8 @@ const CarCardSlider = () => {
                     }}
                     className={`h-2 rounded-full transition-all ${
                       Math.floor(liveAuctionIndex / visibleCards) === idx
-                        ? 'bg-[#ed3237] w-8'
-                        : 'bg-gray-300 w-2'
+                        ? "bg-[#ed3237] w-8"
+                        : "bg-gray-300 w-2"
                     }`}
                   />
                 ))}
@@ -509,7 +524,9 @@ const CarCardSlider = () => {
             )}
           </>
         ) : (
-          <p className="text-center text-gray-600">No live auctions yet! API response will populate this section later.</p>
+          <p className="text-center text-gray-600">
+            No live auctions yet! API response will populate this section later.
+          </p>
         )}
       </div>
 
@@ -531,11 +548,21 @@ const CarCardSlider = () => {
             <h2 className="text-xl font-bold mb-2">
               {selectedAuction?.make} {selectedAuction?.model}
             </h2>
-            <p><b>Condition:</b> {selectedAuction?.vehicleCondition}</p>
-            <p><b>Seller Offer:</b> {selectedAuction?.sellerOffer}</p>
-            <p><b>Start Time:</b> {selectedAuction?.startTime}</p>
-            <p><b>End Time:</b> {selectedAuction?.endTime}</p>
-            <p><b>Location:</b> {selectedAuction?.cityName}</p>
+            <p>
+              <b>Condition:</b> {selectedAuction?.vehicleCondition}
+            </p>
+            <p>
+              <b>Seller Offer:</b> {selectedAuction?.sellerOffer}
+            </p>
+            <p>
+              <b>Start Time:</b> {selectedAuction?.startTime}
+            </p>
+            <p>
+              <b>End Time:</b> {selectedAuction?.endTime}
+            </p>
+            <p>
+              <b>Location:</b> {selectedAuction?.cityName}
+            </p>
           </div>
         </div>
       )}
@@ -558,10 +585,18 @@ const CarCardSlider = () => {
             <h2 className="text-xl font-bold mb-2">
               {selectedLiveAuction?.make} {selectedLiveAuction?.model}
             </h2>
-            <p><b>Condition:</b> {selectedLiveAuction?.vehicleCondition}</p>
-            <p><b>Current Bid:</b> {selectedLiveAuction?.currentBid}</p>
-            <p><b>End Time:</b> {selectedLiveAuction?.endTime}</p>
-            <p><b>Location:</b> {selectedLiveAuction?.cityName}</p>
+            <p>
+              <b>Condition:</b> {selectedLiveAuction?.vehicleCondition}
+            </p>
+            <p>
+              <b>Current Bid:</b> {selectedLiveAuction?.currentBid}
+            </p>
+            <p>
+              <b>End Time:</b> {selectedLiveAuction?.endTime}
+            </p>
+            <p>
+              <b>Location:</b> {selectedLiveAuction?.cityName}
+            </p>
           </div>
         </div>
       )}
