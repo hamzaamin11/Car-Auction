@@ -37,7 +37,7 @@ const MyBids = () => {
     <>
       {/* <Topbar />
       <Sidebar /> */}
-      <div className="max-h- overflow-auto bg-gray-50 p-6 md:p-12">
+      <div className="max-h- overflow-auto bg-gray-50 p-6 md:p-9">
         <h1 className="text-3xl font-bold mb-6 text-gray-800">Sold Vehicles</h1>
 
         {/* Bids Table */}
@@ -46,9 +46,7 @@ const MyBids = () => {
             <thead className="bg-[#191970] text-white">
               <tr>
                 <th className="px-6 py-3  text-sm font-semibold">SR#</th>
-                <th className="px-6 py-3 text-left text-sm font-semibold">
-                  Customer Name
-                </th>
+              
                 <th className="px-6 py-3 text-left text-sm font-semibold">
                   Vehicle
                 </th>
@@ -84,9 +82,7 @@ const MyBids = () => {
                       className="hover:bg-gray-50 transition cursor-default"
                     >
                       <td className="text-center">{index + 1}</td>
-                      <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-700">
-                        {name}
-                      </td>
+                    
                       <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-700">
                         {make}/{model}
                       </td>

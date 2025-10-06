@@ -19,6 +19,9 @@ const Navbar = () => {
   const [profileModalOpen, setProfileModalOpen] = useState(false);
 
   const dropdownRef = useRef(null);
+  const countryDropdownRef = useRef(null);
+  const cityDropdownRef = useRef(null);
+  const genderDropdownRef = useRef(null);
   const navigate = useNavigate();
   const location = useLocation();
   const dispatch = useDispatch();
@@ -52,7 +55,7 @@ const Navbar = () => {
   });
 
   // Options lists
-  const countries = ["Pakistan", "India", "Bangladesh", "UAE", "Saudi Arabia", "United States", "United Kingdom", "Canada", "Australia"];
+  const countries = ["Pakistan"];
   const cities = ["Karachi", "Lahore", "Islamabad", "Rawalpindi", "Faisalabad", "Multan", "Gujranwala", "Peshawar", "Quetta", "Sialkot", "Hyderabad"];
   const genders = ["Male", "Female", "Other"];
 
@@ -137,6 +140,7 @@ const Navbar = () => {
     localStorage.clear();
     dispatch(logOut());
     setDropdownOpen(false);
+    navigate("/");
   };
 
   const toggleDropdown = () => {
@@ -152,11 +156,24 @@ const Navbar = () => {
     }
   }, [profileModalOpen]);
 
-  // Outside click detection
+  // Outside click detection for all dropdowns
   useEffect(() => {
     function handleClickOutside(event) {
+      // Close profile dropdown
       if (dropdownRef.current && !dropdownRef.current.contains(event.target)) {
         setDropdownOpen(false);
+      }
+      // Close country dropdown
+      if (countryDropdownRef.current && !countryDropdownRef.current.contains(event.target)) {
+        setShowCountryDropdown(false);
+      }
+      // Close city dropdown
+      if (cityDropdownRef.current && !cityDropdownRef.current.contains(event.target)) {
+        setShowCityDropdown(false);
+      }
+      // Close gender dropdown
+      if (genderDropdownRef.current && !genderDropdownRef.current.contains(event.target)) {
+        setShowGenderDropdown(false);
       }
     }
     document.addEventListener("mousedown", handleClickOutside);
@@ -326,7 +343,7 @@ const Navbar = () => {
             )}
           </li>
         </ul>
-        {/* ✅ Dropdown with outside click close */}
+        {/* Profile Dropdown */}
         <div className="hidden md:flex gap-4 relative" ref={dropdownRef}>
           {currentUser ? (
             <div className="relative">
@@ -691,7 +708,7 @@ const Navbar = () => {
                 </div>
 
                 {/* Gender - Searchable */}
-                <div className="mb-4 relative">
+                <div className="mb-4 relative" ref={genderDropdownRef}>
                   <label className="block text-sm font-medium text-gray-700 mb-2">
                     Gender
                   </label>
@@ -737,7 +754,7 @@ const Navbar = () => {
                 </div>
 
                 {/* Country - Searchable */}
-                <div className="mb-4 relative">
+                <div className="mb-4 relative" ref={countryDropdownRef}>
                   <label className="block text-sm font-medium text-gray-700 mb-2">
                     Country
                   </label>
@@ -768,7 +785,7 @@ const Navbar = () => {
                 </div>
 
                 {/* City - Searchable */}
-                <div className="mb-4 relative">
+                <div className="mb-4 relative" ref={cityDropdownRef}>
                   <label className="block text-sm font-medium text-gray-700 mb-2">
                     City
                   </label>
