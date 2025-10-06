@@ -180,7 +180,7 @@ const TabsSection = () => {
   ];
 
   return (
-   <div className="p-10  max-w-screen mx-auto">
+   <div className="p-10  max-w-[90rem] mx-auto">
   <div className="items-center flex-wrap pb-2">
     <h1 className="text-xl sm:text-2xl lg:text-3xl font-bold mx-6">
       Search Your Dream Car
