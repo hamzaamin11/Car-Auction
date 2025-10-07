@@ -139,8 +139,8 @@ const AdminBidHistory = () => {
                   </tr>
                 </thead>
                 <tbody className="divide-y divide-gray-100">
-                  {filteredBiders?.length > 0 ? (
-                    filteredBiders.map(
+                  {currentItems?.length > 0 ? (
+                    currentItems.map(
                       (
                         {
                           id,
@@ -166,7 +166,7 @@ const AdminBidHistory = () => {
                           key={index}
                           className="hover:bg-gray-50 transition cursor-default"
                         >
-                          <td className="text-center">{index + 1}</td>
+                          <td className="text-center">{indexOfFirstItem + index + 1}</td>
                           <td
                             onClick={() =>
                               setSelectedCustomer({ name, contact, cnic, address })
@@ -222,6 +222,37 @@ const AdminBidHistory = () => {
                   )}
                 </tbody>
               </table>
+              {totalPages > 1 && (
+                <div className="flex justify-center mt-4 space-x-2 p-4">
+                  <button
+                    onClick={() => handlePageChange(currentPage - 1)}
+                    disabled={currentPage === 1}
+                    className="px-3 py-1 bg-blue-950 text-white rounded disabled:opacity-50"
+                  >
+                    Previous
+                  </button>
+                  {Array.from({ length: totalPages }, (_, i) => i + 1).map((page) => (
+                    <button
+                      key={page}
+                      onClick={() => handlePageChange(page)}
+                      className={`px-3 py-1 rounded ${
+                        currentPage === page
+                          ? "bg-[#191970] text-white"
+                          : "bg-gray-200 text-gray-700"
+                      }`}
+                    >
+                      {page}
+                    </button>
+                  ))}
+                  <button
+                    onClick={() => handlePageChange(currentPage + 1)}
+                    disabled={currentPage === totalPages}
+                    className="px-3 py-1 bg-blue-950 text-white rounded disabled:opacity-50"
+                  >
+                    Next
+                  </button>
+                </div>
+              )}
             </div>
 
             <div className="md:hidden space-y-4 px-3">
@@ -348,7 +379,6 @@ const AdminBidHistory = () => {
         )}
 
         {/* Customer Details Modal */}
-             {/* Customer Details Modal */}
         {selectedCustomer && (
           <div className="fixed inset-0 z-50 flex items-center justify-center bg-blur backdrop-blur-md p-4">
             <div className="bg-white rounded-2xl shadow-2xl w-full max-w-3xl max-h-[90vh] overflow-y-auto relative">
@@ -357,7 +387,7 @@ const AdminBidHistory = () => {
                   Customer Details
                 </h2>
                 <button
-                  className="text-black hover:text-red-500 p-2 rounded-full shadow-md "
+                  className="text-black hover:text-red-500 p-2 rounded-full shadow-md"
                   onClick={() => setSelectedCustomer(null)}
                 >
                   <IoMdClose size={20} />
@@ -405,7 +435,7 @@ const AdminBidHistory = () => {
                   View Vehicle
                 </h2>
                 <button
-                  className=" text-black hover:text-red-500 p-2 rounded-full shadow-md "
+                  className="text-black hover:text-red-500 p-2 rounded-full shadow-md"
                   onClick={() => {
                     setSelectedVehicle(null);
                     setCurrentImageIndex(0);
@@ -519,9 +549,9 @@ const AdminBidHistory = () => {
                       <div>
                         <p className="text-sm text-gray-500">Price:</p>
                         <p className="font-semibold text-gray-900">
-                          {selectedVehicle.buyNowPrice || 
-                           selectedVehicle.MonsterBid || 
-                           selectedVehicle.maxBid || 
+                          {selectedVehicle.buyNowPrice ||
+                           selectedVehicle.MonsterBid ||
+                           selectedVehicle.maxBid ||
                            "N/A"}
                         </p>
                       </div>
