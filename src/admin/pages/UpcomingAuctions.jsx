@@ -46,11 +46,6 @@ export default function UpcomingAuctions() {
 
   const id = currentUser?.id;
 
-  // const handleToggleModal = (user) => {
-  //   setIsOpen((prev) => !prev);
-  //   setSelectCar(user);
-  // };
-
   const handleGetAllUpcomingAuctions = async () => {
     try {
       const res = await axios.get(
@@ -98,7 +93,7 @@ export default function UpcomingAuctions() {
 
   return (
     <>
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 font-sans">
+      <div className="max-w-7xl mx-auto px-3 sm:px-4 lg:px-8 py-6 font-sans">
         <h1 className="lg:text-3xl sm:text-4xl font-bold mb-8 text-gray-900">
           Upcoming Auctions
         </h1>
@@ -236,7 +231,7 @@ export default function UpcomingAuctions() {
               >
                 {/* Header */}
                 <div className="flex justify-between items-center mb-3">
-                  <h3 className="font-bold text-lg text-gray-900">Seller</h3>
+                  <h3 className="font-bold text-lg text-gray-900">Owner Name</h3>
                   <span className="text-gray-700 font-medium">
                     {user?.name}
                   </span>
@@ -262,13 +257,14 @@ export default function UpcomingAuctions() {
                     <span className="text-gray-900 font-bold">
                       Seller Offer
                     </span>
-                    <span className="text-gray-900">{user?.sellerOffer}</span>
+                    <span className="text-gray-500">{user?.sellerOffer}</span>
                   </p>
 
                   <p className="flex justify-between">
                     <span className="text-gray-900 font-bold">Start Time</span>
                     <span className="text-gray-500">
-                      {user?.startTime?.slice(11, 19)}
+                      {user?.startTime ? moment(user.startTime).local().format("hh:mm A")
+                                              : "--"}
                     </span>
                   </p>
 
@@ -284,7 +280,9 @@ export default function UpcomingAuctions() {
                 <div className="mt-4">
                   <button
                     onClick={(e) => {
-                      handleToggleModel("update"), setselectedVehicle(user);
+                      e.stopPropagation();
+                      handleToggleModel("update");
+                      setselectedVehicle(user);
                     }}
                     className="w-full py-2.5 bg-blue-950 text-white text-sm font-medium rounded-lg hover:cursor-pointer"
                   >

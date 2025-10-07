@@ -146,7 +146,7 @@ const JoinAuctionTable = () => {
       </table>
 
       {/* Upcoming Auctions */}
-      <h2 className="text-xl font-semibold mb-2 text-gray-800">
+      <h2 className=" font-semibold mb-2 text-gray-800">
         Upcoming Auctions ({auctions.upcoming.length})
       </h2>
       <table className="w-full mb-8 border shadow-sm rounded overflow-hidden text-sm">

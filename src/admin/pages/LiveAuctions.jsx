@@ -74,8 +74,8 @@ export default function LiveAuctions() {
     <>
       {/* <Topbar />
       <Sidebar /> */}
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 font-sans">
-        <h1 className="text-3xl sm:text-4xl font-bold mb-8 text-gray-900">
+      <div className="min-h-screen bg-gray-100 p-4 sm:p-6">
+        <h1 className="text-2xl sm:text-3xl font-bold mb-8 text-gray-900">
           Live Auctions
         </h1>
 
@@ -168,7 +168,7 @@ export default function LiveAuctions() {
               >
                 {/* Header */}
                 <div className="flex justify-between items-center mb-3">
-                  <span className="text-gray-900 font-bold">Seller Name</span>
+                  <span className="text-gray-900 font-bold">Owner Name</span>
                   <span className="text-gray-500">{user?.name}</span>
                 </div>
 
@@ -201,7 +201,7 @@ export default function LiveAuctions() {
                     <span className="text-gray-900 font-bold">End Time</span>
                     <span className="text-gray-500">
                       {user.endTime
-                        ? moment(user.endTime).local().format("HH:mm:ss")
+                        ? moment(user.endTime).local().format("hh:mm A")
                         : "--"}
                     </span>
                   </p>
