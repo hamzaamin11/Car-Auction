@@ -57,31 +57,6 @@ const carColors = [
   "Turquoise",
 ];
 
-const Cities = [
-  "Abbottabad", "Addul Hakeem", "Ahmadpur East", "Ahmednagar", "Alipur", "Arandu", "Arifwala",
-  "Atharan Hazari", "Attock", "Badah", "Badin", "Bahawalnagar", "Bahawalpur", "Balakot",
-  "Bannu", "Barkhan", "Basirpur", "Basti Maluk", "Bela", "Bhag", "Bhakkar", "Bhan", "Bhera",
-  "Bucheki", "Chacharan Sharif", "Chak Jhumra", "Chakwal", "Chaman", "Charsadda", "Chawinda",
-  "Chichawatni", "Chiniot", "Chitral", "Choubara", "Chunian", "Dadu", "Daira Din Panah",
-  "Dalbandin", "Daulatpur", "Daur", "Depalpur", "Dera Bugti", "Dera Ghazi Khan",
-  "Dera Ismail Khan", "Dhadar", "Digri", "Dijkot", "Dinga", "Diplo", "Dir", "Drosh",
-  "Dudhial", "Duki", "Dunyapur", "Eminabad", "Faisalabad", "Fateh Jang", "Fateh Pur",
-  "Firozwala", "Fort Abbas", "Gaddani", "Gambat", "Garhi Khairo", "Gharibwal", "Gharo",
-  "Gilgit", "Gojra", "Gujranwala", "Gujrat", "Gwadar", "Hafizabad", "Hala", "Hangu",
-  "Haripur", "Harnai", "Haroonabad", "Hasilpur", "Havelian", "Hoshab", "Hyderabad",
-  "Isa Khel", "Islamabad", "Jacobabad", "Jaranwala", "Jhang", "Jhelum", "Jamshoro",
-  "Karachi", "Kamalia", "Kamoke", "Kandhkot", "Kasur", "Khairpur", "Khushab", "Khuzdar",
-  "Kohat", "Kot Abdul Malik", "Kot Addu", "Kotri", "Lahore", "Larkana", "Layyah",
-  "Lodhran", "Mandi Bahauddin", "Mansehra", "Mardan", "Mianwali", "Mirpur Khas",
-  "Mirpur (Azad Kashmir)", "Mingora", "Muzaffarabad", "Muzaffargarh", "Multan", "Muridke",
-  "Nawabshah", "Narowal", "Nowshera", "Okara", "Pakpattan", "Parachinar", "Quetta",
-  "Qambar Shahdadkot", "Rahim Yar Khan", "Rawalpindi", "Rabwah", "Sadiqabad", "Sahiwal",
-  "Sambrial", "Sanghar", "Sargodha", "Shaheed Benazirabad (Nawabshah)", "Sheikhupura",
-  "Shikarpur", "Sialkot", "Sukkur", "Swabi", "Taxila", "Tando Adam", "Tando Allahyar",
-  "Tando Muhammad Khan", "Talagang", "Tharparkar", "Thatta", "Turbat", "Vehari",
-  "Wah Cantonment", "Wazirabad", "Zabād", "Zafarke", "Zafarwal", "Zahir Pir", "Zahri", "Zaida",
-];
-
 function AddAdminVehicle({ open, setOpen, onVehicleUpdated }) {
   const initialVehicleState = {
     year: "",
@@ -120,18 +95,47 @@ function AddAdminVehicle({ open, setOpen, onVehicleUpdated }) {
   const [pageNo, setPageNo] = useState(1);
   const [selectedCount, setSelectedCount] = useState(0);
   const [price, setPrice] = useState("");
-  const { getVehicles, delVehicle, getAllVehicles } = useContext(VehicleContext);
+  const { getVehicles, delVehicle, getAllVehicles } =
+    useContext(VehicleContext);
   const { user } = useAuth();
   const dispatch = useDispatch();
 
   const numberToIndianWords = (num) => {
     if (num === 0) return "Zero";
     const ones = [
-      "", "One", "Two", "Three", "Four", "Five", "Six", "Seven", "Eight", "Nine",
-      "Ten", "Eleven", "Twelve", "Thirteen", "Fourteen", "Fifteen", "Sixteen",
-      "Seventeen", "Eighteen", "Nineteen",
+      "",
+      "One",
+      "Two",
+      "Three",
+      "Four",
+      "Five",
+      "Six",
+      "Seven",
+      "Eight",
+      "Nine",
+      "Ten",
+      "Eleven",
+      "Twelve",
+      "Thirteen",
+      "Fourteen",
+      "Fifteen",
+      "Sixteen",
+      "Seventeen",
+      "Eighteen",
+      "Nineteen",
     ];
-    const tens = ["", "", "Twenty", "Thirty", "Forty", "Fifty", "Sixty", "Seventy", "Eighty", "Ninety"];
+    const tens = [
+      "",
+      "",
+      "Twenty",
+      "Thirty",
+      "Forty",
+      "Fifty",
+      "Sixty",
+      "Seventy",
+      "Eighty",
+      "Ninety",
+    ];
     const twoDigits = (n) => {
       if (n < 20) return ones[n];
       const t = Math.floor(n / 10);
@@ -348,7 +352,7 @@ function AddAdminVehicle({ open, setOpen, onVehicleUpdated }) {
   };
 
   const handleOutsideClick = (e, vehicleId) => {
-    if (actionMenuOpen === vehicleId && !e.target.closest('.action-menu')) {
+    if (actionMenuOpen === vehicleId && !e.target.closest(".action-menu")) {
       setActionMenuOpen(null);
     }
   };
@@ -426,11 +430,14 @@ function AddAdminVehicle({ open, setOpen, onVehicleUpdated }) {
                   </label>
                   <input
                     onClick={handleUpdateCarInfo}
-                    value={`${selected?.year || ""} ${selected?.make || ""} ${selected?.model || ""} ${selected?.series || ""}`}
+                    value={`${selected?.year || ""} ${selected?.make || ""} ${
+                      selected?.model || ""
+                    } ${selected?.series || ""}`}
                     placeholder="Year/Make/Model/Version"
                     readOnly
                     className={`border border-gray-300 px-4 py-2 rounded focus:outline-none focus:ring-2 focus:ring-indigo-500 w-full ${
-                      (selected.year && selected.make && selected.model) || selected.series
+                      (selected.year && selected.make && selected.model) ||
+                      selected.series
                         ? "bg-green-200 text-green-700"
                         : "bg-red-200"
                     }`}
@@ -475,7 +482,8 @@ function AddAdminVehicle({ open, setOpen, onVehicleUpdated }) {
                 </div>
                 <div>
                   <label className="block text-sm font-medium text-gray-700 mb-1">
-                    Vehicle Transmission Type <span className="text-red-500">*</span>
+                    Vehicle Transmission Type{" "}
+                    <span className="text-red-500">*</span>
                   </label>
                   <select
                     name="transmission"
@@ -490,7 +498,8 @@ function AddAdminVehicle({ open, setOpen, onVehicleUpdated }) {
                 </div>
                 <div>
                   <label className="block text-sm font-medium text-gray-700 mb-1">
-                    Vehicle Meter Reading <span className="text-red-500">*</span>
+                    Vehicle Meter Reading{" "}
+                    <span className="text-red-500">*</span>
                   </label>
                   <input
                     name="mileage"
@@ -622,15 +631,21 @@ function AddAdminVehicle({ open, setOpen, onVehicleUpdated }) {
                           />
                         </svg>
                         <p className="text-sm text-gray-600">
-                          <span className="font-medium text-indigo-600">Click to upload</span>
+                          <span className="font-medium text-indigo-600">
+                            Click to upload
+                          </span>
                         </p>
-                        <p className="text-xs text-gray-400">PNG, JPG (Max 5MB each)</p>
+                        <p className="text-xs text-gray-400">
+                          PNG, JPG (Max 5MB each)
+                        </p>
                         <p className="text-xs text-gray-400 px-2">
-                          You can add maximum 5 images and first image will be used as front on the card
+                          You can add maximum 5 images and first image will be
+                          used as front on the card
                         </p>
                         {selectedCount > 0 && (
                           <p className="text-sm text-green-600 font-medium mt-2">
-                            {selectedCount} image{selectedCount > 1 ? "s" : ""} selected
+                            {selectedCount} image{selectedCount > 1 ? "s" : ""}{" "}
+                            selected
                           </p>
                         )}
                       </div>
@@ -659,7 +674,9 @@ function AddAdminVehicle({ open, setOpen, onVehicleUpdated }) {
             {isOpen === "selector" && (
               <div className="fixed inset-0 bg-opacity-40 flex items-center justify-center z-50">
                 <div className="w-full max-w-5xl bg-white p-4 sm:p-6 rounded-lg shadow-lg relative">
-                  <CarSelector handleIsOpenToggle={() => handleIsOpenToggle("")} />
+                  <CarSelector
+                    handleIsOpenToggle={() => handleIsOpenToggle("")}
+                  />
                 </div>
               </div>
             )}
@@ -670,7 +687,11 @@ function AddAdminVehicle({ open, setOpen, onVehicleUpdated }) {
       <div className="max-w-7xl mx-auto space-y-4 px-2 sm:px-4">
         {allVehicles?.length > 0 ? (
           allVehicles.map((vehicle, index) => (
-            <div key={index} onClick={(e) => handleOutsideClick(e, vehicle.id)} className="relative">
+            <div
+              key={index}
+              onClick={(e) => handleOutsideClick(e, vehicle.id)}
+              className="relative"
+            >
               {/* Desktop: Card View */}
               <div className="hidden lg:flex flex-col lg:flex-row items-start lg:items-center justify-between border rounded-lg hover:shadow-md transition-all duration-200 p-4 gap-4">
                 <div
@@ -694,16 +715,29 @@ function AddAdminVehicle({ open, setOpen, onVehicleUpdated }) {
                   onClick={() => handleViewClick(vehicle)}
                 >
                   <h2 className="text-base font-bold text-gray-800">
-                    {vehicle.make.charAt(0).toUpperCase() + vehicle.make.slice(1)}{" "}
-                    {vehicle.model.charAt(0).toUpperCase() + vehicle.model.slice(1)}{" "}
-                    {vehicle.series.charAt(0).toUpperCase() + vehicle.series.slice(1)}
+                    {vehicle.make.charAt(0).toUpperCase() +
+                      vehicle.make.slice(1)}{" "}
+                    {vehicle.model.charAt(0).toUpperCase() +
+                      vehicle.model.slice(1)}{" "}
+                    {vehicle.series.charAt(0).toUpperCase() +
+                      vehicle.series.slice(1)}
                   </h2>
-                  <p className="text-lg font-bold text-gray-800">PKR {vehicle.buyNowPrice}</p>
+                  <p className="text-lg font-bold text-gray-800">
+                    PKR {vehicle.buyNowPrice}
+                  </p>
                   <p className="text-sm text-gray-500">
-                    {vehicle.year} | {vehicle.fuelType.charAt(0).toUpperCase() + vehicle.fuelType.slice(1)} |{" "}
-                    {vehicle.transmission.charAt(0).toUpperCase() + vehicle.transmission.slice(1)} |{" "}
-                    {vehicle.mileage || "--"} KM | {vehicle.color.charAt(0).toUpperCase() + vehicle.color.slice(1)} |{" "}
-                    {vehicle.cityName?.charAt(0)?.toUpperCase() + vehicle.cityName?.slice(1) || "--"}
+                    {vehicle.year} |{" "}
+                    {vehicle.fuelType.charAt(0).toUpperCase() +
+                      vehicle.fuelType.slice(1)}{" "}
+                    |{" "}
+                    {vehicle.transmission.charAt(0).toUpperCase() +
+                      vehicle.transmission.slice(1)}{" "}
+                    | {vehicle.mileage || "--"} KM |{" "}
+                    {vehicle.color.charAt(0).toUpperCase() +
+                      vehicle.color.slice(1)}{" "}
+                    |{" "}
+                    {vehicle.cityName?.charAt(0)?.toUpperCase() +
+                      vehicle.cityName?.slice(1) || "--"}
                   </p>
                 </div>
                 <div className="w-full lg:w-auto text-left lg:text-right relative action-menu">
@@ -725,10 +759,9 @@ function AddAdminVehicle({ open, setOpen, onVehicleUpdated }) {
                       >
                         Edit
                       </button>
-                      {vehicle.saleStatus === "upcoming" || vehicle.saleStatus === "sold" ? (
-                        <button
-                          className="w-full px-4 py-2 text-sm text-green-600 hover:bg-green-100 text-left opacity-50 cursor-not-allowed"
-                        >
+                      {vehicle.saleStatus === "upcoming" ||
+                      vehicle.saleStatus === "sold" ? (
+                        <button className="w-full px-4 py-2 text-sm text-green-600 hover:bg-green-100 text-left opacity-50 cursor-not-allowed">
                           Bid Added
                         </button>
                       ) : (
@@ -787,16 +820,29 @@ function AddAdminVehicle({ open, setOpen, onVehicleUpdated }) {
                     onClick={() => handleViewClick(vehicle)}
                   >
                     <h2 className="text-sm font-bold text-gray-800">
-                      {vehicle.make.charAt(0).toUpperCase() + vehicle.make.slice(1)}{" "}
-                      {vehicle.model.charAt(0).toUpperCase() + vehicle.model.slice(1)}{" "}
-                      {vehicle.series.charAt(0).toUpperCase() + vehicle.series.slice(1)}
+                      {vehicle.make.charAt(0).toUpperCase() +
+                        vehicle.make.slice(1)}{" "}
+                      {vehicle.model.charAt(0).toUpperCase() +
+                        vehicle.model.slice(1)}{" "}
+                      {vehicle.series.charAt(0).toUpperCase() +
+                        vehicle.series.slice(1)}
                     </h2>
-                    <p className="text-xs text-gray-700 font-semibold">PKR {vehicle.buyNowPrice}</p>
+                    <p className="text-xs text-gray-700 font-semibold">
+                      PKR {vehicle.buyNowPrice}
+                    </p>
                     <p className="text-xs text-gray-500">
-                      {vehicle.year} | {vehicle.fuelType.charAt(0).toUpperCase() + vehicle.fuelType.slice(1)} |{" "}
-                      {vehicle.transmission.charAt(0).toUpperCase() + vehicle.transmission.slice(1)} |{" "}
-                      {vehicle.mileage || "--"} KM | {vehicle.color.charAt(0).toUpperCase() + vehicle.color.slice(1)} |{" "}
-                      {vehicle.cityName?.charAt(0)?.toUpperCase() + vehicle.cityName?.slice(1) || "--"}
+                      {vehicle.year} |{" "}
+                      {vehicle.fuelType.charAt(0).toUpperCase() +
+                        vehicle.fuelType.slice(1)}{" "}
+                      |{" "}
+                      {vehicle.transmission.charAt(0).toUpperCase() +
+                        vehicle.transmission.slice(1)}{" "}
+                      | {vehicle.mileage || "--"} KM |{" "}
+                      {vehicle.color.charAt(0).toUpperCase() +
+                        vehicle.color.slice(1)}{" "}
+                      |{" "}
+                      {vehicle.cityName?.charAt(0)?.toUpperCase() +
+                        vehicle.cityName?.slice(1) || "--"}
                     </p>
                   </div>
                   <div className="relative action-menu">
@@ -818,10 +864,9 @@ function AddAdminVehicle({ open, setOpen, onVehicleUpdated }) {
                         >
                           Edit
                         </button>
-                        {vehicle.saleStatus === "upcoming" || vehicle.saleStatus === "sold" ? (
-                          <button
-                            className="w-full px-4 py-2 text-sm text-green-600 hover:bg-green-100 text-left opacity-50 cursor-not-allowed"
-                          >
+                        {vehicle.saleStatus === "upcoming" ||
+                        vehicle.saleStatus === "sold" ? (
+                          <button className="w-full px-4 py-2 text-sm text-green-600 hover:bg-green-100 text-left opacity-50 cursor-not-allowed">
                             Bid Added
                           </button>
                         ) : (
@@ -859,20 +904,26 @@ function AddAdminVehicle({ open, setOpen, onVehicleUpdated }) {
             </div>
           ))
         ) : (
-          <p className="text-center text-gray-500 py-6">No vehicles found. Please add a vehicle.</p>
+          <p className="text-center text-gray-500 py-6">
+            No vehicles found. Please add a vehicle.
+          </p>
         )}
       </div>
 
       <div className="flex justify-between mt-6 px-2 sm:px-4">
         <button
-          className={`bg-blue-950 text-white px-5 py-2 rounded  ${pageNo > 1 ? "block" : "hidden"}`}
+          className={`bg-blue-950 text-white px-5 py-2 rounded  ${
+            pageNo > 1 ? "block" : "hidden"
+          }`}
           onClick={handlePrevPage}
         >
           ‹ Prev
         </button>
         <div></div>
         <button
-          className={`bg-blue-950 text-white px-5 py-2 rounded ${allVehicles.length === 0 ? "hidden" : "block"}`}
+          className={`bg-blue-950 text-white px-5 py-2 rounded ${
+            allVehicles.length === 0 ? "hidden" : "block"
+          }`}
           onClick={handleNextPage}
         >
           Next ›

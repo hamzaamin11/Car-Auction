@@ -34,6 +34,72 @@ const LiveCommentsModal = ({ isOpen, setIsOpen }) => {
     }
   };
 
+  const numberToIndianWords = (num) => {
+    if (num === 0) return "Zero";
+    const ones = [
+      "",
+      "One",
+      "Two",
+      "Three",
+      "Four",
+      "Five",
+      "Six",
+      "Seven",
+      "Eight",
+      "Nine",
+      "Ten",
+      "Eleven",
+      "Twelve",
+      "Thirteen",
+      "Fourteen",
+      "Fifteen",
+      "Sixteen",
+      "Seventeen",
+      "Eighteen",
+      "Nineteen",
+    ];
+    const tens = [
+      "",
+      "",
+      "Twenty",
+      "Thirty",
+      "Forty",
+      "Fifty",
+      "Sixty",
+      "Seventy",
+      "Eighty",
+      "Ninety",
+    ];
+    const twoDigits = (n) => {
+      if (n < 20) return ones[n];
+      const t = Math.floor(n / 10);
+      const o = n % 10;
+      return tens[t] + (o ? " " + ones[o] : "");
+    };
+    const threeDigits = (n) => {
+      const h = Math.floor(n / 100);
+      const r = n % 100;
+      return (h ? ones[h] + " Hundred " : "") + (r ? twoDigits(r) : "").trim();
+    };
+    let words = "";
+    if (Math.floor(num / 10000000) > 0) {
+      words += numberToIndianWords(Math.floor(num / 10000000)) + " Crore ";
+      num %= 10000000;
+    }
+    if (Math.floor(num / 100000) > 0) {
+      words += numberToIndianWords(Math.floor(num / 100000)) + " Lac ";
+      num %= 100000;
+    }
+    if (Math.floor(num / 1000) > 0) {
+      words += numberToIndianWords(Math.floor(num / 1000)) + " Thousand ";
+      num %= 1000;
+    }
+    if (num > 0) {
+      words += threeDigits(num);
+    }
+    return words.trim();
+  };
+
   const handleSubmit = async (e) => {
     e.preventDefault();
 
@@ -236,7 +302,7 @@ const LiveCommentsModal = ({ isOpen, setIsOpen }) => {
             value={bidAmount.maxBid}
             onChange={(e) => {
               const val = e.target.value;
-              // ✅ sirf digits allow karne ke liye regex
+
               if (/^\d*$/.test(val) && val.length <= 9) handleChange(e);
             }}
             placeholder="Enter your bid..."
@@ -252,6 +318,13 @@ const LiveCommentsModal = ({ isOpen, setIsOpen }) => {
             Bid
           </button>
         </form>
+        <div p-2 >
+          {bidAmount.maxBid && (
+            <p className="mt-2 text-sm text-red-500 font-semibold mx-4">
+              {numberToIndianWords(parseInt(bidAmount.maxBid))}
+            </p>
+          )}
+        </div>
       </div>
     </div>
   );

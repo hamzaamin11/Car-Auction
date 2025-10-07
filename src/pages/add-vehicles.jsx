@@ -2,7 +2,7 @@ import { useState, useEffect } from "react";
 import { useAuth } from "../context/AuthContext";
 import { BASE_URL } from "../components/Contant/URL";
 import { useDispatch, useSelector } from "react-redux";
-import { array } from "prop-types";
+import { BsThreeDotsVertical } from "react-icons/bs";
 import axios from "axios";
 import { toast, ToastContainer } from "react-toastify";
 import { ViewAdminCar } from "../components/ViewAdminCar";
@@ -119,6 +119,7 @@ const AddVehicles = () => {
   const [editId, setEditId] = useState(null);
   const [errorMsg, setErrorMsg] = useState("");
   const [successMsg, setSuccessMsg] = useState("");
+  const [pageNo, setPageNo] = useState(1);
   const [allCities, setAllCities] = useState([]);
   const dispatch = useDispatch();
   const [selectedCount, setSelectedCount] = useState(0);
@@ -206,6 +207,14 @@ const AddVehicles = () => {
     }
   };
 
+  const handleNextPage = () => {
+    setPageNo(pageNo + 1);
+  };
+
+  const handlePrevPage = () => {
+    setPageNo(pageNo > 1 ? pageNo - 1 : 0);
+  };
+
   useEffect(() => {
     handleGetAllCities();
   }, []);
@@ -219,7 +228,9 @@ const AddVehicles = () => {
   const handleGetAllVehicleById = async () => {
     try {
       const res = await axios.get(
-        `${BASE_URL}/getVehiclesByUser/${currentUser?.id}?search=${search}`
+        `${BASE_URL}/getVehiclesByUser/${
+          currentUser?.id
+        }?search=${search}&entry=${10}`
       );
       setAllVehicles(res.data);
     } catch (error) {
@@ -313,7 +324,7 @@ const AddVehicles = () => {
       mileage: "Mileage",
       vehicleCondition: "Vehicle Condition",
       locationId: "Location",
-      buyNowPrice: "Buy Now Price",
+      buyNowPrice: "buyNowPrice",
       certifyStatus: "Certify Status",
       image: "Image",
     };
@@ -478,10 +489,13 @@ const AddVehicles = () => {
   };
 
   return (
-    <div className="min-h-screen p-6 bg-gradient-to-br from-gray-100 to-blue-50" onClick={handleDropdownClose}>
+    <div
+      className="min-h-screen p-6 bg-gradient-to-br from-gray-100 to-blue-50"
+      onClick={handleDropdownClose}
+    >
       <div className="max-w-7xl mx-auto">
-        <header className="flex flex-col md:flex-row justify-between items-center mb-8">
-          <h1 className="text-3xl font-bold text-gray-800">All Vehicles</h1>
+        <header className="flex flex-col md:flex-row justify-between items-center ">
+          <h1 className="text-3xl font-bold text-gray-800">Vehicle List</h1>
           <div className="relative w-full max-w-md mt-4 lg:mt-0 md:mt-0 lg:ml-[-100px] ml-0">
             <span className="absolute inset-y-0 left-0 flex items-center pl-3 text-gray-400">
               <svg
@@ -501,9 +515,9 @@ const AddVehicles = () => {
             </span>
             <input
               type="text"
-              placeholder="Search by car name, location, vehicle ID"
+              placeholder="Search By Car Name"
               onChange={(e) => setSearch(e.target.value)}
-              className="w-full pl-10 pr-4 py-2 rounded-lg border border-gray-300 shadow-sm placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500"
+              className="w-full pl-10 pr-4 py-2 rounded-lg border border-gray-300 shadow-sm placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500 placeholder:text-sm"
             />
           </div>
           {!isCustomer && (
@@ -524,7 +538,7 @@ const AddVehicles = () => {
                 dispatch(addModel(""));
                 dispatch(addSeries(""));
               }}
-              className="mt-4 md:mt-0 px-6 py-2 bg-blue-950 text-white rounded"
+              className="mt-4 md:mt-0 px-4 py-2 bg-blue-950 text-white text-sm rounded hover:cursor-pointer"
             >
               Add Vehicle
             </button>
@@ -654,7 +668,9 @@ const AddVehicles = () => {
                     </select>
                   </div>
                   <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-1"></label>
+                    <label className="block text-sm font-medium text-gray-700 mb-1">
+                      Vehicle Meter Reading
+                    </label>
                     <input
                       name="mileage"
                       value={vehicleData?.mileage || ""}
@@ -718,7 +734,6 @@ const AddVehicles = () => {
                       <option value="">Select Vehicle Condition</option>
                       <option value="new">New</option>
                       <option value="used">Used</option>
-                     
                     </select>
                   </div>
                   <div>
@@ -862,8 +877,9 @@ const AddVehicles = () => {
                   />
                 </div>
                 <div className="flex-1 min-w-0">
-                  <h2 className="font-bold text-sm sm:text-base truncate">
-                    {vehicle.make || "—"} {vehicle.model || "—"}
+                  <h2 className="font-bold text-gray-800 text-sm sm:text-base truncate">
+                    {vehicle.make || "—"} {vehicle.model || "—"}{" "}
+                    {vehicle.series || "—"}
                   </h2>
                   <p className="text-base font-bold text-gray-900">
                     PKR {vehicle.buyNowPrice}
@@ -881,7 +897,7 @@ const AddVehicles = () => {
                     }}
                     className="px-3 py-1 text-gray-600 text-xl"
                   >
-                    ...
+                    <BsThreeDotsVertical />
                   </button>
                   {isDropdownOpen === vehicle.newVehicleId && (
                     <div className="absolute right-0 mt-2 w-32 bg-white border rounded-lg shadow-lg z-10">
@@ -979,38 +995,22 @@ const AddVehicles = () => {
                     )}
                   />
                 </div>
-                <div className="flex-1 min-w-0 space-y-2">
-                  <h2 className="font-bold text-lg">
-                    {vehicle.make || "—"} {vehicle.model || "—"} for sale
+                <div className="flex-1 min-w-0 space-y-1">
+                  <h2 className="font-bold text-gray-800">
+                    {vehicle.make || "—"} {vehicle.model || "—"}{" "}
+                    {vehicle.series || "—"}
                   </h2>
-                  <p className="text-xl font-bold text-gray-900">
+                  <p className="text-lg font-bold text-gray-800">
                     PKR {vehicle.buyNowPrice}
                   </p>
 
-
-
-{/* 2006 | Petrol | Manual | 370000 KM | White | Lahore */}
-
-                  <div className="flex flex-wrap gap-2 text-sm">
-                    <span className=" ">
-                      {vehicle.year || "—"}
-                    </span>|
-                    <span className="">
-                      {vehicle.mileage || "—"}KM
-                    </span>|
-                    <span className=" ">
-                      {vehicle.fuelType || "—"}
-                    </span>|
-                   
-                    <span className=" ">
-                      {vehicle.color || "—"}
-                    </span>|
-                    <span className=" ">
-                      {vehicle.transmission || "—"}
-                    </span>|
-                    <span className="">
-                      {vehicle.cityName || "—"}
-                    </span>
+                  <div className="flex flex-wrap gap-1 text-sm text-gray-500 ">
+                    <span className=" ">{vehicle.year || "—"}</span>|
+                    <span className="">{vehicle.mileage || "—"}KM</span>|
+                    <span className=" ">{vehicle.fuelType || "—"}</span>|
+                    <span className=" ">{vehicle.color || "—"}</span>|
+                    <span className=" ">{vehicle.transmission || "—"}</span>|
+                    <span className="">{vehicle.cityName || "—"}</span>
                   </div>
                 </div>
                 <div className="relative flex-shrink-0">
@@ -1021,7 +1021,7 @@ const AddVehicles = () => {
                     }}
                     className="px-3 py-1 text-gray-600 text-xl"
                   >
-                    ...
+                    <BsThreeDotsVertical />
                   </button>
                   {isDropdownOpen === vehicle.newVehicleId && (
                     <div className="absolute right-0 mt-2 w-32 bg-white border rounded-lg shadow-lg z-10">
@@ -1091,7 +1091,26 @@ const AddVehicles = () => {
                 </div>
               </div>
             ))
-          )}
+          )}{" "}
+          <div className="flex justify-between mt-6 px-2 sm:px-4">
+            <button
+              className={`bg-blue-950 text-white px-5 py-2 rounded  ${
+                pageNo > 1 ? "block" : "hidden"
+              }`}
+              onClick={handlePrevPage}
+            >
+              ‹ Prev
+            </button>
+            <div></div>
+            <button
+              className={`bg-blue-950 text-white px-5 py-2 rounded ${
+                allVehicles.length === 0 ? "hidden" : "block"
+              }`}
+              onClick={handleNextPage}
+            >
+              Next ›
+            </button>
+          </div>
         </section>
       </div>
       {isOpen === "View" && (

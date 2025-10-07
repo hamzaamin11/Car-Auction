@@ -5,277 +5,271 @@ import { useNavigate } from "react-router-dom";
 import moment from "moment";
 
 const JoinAuctionTable = ({ allLive, upComing }) => {
-  const [isRegistered, setIsRegistered] = useState(false);
   const [getId, setGetId] = useState({});
-  const navigate = useNavigate();
-
   const [addBiding, setAddBiding] = useState({
     userId: "",
     vehicleId: "",
     maxBid: "",
     monsterBid: "",
   });
+  const navigate = useNavigate();
 
   const handleChange = (e) => {
-    e.preventDefault();
     const { name, value } = e.target;
     setAddBiding({ ...addBiding, [name]: value });
   };
 
-  const handleClickStartBiding = (id) => {
-    setIsRegistered(true);
-    setGetId(id);
-  };
-
   useEffect(() => {
-    if (getId?.userId) {
-      setAddBiding((prev) => ({
-        ...prev,
-        userId: getId.userId,
-      }));
-    }
-  }, [getId]);
-
-  useEffect(() => {
-    if (getId?.vehicleId) {
-      setAddBiding((prev) => ({
-        ...prev,
-        vehicleId: getId?.vehicleId,
-      }));
-    }
+    if (getId?.userId) setAddBiding((p) => ({ ...p, userId: getId.userId }));
+    if (getId?.vehicleId)
+      setAddBiding((p) => ({ ...p, vehicleId: getId.vehicleId }));
   }, [getId]);
 
   const handleSubmitBid = async (e) => {
     e.preventDefault();
     const filteredData = Object.fromEntries(
-      Object.entries(addBiding).filter(([_, value]) => value !== "")
+      Object.entries(addBiding).filter(([_, v]) => v !== "")
     );
-
     try {
       const res = await axios.post(
         `${BASE_URL}/customer/startBidding`,
         filteredData
       );
       console.log(res.data);
-      setIsRegistered(false);
     } catch (error) {
       console.log(error);
     }
   };
 
   return (
-    <div className="max-w-6xl mx-auto p-4 font-sans">
-      <div className="flex justify-between items-center mb-6">
-        <h1 className="text-2xl font-bold">Auction Dashboard</h1>
-      </div>
+    <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6 font-sans">
+      {/* ========== LIVE AUCTIONS SECTION ========== */}
+      <section className="mb-12">
+        <div className="flex items-center justify-between mb-4">
+          <h2 className="text-2xl font-semibold text-gray-800">
+            Live Auctions
+          </h2>
+          <span className="px-3 py-1 text-sm rounded bg-blue-900 text-white font-medium">
+            {allLive?.length} Active
+          </span>
+        </div>
 
-      {/* Live Auctions */}
-      <h2 className="text-xl font-semibold mb-2 text-gray-800">
-        Live Auctions ({allLive?.length})
-      </h2>
-
-      {/* Table for large screens, cards for mobile */}
-      <div className="overflow-x-auto hidden md:block">
-        <table className="w-full mb-8 border shadow-sm rounded overflow-hidden text-sm">
-          <thead className="bg-gray-200">
-            <tr>
-              <th className="p-2">SR#</th>
-              <th className="p-2">Image</th>
-              <th className="p-2">Model</th>
-              <th className="p-2">Date</th>
-              <th className="p-2">Start Time</th>
-              <th className="p-2">End Time</th>
-
-              <th className="p-2">Location</th>
-              <th className="p-2">Action</th>
-            </tr>
-          </thead>
-          <tbody>
-            {allLive?.map((auction, idx) => (
-              <tr key={idx} className="border-b hover:bg-gray-50 text-center">
-                <td className="p-1">{idx + 1}</td>
-                <td className="p-1 text-center w-16 h-16 ">
-                  <img
-                    src={auction.images[0]}
-                    alt="auction image"
-                    className=" "
-                  />
-                </td>
-                <td className="p-1">
-                  {auction.make}/{auction.model}
-                </td>
-                <td className="p-1">{auction.startTime.slice(0, 10)}</td>
-                <td className="p-1">
-                  {auction?.startTime
-                    ? moment(auction.startTime).local().format("hh:mm A")
-                    : "--"}
-                </td>
-                <td className="p-1">
-                  {" "}
-                  {auction?.endTime
-                    ? moment(auction?.endTime).local().format("hh:mm A")
-                    : "--"}
-                </td>
-
-                <td className="p-1">{auction.locationId}</td>
-                <td className="p-1">
-                  <button
-                    className="px-2 py-1 rounded bg-blue-500 hover:bg-blue-600 text-white text-xs"
-                    onClick={() => navigate(`/detailbid/${auction.vehicleId}`)}
-                  >
-                    Start Biding
-                  </button>
-                </td>
+        {/* Desktop Table */}
+        <div className="hidden md:block bg-white rounded-xl shadow-lg overflow-hidden border border-gray-100">
+          <div className="bg-blue-900 p-3 text-white font-semibold text-sm uppercase tracking-wide">
+            Current Live Auctions
+          </div>
+          <table className="w-full text-sm">
+            <thead className="bg-gray-50 text-gray-700 border-b">
+              <tr>
+                <th className="p-3 text-left">SR#</th>
+                <th className="p-3 text-left">Image</th>
+                <th className="p-3 text-left">Model</th>
+                <th className="p-3 text-left">Date</th>
+                <th className="p-3 text-left">Start</th>
+                <th className="p-3 text-left">End</th>
+                <th className="p-3 text-left">Location</th>
+                <th className="p-3 text-center">Action</th>
               </tr>
-            ))}
-          </tbody>
-        </table>
-      </div>
+            </thead>
+            <tbody>
+              {allLive?.map((auction, idx) => (
+                <tr
+                  key={idx}
+                  className="border-b hover:bg-blue-50/40 transition-all duration-200"
+                >
+                  <td className="p-3 text-gray-600">{idx + 1}</td>
+                  <td className="p-3">
+                    <img
+                      src={auction.images[0]}
+                      alt="auction"
+                      className="w-24 h-16 object-cover rounded-lg border"
+                    />
+                  </td>
+                  <td className="p-3 font-medium text-gray-800">
+                    {auction.make}/{auction.model}
+                  </td>
+                  <td className="p-3 text-gray-600">
+                    {auction.startTime.slice(0, 10)}
+                  </td>
+                  <td className="p-3 text-gray-600">
+                    {moment(auction.startTime).format("hh:mm A")}
+                  </td>
+                  <td className="p-3 text-gray-600">
+                    {moment(auction.endTime).format("hh:mm A")}
+                  </td>
+                  <td className="p-3 text-gray-700">{auction.locationId}</td>
+                  <td className="p-3 text-center">
+                    <button
+                      onClick={() =>
+                        navigate(`/detailbid/${auction.vehicleId}`)
+                      }
+                      className="px-4 py-1.5 bg-blue-900 hover:bg-blue-800 text-white rounded-full text-xs font-semibold shadow-sm transition-all hover:cursor-pointer"
+                    >
+                      Start Bidding
+                    </button>
+                  </td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+          {allLive?.length === 0 && (
+            <div className="p-6 text-center text-gray-600 font-medium">
+              No live auctions available
+            </div>
+          )}
+        </div>
 
-      {/* Mobile cards */}
-      <div className="grid gap-4 md:hidden">
-        {allLive?.map((auction, idx) => (
-          <div
-            key={idx}
-            className="border rounded-lg p-3 shadow-sm bg-white text-sm"
-          >
-            <p>
-              <strong>SR#:</strong> {idx + 1}
-            </p>
-            <p>
-              <strong>Date:</strong> {auction.startTime.slice(0, 10)}
-            </p>
-            <p>
-              <strong>Start Time:</strong>{" "}
-              {auction?.startTime
-                ? moment(auction.startTime).local().format("HH:mm:ss")
-                : "--"}
-            </p>
-            <p>
-              <strong>End Time:</strong>{" "}
-              {auction?.endTime
-                ? moment(auction?.endTime).local().format("HH:mm:ss")
-                : "--"}
-            </p>
-            <p>
-              <strong>Model:</strong> {auction.model}
-            </p>
-            <p>
-              <strong>Location:</strong> {auction.locationId}
-            </p>
-            <button
-              className="mt-2 w-full px-3 py-1 rounded bg-blue-500 hover:bg-blue-600 text-white text-xs"
-              onClick={() => navigate(`/detailbid/${auction.vehicleId}`)}
+        {/* Mobile Cards */}
+        <div className="grid gap-4 md:hidden mt-4">
+          {allLive?.map((auction, idx) => (
+            <div
+              key={idx}
+              className="bg-white p-4 rounded-xl shadow-md border hover:shadow-lg transition duration-200"
             >
-              Start Biding
-            </button>
+              <div className="flex items-center gap-3">
+                <img
+                  src={auction.images[0]}
+                  alt="auction"
+                  className="w-24 h-16 object-cover rounded-md border"
+                />
+                <div>
+                  <p className="font-semibold text-gray-800 text-sm">
+                    {auction.make}/{auction.model}/{auction.series}
+                  </p>
+                  <p className="text-gray-500 text-xs">
+                    {auction.startTime.slice(0, 10)}
+                  </p>
+                </div>
+              </div>
+              <div className="mt-3 text-sm text-gray-700 space-y-1">
+                <p>
+                  <strong>Start:</strong>{" "}
+                  {moment(auction.startTime).format("hh:mm A")}
+                </p>
+                <p>
+                  <strong>End:</strong>{" "}
+                  {moment(auction.endTime).format("hh:mm A")}
+                </p>
+                <p>
+                  <strong>Location:</strong> {auction.locationId}
+                </p>
+              </div>
+              <button
+                onClick={() => navigate(`/detailbid/${auction.vehicleId}`)}
+                className="mt-3 w-full py-2 bg-blue-900 hover:bg-blue-800 text-white rounded-full text-sm font-semibold transition"
+              >
+                Start Bidding
+              </button>
+            </div>
+          ))}
+        </div>
+      </section>
+
+      {/* ========== UPCOMING AUCTIONS SECTION ========== */}
+      <section>
+        <div className="flex items-center justify-between mb-4">
+          <h2 className="lg:text-2xl text-lg  font-semibold text-gray-800">
+            Upcoming Auctions
+          </h2>
+          <span className="px-3 py-1 lg:text-sm text-xs rounded bg-red-600 text-white font-medium ">
+            {upComing?.length} Upcoming
+          </span>
+        </div>
+
+        <div className="hidden md:block bg-white rounded-xl shadow-lg overflow-hidden border border-gray-100">
+          <div className="bg-red-600 p-3 text-white font-semibold text-sm uppercase tracking-wide">
+            Scheduled Auctions
           </div>
-        ))}
-      </div>
-      {allLive.length === 0 && (
-        <span className="flex items-center justify-center font-bold ">
-          No live data
-        </span>
-      )}
-
-      {/* Upcoming Auctions */}
-      <h2 className="text-xl font-semibold mb-2 text-gray-800 mt-6">
-        Upcoming Auctions ({upComing.length})
-      </h2>
-
-      {/* Table for large screens */}
-      <div className="overflow-x-auto hidden md:block">
-        <table className="w-full mb-2 border shadow-sm rounded overflow-hidden text-sm">
-          <thead className="bg-gray-200">
-            <tr>
-              <th className="p-2 text-center">Sr#</th>
-
-              <th className=" text-center">Image</th>
-              <th className="p-2 text-center">Model</th>
-
-              <th className="p-2 text-center">Date</th>
-              <th className="p-2 text-center">Auction Start</th>
-              <th className="p-2 text-center">Location</th>
-              <th className="p-2 text-center">Status</th>
-            </tr>
-          </thead>
-
-          <tbody>
-            {upComing?.map((auction, idx) => (
-              <tr key={idx} className="border-b hover:bg-gray-50">
-                <td className="p-1 text-center">{idx + 1}</td>
-                <td
-                  onClick={() => navigate(`/detailbid/${auction.vehicleId}`)}
-                  className="p-1 text-center w-16 h-16 hover:cursor-pointer "
-                >
-                  <img
-                    src={auction.images[0]}
-                    alt="auction image"
-                    className=" "
-                  />
-                </td>
-
-                <td
-                  onClick={() => navigate(`/detailbid/${auction.vehicleId}`)}
-                  className="p-1 text-center hover:cursor-pointer"
-                >
-                  {auction.make}/{auction.model}
-                </td>
-                <td className="p-1 text-center">
-                  {auction?.startTime.slice(0, 10)}
-                </td>
-
-                <td className="p-1 text-center">
-                  {auction?.startTime
-                    ? moment(auction.startTime).local().format("hh:mm A")
-                    : "--"}
-                </td>
-
-                <td className="p-1 text-center">{auction.locationId}</td>
-                <td className="p-1 text-center text-red-600 font-bold">
-                  Pending
-                </td>
+          <table className="w-full text-sm">
+            <thead className="bg-gray-50 text-gray-700 border-b">
+              <tr>
+                <th className="p-3 text-left">SR#</th>
+                <th className="p-3 text-left">Image</th>
+                <th className="p-3 text-left">Model</th>
+                <th className="p-3 text-left">Date</th>
+                <th className="p-3 text-left">Start Time</th>
+                <th className="p-3 text-left">Location</th>
+                <th className="p-3 text-center">Status</th>
               </tr>
-            ))}
-          </tbody>
-        </table>
-      </div>
+            </thead>
+            <tbody>
+              {upComing?.map((auction, idx) => (
+                <tr
+                  key={idx}
+                  className="border-b hover:bg-yellow-50/40 transition-all duration-200"
+                >
+                  <td className="p-3 text-gray-600">{idx + 1}</td>
+                  <td className="p-3">
+                    <img
+                      src={auction.images[0]}
+                      alt="auction"
+                      className="w-24 h-16 object-cover rounded-lg border"
+                    />
+                  </td>
+                  <td className="p-3 font-medium text-gray-800">
+                    {auction.make}/{auction.model}
+                  </td>
+                  <td className="p-3 text-gray-600">
+                    {auction.startTime.slice(0, 10)}
+                  </td>
+                  <td className="p-3 text-gray-600">
+                    {moment(auction.startTime).format("hh:mm A")}
+                  </td>
+                  <td className="p-3 text-gray-700">{auction.locationId}</td>
+                  <td className="p-3 text-center text-gray-500 font-semibold">
+                    Pending
+                  </td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+          {upComing?.length === 0 && (
+            <div className="p-6 text-center text-gray-600 font-medium">
+              No upcoming auctions available
+            </div>
+          )}
+        </div>
 
-      {/* Mobile cards */}
-      <div className="grid gap-4 md:hidden">
-        {upComing?.map((auction, idx) => (
-          <div
-            key={idx}
-            className="border rounded-lg p-3 shadow-sm bg-white text-sm"
-          >
-            <p>
-              <strong>SR#:</strong> {idx + 1}
-            </p>
-            <p>
-              <strong>Date:</strong> {auction.startTime.slice(0, 10)}
-            </p>
-            <p>
-              <strong>Auction Live:</strong>{" "}
-              {auction.startTime.slice(10) || "00:00"}
-            </p>
-            <p>
-              <strong>Model:</strong> {auction.make}/{auction.model}
-            </p>
-            <p>
-              <strong>Location:</strong> {auction.locationId}
-            </p>
-            <p className="text-red-600">
-              <strong>Status:</strong> Pending
-            </p>
-          </div>
-        ))}
-      </div>
-
-      {upComing.length === 0 && (
-        <span className="flex items-center justify-center font-bold mt-4">
-          No upcoming data
-        </span>
-      )}
+        {/* Mobile Cards */}
+        <div className="grid gap-4 md:hidden mt-4">
+          {upComing?.map((auction, idx) => (
+            <div
+              key={idx}
+              className="bg-white p-4 rounded-xl shadow-md border hover:shadow-lg transition duration-200"
+            >
+              <div className="flex items-center gap-3">
+                <img
+                  src={auction.images[0]}
+                  alt="auction"
+                  className="w-24 h-16 object-cover rounded-md border"
+                />
+                <div>
+                  <p className="font-semibold text-gray-800 text-sm">
+                    {auction.make}/{auction.model}/{auction.series}
+                  </p>
+                  <p className="text-gray-500 text-xs">
+                    {auction.startTime.slice(0, 10)}
+                  </p>
+                </div>
+              </div>
+              <div className="mt-3 text-sm text-gray-700 space-y-1">
+                <p>
+                  <strong>Start:</strong>{" "}
+                  {moment(auction.startTime).format("hh:mm A")}
+                </p>
+                <p>
+                  <strong>Location:</strong> {auction.locationId}
+                </p>
+                <p className="flex gap-1">
+                  <strong>Bid Status:</strong>
+                  <p className="text-gray-500 font-semibold"> Pending</p>
+                </p>
+              </div>
+            </div>
+          ))}
+        </div>
+      </section>
     </div>
   );
 };

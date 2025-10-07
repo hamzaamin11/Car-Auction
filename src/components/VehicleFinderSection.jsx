@@ -268,12 +268,13 @@ const VehicleFinderSection = () => {
 
               <div className="p-4 flex flex-col justify-between flex-grow">
                 <div>
-                  <h3 className="text-lg font-semibold mb-1">{car.model}</h3>
+                  <h3 className="text-lg font-semibold mb-1">
+                    {car.make} {car.model}
+                  </h3>
                   <p className="text-gray-700 font-semibold mb-1">
                     Price: PKR {car.buyNowPrice}
                   </p>
-                  <p className="mb-1">{renderStars(car.reviews || 0)}</p>
-                  <p className="text-sm text-gray-600">
+                  <p className="text-sm font-semibold text-gray-600">
                     Condition:{" "}
                     <span
                       className={
@@ -292,7 +293,7 @@ const VehicleFinderSection = () => {
 
                 <div className="mt-3 flex justify-between">
                   <button className="bg-[#b73439] text-white text-sm px-3 py-1 rounded hover:bg-red-700">
-                    Join Auctions
+                    Detail View
                   </button>
                 </div>
               </div>
