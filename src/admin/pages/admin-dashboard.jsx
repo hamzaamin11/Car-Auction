@@ -5,8 +5,10 @@ import {
   FaUsers,
   FaCalendarAlt,
   FaHistory,
+  FaEnvelope,
+  FaHandshake,
+  FaCity,
 } from "react-icons/fa";
-
 import axios from "axios";
 import { BASE_URL } from "../../components/Contant/URL";
 import Card from "../../components/AdminCardComponent/Card";
@@ -35,23 +37,14 @@ const initialBids = [
 
 const Dashboard = () => {
   const [bids, setBids] = useState(initialBids);
-
   const [newBid, setNewBid] = useState({ vehicle: "", bidder: "", amount: "" });
-
   const [loading, setLoading] = useState(false);
-
   const [totalVehicles, setTotalVehicles] = useState({});
-
   const [allBrands, setAllBrands] = useState([]);
-
   const [allModels, setAllModels] = useState([]);
-
   const [allSeries, setAllSeries] = useState([]);
-
   const [liveAuctions, setLiveAuctions] = useState({});
-
   const [upcomingBid, setUpcompingBid] = useState({});
-
   const [totalCustomers, setTotalCustomers] = useState({});
 
   const handleDelete = (id) => {
@@ -109,7 +102,6 @@ const Dashboard = () => {
     setLoading(true);
     try {
       const res = await axios.get(`${BASE_URL}/admin/getBrands`);
-
       setAllBrands(res.data);
       setLoading(false);
     } catch (error) {
@@ -121,7 +113,6 @@ const Dashboard = () => {
   const handleGetAllModels = async () => {
     try {
       const res = await axios.get(`${BASE_URL}/getModels`);
-
       setAllModels(res.data);
     } catch (error) {
       console.log(error);
@@ -149,12 +140,10 @@ const Dashboard = () => {
 
   return (
     <>
-      {/* <Topbar />
-    <Sidebar /> */}
-      <div className="p-6 bg-gray-50   space-y-8">
+      <div className="p-6 bg-gray-50 space-y-8">
         <h2 className="text-3xl font-bold text-[#191970]">Welcome, Admin</h2>
 
-        {/* Summary Stats */}
+        {/* Summary Stats (Desktop and Mobile) */}
         <div className="grid grid-cols-2 lg:grid-cols-4 gap-6">
           <Card
             title={"Total Vehicles"}
@@ -163,7 +152,6 @@ const Dashboard = () => {
             icon={<FaCarSide size={28} />}
             path={"/admin/vehicles"}
           />
-
           <Card
             title={"Live Auction"}
             totalData={liveAuctions.totalLiveAuctions}
@@ -171,15 +159,13 @@ const Dashboard = () => {
             icon={<FaGavel size={28} />}
             path={"/admin/live-auctions"}
           />
-
           <Card
             title={"Upcoming Auction"}
             totalData={upcomingBid.totalUpcomingAuctions}
             color={"bg-blue-200"}
-            icon=<FaCalendarAlt size={28} />
+            icon={<FaCalendarAlt size={28} />}
             path={"/admin/upcoming-auctions"}
           />
-
           <Card
             title={"Total Users"}
             totalData={totalCustomers.totalBuyers}
@@ -188,7 +174,9 @@ const Dashboard = () => {
             path={"/admin/manage-users"}
           />
         </div>
-        <div className="lg:hidden grid grid-cols-2 lg:grid-cols-4 gap-6">
+
+        {/* Mobile-Only Cards */}
+        <div className="lg:hidden grid grid-cols-2 gap-6">
           <Card
             title={"Bid History"}
             totalData={totalVehicles.totalVehicles}
@@ -203,7 +191,6 @@ const Dashboard = () => {
             icon={<MdBrandingWatermark size={28} />}
             path={"/admin/addbrand"}
           />
-
           <Card
             title={"Add Model"}
             totalData={allModels.length}
@@ -217,6 +204,34 @@ const Dashboard = () => {
             color={"bg-blue-200"}
             icon={<FaCarSide size={28} />}
             path={"/admin/addseries"}
+          />
+          <Card
+            title={"Suggestions"}
+            totalData={0} // Placeholder, update with actual data if available
+            color={"bg-blue-200"}
+            icon={<FaEnvelope size={28} />}
+            path={"/admin/suggestionlist"}
+          />
+          <Card
+            title={"Partnership Opportunities"}
+            totalData={0} // Placeholder, update with actual data if available
+            color={"bg-blue-200"}
+            icon={<FaHandshake size={28} />}
+            path={"/admin/becomepartnerlist"}
+          />
+          <Card
+            title={"Get in Touch"}
+            totalData={0} // Placeholder, update with actual data if available
+            color={"bg-blue-200"}
+            icon={<FaEnvelope size={28} />}
+            path={"/admin/contactlist"}
+          />
+          <Card
+            title={"Add City"}
+            totalData={0} // Placeholder, update with actual data if available
+            color={"bg-blue-200"}
+            icon={<FaCity size={28} />}
+            path={"/admin/city"}
           />
         </div>
 
@@ -235,7 +250,6 @@ const Dashboard = () => {
               </BarChart>
             </ResponsiveContainer>
           </div>
-
           <div className="bg-white p-6 rounded-xl shadow-sm">
             <h3 className="text-lg font-semibold mb-4 text-[#191970]">
               Auction Status
@@ -264,7 +278,6 @@ const Dashboard = () => {
             </ResponsiveContainer>
           </div>
         </div>
-
         */}
       </div>
     </>
