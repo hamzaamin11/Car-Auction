@@ -223,31 +223,18 @@ const AdminBidHistory = () => {
                 </tbody>
               </table>
               {totalPages > 1 && (
-                <div className="flex justify-center mt-4 space-x-2 p-4">
+                <div className="flex justify-between items-center p-4">
                   <button
                     onClick={() => handlePageChange(currentPage - 1)}
                     disabled={currentPage === 1}
-                    className="px-3 py-1 bg-blue-950 text-white rounded disabled:opacity-50"
+                    className="px-4 py-2 bg-blue-950 text-white rounded disabled:opacity-50 hover:bg-blue-800 transition"
                   >
                     Previous
                   </button>
-                  {Array.from({ length: totalPages }, (_, i) => i + 1).map((page) => (
-                    <button
-                      key={page}
-                      onClick={() => handlePageChange(page)}
-                      className={`px-3 py-1 rounded ${
-                        currentPage === page
-                          ? "bg-[#191970] text-white"
-                          : "bg-gray-200 text-gray-700"
-                      }`}
-                    >
-                      {page}
-                    </button>
-                  ))}
                   <button
                     onClick={() => handlePageChange(currentPage + 1)}
                     disabled={currentPage === totalPages}
-                    className="px-3 py-1 bg-blue-950 text-white rounded disabled:opacity-50"
+                    className="px-4 py-2 bg-blue-950 text-white rounded disabled:opacity-50 hover:bg-blue-800 transition"
                   >
                     Next
                   </button>
@@ -344,31 +331,18 @@ const AdminBidHistory = () => {
                 <div className="text-center py-8 text-gray-400">No bids yet.</div>
               )}
               {totalPages > 1 && (
-                <div className="flex justify-center mt-4 space-x-2">
+                <div className="flex justify-between items-center p-4">
                   <button
                     onClick={() => handlePageChange(currentPage - 1)}
                     disabled={currentPage === 1}
-                    className="px-3 py-1 bg-blue-950 text-white rounded disabled:opacity-50"
+                    className="px-4 py-2 bg-blue-950 text-white rounded disabled:opacity-50 hover:bg-blue-800 transition"
                   >
                     Previous
                   </button>
-                  {Array.from({ length: totalPages }, (_, i) => i + 1).map((page) => (
-                    <button
-                      key={page}
-                      onClick={() => handlePageChange(page)}
-                      className={`px-3 py-1 rounded ${
-                        currentPage === page
-                          ? "bg-[#191970] text-white"
-                          : "bg-gray-200 text-gray-700"
-                      }`}
-                    >
-                      {page}
-                    </button>
-                  ))}
                   <button
                     onClick={() => handlePageChange(currentPage + 1)}
                     disabled={currentPage === totalPages}
-                    className="px-3 py-1 bg-blue-950 text-white rounded disabled:opacity-50"
+                    className="px-4 py-2 bg-blue-950 text-white rounded disabled:opacity-50 hover:bg-blue-800 transition"
                   >
                     Next
                   </button>
