@@ -278,10 +278,6 @@ export const SeriesList = () => {
           ‹ Prev
         </button>
         
-        <span className="text-sm text-gray-600 font-medium">
-          Page {pageNo}
-        </span>
-        
         <button
           className={`bg-blue-950 text-white px-4 sm:px-5 py-2 rounded-md text-sm sm:text-base font-medium transition hover:bg-blue-900 ${
             allSeries.length === 0 ? "invisible" : "block"
