@@ -90,7 +90,7 @@ import { SuggestionList } from "./admin/pages/SuggestionList";
 import { ContactList } from "./admin/pages/ContactList";
 import { BecomePartnerList } from "./admin/pages/BecomePartnerList";
 import { CitiesList } from "./pages/CitiesList";
-
+import { VehicleApproval } from "./admin/pages/VehicleApproval";
 
 function Layout() {
   const location = useLocation();
@@ -102,8 +102,6 @@ function Layout() {
   const isAdminLogin = location.pathname === "/admin-login";
 
   const hideNavbarFooter = isAdminRoute || isAdminLogin;
-
-
 
   return (
     <>
@@ -213,7 +211,8 @@ function Layout() {
           <Route path="/admin/addbrand" element={<BrandList />} />
           <Route path="/admin/addmodel" element={<ModelList />} />
           <Route path="/admin/addseries" element={<SeriesList />} />
-            <Route path="/admin/city" element={<CitiesList />} />
+          <Route path="/admin/approval" element={<VehicleApproval />} />
+          <Route path="/admin/city" element={<CitiesList />} />
 
           <Route path="/admin/suggestionlist" element={<SuggestionList />} />
 

@@ -187,7 +187,7 @@ function AddAdminVehicle({ open, setOpen, onVehicleUpdated }) {
   const handleGetVehicles = async () => {
     try {
       const res = await axios.get(
-        `${BASE_URL}/seller/getVehicles?search=${search}&page=${pageNo}&entry=${10}`
+        `${BASE_URL}/seller/getVehicles?page=${pageNo}&entry=${10}`
       );
       setAllVehicles(res.data);
     } catch (error) {

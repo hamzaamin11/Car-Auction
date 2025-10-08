@@ -164,6 +164,7 @@ const VehicleFinderSection = () => {
   return (
     <div className="max-w-7xl mx-auto p-6 font-sans">
       {/* Filters */}
+
       <div className="flex lg:flex-row flex-col items-center justify-between gap-4 mb-4">
         <div className="w-full">
           <label className="block text-sm font-medium text-gray-700 mb-1">
@@ -221,10 +222,9 @@ const VehicleFinderSection = () => {
             className="w-full"
           />
         </div>
-
         <button
           onClick={handleGetCars}
-          className="bg-[#b73439] text-white rounded px-5 py-2 font-semibold hover:bg-[#518ecb] transition w-full"
+          className="bg-[#b73439] text-white rounded px-5 py-2 font-semibold hover:bg-[#518ecb] transition w-full md:mt-5 mt-0"
         >
           Search
         </button>

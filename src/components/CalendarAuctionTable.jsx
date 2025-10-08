@@ -1,6 +1,7 @@
 import axios from "axios";
 import React, { useEffect, useState } from "react";
 import { BASE_URL } from "./Contant/URL";
+import { Link } from "react-router-dom";
 
 export default function CalendarAuctionTable({ showTime, allAuctions }) {
   console.log(
@@ -25,13 +26,13 @@ export default function CalendarAuctionTable({ showTime, allAuctions }) {
                 {loca?.date?.slice(0, 10)}
               </td>
               <td className="px-4 py-3">{loca.day}</td>
-              <td className="px-4 py-3">
+              <Link to={"/join"} className="px-4 py-3">
                 <ul className="list-disc list-inside space-y-1">
                   {loca.location.map((lo, index) => (
                     <li key={index}>{lo}</li>
                   ))}
                 </ul>
-              </td>
+              </Link>
             </tr>
           ))}
         </tbody>
