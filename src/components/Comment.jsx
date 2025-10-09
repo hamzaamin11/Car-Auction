@@ -22,6 +22,8 @@ const LiveCommentsModal = ({ isOpen, setIsOpen }) => {
 
   const [bidAmount, setBidAmount] = useState(initialState);
   const [socket, setSocket] = useState(null);
+
+  console.log("socket=>", socket);
   const [remainingTime, setRemainingTime] = useState(0);
   const [phase, setPhase] = useState("loading");
   const [key, setKey] = useState(0);
@@ -318,7 +320,7 @@ const LiveCommentsModal = ({ isOpen, setIsOpen }) => {
             Bid
           </button>
         </form>
-        <div p-2 >
+        <div p-2>
           {bidAmount.maxBid && (
             <p className="mt-2 text-sm text-red-500 font-semibold mx-4">
               {numberToIndianWords(parseInt(bidAmount.maxBid))}
