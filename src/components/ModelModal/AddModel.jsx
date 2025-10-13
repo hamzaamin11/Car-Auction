@@ -3,6 +3,7 @@ import React, { useEffect, useState } from "react";
 import { BASE_URL } from "../Contant/URL";
 import { toast, ToastContainer } from "react-toastify";
 import Select from "react-select";
+import Swal from "sweetalert2";
 
 const initialState = {
   brandId: "",
@@ -10,15 +11,11 @@ const initialState = {
 };
 
 export const AddModel = ({ handleClose, handleGetAllModels }) => {
-
   const [allBrands, setAllBrands] = useState([]);
-
-  
 
   const [formData, setFormData] = useState(initialState);
 
   const [loading, setLoading] = useState(false);
-
 
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -41,21 +38,26 @@ export const AddModel = ({ handleClose, handleGetAllModels }) => {
     e.preventDefault();
     setLoading(true);
     try {
-      // const payload = new FormData();
-      // payload.append("brandId", formData.brandId);
-      // payload.append("modelName", formData.modelName);
-
       const res = await axios.post(`${BASE_URL}/addModel`, formData);
-
       console.log(res.data);
-      toast.success("Model has been added successfully");
       setFormData(initialState);
       handleClose();
       handleGetAllBrands();
       handleGetAllModels();
+      await Swal.fire({
+        title: "Success!",
+        text: "The model has been added successfully.",
+        icon: "success",
+        confirmButtonColor: "#9333ea",
+      });
     } catch (error) {
       console.log(error);
-      toast.error("Something went wrong");
+      await Swal.fire({
+        title: "Error!",
+        text: "Something went wrong.",
+        icon: "error",
+        confirmButtonColor: "#9333ea",
+      });
     } finally {
       setLoading(false);
     }
@@ -141,7 +143,6 @@ export const AddModel = ({ handleClose, handleGetAllModels }) => {
           </div>
         </form>
       </div>
-      <ToastContainer />
     </div>
   );
 };

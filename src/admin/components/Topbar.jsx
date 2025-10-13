@@ -3,8 +3,10 @@ import { FaUserCircle } from "react-icons/fa";
 import { Link, useNavigate, useLocation } from "react-router-dom";
 import { AiOutlineLogout } from "react-icons/ai";
 import { useDispatch, useSelector } from "react-redux";
-import { logOut } from "../../components/Redux/UserSlice";
+import { authSuccess, logOut } from "../../components/Redux/UserSlice";
 import logo from "../../assets/wheellogo.png";
+import axios from "axios";
+import { BASE_URL } from "../../components/Contant/URL";
 
 export default function Topbar() {
   const { currentUser } = useSelector((state) => state?.auth);
@@ -44,39 +46,62 @@ export default function Topbar() {
     username: currentUser?.name || "",
     email: currentUser?.email || "",
     mobileNumber: currentUser?.contact || "",
-    profileImage: currentUser?.profileImage || "",
+    image: currentUser?.image || "",
+    role: currentUser?.role,
+    cnic: currentUser?.cnic || "",
   });
+
+  console.log("profile image =>", profileForm);
+
+  
 
   // Options lists
   const countries = ["Pakistan"];
-  const cities = ["Karachi", "Lahore", "Islamabad", "Rawalpindi", "Faisalabad", "Multan", "Gujranwala", "Peshawar", "Quetta", "Sialkot", "Hyderabad"];
+
+  const cities = [
+    "Karachi",
+    "Lahore",
+    "Islamabad",
+    "Rawalpindi",
+    "Faisalabad",
+    "Multan",
+    "Gujranwala",
+    "Peshawar",
+    "Quetta",
+    "Sialkot",
+    "Hyderabad",
+  ];
+
   const genders = ["Male", "Female", "Other"];
 
   // Filter functions
-  const filteredCountries = countries.filter(country =>
+  const filteredCountries = countries.filter((country) =>
     country.toLowerCase().includes(countrySearch.toLowerCase())
   );
 
-  const filteredCities = cities.filter(city =>
+  const filteredCities = cities.filter((city) =>
     city.toLowerCase().includes(citySearch.toLowerCase())
   );
 
-  const filteredGenders = genders.filter(gender =>
+  const filteredGenders = genders.filter((gender) =>
     gender.toLowerCase().includes(genderSearch.toLowerCase())
   );
 
   // Handle image upload
   const handleImageChange = (e) => {
-    const file = e.target.files[0];
-    if (file) {
-      const reader = new FileReader();
-      reader.onloadend = () => {
-        setProfileForm((prev) => ({ ...prev, profileImage: reader.result }));
-      };
-      reader.readAsDataURL(file);
-    }
-  };
+    const file = e.target.files?.[0];
+    if (!file) return; // stop if no file selected
 
+    const reader = new FileReader();
+    reader.onloadend = () => {
+      setProfileForm((prev) => ({
+        ...prev,
+        image: reader.result, // store Base64 image
+      }));
+    };
+
+    reader.readAsDataURL(file);
+  };
   // Handle password form changes
   const handlePasswordChange = (e) => {
     const { name, value } = e.target;
@@ -111,22 +136,71 @@ export default function Topbar() {
   };
 
   // Handle password submission
-  const handlePasswordSubmit = (e) => {
+  const handlePasswordSubmit = async (e) => {
     e.preventDefault();
     if (passwordForm.newPassword !== passwordForm.confirmPassword) {
       alert("New password and confirm password do not match!");
       return;
     }
-    console.log("Password change submitted:", passwordForm);
-    setPasswordModalOpen(false);
-    setPasswordForm({ currentPassword: "", newPassword: "", confirmPassword: "" });
+    try {
+      const res = await axios.put(
+        `${BASE_URL}/updatePassword/${currentUser?.id}`,
+        {
+          password: passwordForm.newPassword,
+        }
+      );
+      setPasswordForm({
+        currentPassword: "",
+        newPassword: "",
+        confirmPassword: "",
+      });
+      console.log("res =>", res.data);
+      setPasswordModalOpen(false);
+    } catch (error) {
+      console.log(error);
+    }
   };
 
   // Handle profile submission
-  const handleProfileSubmit = (e) => {
+  const handleProfileSubmit = async (e) => {
     e.preventDefault();
-    console.log("Profile update submitted:", profileForm);
-    setProfileModalOpen(false);
+    try {
+      const formData = new FormData();
+
+      // ✅ Append all text fields
+      formData.append("name", profileForm.name);
+      formData.append("gender", profileForm.gender);
+      formData.append("dateOfBirth", profileForm.dateOfBirth);
+      formData.append("country", profileForm.country);
+      formData.append("city", profileForm.city);
+      formData.append("username", profileForm.username);
+      formData.append("email", profileForm.email);
+      formData.append("contact", profileForm.mobileNumber);
+      formData.append("role", profileForm.role);
+      formData.append("cnic", profileForm.cnic);
+
+      // ✅ Append image only if user selected a new one
+      if (profileForm.image && profileForm.image instanceof File) {
+        formData.append("image", profileForm.image);
+      }
+
+      // ✅ Send request
+      const res = await axios.put(
+        `${BASE_URL}/admin/updateRegisterUsers/${currentUser?.id}`,
+        formData,
+        {
+          headers: {
+            "Content-Type": "multipart/form-data",
+          },
+        }
+      );
+
+      console.log("Profile updated:", res.data);
+      setProfileModalOpen(false);
+      dispatch(authSuccess(res.data));
+    } catch (error) {
+      console.error("Error updating profile:", error);
+    }
   };
 
   const handleLogout = () => {
@@ -139,12 +213,28 @@ export default function Topbar() {
     setDropdownOpen((prev) => !prev);
   };
 
+  const handleUpdateUser = async () => {
+    try {
+      const res = await axios.put(
+        `${BASE_URL}/admin/updateRegisterUsers/${currentUser?.id}`
+      );
+      console.log(res.data);
+    } catch (error) {
+      console.log(error);
+    }
+  };
+
   // Initialize search fields when modal opens
   useEffect(() => {
     if (profileModalOpen) {
       setCountrySearch(profileForm.country);
       setCitySearch(profileForm.city);
-      setGenderSearch(profileForm.gender ? profileForm.gender.charAt(0).toUpperCase() + profileForm.gender.slice(1) : "");
+      setGenderSearch(
+        profileForm.gender
+          ? profileForm.gender.charAt(0).toUpperCase() +
+              profileForm.gender.slice(1)
+          : ""
+      );
     }
   }, [profileModalOpen]);
 
@@ -156,15 +246,24 @@ export default function Topbar() {
         setDropdownOpen(false);
       }
       // Close country dropdown
-      if (countryDropdownRef.current && !countryDropdownRef.current.contains(event.target)) {
+      if (
+        countryDropdownRef.current &&
+        !countryDropdownRef.current.contains(event.target)
+      ) {
         setShowCountryDropdown(false);
       }
       // Close city dropdown
-      if (cityDropdownRef.current && !cityDropdownRef.current.contains(event.target)) {
+      if (
+        cityDropdownRef.current &&
+        !cityDropdownRef.current.contains(event.target)
+      ) {
         setShowCityDropdown(false);
       }
       // Close gender dropdown
-      if (genderDropdownRef.current && !genderDropdownRef.current.contains(event.target)) {
+      if (
+        genderDropdownRef.current &&
+        !genderDropdownRef.current.contains(event.target)
+      ) {
         setShowGenderDropdown(false);
       }
     }
@@ -313,9 +412,9 @@ export default function Topbar() {
             <div className="flex justify-center mb-6">
               <div className="relative">
                 <div className="w-32 h-32 rounded-full bg-gray-200 flex items-center justify-center overflow-hidden">
-                  {profileForm.profileImage ? (
+                  {profileForm.image ? (
                     <img
-                      src={profileForm.profileImage}
+                      src={profileForm.image}
                       alt="Profile"
                       className="w-full h-full object-cover"
                     />
@@ -349,7 +448,8 @@ export default function Topbar() {
 
             <div className="bg-red-50 border border-red-200 rounded-md p-3 mb-6">
               <p className="text-sm text-red-600">
-                Picture can be changed. Select an image to update your profile picture
+                Picture can be changed. Select an image to update your profile
+                picture
               </p>
             </div>
 
@@ -363,7 +463,21 @@ export default function Topbar() {
                   <input
                     type="text"
                     name="name"
-                    value={profileForm.name}
+                    value={profileForm?.name}
+                    onChange={handleProfileChange}
+                    className="p-2.5 w-full border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                    required
+                  />
+                </div>
+
+                <div className="mb-4">
+                  <label className="block text-sm font-medium text-gray-700 mb-2">
+                    CNIC
+                  </label>
+                  <input
+                    type="number"
+                    name="cnic"
+                    value={profileForm?.cnic}
                     onChange={handleProfileChange}
                     className="p-2.5 w-full border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
                     required

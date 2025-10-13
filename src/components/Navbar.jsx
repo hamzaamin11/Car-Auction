@@ -1,12 +1,20 @@
 import React, { useEffect, useRef, useState } from "react";
 import { Link, useNavigate, useLocation } from "react-router-dom";
-import { FaBars, FaTimes, FaUser, FaSignInAlt, FaUserCircle } from "react-icons/fa";
+import {
+  FaBars,
+  FaTimes,
+  FaUser,
+  FaSignInAlt,
+  FaUserCircle,
+} from "react-icons/fa";
 import { RiArrowDropDownLine } from "react-icons/ri";
 import { useAuth } from "../context/AuthContext";
 import { AiOutlineLogout } from "react-icons/ai";
 import { useDispatch, useSelector } from "react-redux";
 import { logOut } from "./Redux/UserSlice";
 import logoImage from "../../src/assets/wheellogo.png";
+import axios from "axios";
+import { BASE_URL } from "./Contant/URL";
 
 const Navbar = () => {
   const { user, isAuthenticated, logout } = useAuth();
@@ -52,23 +60,36 @@ const Navbar = () => {
     email: currentUser?.email || "",
     mobileNumber: currentUser?.contact || "",
     profileImage: currentUser?.profileImage || "",
+    cnic: currentUser?.cnic || "",
   });
 
   // Options lists
   const countries = ["Pakistan"];
-  const cities = ["Karachi", "Lahore", "Islamabad", "Rawalpindi", "Faisalabad", "Multan", "Gujranwala", "Peshawar", "Quetta", "Sialkot", "Hyderabad"];
+  const cities = [
+    "Karachi",
+    "Lahore",
+    "Islamabad",
+    "Rawalpindi",
+    "Faisalabad",
+    "Multan",
+    "Gujranwala",
+    "Peshawar",
+    "Quetta",
+    "Sialkot",
+    "Hyderabad",
+  ];
   const genders = ["Male", "Female", "Other"];
 
   // Filter functions
-  const filteredCountries = countries.filter(country =>
+  const filteredCountries = countries.filter((country) =>
     country.toLowerCase().includes(countrySearch.toLowerCase())
   );
 
-  const filteredCities = cities.filter(city =>
+  const filteredCities = cities.filter((city) =>
     city.toLowerCase().includes(citySearch.toLowerCase())
   );
 
-  const filteredGenders = genders.filter(gender =>
+  const filteredGenders = genders.filter((gender) =>
     gender.toLowerCase().includes(genderSearch.toLowerCase())
   );
 
@@ -126,16 +147,55 @@ const Navbar = () => {
     }
     console.log("Password change submitted:", passwordForm);
     setPasswordModalOpen(false);
-    setPasswordForm({ currentPassword: "", newPassword: "", confirmPassword: "" });
+    setPasswordForm({
+      currentPassword: "",
+      newPassword: "",
+      confirmPassword: "",
+    });
   };
 
   // Handle profile submission
-  const handleProfileSubmit = (e) => {
-    e.preventDefault();
-    console.log("Profile update submitted:", profileForm);
-    setProfileModalOpen(false);
-  };
 
+  const handleProfileSubmit = async (e) => {
+    e.preventDefault();
+    try {
+      const formData = new FormData();
+
+      // ✅ Append all text fields
+      formData.append("name", profileForm.name);
+      formData.append("gender", profileForm.gender);
+      formData.append("dateOfBirth", profileForm.dateOfBirth);
+      formData.append("country", profileForm.country);
+      formData.append("city", profileForm.city);
+      formData.append("username", profileForm.username);
+      formData.append("email", profileForm.email);
+      formData.append("contact", profileForm.mobileNumber);
+      formData.append("role", profileForm.role);
+      formData.append("cnic", profileForm.cnic);
+
+      // ✅ Append image only if user selected a new one
+      if (profileForm.image && profileForm.image instanceof File) {
+        formData.append("image", profileForm.image);
+      }
+
+      // ✅ Send request
+      const res = await axios.put(
+        `${BASE_URL}/admin/updateRegisterUsers/${currentUser?.id}`,
+        formData,
+        {
+          headers: {
+            "Content-Type": "multipart/form-data",
+          },
+        }
+      );
+
+      console.log("Profile updated:", res.data);
+      setProfileModalOpen(false);
+      dispatch(authSuccess(res.data));
+    } catch (error) {
+      console.error("Error updating profile:", error);
+    }
+  };
   const handleLogout = () => {
     localStorage.clear();
     dispatch(logOut());
@@ -152,7 +212,12 @@ const Navbar = () => {
     if (profileModalOpen) {
       setCountrySearch(profileForm.country);
       setCitySearch(profileForm.city);
-      setGenderSearch(profileForm.gender ? profileForm.gender.charAt(0).toUpperCase() + profileForm.gender.slice(1) : "");
+      setGenderSearch(
+        profileForm.gender
+          ? profileForm.gender.charAt(0).toUpperCase() +
+              profileForm.gender.slice(1)
+          : ""
+      );
     }
   }, [profileModalOpen]);
 
@@ -164,15 +229,24 @@ const Navbar = () => {
         setDropdownOpen(false);
       }
       // Close country dropdown
-      if (countryDropdownRef.current && !countryDropdownRef.current.contains(event.target)) {
+      if (
+        countryDropdownRef.current &&
+        !countryDropdownRef.current.contains(event.target)
+      ) {
         setShowCountryDropdown(false);
       }
       // Close city dropdown
-      if (cityDropdownRef.current && !cityDropdownRef.current.contains(event.target)) {
+      if (
+        cityDropdownRef.current &&
+        !cityDropdownRef.current.contains(event.target)
+      ) {
         setShowCityDropdown(false);
       }
       // Close gender dropdown
-      if (genderDropdownRef.current && !genderDropdownRef.current.contains(event.target)) {
+      if (
+        genderDropdownRef.current &&
+        !genderDropdownRef.current.contains(event.target)
+      ) {
         setShowGenderDropdown(false);
       }
     }
@@ -190,13 +264,13 @@ const Navbar = () => {
   // Prevent background scrolling when modals are open
   useEffect(() => {
     if (passwordModalOpen || profileModalOpen) {
-      document.body.style.overflow = 'hidden';
+      document.body.style.overflow = "hidden";
     } else {
-      document.body.style.overflow = 'auto';
+      document.body.style.overflow = "auto";
     }
     // Cleanup on component unmount
     return () => {
-      document.body.style.overflow = 'auto';
+      document.body.style.overflow = "auto";
     };
   }, [passwordModalOpen, profileModalOpen]);
 
@@ -686,7 +760,8 @@ const Navbar = () => {
 
             <div className="bg-red-50 border border-red-200 rounded-md p-3 mb-6">
               <p className="text-sm text-red-600">
-                Picture can be changed. Select an image to update your profile picture
+                Picture can be changed. Select an image to update your profile
+                picture
               </p>
             </div>
 
@@ -701,6 +776,20 @@ const Navbar = () => {
                     type="text"
                     name="name"
                     value={profileForm.name}
+                    onChange={handleProfileChange}
+                    className="p-2.5 w-full border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                    required
+                  />
+                </div>
+
+                <div className="mb-4">
+                  <label className="block text-sm font-medium text-gray-700 mb-2">
+                    CNIC
+                  </label>
+                  <input
+                    type="number"
+                    name="cnic"
+                    value={profileForm.cnic}
                     onChange={handleProfileChange}
                     className="p-2.5 w-full border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
                     required

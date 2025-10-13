@@ -22,11 +22,21 @@ export const EditCityModal = ({
 
       console.log(res.data);
       handleClose();
-      toast.success("City has been added successfully");
       handleGetAllCities();
+      await Swal.fire({
+        title: "Success!",
+        text: "The City has been updated successfully.",
+        icon: "success",
+        confirmButtonColor: "#9333ea",
+      });
     } catch (error) {
       console.error(error);
-      toast.error("Failed to add city");
+      await Swal.fire({
+        title: "Error!",
+        text: "Something went wrong.",
+        icon: "error",
+        confirmButtonColor: "#9333ea",
+      });
     } finally {
       setLoading(false);
     }

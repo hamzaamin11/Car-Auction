@@ -2,6 +2,7 @@ import axios from "axios";
 import React, { useState } from "react";
 import { BASE_URL } from "../Contant/URL";
 import { toast, ToastContainer } from "react-toastify";
+import Swal from "sweetalert2";
 
 export const AddCityModal = ({ handleClose, handleGetAllCities }) => {
   const [cityName, setCityName] = useState("");
@@ -19,10 +20,21 @@ export const AddCityModal = ({ handleClose, handleGetAllCities }) => {
       console.log(res.data);
       handleClose();
       handleGetAllCities();
-      toast.success("City has been added successfully");
+      await Swal.fire({
+        title: "Success!",
+        text: "The City has been added successfully.",
+        icon: "success",
+        confirmButtonColor: "#9333ea",
+      });
     } catch (error) {
       console.error(error);
-      toast.error("Failed to add city");
+
+      await Swal.fire({
+        title: "Error!",
+        text: "Something went wrong.",
+        icon: "error",
+        confirmButtonColor: "#9333ea",
+      });
     } finally {
       setLoading(false);
     }

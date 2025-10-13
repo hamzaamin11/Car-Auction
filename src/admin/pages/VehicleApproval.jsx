@@ -1,52 +1,85 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { MoreVertical } from "lucide-react";
+import axios from "axios";
+import { BASE_URL } from "../../components/Contant/URL";
+import Swal from "sweetalert2";
 
 export const VehicleApproval = () => {
   const [actionMenuOpen, setActionMenuOpen] = useState(null);
   const [search, setSearch] = useState("");
 
-  const [vehicles] = useState([
-    {
-      id: 1,
-      make: "Toyota",
-      model: "Corolla",
-      series: "Altis",
-      year: 2020,
-      fuelType: "Petrol",
-      transmission: "Automatic",
-      mileage: 42000,
-      color: "White",
-      cityName: "Karachi",
-      buyNowPrice: "3,200,000",
-      images: [
-        "https://images.unsplash.com/photo-1616128618694-96f6d5d1e0b3?auto=format&fit=crop&w=800&q=80",
-      ],
-    },
-    {
-      id: 2,
-      make: "Honda",
-      model: "Civic",
-      series: "Oriel",
-      year: 2019,
-      fuelType: "Petrol",
-      transmission: "Manual",
-      mileage: 56000,
-      color: "Black",
-      cityName: "Lahore",
-      buyNowPrice: "3,600,000",
-      images: [
-        "https://images.unsplash.com/photo-1605559424843-9a1fdd9c5a25?auto=format&fit=crop&w=800&q=80",
-      ],
-    },
-  ]);
+  const [vehicles, setVehicles] = useState([]);
+
+  // const [vehicles] = useState([
+  //   {
+  //     id: 1,
+  //     make: "Toyota",
+  //     model: "Corolla",
+  //     series: "Altis",
+  //     year: 2020,
+  //     fuelType: "Petrol",
+  //     transmission: "Automatic",
+  //     mileage: 42000,
+  //     color: "White",
+  //     cityName: "Karachi",
+  //     buyNowPrice: "3,200,000",
+  //     images: [
+  //       "https://images.unsplash.com/photo-1616128618694-96f6d5d1e0b3?auto=format&fit=crop&w=800&q=80",
+  //     ],
+  //   },
+  //   {
+  //     id: 2,
+  //     make: "Honda",
+  //     model: "Civic",
+  //     series: "Oriel",
+  //     year: 2019,
+  //     fuelType: "Petrol",
+  //     transmission: "Manual",
+  //     mileage: 56000,
+  //     color: "Black",
+  //     cityName: "Lahore",
+  //     buyNowPrice: "3,600,000",
+  //     images: [
+  //       "https://images.unsplash.com/photo-1605559424843-9a1fdd9c5a25?auto=format&fit=crop&w=800&q=80",
+  //     ],
+  //   },
+  // ]);
+
+  const handleGetAllUnapprovalVehicles = async () => {
+    try {
+      const res = await axios.get(`${BASE_URL}/getUnApprovedVehicles`);
+      console.log(res.data);
+      setVehicles(res.data);
+    } catch (error) {
+      console.log(error);
+    }
+  };
 
   const toggleActionMenu = (id) => {
     setActionMenuOpen((prev) => (prev === id ? null : id));
   };
 
-  const handleApprove = (vehicle) => {
-    alert(`${vehicle.make} ${vehicle.model} has been approved ✅`);
-    setActionMenuOpen(null);
+  const handleApprove = async (vehicle) => {
+    try {
+      const res = await axios.put(`${BASE_URL}/ApprovedVehicles/${vehicle.id}`);
+      setActionMenuOpen(null);
+      console.log(res.data);
+      handleGetAllUnapprovalVehicles();
+      await Swal.fire({
+        title: "Success!",
+        text: "This vehicle has been approved successfully.",
+        icon: "success",
+        confirmButtonColor: "#9333ea",
+      });
+    } catch (error) {
+      console.log(res.data);
+      await Swal.fire({
+        title: "Error!",
+        text: "Something went wrong.",
+        icon: "error",
+        confirmButtonColor: "#9333ea",
+      });
+    }
   };
 
   const handleReject = (vehicle) => {
@@ -60,6 +93,9 @@ export const VehicleApproval = () => {
       .includes(search.toLowerCase())
   );
 
+  useEffect(() => {
+    handleGetAllUnapprovalVehicles();
+  }, []);
   return (
     <div className="min-h-screen bg-gray-100 p-6">
       {/* Header */}

@@ -146,7 +146,7 @@ export const ModelList = () => {
           No series found
         </div>
       )}
-      <ToastContainer />
+   
       <div className="flex justify-between mt-6">
         {/* Prev Button */}
         <button
@@ -158,9 +158,10 @@ export const ModelList = () => {
           ‹ Prev
         </button>
         {/* Next Button */}
+        <div></div>
         <button
           className={`bg-blue-950 text-white px-5 py-2 rounded-md  ${
-            allModels.length === 0 ? "hidden" : "block"
+            allModels.length === 10 ? "block" : "hidden"
           }`}
           onClick={handleNextPage}
         >

@@ -171,10 +171,11 @@ export const BrandList = () => {
         >
           ‹ Prev
         </button>
+        <div></div>
         {/* Next Button */}
         <button
           className={`bg-blue-950 text-white px-5 py-2 rounded-md  ${
-            allBrands.length === 0 ? "hidden" : "block"
+            allBrands.length === 10 ? "block" : "hidden"
           }`}
           onClick={handleNextPage}
         >

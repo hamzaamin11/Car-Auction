@@ -121,7 +121,8 @@ export const CitiesList = () => {
               <tr key={city.id} className="border-b">
                 <td className="py-2 px-4">{index + 1}</td>
                 <td className="py-2 px-4">
-                  {city.cityName.charAt(0).toUpperCase() + city.cityName.slice(1)}
+                  {city.cityName.charAt(0).toUpperCase() +
+                    city.cityName.slice(1)}
                 </td>
                 <td className="py-2 px-4 flex gap-2 justify-center">
                   <button
@@ -166,7 +167,7 @@ export const CitiesList = () => {
         >
           ‹ Prev
         </button>
-        {/* Next Button */}
+        <div></div>
         <button
           className={`bg-blue-950 text-white px-5 py-2 rounded-md  ${
             allCities.length === 0 ? "hidden" : "block"

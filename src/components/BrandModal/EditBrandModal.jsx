@@ -1,6 +1,7 @@
 import axios from "axios";
 import { useEffect, useState } from "react";
 import { BASE_URL } from "../Contant/URL";
+import Swal from "sweetalert2";
 
 export const EditBrandModal = ({
   handleClose,
@@ -35,8 +36,20 @@ export const EditBrandModal = ({
       console.log(res.data);
       handleClose();
       handleGetAllBrands();
+      await Swal.fire({
+        title: "Success!",
+        text: "The brand has been updated successfully.",
+        icon: "success",
+        confirmButtonColor: "#9333ea",
+      });
     } catch (error) {
       console.log("Error updating brand:", error);
+      await Swal.fire({
+        title: "Error!",
+        text: "Something went wrong.",
+        icon: "error",
+        confirmButtonColor: "#9333ea",
+      });
     }
   };
 

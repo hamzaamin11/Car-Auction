@@ -2,6 +2,7 @@ import axios from "axios";
 import React, { useState } from "react";
 import { BASE_URL } from "../Contant/URL";
 import { toast, ToastContainer } from "react-toastify";
+import Swal from "sweetalert2";
 
 export const AddBrandModal = ({ handleClose, handleGetAllBrands }) => {
   const [brandName, setBrandName] = useState("");
@@ -24,10 +25,21 @@ export const AddBrandModal = ({ handleClose, handleGetAllBrands }) => {
       handleClose();
       handleGetAllBrands();
       setLoading(false);
-      toast.success("Brand has been added successfully");
+      await Swal.fire({
+        title: "Success!",
+        text: "The brand has been added successfully.",
+        icon: "success",
+        confirmButtonColor: "#9333ea",
+      });
     } catch (error) {
       console.log(error);
       setLoading(false);
+      await Swal.fire({
+        title: "Error!",
+        text: "Something went wrong.",
+        icon: "error",
+        confirmButtonColor: "#9333ea",
+      });
     }
   };
 
@@ -90,7 +102,6 @@ export const AddBrandModal = ({ handleClose, handleGetAllBrands }) => {
           </div>
         </form>
       </div>
-      <ToastContainer />
     </div>
   );
 };

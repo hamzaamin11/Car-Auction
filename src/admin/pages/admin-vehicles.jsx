@@ -79,6 +79,7 @@ function AddAdminVehicle({ open, setOpen, onVehicleUpdated }) {
   const { currentUser } = useSelector((state) => state?.auth);
   const selected = useSelector((state) => state.carSelector);
   const [vehicle, setVehicle] = useState(initialVehicleState);
+  console.log("admin vehicle price =>", vehicle);
   const [allCities, setAllCities] = useState([]);
   const [allVehicles, setAllVehicles] = useState([]);
   const [isOpenBid, setIsOpenBid] = useState(false);
@@ -187,7 +188,7 @@ function AddAdminVehicle({ open, setOpen, onVehicleUpdated }) {
   const handleGetVehicles = async () => {
     try {
       const res = await axios.get(
-        `${BASE_URL}/seller/getVehicles?page=${pageNo}&entry=${10}`
+        `${BASE_URL}/getApprovedVehicles?page=${pageNo}&entry=${10}`
       );
       setAllVehicles(res.data);
     } catch (error) {
@@ -234,14 +235,33 @@ function AddAdminVehicle({ open, setOpen, onVehicleUpdated }) {
       confirmButtonText: "Yes, delete it!",
     });
 
+    // Stop if user cancels
     if (!result.isConfirmed) return;
 
     try {
-      const res = await axios.patch(`${BASE_URL}/seller/deleteVehicle/${id}`);
+      // Delete the vehicle
+      await axios.patch(`${BASE_URL}/seller/deleteVehicle/${id}`);
+
+      // Refresh the vehicle list
       handleGetVehicles();
-      toast.info("Vehicle has been deleted successfully");
+
+      // ✅ Show SweetAlert success message
+      await Swal.fire({
+        title: "Deleted!",
+        text: "The vehicle has been deleted successfully.",
+        icon: "success",
+        confirmButtonColor: "#9333ea",
+      });
     } catch (error) {
-      console.log(error);
+      console.error(error);
+
+      // ❌ Optional error alert
+      await Swal.fire({
+        title: "Error!",
+        text: "Something went wrong while deleting the vehicle.",
+        icon: "error",
+        confirmButtonColor: "#9333ea",
+      });
     }
   };
 
@@ -288,7 +308,7 @@ function AddAdminVehicle({ open, setOpen, onVehicleUpdated }) {
     });
 
     try {
-      const res = await fetch(`${BASE_URL}/seller/addVehicle`, {
+      const res = await fetch(`${BASE_URL}/addVehicleForAdmin`, {
         method: "POST",
         body: formData,
       });
@@ -574,11 +594,15 @@ function AddAdminVehicle({ open, setOpen, onVehicleUpdated }) {
                   <input
                     type="text"
                     name="buyNowPrice"
-                    value={price}
+                    value={vehicle.buyNowPrice}
                     onChange={(e) => {
                       const value = e.target.value;
                       if (/^\d*$/.test(value) && value.length <= 9) {
                         setPrice(value);
+                        setVehicle((prev) => ({
+                          ...prev,
+                          buyNowPrice: value,
+                        }));
                       }
                     }}
                     placeholder="Add Price"

@@ -43,14 +43,26 @@ export const EditModal = ({ handleClose, seleteModel, handleGetAllModels }) => {
     e.preventDefault();
     try {
       const res = await axios.put(
-        `${BASE_URL}/updateModel/${seleteModel.id}`,
+        `${BASE_URL}/updateModel/${seleteModel.modelId}`,
         formData
       );
       console.log("Updated:", res.data);
       handleClose();
       handleGetAllModels();
+      await Swal.fire({
+        title: "Success!",
+        text: "The model has been updated successfully.",
+        icon: "success",
+        confirmButtonColor: "#9333ea",
+      });
     } catch (error) {
       console.log("Error updating model:", error);
+      await Swal.fire({
+        title: "Error!",
+        text: "Something went wrong.",
+        icon: "error",
+        confirmButtonColor: "#9333ea",
+      });
     }
   };
 
