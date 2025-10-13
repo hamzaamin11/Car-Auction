@@ -48,7 +48,7 @@ const AudiQ2Prices = () => {
                 <td className="p-1 border text-center ">{idx + 1}.</td>
                 <td className="p-1 border text-center ">
                   <span
-                    onClick={() => navigate(`/standardline/${item.id}`)}
+                    onClick={() => navigate(`/detailbid/${item.id}`)}
                     className="text-[#233D7B] underline hover:cursor-pointer"
                   >
                     {item.make} {item.model} {item.series} {item.engine}
