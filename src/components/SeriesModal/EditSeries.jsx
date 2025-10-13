@@ -3,6 +3,7 @@ import React, { useEffect, useState } from "react";
 import { BASE_URL } from "../Contant/URL";
 import { toast, ToastContainer } from "react-toastify";
 import Select from "react-select";
+import Swal from "sweetalert2";
 
 const initialState = {
   brandId: "",
@@ -66,13 +67,24 @@ export const EditSeries = ({
         formData
       );
 
-      toast.success("Series has been updated successfully");
+      await Swal.fire({
+        title: "Success!",
+        text: "The series has been updated successfully.",
+        icon: "success",
+        confirmButtonColor: "#9333ea",
+      });
       setFormData(initialState);
       handleClose();
       handleGetAllSeries();
     } catch (error) {
       console.log(error);
       toast.error("Something went wrong");
+      await Swal.fire({
+        title: "Error!",
+        text: "Something went wrong.",
+        icon: "error",
+        confirmButtonColor: "#9333ea",
+      });
     } finally {
       setLoading(false);
     }

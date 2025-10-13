@@ -5,11 +5,12 @@ import { MdClose } from "react-icons/md";
 import moment from "moment";
 import { toast, ToastContainer } from "react-toastify";
 import { BASE_URL } from "../components/Contant/URL";
+import Swal from "sweetalert2";
 
 export const AdminUpdatebid = ({
   setIsOpenBid,
   selectedVehicle,
-  getAllVehicles,
+  handleGetAllUpcomingAuctions,
 }) => {
   const initialState = {
     startTime: "",
@@ -17,6 +18,7 @@ export const AdminUpdatebid = ({
     vehicleId: selectedVehicle?.id || selectedVehicle?.newVehicleId,
     userId: selectedVehicle?.userId,
     saleStatus: "pending",
+    vehicleId: selectedVehicle?.vehicleId,
   };
 
   const [viewImage, setViewImage] = useState();
@@ -47,21 +49,35 @@ export const AdminUpdatebid = ({
     }
   }, [selectedVehicle]);
 
-
-
   const handleBidSubmit = async (e) => {
     e.preventDefault();
     setLoading(true);
     try {
-      const res = await axios.post(`${BASE_URL}/seller/createBid`, formData);
+      const res = await axios.put(
+        `${BASE_URL}/seller/updateCreateBid/${selectedVehicle.bidId}`,
+        formData
+      );
       console.log("res", res.data);
-      getAllVehicles();
+
       setIsOpenBid(false);
-      toast.success("Vehicle has been added for bid");
+      await Swal.fire({
+        title: "Success!",
+        text: "The bid time has been updated successfully.",
+        icon: "success",
+        confirmButtonColor: "#9333ea",
+      });
+
       setLoading(false);
+      handleGetAllUpcomingAuctions();
     } catch (error) {
       console.log(error);
       setLoading(false);
+      await Swal.fire({
+        title: "Error!",
+        text: "Something went wrong.",
+        icon: "error",
+        confirmButtonColor: "#9333ea",
+      });
     }
   };
 

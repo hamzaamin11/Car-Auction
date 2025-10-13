@@ -382,6 +382,7 @@ export default function UpcomingAuctions() {
           <AdminUpdatebid
             selectedVehicle={selectedVehicle}
             setIsOpenBid={() => handleToggleModel("update")}
+            handleGetAllUpcomingAuctions = {handleGetAllUpcomingAuctions}
           />
         )}
 

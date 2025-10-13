@@ -11,10 +11,11 @@ import { RiArrowDropDownLine } from "react-icons/ri";
 import { useAuth } from "../context/AuthContext";
 import { AiOutlineLogout } from "react-icons/ai";
 import { useDispatch, useSelector } from "react-redux";
-import { logOut } from "./Redux/UserSlice";
+import { authSuccess, logOut } from "./Redux/UserSlice";
 import logoImage from "../../src/assets/wheellogo.png";
 import axios from "axios";
 import { BASE_URL } from "./Contant/URL";
+import Swal from "sweetalert2";
 
 const Navbar = () => {
   const { user, isAuthenticated, logout } = useAuth();
@@ -25,6 +26,7 @@ const Navbar = () => {
   const [dropdownOpen, setDropdownOpen] = useState(false);
   const [passwordModalOpen, setPasswordModalOpen] = useState(false);
   const [profileModalOpen, setProfileModalOpen] = useState(false);
+  const [cities, setCities] = useState([]);
 
   const dropdownRef = useRef(null);
   const countryDropdownRef = useRef(null);
@@ -66,20 +68,17 @@ const Navbar = () => {
 
   // Options lists
   const countries = ["Pakistan"];
-  const cities = [
-    "Karachi",
-    "Lahore",
-    "Islamabad",
-    "Rawalpindi",
-    "Faisalabad",
-    "Multan",
-    "Gujranwala",
-    "Peshawar",
-    "Quetta",
-    "Sialkot",
-    "Hyderabad",
-  ];
+
   const genders = ["Male", "Female", "Other"];
+
+  const handleGetAllCity = async () => {
+    try {
+      const res = await axios.get(`${BASE_URL}/getCitites`);
+      setCities(res.data);
+    } catch (error) {
+      console.log(error);
+    }
+  };
 
   // Filter functions
   const filteredCountries = countries.filter((country) =>
@@ -87,7 +86,7 @@ const Navbar = () => {
   );
 
   const filteredCities = cities.filter((city) =>
-    city.toLowerCase().includes(citySearch.toLowerCase())
+    city?.cityName?.toLowerCase().includes(citySearch.toLowerCase())
   );
 
   const filteredGenders = genders.filter((gender) =>
@@ -127,8 +126,8 @@ const Navbar = () => {
 
   // Handle city selection
   const handleCitySelect = (city) => {
-    setProfileForm((prev) => ({ ...prev, city }));
-    setCitySearch(city);
+    setProfileForm((prev) => ({ ...prev, city: city.cityName }));
+    setCitySearch(city.cityName);
     setShowCityDropdown(false);
   };
 
@@ -193,8 +192,20 @@ const Navbar = () => {
       console.log("Profile updated:", res.data);
       setProfileModalOpen(false);
       dispatch(authSuccess(res.data));
+      await Swal.fire({
+        title: "Success!",
+        text: "The User has been updated successfully.",
+        icon: "success",
+        confirmButtonColor: "#9333ea",
+      });
     } catch (error) {
       console.error("Error updating profile:", error);
+      await Swal.fire({
+        title: "Error!",
+        text: "Something went wrong.",
+        icon: "error",
+        confirmButtonColor: "#9333ea",
+      });
     }
   };
   const handleLogout = () => {
@@ -221,6 +232,10 @@ const Navbar = () => {
       );
     }
   }, [profileModalOpen]);
+
+  useEffect(() => {
+    handleGetAllCity();
+  }, []);
 
   // Outside click detection for all dropdowns
   useEffect(() => {
@@ -898,7 +913,7 @@ const Navbar = () => {
                           onClick={() => handleCitySelect(city)}
                           className="p-2.5 hover:bg-blue-50 cursor-pointer transition-colors"
                         >
-                          {city}
+                          {city.cityName}
                         </div>
                       ))}
                     </div>
