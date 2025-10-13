@@ -126,7 +126,7 @@ const CarCardSlider = () => {
   // Fetch normal cars
   const handleGetVehicles = async () => {
     try {
-      const res = await axios.get(`${BASE_URL}/customer/getVehicles`);
+      const res = await axios.get(`${BASE_URL}/getApprovedVehicles`);
       setAllCars(res.data);
     } catch (error) {
       console.log(error);
@@ -362,8 +362,6 @@ const CarCardSlider = () => {
           </button>
         )}
       </div>
-
-    
     </div>
   );
 };

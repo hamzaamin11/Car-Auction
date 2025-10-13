@@ -30,32 +30,6 @@ const BodyType = [
   { label: "Compact sedan", value: "Compact sedan" },
 ];
 
-const Cities = [
-  "Abbottabad", "Addul Hakeem", "Ahmadpur East", "Ahmednagar", "Alipur", "Arandu", "Arifwala", "Atharan Hazari", "Attock",
-  "Badah", "Badin", "Bahawalnagar", "Bahawalpur", "Balakot", "Bannu", "Barkhan", "Basirpur", "Basti Maluk", "Bela", "Bhag", "Bhakkar", "Bhan", "Bhera", "Bucheki",
-  "Chacharan Sharif", "Chak Jhumra", "Chakwal", "Chaman", "Charsadda", "Chawinda", "Chichawatni", "Chiniot", "Chitral", "Choubara", "Chunian",
-  "Dadu", "Daira Din Panah", "Dalbandin", "Daulatpur", "Daur", "Depalpur", "Dera Bugti", "Dera Ghazi Khan", "Dera Ismail Khan", "Dhadar", "Digri", "Dijkot", "Dinga", "Diplo", "Dir", "Drosh", "Dudhial", "Duki", "Dunyapur",
-  "Eminabad",
-  "Faisalabad", "Fateh Jang", "Fateh Pur", "Firozwala", "Fort Abbas",
-  "Gaddani", "Gambat", "Garhi Khairo", "Gharibwal", "Gharo", "Gilgit", "Gojra", "Gujranwala", "Gujrat", "Gwadar",
-  "Hafizabad", "Hala", "Hangu", "Haripur", "Harnai", "Haroonabad", "Hasilpur", "Havelian", "Hoshab", "Hyderabad",
-  "Isa Khel", "Islamabad",
-  "Jacobabad", "Jaranwala", "Jhang", "Jhelum", "Jamshoro",
-  "Karachi", "Kamalia", "Kamoke", "Kandhkot", "Kasur", "Khairpur", "Khushab", "Khuzdar", "Kohat", "Kot Abdul Malik", "Kot Addu", "Kotri",
-  "Lahore", "Larkana", "Layyah", "Lodhran",
-  "Mandi Bahauddin", "Mansehra", "Mardan", "Mianwali", "Mirpur Khas", "Mirpur (Azad Kashmir)", "Mingora", "Muzaffarabad", "Muzaffargarh", "Multan", "Muridke",
-  "Nawabshah", "Narowal", "Nowshera",
-  "Okara",
-  "Pakpattan", "Parachinar",
-  "Quetta", "Qambar Shahdadkot",
-  "Rahim Yar Khan", "Rawalpindi", "Rabwah",
-  "Sadiqabad", "Sahiwal", "Sambrial", "Sanghar", "Sargodha", "Shaheed Benazirabad (Nawabshah)", "Sheikhupura", "Shikarpur", "Sialkot", "Sukkur", "Swabi",
-  "Taxila", "Tando Adam", "Tando Allahyar", "Tando Muhammad Khan", "Talagang", "Tharparkar", "Thatta", "Turbat",
-  "Vehari",
-  "Wah Cantonment", "Wazirabad", "WeTa?",
-  "Zabad", "Zafarke", "Zafarwal", "Zahir Pir", "Zahri", "Zaida",
-];
-
 const FilterPriceCars = () => {
   const { name, value } = useParams();
   console.log({ name, value });
@@ -70,8 +44,8 @@ const FilterPriceCars = () => {
     allMakes: name === "make" ? value : "",
     allModels: name === "model" ? value : "",
     location: name === "city" ? value : "",
-    formCash: name === "budget" ? (value.split("-")[0] || "") : "",
-    toCash: name === "budget" ? (value.split("-")[1] || "") : "",
+    formCash: name === "budget" ? value.split("-")[0] || "" : "",
+    toCash: name === "budget" ? value.split("-")[1] || "" : "",
   });
   const [allFilterCars, setAllFilterCars] = useState([]);
   const [filterModel, setFilterModel] = useState([]);
@@ -124,7 +98,7 @@ const FilterPriceCars = () => {
   const handleGetFilterByVehicle = async () => {
     setLoading(true);
     try {
-      const res = await axios.get(`${BASE_URL}/seller/getVehicles`, {
+      const res = await axios.get(`${BASE_URL}/getApprovedVehicles`, {
         params: {
           locationId: filterData?.location || "",
           make: selectMake?.brandName || filterData.allMakes || "",
@@ -272,9 +246,11 @@ const FilterPriceCars = () => {
           </label>
           <Select
             options={[{ label: "Select All Type", value: "" }, ...BodyType]}
-            value={BodyType.find(
-              (option) => option.value === filterData.vehicleType
-            ) || { label: "Select All Type", value: "" }}
+            value={
+              BodyType.find(
+                (option) => option.value === filterData.vehicleType
+              ) || { label: "Select All Type", value: "" }
+            }
             onChange={(selected) => {
               handleChange("vehicleType", selected.value);
               if (selected.value) {
@@ -292,7 +268,10 @@ const FilterPriceCars = () => {
             Select Year
           </label>
           <Select
-            options={[{ label: "Select Model Year", value: "" }, ...currentYear]}
+            options={[
+              { label: "Select Model Year", value: "" },
+              ...currentYear,
+            ]}
             value={
               currentYear.find(
                 (option) => option.value === filterData.selectYear
@@ -312,7 +291,9 @@ const FilterPriceCars = () => {
           <Select
             options={[{ label: "Select Vehicle Make", value: "" }, ...allMakes]}
             value={
-              allMakes.find((option) => option.value === filterData.allMakes) || {
+              allMakes.find(
+                (option) => option.value === filterData.allMakes
+              ) || {
                 label: "Select Vehicle Make",
                 value: "",
               }
@@ -334,9 +315,14 @@ const FilterPriceCars = () => {
             Select Model
           </label>
           <Select
-            options={[{ label: "Select Vehicle Model", value: "" }, ...allModels]}
+            options={[
+              { label: "Select Vehicle Model", value: "" },
+              ...allModels,
+            ]}
             value={
-              allModels.find((option) => option.value === filterData.allModels) || {
+              allModels.find(
+                (option) => option.value === filterData.allModels
+              ) || {
                 label: "Select Vehicle Model",
                 value: "",
               }
@@ -353,9 +339,14 @@ const FilterPriceCars = () => {
             Select Location
           </label>
           <Select
-            options={[{ label: "Select Vehicle Location", value: "" }, ...cityOptions]}
+            options={[
+              { label: "Select Vehicle Location", value: "" },
+              ...cityOptions,
+            ]}
             value={
-              cityOptions.find((option) => option.value === filterData.location) || {
+              cityOptions.find(
+                (option) => option.value === filterData.location
+              ) || {
                 label: "Select Vehicle Location",
                 value: "",
               }

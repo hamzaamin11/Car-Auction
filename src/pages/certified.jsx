@@ -136,7 +136,7 @@ const CertifiedCarsPage = () => {
                   </p>
                 </div>
                 <p className="mt-4 text-lg font-semibold text-gray-900">
-                  ${car.buyNowPrice.toLocaleString()}
+                  PKR:{car.buyNowPrice.toLocaleString()}
                 </p>
               </div>
             </div>

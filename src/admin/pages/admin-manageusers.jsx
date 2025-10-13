@@ -151,32 +151,41 @@ export default function ManageUsers() {
               <table className="min-w-full divide-y divide-gray-200 text-sm">
                 <thead className="bg-blue-900 text-white">
                   <tr>
-                    <th className="px-6 py-4 text-left font-semibold">User</th>
+                    <th className="px-6 py-4 text-left font-semibold">Users</th>
                     <th className="px-6 py-4 text-left font-semibold">Email</th>
                     <th className="px-6 py-4 text-left font-semibold">Phone</th>
                     <th className="px-6 py-4 text-left font-semibold">Role</th>
-                    <th className="px-6 py-4 text-center font-semibold">Actions</th>
+                    <th className="px-6 py-4 text-center font-semibold">
+                      Actions
+                    </th>
                   </tr>
                 </thead>
                 <tbody className="divide-y divide-gray-100 bg-white">
                   {filteredUsers.map((user) => (
                     <tr
-                      key={user.id}
+                      key={user?.id}
                       className="hover:bg-indigo-50 transition-colors"
                     >
                       <td className="px-6 py-4">
                         <div className="flex items-center gap-3">
-                          <UserImage user={user} size="md" />
+                          {user?.imageUrl ? (
+                            <img src={user.imageUrl} />
+                          ) : (
+                            <UserImage user={user} size="md" />
+                          )}
+
                           <span className="font-medium text-gray-900">
-                            {user.name.charAt(0).toUpperCase() + user.name.slice(1)}
+                            {user?.name?.charAt(0)?.toUpperCase() +
+                              user?.name?.slice(1)}
                           </span>
                         </div>
                       </td>
                       <td className="px-6 py-4 text-gray-700">
-                        {user.email.charAt(0).toUpperCase() + user.email.slice(1)}
+                        {user?.email?.charAt(0).toUpperCase() +
+                          user?.email?.slice(1)}
                       </td>
                       <td className="px-6 py-4 text-left text-gray-700">
-                        {user.contact.slice(0, 14)}
+                        {user?.contact?.slice(0, 14)}
                       </td>
                       <td>
                         <span
@@ -188,7 +197,8 @@ export default function ManageUsers() {
                               : "bg-green-100 text-green-500"
                           }`}
                         >
-                          {user.role.charAt(0).toUpperCase() + user.role.slice(1)}
+                          {user.role.charAt(0).toUpperCase() +
+                            user.role.slice(1)}
                         </span>
                       </td>
                       <td className="px-6 py-4 flex items-center justify-center gap-2">
@@ -250,11 +260,12 @@ export default function ManageUsers() {
                 <div className="flex flex-col gap-2 mb-3">
                   <p className="text-sm text-gray-600">
                     <span className="font-bold">Email:</span>{" "}
-                    {user.email.charAt(0).toUpperCase() + user.email.slice(1)}
+                    {user?.email?.charAt(0).toUpperCase() +
+                      user?.email?.slice(1)}
                   </p>
                   <p className="text-sm text-gray-600">
                     <span className="font-bold">Phone:</span>{" "}
-                    {user.contact.slice(0, 14)}
+                    {user?.contact?.slice(0, 14)}
                   </p>
                 </div>
                 <div className="flex gap-2">

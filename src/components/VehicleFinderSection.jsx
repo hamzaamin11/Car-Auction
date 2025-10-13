@@ -33,7 +33,7 @@ const VehicleFinderSection = () => {
   const handleGetCars = async () => {
     try {
       const res = await axios.get(
-        `${BASE_URL}/customer/getVehicles?vehicleCondition=${filters.condition}&make=${filters.make}&model=${filters.model}&year=${filters.year}&buyNowPrice=${filters.price}`
+        `${BASE_URL}/getApprovedVehicles?vehicleCondition=${filters.condition}&make=${filters.make}&model=${filters.model}&year=${filters.year}&buyNowPrice=${filters.price}`
       );
       setAllCars(res.data || []);
     } catch (error) {
