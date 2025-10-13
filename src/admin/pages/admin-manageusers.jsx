@@ -254,7 +254,7 @@ export default function ManageUsers() {
                   </p>
                   <p className="text-sm text-gray-600">
                     <span className="font-bold">Phone:</span>{" "}
-                    {user?.contact.slice(0, 14)}
+                    {user?.contact?.slice(0, 14)}
                   </p>
                 </div>
                 <div className="flex gap-2">

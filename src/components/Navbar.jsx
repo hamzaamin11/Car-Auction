@@ -61,6 +61,7 @@ const Navbar = () => {
     mobileNumber: currentUser?.contact || "",
     profileImage: currentUser?.profileImage || "",
     cnic: currentUser?.cnic || "",
+    role: currentUser?.role || "",
   });
 
   // Options lists
