@@ -175,14 +175,22 @@ export default function ManageUsers() {
                           )}
 
                           <span className="font-medium text-gray-900">
+<<<<<<< Updated upstream
                             {user?.name?.charAt(0)?.toUpperCase() +
                               user?.name?.slice(1)}
+=======
+                            {user?.name?.charAt(0)?.toUpperCase() + user?.name?.slice(1)}
+>>>>>>> Stashed changes
                           </span>
                         </div>
                       </td>
                       <td className="px-6 py-4 text-gray-700">
+<<<<<<< Updated upstream
                         {user?.email?.charAt(0).toUpperCase() +
                           user?.email?.slice(1)}
+=======
+                        {user?.email?.charAt(0)?.toUpperCase() + user?.email?.slice(1)}
+>>>>>>> Stashed changes
                       </td>
                       <td className="px-6 py-4 text-left text-gray-700">
                         {user?.contact?.slice(0, 14)}
@@ -253,15 +261,19 @@ export default function ManageUsers() {
                           : "bg-green-100 text-green-500"
                       }`}
                     >
-                      {user.role.charAt(0).toUpperCase() + user.role.slice(1)}
+                      {user?.role?.charAt(0)?.toUpperCase() + user?.role?.slice(1)}
                     </span>
                   </div>
                 </div>
                 <div className="flex flex-col gap-2 mb-3">
                   <p className="text-sm text-gray-600">
                     <span className="font-bold">Email:</span>{" "}
+<<<<<<< Updated upstream
                     {user?.email?.charAt(0).toUpperCase() +
                       user?.email?.slice(1)}
+=======
+                    {user?.email?.charAt(0)?.toUpperCase() + user?.email?.slice(1)}
+>>>>>>> Stashed changes
                   </p>
                   <p className="text-sm text-gray-600">
                     <span className="font-bold">Phone:</span>{" "}

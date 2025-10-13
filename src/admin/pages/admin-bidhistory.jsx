@@ -159,6 +159,7 @@ const AdminBidHistory = () => {
                           engine,
                           transmission,
                           color,
+                          email,
                         },
                         index
                       ) => (
@@ -169,7 +170,7 @@ const AdminBidHistory = () => {
                           <td className="text-center">{indexOfFirstItem + index + 1}</td>
                           <td
                             onClick={() =>
-                              setSelectedCustomer({ name, contact, cnic, address })
+                              setSelectedCustomer({ name, contact, cnic, address , email})
                             }
                             className="px-6 py-4 whitespace-nowrap text-sm text-gray-700 cursor-pointer hover:text-blue-600"
                           >
@@ -262,6 +263,7 @@ const AdminBidHistory = () => {
                       engine,
                       transmission,
                       color,
+                      email,
                     },
                     index
                   ) => (
@@ -383,6 +385,12 @@ const AdminBidHistory = () => {
                     </p>
                   </div>
                   <div>
+                    <p className="text-sm text-gray-500">EMAIL:</p>
+                    <p className="font-semibold text-gray-900">
+                      {selectedCustomer.email || "N/A"}
+                    </p>
+                  </div>
+                    <div>
                     <p className="text-sm text-gray-500">CNIC:</p>
                     <p className="font-semibold text-gray-900">
                       {selectedCustomer.cnic || "N/A"}

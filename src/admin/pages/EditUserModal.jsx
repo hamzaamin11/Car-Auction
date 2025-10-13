@@ -202,6 +202,45 @@ const EditUserModal = ({ Open, setOpen, selectedUser }) => {
                         <option value="customer">Customer</option>
                       </select>
                     </div>
+                       <div>
+                      <label className="block text-sm font-medium text-gray-700">
+                        CNIC
+                      </label>
+                      <input
+                        type="tel"
+                        name="cnic"
+                        value={user.cnic}
+                        onChange={handleChange}
+                        className="mt-1 w-full rounded-xl border border-gray-300 p-3 focus:outline-none focus:ring-2 focus:ring-blue-500"
+                        placeholder="+123456789"
+                      />
+                    </div>
+                       <div>
+                      <label className="block text-sm font-medium text-gray-700">
+                        Address
+                      </label>
+                      <input
+                        type="text"
+                        name="address"
+                        value={user.address}
+                        onChange={handleChange}
+                        className="mt-1 w-full rounded-xl border border-gray-300 p-3 focus:outline-none focus:ring-2 focus:ring-blue-500"
+                        placeholder="123 Main St"
+                      />
+                    </div>
+                    <div>
+                      <label className="block text-sm font-medium text-gray-700">
+                        Phone Number
+                      </label>
+                      <input
+                        type="tel"
+                        name="contact"
+                        value={user.contact}
+                        onChange={handleChange}
+                        className="mt-1 w-full rounded-xl border border-gray-300 p-3 focus:outline-none focus:ring-2 focus:ring-blue-500"
+                        placeholder="+123456789"
+                      />
+                    </div>
 
                     <div>
                       <label className="block text-sm font-medium text-gray-700">
