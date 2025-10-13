@@ -7,6 +7,7 @@ import { authSuccess, logOut } from "../../components/Redux/UserSlice";
 import logo from "../../assets/wheellogo.png";
 import axios from "axios";
 import { BASE_URL } from "../../components/Contant/URL";
+import Swal from "sweetalert2";
 
 export default function Topbar() {
   const { currentUser } = useSelector((state) => state?.auth);
@@ -51,13 +52,17 @@ export default function Topbar() {
     cnic: currentUser?.cnic || "",
   });
 
-  console.log("profile image =>", profileForm);
+  // Separate state for image file and preview
+  const [imageFile, setImageFile] = useState(null);
+  const [imagePreview, setImagePreview] = useState("");
 
-  
+  console.log("Current User in Topbar:", currentUser);
+  console.log("User Image:", currentUser?.image);
+  console.log("User ImageUrl:", currentUser?.imageUrl);
+  console.log("Image Preview State:", imagePreview);
 
   // Options lists
   const countries = ["Pakistan"];
-
   const cities = [
     "Karachi",
     "Lahore",
@@ -71,7 +76,6 @@ export default function Topbar() {
     "Sialkot",
     "Hyderabad",
   ];
-
   const genders = ["Male", "Female", "Other"];
 
   // Filter functions
@@ -90,18 +94,19 @@ export default function Topbar() {
   // Handle image upload
   const handleImageChange = (e) => {
     const file = e.target.files?.[0];
-    if (!file) return; // stop if no file selected
+    if (!file) return;
 
+    // Store the actual file for upload
+    setImageFile(file);
+
+    // Create preview
     const reader = new FileReader();
     reader.onloadend = () => {
-      setProfileForm((prev) => ({
-        ...prev,
-        image: reader.result, // store Base64 image
-      }));
+      setImagePreview(reader.result);
     };
-
     reader.readAsDataURL(file);
   };
+
   // Handle password form changes
   const handlePasswordChange = (e) => {
     const { name, value } = e.target;
@@ -139,7 +144,12 @@ export default function Topbar() {
   const handlePasswordSubmit = async (e) => {
     e.preventDefault();
     if (passwordForm.newPassword !== passwordForm.confirmPassword) {
-      alert("New password and confirm password do not match!");
+      await Swal.fire({
+        title: "Error!",
+        text: "New password and confirm password do not match!",
+        icon: "error",
+        confirmButtonColor: "#9333ea",
+      });
       return;
     }
     try {
@@ -155,9 +165,21 @@ export default function Topbar() {
         confirmPassword: "",
       });
       console.log("res =>", res.data);
+      await Swal.fire({
+        title: "Success!",
+        text: "Password changed successfully!",
+        icon: "success",
+        confirmButtonColor: "#9333ea",
+      });
       setPasswordModalOpen(false);
     } catch (error) {
       console.log(error);
+      await Swal.fire({
+        title: "Error!",
+        text: "Failed to change password. Please try again.",
+        icon: "error",
+        confirmButtonColor: "#9333ea",
+      });
     }
   };
 
@@ -167,7 +189,7 @@ export default function Topbar() {
     try {
       const formData = new FormData();
 
-      // ✅ Append all text fields
+      // Append all text fields
       formData.append("name", profileForm.name);
       formData.append("gender", profileForm.gender);
       formData.append("dateOfBirth", profileForm.dateOfBirth);
@@ -179,12 +201,12 @@ export default function Topbar() {
       formData.append("role", profileForm.role);
       formData.append("cnic", profileForm.cnic);
 
-      // ✅ Append image only if user selected a new one
-      if (profileForm.image && profileForm.image instanceof File) {
-        formData.append("image", profileForm.image);
+      // Append the actual file if user selected a new one
+      if (imageFile) {
+        formData.append("image", imageFile);
       }
 
-      // ✅ Send request
+      // Send request
       const res = await axios.put(
         `${BASE_URL}/admin/updateRegisterUsers/${currentUser?.id}`,
         formData,
@@ -196,10 +218,33 @@ export default function Topbar() {
       );
 
       console.log("Profile updated:", res.data);
-      setProfileModalOpen(false);
+      
+      // Update Redux state with new user data
       dispatch(authSuccess(res.data));
+
+      // Update image preview with new URL from backend
+      if (res.data.image || res.data.imageUrl) {
+        setImagePreview(res.data.image || res.data.imageUrl);
+      }
+
+      // Clear the file state
+      setImageFile(null);
+
+      await Swal.fire({
+        title: "Success!",
+        text: "Profile updated successfully!",
+        icon: "success",
+        confirmButtonColor: "#9333ea",
+      });
+      setProfileModalOpen(false);
     } catch (error) {
       console.error("Error updating profile:", error);
+      await Swal.fire({
+        title: "Error!",
+        text: "Failed to update profile. Please try again.",
+        icon: "error",
+        confirmButtonColor: "#9333ea",
+      });
     }
   };
 
@@ -213,18 +258,14 @@ export default function Topbar() {
     setDropdownOpen((prev) => !prev);
   };
 
-  const handleUpdateUser = async () => {
-    try {
-      const res = await axios.put(
-        `${BASE_URL}/admin/updateRegisterUsers/${currentUser?.id}`
-      );
-      console.log(res.data);
-    } catch (error) {
-      console.log(error);
+  // Update imagePreview when currentUser changes (after login or profile update)
+  useEffect(() => {
+    if (currentUser?.image || currentUser?.imageUrl) {
+      setImagePreview(currentUser?.image || currentUser?.imageUrl);
     }
-  };
+  }, [currentUser]);
 
-  // Initialize search fields when modal opens
+  // Initialize search fields and image preview when modal opens
   useEffect(() => {
     if (profileModalOpen) {
       setCountrySearch(profileForm.country);
@@ -235,8 +276,11 @@ export default function Topbar() {
               profileForm.gender.slice(1)
           : ""
       );
+      // Reset image preview to current user's image when modal opens
+      setImagePreview(currentUser?.image || currentUser?.imageUrl || "");
+      setImageFile(null);
     }
-  }, [profileModalOpen]);
+  }, [profileModalOpen, currentUser]);
 
   // Outside click detection for all dropdowns
   useEffect(() => {
@@ -297,10 +341,19 @@ export default function Topbar() {
           onClick={toggleDropdown}
           className="flex items-center gap-2 focus:outline-none group"
         >
-          <FaUserCircle
-            size={40}
-            className="text-gray-700 group-hover:text-blue-600 transition-colors duration-300"
-          />
+          {/* Show actual profile image or fallback to icon */}
+          {currentUser?.image || currentUser?.imageUrl ? (
+            <img
+              src={currentUser?.image || currentUser?.imageUrl}
+              alt="Profile"
+              className="w-10 h-10 rounded-full object-cover border-2 border-gray-300 group-hover:border-blue-600 transition-colors duration-300"
+            />
+          ) : (
+            <FaUserCircle
+              size={40}
+              className="text-gray-700 group-hover:text-blue-600 transition-colors duration-300"
+            />
+          )}
         </button>
 
         <div
@@ -412,9 +465,9 @@ export default function Topbar() {
             <div className="flex justify-center mb-6">
               <div className="relative">
                 <div className="w-32 h-32 rounded-full bg-gray-200 flex items-center justify-center overflow-hidden">
-                  {profileForm.image ? (
+                  {imagePreview ? (
                     <img
-                      src={profileForm.image}
+                      src={imagePreview}
                       alt="Profile"
                       className="w-full h-full object-cover"
                     />

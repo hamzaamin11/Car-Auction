@@ -1,14 +1,15 @@
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { FaUserShield, FaLock } from "react-icons/fa";
-import { useAuth } from "../../context/AuthContext";
+import { useDispatch } from "react-redux";
+import { authSuccess, authFailure } from "../../components/Redux/UserSlice";
 import { BASE_URL } from "../../components/Contant/URL";
 
-const AdminLogin = ({ children }) => {
+const AdminLogin = () => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [error, setError] = useState("");
-  const { login } = useAuth();
+  const dispatch = useDispatch();
   const navigate = useNavigate();
 
   const handleLogin = async (e) => {
@@ -19,32 +20,61 @@ const AdminLogin = ({ children }) => {
       const response = await fetch(`${BASE_URL}/login`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ role: "admin", email, password }),
+        body: JSON.stringify({ email, password }),
       });
 
       const data = await response.json();
 
-      const userData = {
-        id: data.user.id || data.user._id, // Supports both SQL and MongoDB
-        email: data.user.email,
-        role: data.user.role || role,
-        name: data.user.name || formData.email.split("@")[0], // Fallback to email prefix
-        token: data.token, // Optional: if using JWT
-      };
+      console.log("Login response:", data); // Debug log
 
-      if (response.ok && data.user) {
-        localStorage.setItem("adminName", data.user.name);
-        localStorage.setItem("adminId", data.user.id);
-        localStorage.setItem("adminRole", data.user.role);
-        localStorage.setItem("isAdmin", "true"); // ✅ Required for auth
-        navigate("/admin");
-        login(userData);
+      if (response.ok && data.id) {
+        // ✅ Backend returns flat object, not nested in 'user'
+        const userData = {
+          id: data.id,
+          email: data.email,
+          role: data.role,
+          name: data.name,
+          contact: data.contact,
+          cnic: data.cnic,
+          address: data.address,
+          postcode: data.postcode,
+          image: data.image, // ✅ Store Cloudinary URL
+          imageUrl: data.imageUrl, // ✅ Also store imageUrl
+          token: data.token,
+          date: data.date,
+          username: data.username,
+          gender: data.gender,
+          country: data.country,
+          dateOfBirth: data.dateOfBirth,
+          city: data.city,
+        };
+
+        console.log("Storing user data:", userData); // Debug log
+
+        // ✅ Store in Redux
+        dispatch(authSuccess(userData));
+
+        // ✅ Also store in localStorage for persistence
+        localStorage.setItem("user", JSON.stringify(userData));
+        localStorage.setItem("token", data.token);
+        localStorage.setItem("isAdmin", data.role === "admin" ? "true" : "false");
+
+        // Navigate based on role
+        if (data.role === "admin") {
+          navigate("/admin");
+        } else {
+          navigate("/");
+        }
       } else {
-        setError(data.message || "Login failed");
+        const errorMsg = data.message || "Login failed";
+        setError(errorMsg);
+        dispatch(authFailure(errorMsg));
       }
     } catch (err) {
-      console.error(err);
-      setError("Something went wrong. Please try again.");
+      console.error("Login error:", err);
+      const errorMsg = "Something went wrong. Please try again.";
+      setError(errorMsg);
+      dispatch(authFailure(errorMsg));
     }
   };
 
@@ -63,7 +93,11 @@ const AdminLogin = ({ children }) => {
         </div>
 
         <form onSubmit={handleLogin} className="space-y-5">
-          {error && <p className="text-red-300 text-center">{error}</p>}
+          {error && (
+            <div className="bg-red-500/20 border border-red-500/50 rounded p-3">
+              <p className="text-red-100 text-center text-sm">{error}</p>
+            </div>
+          )}
 
           <div>
             <label className="block text-white mb-1">Email Address</label>
