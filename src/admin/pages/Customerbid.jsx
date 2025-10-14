@@ -58,24 +58,24 @@ export const Customerbid = () => {
     }
   };
 
-  const handleSubmitBid = async () => {
-    if (!currentUser) {
-      toast.error("Please log in first");
-      return;
-    }
-    try {
-      const res = await axios.post(
-        `${BASE_URL}/customer/startBidding`,
-        bidAmount
-      );
-      console.log(res.data);
-      toast.success("Your bid has been added successfully!");
-      setBidAmount(initialState);
-      setIsOpen(true);
-    } catch (error) {
-      console.log(error);
-    }
-  };
+  // const handleSubmitBid = async () => {
+  //   if (!currentUser) {
+  //     toast.error("Please log in first");
+  //     return;
+  //   }
+  //   try {
+  //     const res = await axios.post(
+  //       `${BASE_URL}/customer/startBidding`,
+  //       bidAmount
+  //     );
+  //     console.log(res.data);
+  //     toast.success("Your bid has been added successfully!");
+  //     setBidAmount(initialState);
+  //     setIsOpen(true);
+  //   } catch (error) {
+  //     console.log(error);
+  //   }
+  // };
 
   useEffect(() => {
     handleGetPrice();

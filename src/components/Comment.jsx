@@ -10,6 +10,8 @@ import { CountdownCircleTimer } from "react-countdown-circle-timer";
 
 const LiveCommentsModal = ({ isOpen, setIsOpen }) => {
   const [allCustomerBid, setAllCustomerBid] = useState([]);
+
+  console.log("=>>>>", allCustomerBid);
   const { currentUser } = useSelector((state) => state.auth);
   const userId = currentUser?.id;
   const { id: vehicleId } = useParams();
@@ -269,27 +271,29 @@ const LiveCommentsModal = ({ isOpen, setIsOpen }) => {
         </div>
 
         <div className="flex-1 overflow-y-auto p-4 space-y-3 bg-gray-50">
-          {allCustomerBid.length === 0 ? (
+          {allCustomerBid.filter((bid) => bid.role !== "admin").length === 0 ? (
             <p className="text-gray-400 text-center mt-10">No bids yet...</p>
           ) : (
-            allCustomerBid.map((bid, i) => (
-              <div
-                key={i}
-                className="bg-white rounded-lg shadow-sm border border-gray-200 p-3 hover:shadow-md transition"
-              >
-                <div className="flex justify-between items-center">
-                  <span className="font-semibold text-[#233D7B]">
-                    {bid.name || "Anonymous"}
-                  </span>
-                  <span className="text-xs text-gray-500">
-                    {moment(bid.createdAt).format("hh:mm A")}
-                  </span>
+            allCustomerBid
+              .filter((bid) => bid.role !== "admin")
+              .map((bid, i) => (
+                <div
+                  key={i}
+                  className="bg-white rounded-lg shadow-sm border border-gray-200 p-3 hover:shadow-md transition"
+                >
+                  <div className="flex justify-between items-center">
+                    <span className="font-semibold text-[#233D7B]">
+                      {bid.name || "Anonymous"}
+                    </span>
+                    <span className="text-xs text-gray-500">
+                      {moment(bid.createdAt).format("hh:mm A")}
+                    </span>
+                  </div>
+                  <p className="text-xl font-bold text-green-700">
+                    PKR {bid.maxBid}
+                  </p>
                 </div>
-                <p className="text-xl font-bold text-green-700">
-                  PKR {bid.maxBid}
-                </p>
-              </div>
-            ))
+              ))
           )}
           <div ref={commentsEndRef} className="h-0" />
         </div>
