@@ -44,6 +44,10 @@ const Navbar = () => {
   const [showCityDropdown, setShowCityDropdown] = useState(false);
   const [showGenderDropdown, setShowGenderDropdown] = useState(false);
 
+  // ✅ FIXED: Separate states for image file and preview
+  const [imageFile, setImageFile] = useState(null);
+  const [imagePreview, setImagePreview] = useState("");
+
   // Password form state
   const [passwordForm, setPasswordForm] = useState({
     currentPassword: "",
@@ -61,14 +65,12 @@ const Navbar = () => {
     username: currentUser?.name || "",
     email: currentUser?.email || "",
     mobileNumber: currentUser?.contact || "",
-    profileImage: currentUser?.profileImage || "",
     cnic: currentUser?.cnic || "",
     role: currentUser?.role || "",
   });
 
   // Options lists
   const countries = ["Pakistan"];
-
   const genders = ["Male", "Female", "Other"];
 
   const handleGetAllCity = async () => {
@@ -93,16 +95,20 @@ const Navbar = () => {
     gender.toLowerCase().includes(genderSearch.toLowerCase())
   );
 
-  // Handle image upload
+  // ✅ FIXED: Handle image upload with separate file and preview
   const handleImageChange = (e) => {
-    const file = e.target.files[0];
-    if (file) {
-      const reader = new FileReader();
-      reader.onloadend = () => {
-        setProfileForm((prev) => ({ ...prev, profileImage: reader.result }));
-      };
-      reader.readAsDataURL(file);
-    }
+    const file = e.target.files?.[0];
+    if (!file) return;
+
+    // Store the actual file for upload
+    setImageFile(file);
+
+    // Create preview immediately
+    const reader = new FileReader();
+    reader.onloadend = () => {
+      setImagePreview(reader.result);
+    };
+    reader.readAsDataURL(file);
   };
 
   // Handle password form changes
@@ -139,29 +145,54 @@ const Navbar = () => {
   };
 
   // Handle password submission
-  const handlePasswordSubmit = (e) => {
+  const handlePasswordSubmit = async (e) => {
     e.preventDefault();
     if (passwordForm.newPassword !== passwordForm.confirmPassword) {
-      alert("New password and confirm password do not match!");
+      await Swal.fire({
+        title: "Error!",
+        text: "New password and confirm password do not match!",
+        icon: "error",
+        confirmButtonColor: "#9333ea",
+      });
       return;
     }
-    console.log("Password change submitted:", passwordForm);
-    setPasswordModalOpen(false);
-    setPasswordForm({
-      currentPassword: "",
-      newPassword: "",
-      confirmPassword: "",
-    });
+    try {
+      const res = await axios.put(
+        `${BASE_URL}/updatePassword/${currentUser?.id}`,
+        {
+          password: passwordForm.newPassword,
+        }
+      );
+      setPasswordForm({
+        currentPassword: "",
+        newPassword: "",
+        confirmPassword: "",
+      });
+      await Swal.fire({
+        title: "Success!",
+        text: "Password changed successfully!",
+        icon: "success",
+        confirmButtonColor: "#9333ea",
+      });
+      setPasswordModalOpen(false);
+    } catch (error) {
+      console.log(error);
+      await Swal.fire({
+        title: "Error!",
+        text: "Failed to change password. Please try again.",
+        icon: "error",
+        confirmButtonColor: "#9333ea",
+      });
+    }
   };
 
-  // Handle profile submission
-
+  // ✅ FIXED: Handle profile submission with actual file upload
   const handleProfileSubmit = async (e) => {
     e.preventDefault();
     try {
       const formData = new FormData();
 
-      // ✅ Append all text fields
+      // Append all text fields
       formData.append("name", profileForm.name);
       formData.append("gender", profileForm.gender);
       formData.append("dateOfBirth", profileForm.dateOfBirth);
@@ -173,12 +204,12 @@ const Navbar = () => {
       formData.append("role", profileForm.role);
       formData.append("cnic", profileForm.cnic);
 
-      // ✅ Append image only if user selected a new one
-      if (profileForm.image && profileForm.image instanceof File) {
-        formData.append("image", profileForm.image);
+      // ✅ Append the actual file if user selected a new one
+      if (imageFile) {
+        formData.append("image", imageFile);
       }
 
-      // ✅ Send request
+      // Send request
       const res = await axios.put(
         `${BASE_URL}/admin/updateRegisterUsers/${currentUser?.id}`,
         formData,
@@ -190,24 +221,36 @@ const Navbar = () => {
       );
 
       console.log("Profile updated:", res.data);
-      setProfileModalOpen(false);
+
+      // ✅ Update Redux state with new user data
       dispatch(authSuccess(res.data));
+
+      // ✅ Update image preview with new URL from backend
+      if (res.data.image || res.data.imageUrl || res.data.profileImage) {
+        setImagePreview(res.data.image || res.data.imageUrl || res.data.profileImage);
+      }
+
+      // ✅ Clear the file state
+      setImageFile(null);
+
       await Swal.fire({
         title: "Success!",
-        text: "The User has been updated successfully.",
+        text: "Profile updated successfully!",
         icon: "success",
         confirmButtonColor: "#9333ea",
       });
+      setProfileModalOpen(false);
     } catch (error) {
       console.error("Error updating profile:", error);
       await Swal.fire({
         title: "Error!",
-        text: "Something went wrong.",
+        text: "Failed to update profile. Please try again.",
         icon: "error",
         confirmButtonColor: "#9333ea",
       });
     }
   };
+
   const handleLogout = () => {
     localStorage.clear();
     dispatch(logOut());
@@ -219,7 +262,14 @@ const Navbar = () => {
     setDropdownOpen((prev) => !prev);
   };
 
-  // Initialize search fields when modal opens
+  // ✅ FIXED: Update imagePreview when currentUser changes (after login or profile update)
+  useEffect(() => {
+    if (currentUser?.image || currentUser?.imageUrl || currentUser?.profileImage) {
+      setImagePreview(currentUser?.image || currentUser?.imageUrl || currentUser?.profileImage);
+    }
+  }, [currentUser]);
+
+  // ✅ FIXED: Initialize search fields and image preview when modal opens
   useEffect(() => {
     if (profileModalOpen) {
       setCountrySearch(profileForm.country);
@@ -230,8 +280,16 @@ const Navbar = () => {
               profileForm.gender.slice(1)
           : ""
       );
+      // Reset image preview to current user's image when modal opens
+      setImagePreview(
+        currentUser?.image || 
+        currentUser?.imageUrl || 
+        currentUser?.profileImage || 
+        ""
+      );
+      setImageFile(null);
     }
-  }, [profileModalOpen]);
+  }, [profileModalOpen, currentUser]);
 
   useEffect(() => {
     handleGetAllCity();
@@ -240,25 +298,21 @@ const Navbar = () => {
   // Outside click detection for all dropdowns
   useEffect(() => {
     function handleClickOutside(event) {
-      // Close profile dropdown
       if (dropdownRef.current && !dropdownRef.current.contains(event.target)) {
         setDropdownOpen(false);
       }
-      // Close country dropdown
       if (
         countryDropdownRef.current &&
         !countryDropdownRef.current.contains(event.target)
       ) {
         setShowCountryDropdown(false);
       }
-      // Close city dropdown
       if (
         cityDropdownRef.current &&
         !cityDropdownRef.current.contains(event.target)
       ) {
         setShowCityDropdown(false);
       }
-      // Close gender dropdown
       if (
         genderDropdownRef.current &&
         !genderDropdownRef.current.contains(event.target)
@@ -284,7 +338,6 @@ const Navbar = () => {
     } else {
       document.body.style.overflow = "auto";
     }
-    // Cleanup on component unmount
     return () => {
       document.body.style.overflow = "auto";
     };
@@ -441,16 +494,17 @@ const Navbar = () => {
                 onClick={toggleDropdown}
                 className="flex items-center gap-2 focus:outline-none group"
               >
-                {currentUser?.profileImage ? (
+                {/* ✅ FIXED: Show actual profile image or fallback to icon */}
+                {currentUser?.image || currentUser?.imageUrl || currentUser?.profileImage ? (
                   <img
-                    src={currentUser.profileImage}
+                    src={currentUser?.image || currentUser?.imageUrl || currentUser?.profileImage}
                     alt="Profile"
-                    className="w-10 h-10 rounded-full object-cover"
+                    className="w-10 h-10 rounded-full object-cover border-2 border-gray-300 group-hover:border-red-600 transition-colors duration-300"
                   />
                 ) : (
                   <FaUserCircle
                     size={40}
-                    className="text-gray-700 group-hover:text-blue-600 transition-colors duration-300"
+                    className="text-gray-700 group-hover:text-red-600 transition-colors duration-300"
                   />
                 )}
               </button>
@@ -606,9 +660,10 @@ const Navbar = () => {
           {isAuthenticated ? (
             <div className="pt-4 border-t border-white text-sm">
               <div className="flex items-center gap-2 mb-4">
-                {currentUser?.profileImage ? (
+                {/* ✅ FIXED: Show profile image in mobile menu */}
+                {currentUser?.image || currentUser?.imageUrl || currentUser?.profileImage ? (
                   <img
-                    src={currentUser.profileImage}
+                    src={currentUser?.image || currentUser?.imageUrl || currentUser?.profileImage}
                     alt="Profile"
                     className="w-8 h-8 rounded-full object-cover"
                   />
@@ -740,9 +795,10 @@ const Navbar = () => {
             <div className="flex justify-center mb-6">
               <div className="relative">
                 <div className="w-32 h-32 rounded-full bg-gray-200 flex items-center justify-center overflow-hidden">
-                  {profileForm.profileImage ? (
+                  {/* ✅ FIXED: Use imagePreview state for immediate preview */}
+                  {imagePreview ? (
                     <img
-                      src={profileForm.profileImage}
+                      src={imagePreview}
                       alt="Profile"
                       className="w-full h-full object-cover"
                     />
