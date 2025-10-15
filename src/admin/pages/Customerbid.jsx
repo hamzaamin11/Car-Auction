@@ -7,6 +7,7 @@ import { useSelector } from "react-redux";
 import { toast, ToastContainer } from "react-toastify";
 import LiveCommentsModal from "../../components/Comment";
 import moment from "moment";
+import { io } from "socket.io-client";
 
 export const Customerbid = () => {
   const { currentUser } = useSelector((state) => state.auth);
@@ -17,23 +18,16 @@ export const Customerbid = () => {
   const { id } = useParams();
   const vehicleId = id;
 
-  const initialState = {
-    vehicleId,
-    userId,
-    maxBid: "",
-  };
-
-  const [bidAmount, setBidAmount] = useState(initialState);
   const [selectedPrice, setSelectedPrice] = useState(null);
 
-  const currentDate = new Date().toISOString().slice(0, 10);
-  const selectedDate = selectedPrice?.endTime?.slice(0, 10);
-  const imageList = selectedPrice?.images || [];
+  // Socket and bid states
+  const [allCustomerBid, setAllCustomerBid] = useState([]);
+  const [socket, setSocket] = useState(null);
+  const [remainingTime, setRemainingTime] = useState(0);
+  const [phase, setPhase] = useState("loading");
+  const [key, setKey] = useState(0);
 
-  const handleChange = (e) => {
-    const { name, value } = e.target;
-    setBidAmount({ ...bidAmount, [name]: value });
-  };
+  const imageList = selectedPrice?.images || [];
 
   useEffect(() => {
     if (imageList.length > 0) setViewImage(imageList[0]);
@@ -58,24 +52,158 @@ export const Customerbid = () => {
     }
   };
 
-  // const handleSubmitBid = async () => {
-  //   if (!currentUser) {
-  //     toast.error("Please log in first");
-  //     return;
-  //   }
-  //   try {
-  //     const res = await axios.post(
-  //       `${BASE_URL}/customer/startBidding`,
-  //       bidAmount
-  //     );
-  //     console.log(res.data);
-  //     toast.success("Your bid has been added successfully!");
-  //     setBidAmount(initialState);
-  //     setIsOpen(true);
-  //   } catch (error) {
-  //     console.log(error);
-  //   }
-  // };
+  const handleGetallBid = async () => {
+    try {
+      const res = await axios.get(
+        `${BASE_URL}/admin/bidsPlacedById/${vehicleId}`
+      );
+      console.log("📋 Fetched bids:", res.data);
+      setAllCustomerBid(res.data);
+    } catch (error) {
+      console.error("❌ Error fetching bids:", error);
+    }
+  };
+
+  const handleSubmitBid = async (bidAmount) => {
+    try {
+      const response = await axios.post(
+        `${BASE_URL}/customer/startBidding`,
+        bidAmount
+      );
+      console.log("✅ Bid submitted:", response.data);
+
+      // Refresh bids immediately after submission
+      setTimeout(() => {
+        handleGetallBid();
+      }, 500);
+    } catch (error) {
+      console.error("❌ Bid submission failed:", error);
+      throw error;
+    }
+  };
+
+  // SOCKET CONNECTION - STAYS ACTIVE EVEN WHEN MODAL IS CLOSED
+  useEffect(() => {
+    console.log("🔌 Initializing socket connection for vehicle:", vehicleId);
+
+    const newSocket = io("http://localhost:3001", {
+      transports: ["websocket"],
+      withCredentials: true,
+      reconnection: true,
+      reconnectionAttempts: 5,
+      reconnectionDelay: 1000,
+    });
+
+    newSocket.on("connect", () => {
+      console.log("✅ Socket connected:", newSocket.id);
+      console.log("📡 Joining room for vehicle:", vehicleId);
+      newSocket.emit("joinVehicleRoom", { vehicleId });
+    });
+
+    // Listen for bidUpdate event
+    newSocket.on("bidUpdate", (data) => {
+      console.log("📥 Received bidUpdate event:", data);
+
+      // Check if the vehicleId matches (handle both string and number)
+      if (data.vehicleId == vehicleId) {
+        console.log("✅ VehicleId matches, processing bid");
+        setAllCustomerBid((prev) => {
+          // Avoid duplicates by checking if bid already exists
+          const bidExists = prev.some(
+            (bid) =>
+              bid.id === data.latestBid.id ||
+              (bid.createdAt === data.latestBid.createdAt &&
+                bid.maxBid === data.latestBid.maxBid &&
+                bid.userId === data.latestBid.userId)
+          );
+
+          if (bidExists) {
+            console.log("⚠️ Bid already exists, skipping");
+            return prev;
+          }
+
+          console.log("✅ Adding new bid to list:", data.latestBid);
+          return [...prev, data.latestBid];
+        });
+      } else {
+        console.log("⚠️ VehicleId mismatch:", data.vehicleId, "vs", vehicleId);
+      }
+    });
+
+    // Listen for ANY event (for debugging)
+    newSocket.onAny((eventName, ...args) => {
+      console.log("🎯 Received socket event:", eventName, args);
+    });
+
+    newSocket.on("disconnect", () => {
+      console.log("❌ Socket disconnected");
+    });
+
+    newSocket.on("connect_error", (error) => {
+      console.error("🔥 Socket connection error:", error);
+    });
+
+    newSocket.on("error", (error) => {
+      console.error("🔥 Socket error:", error);
+    });
+
+    setSocket(newSocket);
+    handleGetallBid();
+
+    return () => {
+      console.log("🧹 Cleaning up socket connection");
+      newSocket.emit("leaveVehicleRoom", { vehicleId });
+      newSocket.off("bidUpdate");
+      newSocket.off("connect");
+      newSocket.off("disconnect");
+      newSocket.off("error");
+      newSocket.off("connect_error");
+      newSocket.offAny();
+      newSocket.disconnect();
+    };
+  }, [vehicleId]);
+
+  // POLLING FALLBACK - Check for new bids every 3 seconds
+  useEffect(() => {
+    console.log("⏰ Starting polling mechanism");
+    const pollingInterval = setInterval(() => {
+      console.log("🔄 Polling for new bids...");
+      handleGetallBid();
+    }, 3000); // Poll every 3 seconds
+
+    return () => {
+      console.log("⏰ Stopping polling mechanism");
+      clearInterval(pollingInterval);
+    };
+  }, [vehicleId]);
+
+  // TIMER LOGIC
+  useEffect(() => {
+    if (!allCustomerBid[0]?.startTime || !allCustomerBid[0]?.endTime) {
+      console.log("⏰ Missing startTime or endTime:", allCustomerBid[0]);
+      return;
+    }
+
+    const start = moment(allCustomerBid[0].startTime).unix();
+    const end = moment(allCustomerBid[0].endTime).unix();
+    const now = moment().unix();
+
+    if (now < start) {
+      setPhase("before");
+      setRemainingTime(start - now);
+      console.log("⏳ Auction starts in:", start - now, "seconds");
+    } else if (now >= start && now <= end) {
+      setPhase("running");
+      setRemainingTime(end - now);
+      console.log("🏃 Auction running, ends in:", end - now, "seconds");
+    } else {
+      setPhase("ended");
+      setRemainingTime(0);
+      console.log("🏁 Auction ended");
+    }
+
+    setKey((prev) => prev + 1);
+  }, [allCustomerBid]);
 
   useEffect(() => {
     handleGetPrice();
@@ -214,7 +342,17 @@ export const Customerbid = () => {
         </div>
       </div>
 
-      {isOpen && <LiveCommentsModal isOpen={isOpen} setIsOpen={setIsOpen} />}
+      {isOpen && (
+        <LiveCommentsModal
+          isOpen={isOpen}
+          setIsOpen={setIsOpen}
+          allCustomerBid={allCustomerBid}
+          onSubmitBid={handleSubmitBid}
+          phase={phase}
+          remainingTime={remainingTime}
+          timerKey={key}
+        />
+      )}
       <ToastContainer />
     </div>
   );
