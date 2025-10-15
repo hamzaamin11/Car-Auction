@@ -657,7 +657,7 @@ const Navbar = () => {
             </div>
           ))}
 
-          {isAuthenticated ? (
+          {currentUser ? (
             <div className="pt-4 border-t border-white text-sm">
               <div className="flex items-center gap-2 mb-4">
                 {/* ✅ FIXED: Show profile image in mobile menu */}
@@ -692,8 +692,7 @@ const Navbar = () => {
               </button>
               <button
                 onClick={() => {
-                  logout();
-                  setMenuOpen(false);
+                  handleLogout()
                 }}
                 className="block w-full text-left py-1 text-white hover:underline"
               >
