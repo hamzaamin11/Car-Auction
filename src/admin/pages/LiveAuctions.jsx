@@ -25,6 +25,8 @@ export default function LiveAuctions() {
   const [selectedAuctionId, setSelectedAuctionId] = useState(null);
   const [allLiveAuction, setAllLiveAuction] = useState([]);
   const [filteredAuctions, setFilteredAuctions] = useState([]);
+
+  console.log(filteredAuctions.length);
   const [search, setSearch] = useState("");
   const [loading, setLoading] = useState(false);
 
@@ -187,8 +189,12 @@ export default function LiveAuctions() {
                             className="w-16 h-16 object-cover rounded"
                           />
                         </td>
-                        <td className="px-4 py-3 text-gray-700">{user?.make}</td>
-                        <td className="px-4 py-3 text-gray-700">{user?.model}</td>
+                        <td className="px-4 py-3 text-gray-700">
+                          {user?.make}
+                        </td>
+                        <td className="px-4 py-3 text-gray-700">
+                          {user?.model}
+                        </td>
                         <td className="px-4 py-3 text-gray-700">
                           {user?.vehicleCondition}
                         </td>
@@ -217,7 +223,9 @@ export default function LiveAuctions() {
                     className="bg-white rounded-xl shadow-md border border-gray-200 p-4 cursor-pointer hover:shadow-lg hover:border-indigo-300 hover:bg-indigo-50/30 transition-all duration-300"
                   >
                     <div className="flex justify-between items-center mb-3">
-                      <span className="text-gray-900 font-bold">Owner Name</span>
+                      <span className="text-gray-900 font-bold">
+                        Owner Name
+                      </span>
                       <span className="text-gray-500">{user?.name}</span>
                     </div>
                     <div className="space-y-2 text-sm">
@@ -230,7 +238,9 @@ export default function LiveAuctions() {
                         </span>
                       </p>
                       <p className="flex justify-between">
-                        <span className="text-gray-900 font-bold">Condition</span>
+                        <span className="text-gray-900 font-bold">
+                          Condition
+                        </span>
                         <span className="text-gray-500">
                           {user?.vehicleCondition}
                         </span>
@@ -239,10 +249,14 @@ export default function LiveAuctions() {
                         <span className="text-gray-900 font-bold">
                           Demand Price
                         </span>
-                        <span className="text-gray-500">{user?.sellerOffer}</span>
+                        <span className="text-gray-500">
+                          {user?.sellerOffer}
+                        </span>
                       </p>
                       <p className="flex justify-between">
-                        <span className="text-gray-900 font-bold">End Time</span>
+                        <span className="text-gray-900 font-bold">
+                          End Time
+                        </span>
                         <span className="text-gray-500">
                           {user.endTime
                             ? moment(user.endTime).local().format("hh:mm A")
@@ -279,7 +293,7 @@ export default function LiveAuctions() {
               <div></div>
               <button
                 className={`bg-blue-950 text-white px-5 py-2 rounded ${
-                  filteredAuctions.length === 0 ? "hidden" : "block"
+                  filteredAuctions.length === 10 ? "block" : "hidden"
                 }`}
                 onClick={handleNextPage}
               >

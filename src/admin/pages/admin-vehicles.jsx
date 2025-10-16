@@ -318,6 +318,12 @@ function AddAdminVehicle({ open, setOpen, onVehicleUpdated }) {
       setShowModal(false);
       setLoading(false);
       toast.success("Vehicle Added successfully");
+      await Swal.fire({
+        title: "Success!",
+        text: "Vehicle Added successfully",
+        icon: "success",
+        confirmButtonColor: "#9333ea",
+      });
     } catch (error) {
       toast.error(error?.response?.data?.message || "An error occurred");
       console.log(error);

@@ -222,28 +222,33 @@ export const Customerbid = () => {
       <div className="grid lg:grid-cols-3 gap-8">
         {/* LEFT: IMAGE SLIDER */}
         <div className="col-span-2 bg-white rounded-xl shadow-md p-4 relative">
-          <div className="relative w-full h-[500px] rounded-lg overflow-hidden">
+          {/* Image container */}
+          <div className="relative w-full h-[350px] sm:h-[400px] md:h-[450px] lg:h-[500px] rounded-lg overflow-hidden">
             <img
               src={viewImage || "/images/AudiQ2.jpg"}
               alt="Vehicle"
-              className="w-full h-full object-cover"
+              className="w-full h-full object-cover transition-all duration-500 hover:scale-105"
             />
+
+            {/* Left Arrow */}
             <button
               onClick={handlePreviousImage}
-              className="absolute top-1/2 left-4 transform -translate-y-1/2 bg-black/50 text-white p-3 rounded-full hover:bg-black transition"
+              className="absolute top-1/2 left-3 sm:left-4 transform -translate-y-1/2 bg-black/50 text-white p-2 sm:p-3 rounded-full hover:bg-black transition"
             >
-              <FaArrowLeft size={18} />
+              <FaArrowLeft size={16} />
             </button>
+
+            {/* Right Arrow */}
             <button
               onClick={handleNextImage}
-              className="absolute top-1/2 right-4 transform -translate-y-1/2 bg-black/50 text-white p-3 rounded-full hover:bg-black transition"
+              className="absolute top-1/2 right-3 sm:right-4 transform -translate-y-1/2 bg-black/50 text-white p-2 sm:p-3 rounded-full hover:bg-black transition"
             >
-              <FaArrowRight size={18} />
+              <FaArrowRight size={16} />
             </button>
           </div>
 
           {/* Thumbnails */}
-          <div className="flex justify-center gap-3 mt-4 overflow-x-auto pb-2">
+          <div className="flex justify-center gap-2 sm:gap-3 mt-4 overflow-x-auto pb-2 scrollbar-thin scrollbar-thumb-gray-400">
             {imageList.map((img, idx) => (
               <img
                 key={idx}
@@ -253,7 +258,7 @@ export const Customerbid = () => {
                   setViewImage(img);
                   setIndexImage(idx);
                 }}
-                className={`w-24 h-20 object-cover rounded-md cursor-pointer border-4 transition ${
+                className={`w-20 h-16 sm:w-24 sm:h-20 object-cover rounded-md cursor-pointer border-4 transition ${
                   viewImage === img
                     ? "border-[#233D7B]"
                     : "border-gray-300 hover:border-gray-500"
@@ -262,9 +267,7 @@ export const Customerbid = () => {
             ))}
           </div>
         </div>
-
-        {/* RIGHT: VEHICLE + BID DETAILS */}
-        <div className="col-span-1 space-y-6">
+        <div className="col-span-1 space-y-6 hidden lg:block">
           {/* Vehicle Details Card */}
           <div className="bg-white rounded-xl shadow-md p-6">
             <h2 className="text-xl font-bold text-[#233D7B] mb-3 border-b pb-2">
@@ -339,6 +342,84 @@ export const Customerbid = () => {
               </button>
             )}
           </div>
+        </div>
+
+        {/* RIGHT: VEHICLE + BID DETAILS */}
+      </div>
+      <div className="col-span-1 space-y-6 lg:hidden block">
+        {/* Vehicle Details Card */}
+        <div className="bg-white rounded-xl shadow-md p-6">
+          <h2 className="text-xl font-bold text-[#233D7B] mb-3 border-b pb-2">
+            Vehicle Details
+          </h2>
+          <ul className="space-y-2 text-sm text-gray-700">
+            <li>
+              <strong>Year:</strong> {selectedPrice?.year}
+            </li>
+            <li>
+              <strong>Make:</strong> {selectedPrice?.make}
+            </li>
+            <li>
+              <strong>Model:</strong> {selectedPrice?.model}
+            </li>
+            <li>
+              <strong>Body Style:</strong> {selectedPrice?.bodyStyle}
+            </li>
+            <li>
+              <strong>Transmission:</strong> {selectedPrice?.transmission}
+            </li>
+            <li>
+              <strong>Drive:</strong> {selectedPrice?.driveType}
+            </li>
+            <li>
+              <strong>Fuel:</strong> {selectedPrice?.fuelType}
+            </li>
+            <li>
+              <strong>Color:</strong> {selectedPrice?.color || "Gray"}
+            </li>
+          </ul>
+        </div>
+
+        {/* Bid Section */}
+        <div className="bg-white rounded-xl shadow-md p-6 border-t-4 border-[#233D7B]">
+          <h2 className="text-xl font-bold text-[#233D7B] mb-3 border-b pb-2">
+            Bid Detail
+          </h2>
+
+          <p className="text-sm mb-2">
+            <strong>Bid Date:</strong>{" "}
+            {selectedPrice?.startTime
+              ? selectedPrice.startTime.slice(0, 10)
+              : "Coming Soon"}
+          </p>
+          <p className="text-sm mb-2">
+            <strong>Start Time:</strong>{" "}
+            {(selectedPrice?.startTime &&
+              moment(selectedPrice?.startTime).local().format("hh:mm A")) ||
+              "N/A"}
+          </p>
+          <p className="text-sm mb-4">
+            <strong>End Time:</strong>{" "}
+            {(selectedPrice?.endTime &&
+              moment(selectedPrice?.endTime).local().format("hh:mm A")) ||
+              "N/A"}
+          </p>
+
+          <p className="text-xl font-bold mb-4">
+            Demand Price:{" "}
+            <span className="text-green-700">
+              PKR {selectedPrice?.buyNowPrice?.toLocaleString()}
+            </span>
+          </p>
+
+          {selectedPrice?.auctionStatus !== "end" && currentUser && (
+            <button
+              onClick={() => setIsOpen(true)}
+              className="w-full bg-[#233D7B] hover:bg-[#1a2f63] text-white py-3 rounded-lg font-semibold transition-all"
+            >
+              Start Bidding
+            </button>
+          )}
         </div>
       </div>
 

@@ -14,50 +14,20 @@ import { BASE_URL } from "../../components/Contant/URL";
 import Card from "../../components/AdminCardComponent/Card";
 import { MdBrandingWatermark } from "react-icons/md";
 
-const barData = [
-  { name: "Jan", sales: 300 },
-  { name: "Feb", sales: 450 },
-  { name: "Mar", sales: 700 },
-  { name: "Apr", sales: 500 },
-  { name: "May", sales: 750 },
-];
-
-const pieData = [
-  { name: "Sold", value: 75 },
-  { name: "Unsold", value: 25 },
-];
-
-const pieColors = ["#34D399", "#F87171"];
-
-const initialBids = [
-  { id: 1, vehicle: "Toyota Corolla", bidder: "Ali", amount: "$5,000" },
-  { id: 2, vehicle: "Honda Civic", bidder: "Ahmed", amount: "$7,200" },
-  { id: 3, vehicle: "Suzuki WagonR", bidder: "Sara", amount: "$4,500" },
-];
-
 const Dashboard = () => {
-  const [bids, setBids] = useState(initialBids);
-  const [newBid, setNewBid] = useState({ vehicle: "", bidder: "", amount: "" });
   const [loading, setLoading] = useState(false);
   const [totalVehicles, setTotalVehicles] = useState({});
   const [allBrands, setAllBrands] = useState([]);
+  const [unapprovelVehicles, setUnapprovelVehicles] = useState([]);
   const [allModels, setAllModels] = useState([]);
   const [allSeries, setAllSeries] = useState([]);
+  const [allPartners, setAllPartners] = useState([]);
+  const [allSuggestions, setAllSuggestions] = useState([]);
+  const [contactMembers, setContactMembers] = useState([]);
+  const [allCities, setAllCities] = useState([]);
   const [liveAuctions, setLiveAuctions] = useState({});
   const [upcomingBid, setUpcompingBid] = useState({});
   const [totalCustomers, setTotalCustomers] = useState({});
-
-  const handleDelete = (id) => {
-    setBids(bids.filter((bid) => bid.id !== id));
-  };
-
-  const handleAddBid = () => {
-    if (newBid.vehicle && newBid.bidder && newBid.amount) {
-      const newId = bids.length ? Math.max(...bids.map((b) => b.id)) + 1 : 1;
-      setBids([...bids, { id: newId, ...newBid }]);
-      setNewBid({ vehicle: "", bidder: "", amount: "" });
-    }
-  };
 
   const handleGetAllVehicle = async () => {
     setLoading(true);
@@ -89,10 +59,37 @@ const Dashboard = () => {
     }
   };
 
+  const handleGetSuggestions = async () => {
+    try {
+      const res = await axios.get(`${BASE_URL}/admin/getSuggestions`);
+      setAllSuggestions(res.data);
+    } catch (error) {
+      console.log(error);
+    }
+  };
+
+  const handleGetAllPartners = async () => {
+    try {
+      const res = await axios.get(`${BASE_URL}/admin/getPartner`);
+      setAllPartners(res.data);
+    } catch (error) {
+      console.log(error);
+    }
+  };
+
   const handleGetCustomers = async () => {
     try {
       const res = await axios.get(`${BASE_URL}/customer/totalBuyers`);
       setTotalCustomers(res.data);
+    } catch (error) {
+      console.log(error);
+    }
+  };
+
+  const handleGetAllUnapprovelVehicles = async () => {
+    try {
+      const res = await axios.get(`${BASE_URL}/getUnApprovedVehicles`);
+      setUnapprovelVehicles(res.data);
     } catch (error) {
       console.log(error);
     }
@@ -128,6 +125,25 @@ const Dashboard = () => {
     }
   };
 
+  const handleGetContactUs = async () => {
+    try {
+      const res = await axios.get(`${BASE_URL}/admin/getContactUs`);
+      setContactMembers(res.data);
+    } catch (error) {
+      console.log(error);
+    }
+  };
+
+  const handleGetALLCities = async () => {
+    try {
+      const res = await axios.get(`${BASE_URL}/getCitites`);
+
+      setAllCities(res.data);
+    } catch (error) {
+      console.log(error);
+    }
+  };
+
   useEffect(() => {
     handleGetAllVehicle();
     handleGetAllLiveAuction();
@@ -136,6 +152,11 @@ const Dashboard = () => {
     handleGetAllBrands();
     handleGetAllModels();
     handleGetAllSeries();
+    handleGetAllUnapprovelVehicles();
+    handleGetSuggestions();
+    handleGetAllPartners();
+    handleGetContactUs();
+    handleGetALLCities();
   }, []);
 
   return (
@@ -178,6 +199,14 @@ const Dashboard = () => {
         {/* Mobile-Only Cards */}
         <div className="lg:hidden grid grid-cols-2 gap-6">
           <Card
+            title={"Approval Vehicle"}
+            totalData={unapprovelVehicles.length}
+            color={"bg-blue-200"}
+            icon={<FaCarSide size={28} />}
+            path={"/admin/approval"}
+          />
+
+          <Card
             title={"Bid History"}
             totalData={totalVehicles.totalVehicles}
             color={"bg-blue-200"}
@@ -207,28 +236,28 @@ const Dashboard = () => {
           />
           <Card
             title={"Suggestions"}
-            totalData={0} // Placeholder, update with actual data if available
+            totalData={allSuggestions.length} // Placeholder, update with actual data if available
             color={"bg-blue-200"}
             icon={<FaEnvelope size={28} />}
             path={"/admin/suggestionlist"}
           />
           <Card
             title={"Partnership Opportunities"}
-            totalData={0} // Placeholder, update with actual data if available
+            totalData={allPartners.length} // Placeholder, update with actual data if available
             color={"bg-blue-200"}
             icon={<FaHandshake size={28} />}
             path={"/admin/becomepartnerlist"}
           />
           <Card
             title={"Get in Touch"}
-            totalData={0} // Placeholder, update with actual data if available
+            totalData={contactMembers.length} // Placeholder, update with actual data if available
             color={"bg-blue-200"}
             icon={<FaEnvelope size={28} />}
             path={"/admin/contactlist"}
           />
           <Card
             title={"Add City"}
-            totalData={0} // Placeholder, update with actual data if available
+            totalData={allCities.length} // Placeholder, update with actual data if available
             color={"bg-blue-200"}
             icon={<FaCity size={28} />}
             path={"/admin/city"}

@@ -48,7 +48,10 @@ export const BecomePartnerList = () => {
   // Pagination logic
   const indexOfLastItem = currentPage * itemsPerPage;
   const indexOfFirstItem = indexOfLastItem - itemsPerPage;
-  const currentItems = filteredPartners.slice(indexOfFirstItem, indexOfLastItem);
+  const currentItems = filteredPartners.slice(
+    indexOfFirstItem,
+    indexOfLastItem
+  );
   const totalPages = Math.ceil(filteredPartners.length / itemsPerPage);
 
   const handleNextPage = () => {
@@ -129,13 +132,16 @@ export const BecomePartnerList = () => {
                       <td className="py-2 px-4 whitespace-nowrap">
                         {indexOfFirstItem + index + 1}
                       </td>
-                      <td className="py-2 px-4 whitespace-nowrap">
+                      <td className="py-2 px-4 whitespace-nowrap ">
                         {msg?.name.charAt(0).toUpperCase() + msg?.name.slice(1)}
                       </td>
-                      <td className="py-2 px-4 whitespace-nowrap">
-                        {msg?.email.charAt(0).toUpperCase() + msg?.email.slice(1)}
+                      <td className="py-2 px-4 whitespace-nowrap text-xs">
+                        {msg?.email.charAt(0).toUpperCase() +
+                          msg?.email.slice(1)}
                       </td>
-                      <td className="py-2 px-4 whitespace-nowrap">{msg?.contact}</td>
+                      <td className="py-2 px-4 whitespace-nowrap">
+                        {msg?.contact}
+                      </td>
                       <td className="py-2 px-4 whitespace-nowrap">
                         {msg?.bussinessType.charAt(0).toUpperCase() +
                           msg?.bussinessType.slice(1)}
@@ -177,9 +183,10 @@ export const BecomePartnerList = () => {
                       </span>
                     </p>
                     <p className="flex justify-between">
-                      <span className="font-bold text-gray-900">Email</span>
-                      <span className="text-gray-700">
-                        {msg?.email.charAt(0).toUpperCase() + msg?.email.slice(1)}
+                      <span className="font-bold text-gray-900 ">Email</span>
+                      <span className="text-gray-700 text-xs">
+                        {msg?.email.charAt(0).toUpperCase() +
+                          msg?.email.slice(1)}
                       </span>
                     </p>
                     <p className="flex justify-between">
@@ -187,7 +194,9 @@ export const BecomePartnerList = () => {
                       <span className="text-gray-700">{msg?.contact}</span>
                     </p>
                     <p className="flex justify-between">
-                      <span className="font-bold text-gray-900">Business Type</span>
+                      <span className="font-bold text-gray-900">
+                        Business Type
+                      </span>
                       <span className="text-gray-700">
                         {msg?.bussinessType.charAt(0).toUpperCase() +
                           msg?.bussinessType.slice(1)}
@@ -226,7 +235,9 @@ export const BecomePartnerList = () => {
               <div></div>
               <button
                 className={`bg-blue-950 text-white px-5 py-2 rounded ${
-                  currentPage === totalPages ? "opacity-50 cursor-not-allowed" : ""
+                  currentPage === totalPages
+                    ? "opacity-50 cursor-not-allowed"
+                    : ""
                 }`}
                 onClick={handleNextPage}
                 disabled={currentPage === totalPages}

@@ -222,7 +222,7 @@ const CarSelector = ({ handleIsOpenToggle }) => {
 
       {/* Mobile Back & Done Buttons */}
       {window.innerWidth < 768 ? (
-        <div className="flex justify-between p-4 bg-gray-50">
+        <div className="flex justify-between p-4 mb-4 bg-gray-50">
           {/* Back Button (only if not on first step) */}
           {activeStep > 0 && (
             <button
