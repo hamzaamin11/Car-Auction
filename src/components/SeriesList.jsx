@@ -50,6 +50,7 @@ export const SeriesList = () => {
   };
 
   const handleDeleteBrand = async (id) => {
+    console.log("id =>", id);
     const result = await Swal.fire({
       title: "Are you sure?",
       text: "This vehicle will be deleted.",
@@ -65,9 +66,20 @@ export const SeriesList = () => {
       const res = await axios.patch(`${BASE_URL}/deleteSeries/${id}`);
       console.log(res.data);
       handleGetAllSeries();
-      toast.success("Series has been deleted successfully");
+      await Swal.fire({
+        title: "delete!",
+        text: "The series has been delete successfully.",
+        icon: "delete",
+        confirmButtonColor: "#9333ea",
+      });
     } catch (error) {
       console.log(error);
+      await Swal.fire({
+        title: "error!",
+        text: "Something went wrong!",
+        icon: "error",
+        confirmButtonColor: "#9333ea",
+      });
     }
   };
 
@@ -184,7 +196,7 @@ export const SeriesList = () => {
                     Edit
                   </button>
                   <button
-                    onClick={() => handleDeleteBrand(series?.id)}
+                    onClick={() => handleDeleteBrand(series?.seriesId)}
                     className="px-3 py-1 text-sm border border-red-600 text-red-600 rounded-md hover:bg-red-600 hover:text-white transition"
                   >
                     Delete
@@ -205,21 +217,27 @@ export const SeriesList = () => {
           >
             <div className="space-y-2">
               <div className="flex flex-col">
-                <span className="text-xs text-gray-500 font-medium">Make Name</span>
+                <span className="text-xs text-gray-500 font-medium">
+                  Make Name
+                </span>
                 <span className="text-sm font-semibold text-gray-800">
                   {series.brandName}
                 </span>
               </div>
-              
+
               <div className="flex flex-col">
-                <span className="text-xs text-gray-500 font-medium">Model Name</span>
+                <span className="text-xs text-gray-500 font-medium">
+                  Model Name
+                </span>
                 <span className="text-sm font-semibold text-gray-800">
                   {series.modelName}
                 </span>
               </div>
-              
+
               <div className="flex flex-col">
-                <span className="text-xs text-gray-500 font-medium">Model Series</span>
+                <span className="text-xs text-gray-500 font-medium">
+                  Model Series
+                </span>
                 <span className="text-sm font-semibold text-gray-800">
                   {series.seriesName.charAt(0).toUpperCase() +
                     series.seriesName.slice(1)}
@@ -277,7 +295,7 @@ export const SeriesList = () => {
         >
           ‹ Prev
         </button>
-        
+
         <button
           className={`bg-blue-950 text-white px-4 sm:px-5 py-2 rounded-md text-sm sm:text-base font-medium transition hover:bg-blue-900 ${
             allSeries.length === 0 ? "invisible" : "block"
@@ -289,7 +307,7 @@ export const SeriesList = () => {
       </div>
 
       <ToastContainer position="top-right" autoClose={3000} />
-      
+
       {isOpen === "Add" && (
         <AddSeries
           handleClose={() => handleToggleModal("")}

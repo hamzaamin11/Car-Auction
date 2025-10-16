@@ -6,6 +6,7 @@ import { useSelector } from "react-redux";
 import Select from "react-select";
 import CarSelector from "../../components/CarSelector";
 import axios from "axios";
+import Swal from "sweetalert2";
 
 const bodyStyles = [
   "Convertible",
@@ -325,12 +326,22 @@ function EditAdminVehicle({
       }
 
       const data = await response.json();
-      toast.success("Vehicle updated successfully!");
+      await Swal.fire({
+        title: "Success!",
+        text: "Vehicle Added successfully",
+        icon: "success",
+        confirmButtonColor: "#9333ea",
+      });
       onVehicleUpdated();
       setOpen(false);
       setLoading(false);
     } catch (error) {
-      toast.error(error.message);
+      await Swal.fire({
+        title: "Error",
+        text: error?.response?.data?.message || "Something went wrong!",
+        icon: "error",
+        confirmButtonColor: "#9333ea",
+      });
       console.error("Update error:", error);
     } finally {
       setLoading(false);

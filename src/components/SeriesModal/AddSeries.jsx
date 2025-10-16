@@ -3,6 +3,7 @@ import React, { useEffect, useState } from "react";
 import { BASE_URL } from "../Contant/URL";
 import { toast, ToastContainer } from "react-toastify";
 import Select from "react-select";
+import Swal from "sweetalert2";
 
 const initialState = {
   brandId: "",
@@ -58,14 +59,23 @@ export const AddSeries = ({ handleClose, handleGetAllSeries }) => {
     try {
       const res = await axios.post(`${BASE_URL}/addSeries`, formData);
 
-      console.log(res.data);
-      toast.success("Series has been added successfully");
       setFormData(initialState);
       handleClose();
       handleGetAllSeries();
+      await Swal.fire({
+        title: "Success!",
+        text: "The series has been added successfully.",
+        icon: "success",
+        confirmButtonColor: "#9333ea",
+      });
     } catch (error) {
       console.log(error);
-      toast.error("Something went wrong");
+      await Swal.fire({
+        title: "error",
+        text: "Something went wrong!",
+        icon: "success",
+        confirmButtonColor: "#9333ea",
+      });
     } finally {
       setLoading(false);
     }

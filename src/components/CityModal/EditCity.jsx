@@ -2,6 +2,7 @@ import axios from "axios";
 import React, { useState } from "react";
 import { BASE_URL } from "../Contant/URL";
 import { toast, ToastContainer } from "react-toastify";
+import Swal from "sweetalert2";
 
 export const EditCityModal = ({
   handleClose,

@@ -317,7 +317,6 @@ function AddAdminVehicle({ open, setOpen, onVehicleUpdated }) {
       handleGetVehicles();
       setShowModal(false);
       setLoading(false);
-      toast.success("Vehicle Added successfully");
       await Swal.fire({
         title: "Success!",
         text: "Vehicle Added successfully",
@@ -325,7 +324,12 @@ function AddAdminVehicle({ open, setOpen, onVehicleUpdated }) {
         confirmButtonColor: "#9333ea",
       });
     } catch (error) {
-      toast.error(error?.response?.data?.message || "An error occurred");
+      await Swal.fire({
+        title: "Error",
+        text: error?.response?.data?.message || "Something went wrong!",
+        icon: "error",
+        confirmButtonColor: "#9333ea",
+      });
       console.log(error);
       setLoading(false);
     }
@@ -590,7 +594,6 @@ function AddAdminVehicle({ open, setOpen, onVehicleUpdated }) {
                     <option value="">Select Vehicle Condition</option>
                     <option value="new">New</option>
                     <option value="used">Used</option>
-                    <option value="accidented">Accidented</option>
                   </select>
                 </div>
                 <div>
