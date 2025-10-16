@@ -6,6 +6,7 @@ import { useParams } from "react-router-dom";
 import { toast } from "react-toastify";
 import moment from "moment";
 import { CountdownCircleTimer } from "react-countdown-circle-timer";
+import Swal from "sweetalert2";
 
 const LiveCommentsModal = ({
   isOpen,
@@ -22,6 +23,7 @@ const LiveCommentsModal = ({
 
   const initialState = { vehicleId, userId, maxBid: "" };
   const [bidAmount, setBidAmount] = useState(initialState);
+  const [loading, setLoading] = useState(false);
   const commentsEndRef = useRef(null);
 
   const handleChange = (e) => {
@@ -68,13 +70,33 @@ const LiveCommentsModal = ({
     if (!bidAmount.maxBid || bidAmount.maxBid.length < 5)
       return toast.error("Please enter a bid with at least 5 digits.");
     if (phase !== "running") return toast.error("Bidding is not active!");
+    
+    setLoading(true);
     try {
       await onSubmitBid(bidAmount);
       setBidAmount(initialState);
-      toast.success("Your bid has been added successfully!");
+      setLoading(false);
+      
+      // Show SweetAlert success message
+      Swal.fire({
+        icon: "success",
+        title: "Bid Placed!",
+        text: "Your bid has been added successfully.",
+        confirmButtonColor: "#2563eb",
+        confirmButtonText: "OK",
+      });
     } catch (error) {
       console.error("Bid submission error:", error);
-      toast.error("Failed to add bid!");
+      setLoading(false);
+      
+      // Show SweetAlert error message
+      Swal.fire({
+        icon: "error",
+        title: "Failed!",
+        text: "Failed to add bid. Please try again.",
+        confirmButtonColor: "#2563eb",
+        confirmButtonText: "OK",
+      });
     }
   };
 
@@ -187,14 +209,36 @@ const LiveCommentsModal = ({
             }}
             placeholder="Enter bid amount"
             className="flex-1 border border-gray-300 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-600"
-            disabled={phase !== "running"}
+            disabled={phase !== "running" || loading}
           />
           <button
             type="submit"
-            disabled={phase !== "running"}
-            className="bg-blue-600 hover:bg-blue-700 text-white text-sm font-semibold px-5 py-2 rounded-lg transition-all duration-200 disabled:opacity-50"
+            disabled={phase !== "running" || loading}
+            className="bg-blue-600 hover:bg-blue-700 text-white text-sm font-semibold px-5 py-2 rounded-lg transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed flex items-center gap-2"
           >
-            Place Bid
+            {loading && (
+              <svg
+                className="animate-spin h-4 w-4 text-white"
+                xmlns="http://www.w3.org/2000/svg"
+                fill="none"
+                viewBox="0 0 24 24"
+              >
+                <circle
+                  className="opacity-25"
+                  cx="12"
+                  cy="12"
+                  r="10"
+                  stroke="currentColor"
+                  strokeWidth="4"
+                ></circle>
+                <path
+                  className="opacity-75"
+                  fill="currentColor"
+                  d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"
+                ></path>
+              </svg>
+            )}
+            {loading ? "Placing..." : "Place Bid"}
           </button>
         </form>
 
