@@ -495,91 +495,99 @@ const Navbar = () => {
           </li>
         </ul>
         {/* Profile Dropdown */}
-        <div className="hidden md:flex gap-4 relative" ref={dropdownRef}>
-          {currentUser ? (
-            <div className="relative">
-              <button
-                onClick={toggleDropdown}
-                className="flex items-center gap-2 focus:outline-none group"
-              >
-                {/* ✅ FIXED: Show actual profile image or fallback to icon */}
-                {currentUser?.image ||
-                currentUser?.imageUrl ||
-                currentUser?.profileImage ? (
-                  <img
-                    src={
-                      currentUser?.image ||
-                      currentUser?.imageUrl ||
-                      currentUser?.profileImage
-                    }
-                    alt="Profile"
-                    className="w-10 h-10 rounded-full object-cover border-2 border-gray-300 group-hover:border-red-600 transition-colors duration-300"
-                  />
-                ) : (
-                  <FaUserCircle
-                    size={40}
-                    className="text-gray-700 group-hover:text-red-600 transition-colors duration-300"
-                  />
-                )}
-              </button>
+   <div className="hidden md:flex gap-4 relative" ref={dropdownRef}>
+  {currentUser ? (
+    <div className="relative">
+      <button
+        onClick={toggleDropdown}
+        className="flex items-center gap-2 focus:outline-none group"
+      >
+        {currentUser?.image ||
+        currentUser?.imageUrl ||
+        currentUser?.profileImage ? (
+          <img
+            src={
+              currentUser?.image ||
+              currentUser?.imageUrl ||
+              currentUser?.profileImage
+            }
+            alt="Profile"
+            className="w-10 h-10 rounded-full object-cover border-2 border-gray-300 group-hover:border-red-600 transition-colors duration-300"
+          />
+        ) : (
+          <FaUserCircle
+            size={40}
+            className="text-gray-700 group-hover:text-red-600 transition-colors duration-300"
+          />
+        )}
+      </button>
 
-              <div
-                className={`absolute right-0 mt-2 w-44 bg-white rounded-md shadow-lg overflow-hidden transition-all duration-300 ease-in-out ${
-                  dropdownOpen
-                    ? "max-h-96 opacity-100 scale-100"
-                    : "max-h-0 opacity-0 scale-95 pointer-events-none"
-                }`}
-              >
-                <div className="px-4 py-3 border-b border-gray-200">
-                  <p className="text-sm text-gray-600">Signed in as</p>
-                  <p className="text-sm font-medium text-gray-800 truncate">
-                    {currentUser?.name || "--"}
-                  </p>
-                </div>
-                <div
-                  onClick={() => {
-                    setPasswordModalOpen(true);
-                    setDropdownOpen(false);
-                  }}
-                  className="flex items-center gap-2 px-4 py-3 text-gray-600 hover:bg-gray-100 cursor-pointer transition-colors duration-200"
-                >
-                  <span className="text-sm font-semibold">Change Password</span>
-                </div>
-                <div
-                  onClick={() => {
-                    setProfileModalOpen(true);
-                    setDropdownOpen(false);
-                  }}
-                  className="flex items-center gap-2 px-4 py-3 text-gray-600 hover:bg-gray-100 cursor-pointer transition-colors duration-200"
-                >
-                  <span className="text-sm font-semibold">Manage Profile</span>
-                </div>
-                <div
-                  onClick={handleLogout}
-                  className="flex items-center gap-2 px-4 py-3 text-red-600 hover:bg-gray-100 cursor-pointer transition-colors duration-200"
-                >
-                  <AiOutlineLogout size={20} />
-                  <span className="text-sm font-semibold">Logout</span>
-                </div>
-              </div>
-            </div>
-          ) : (
-            <>
-              <Link
-                to="/register"
-                className="flex items-center gap-1 hover:text-red-600"
-              >
-                <FaUser /> Register
-              </Link>
-              <Link
-                to="/login"
-                className="flex items-center gap-1 hover:text-red-600"
-              >
-                <FaSignInAlt /> Signin
-              </Link>
-            </>
-          )}
+      <div
+        className={`absolute right-0 mt-2 w-44 bg-white rounded-md shadow-lg overflow-hidden transition-all duration-300 ease-in-out ${
+          dropdownOpen
+            ? "max-h-96 opacity-100 scale-100"
+            : "max-h-0 opacity-0 scale-95 pointer-events-none"
+        }`}
+      >
+        <div className="px-4 py-3 border-b border-gray-200">
+          <p className="text-sm text-gray-600">Signed in as</p>
+          <p className="text-sm font-medium text-gray-800 truncate">
+            {currentUser?.name || "--"}
+          </p>
         </div>
+        <div
+          onClick={() => {
+            setPasswordModalOpen(true);
+            setDropdownOpen(false);
+          }}
+          className="flex items-center gap-2 px-4 py-3 text-gray-600 hover:bg-gray-100 cursor-pointer transition-colors duration-200"
+        >
+          <span className="text-sm font-semibold">Change Password</span>
+        </div>
+        <div
+          onClick={() => {
+            setProfileModalOpen(true);
+            setDropdownOpen(false);
+          }}
+          className="flex items-center gap-2 px-4 py-3 text-gray-600 hover:bg-gray-100 cursor-pointer transition-colors duration-200"
+        >
+          <span className="text-sm font-semibold">Manage Profile</span>
+        </div>
+        <div
+          onClick={() => {
+            navigate("/soldVehicles");
+            setDropdownOpen(false);
+          }}
+          className="flex items-center gap-2 px-4 py-3 text-gray-600 hover:bg-gray-100 cursor-pointer transition-colors duration-200"
+        >
+          <span className="text-sm font-semibold">Sold Vehicles</span>
+        </div>
+        <div
+          onClick={handleLogout}
+          className="flex items-center gap-2 px-4 py-3 text-red-600 hover:bg-gray-100 cursor-pointer transition-colors duration-200"
+        >
+          <AiOutlineLogout size={20} />
+          <span className="text-sm font-semibold">Logout</span>
+        </div>
+      </div>
+    </div>
+  ) : (
+    <>
+      <Link
+        to="/register"
+        className="flex items-center gap-1 hover:text-red-600"
+      >
+        <FaUser /> Register
+      </Link>
+      <Link
+        to="/login"
+        className="flex items-center gap-1 hover:text-red-600"
+      >
+        <FaSignInAlt /> Signin
+      </Link>
+    </>
+  )}
+</div>
 
         {/* Mobile Toggle */}
         <div className="md:hidden">
@@ -710,6 +718,7 @@ const Navbar = () => {
               >
                 Manage Profile
               </button>
+              <button className="block w-full text-left py-1 text-white hover:underline"> </button>
               <button
                 onClick={() => {
                   handleLogout();

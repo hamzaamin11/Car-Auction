@@ -1,13 +1,13 @@
 import React, { useContext, useEffect, useState, useCallback } from "react";
-import AuctionsContext from "../../context/AuctionsContext";
+import AuctionsContext from "../context/AuctionsContext.jsx";
 import { IoMdClose } from "react-icons/io";
 import { TiTick } from "react-icons/ti";
 import { debounce } from "lodash";
 import moment from "moment";
 import axios from "axios";
-import { BASE_URL } from "../../components/Contant/URL";
-
-const AdminBidHistory = () => {
+import { BASE_URL } from "../components/Contant/URL";
+import Navbar from "../components/Navbar.jsx";
+const SoldVehicles = () => {
   const { aucHistory } = useContext(AuctionsContext);
   const [allBiders, setAllBiders] = useState([]);
   const [filteredBiders, setFilteredBiders] = useState([]);
@@ -17,7 +17,7 @@ const AdminBidHistory = () => {
   const itemsPerPage = 10;
 
   // modal states
-  const [selectedCustomer, setSelectedCustomer] = useState(null);
+  
   const [selectedVehicle, setSelectedVehicle] = useState(null);
   const [currentImageIndex, setCurrentImageIndex] = useState(0);
 
@@ -79,9 +79,10 @@ const AdminBidHistory = () => {
 
   return (
     <>
+      
       <div className="min-h-screen bg-gray-50 p-1 md:p-6">
         <div className="flex flex-col sm:flex-row justify-between items-center gap-4 mb-6 px-3">
-          <h1 className="text-2xl md:text-3xl font-bold text-gray-800">
+          <h1 className="text-2xl md:text-3xl font-bold text-gray-800 px-5">
             Sold Vehicles
           </h1>
           <div className="relative w-full max-w-md">
@@ -105,7 +106,7 @@ const AdminBidHistory = () => {
               type="text"
               placeholder="Search by Make or Model..."
               onChange={(e) => debouncedSearch(e.target.value)}
-              className="w-full pl-10 pr-4 py-2 rounded-md border border-gray-300 shadow-sm placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500"
+              className="w-full pl-12  py-2 rounded-md border border-gray-300 shadow-sm placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500"
             />
           </div>
         </div>
@@ -120,9 +121,8 @@ const AdminBidHistory = () => {
               <table className="min-w-full divide-y divide-gray-200">
                 <thead className="bg-[#191970] text-white">
                   <tr>
-                    <th className="px-6 py-3 text-sm font-semibold">SR#</th>
-                    <th className="px-6 py-3 text-left text-sm font-semibold">
-                      Customer Name
+                   <th className="px-6 py-3 text-left text-sm font-semibold">
+                      Serial
                     </th>
                     <th className="px-6 py-3 text-left text-sm font-semibold">
                       Vehicle
@@ -168,14 +168,7 @@ const AdminBidHistory = () => {
                           className="hover:bg-gray-50 transition cursor-default"
                         >
                           <td className="text-center">{indexOfFirstItem + index + 1}</td>
-                          <td
-                            onClick={() =>
-                              setSelectedCustomer({ name, contact, cnic, address , email})
-                            }
-                            className="px-6 py-4 whitespace-nowrap text-sm text-gray-700 cursor-pointer hover:text-blue-600"
-                          >
-                            {name}
-                          </td>
+                        
                           <td
                             onClick={() => {
                               setSelectedVehicle({
@@ -283,17 +276,7 @@ const AdminBidHistory = () => {
                         </span>
                       </div>
                       <div className="space-y-2 text-sm">
-                        <p className="flex justify-between">
-                          <span className="text-gray-900 font-bold">Customer</span>
-                          <span
-                            onClick={() =>
-                              setSelectedCustomer({ name, contact, cnic, address })
-                            }
-                            className="text-gray-800 cursor-pointer underline"
-                          >
-                            {name}
-                          </span>
-                        </p>
+                       
                         <p className="flex justify-between">
                           <span className="text-gray-900 font-bold">Vehicle</span>
                           <span
@@ -354,59 +337,7 @@ const AdminBidHistory = () => {
           </>
         )}
 
-        {/* Customer Details Modal */}
-        {selectedCustomer && (
-          <div className="fixed inset-0 z-50 flex items-center justify-center bg-blur backdrop-blur-md p-4">
-            <div className="bg-white rounded-2xl shadow-2xl w-full max-w-3xl max-h-[90vh] overflow-y-auto relative">
-              <div className="sticky top-0 bg-white z-10 px-6 py-4 border-b flex justify-between items-center">
-                <h2 className="text-2xl md:text-3xl font-bold text-[#191970]">
-                  Customer Details
-                </h2>
-                <button
-                  className="text-black hover:text-red-500 p-2 rounded-full shadow-md"
-                  onClick={() => setSelectedCustomer(null)}
-                >
-                  <IoMdClose size={20} />
-                </button>
-              </div>
-
-              <div className="p-6">
-                <div className="grid grid-cols-2 gap-6">
-                  <div>
-                    <p className="text-sm text-gray-500">Name:</p>
-                    <p className="font-semibold text-gray-900">
-                      {selectedCustomer.name}
-                    </p>
-                  </div>
-                  <div>
-                    <p className="text-sm text-gray-500">Contact:</p>
-                    <p className="font-semibold text-gray-900">
-                      {selectedCustomer.contact || "N/A"}
-                    </p>
-                  </div>
-                  <div>
-                    <p className="text-sm text-gray-500">EMAIL:</p>
-                    <p className="font-semibold text-gray-900">
-                      {selectedCustomer.email || "N/A"}
-                    </p>
-                  </div>
-                    <div>
-                    <p className="text-sm text-gray-500">CNIC:</p>
-                    <p className="font-semibold text-gray-900">
-                      {selectedCustomer.cnic || "N/A"}
-                    </p>
-                  </div>
-                  <div>
-                    <p className="text-sm text-gray-500">Address:</p>
-                    <p className="font-semibold text-gray-900">
-                      {selectedCustomer.address || "N/A"}
-                    </p>
-                  </div>
-                </div>
-              </div>
-            </div>
-          </div>
-        )}
+      
 
         {/* Vehicle Details Modal */}
         {selectedVehicle && (
@@ -633,4 +564,4 @@ const AdminBidHistory = () => {
   );
 };
 
-export default AdminBidHistory;
+export default SoldVehicles;
