@@ -227,7 +227,9 @@ const Navbar = () => {
 
       // ✅ Update image preview with new URL from backend
       if (res.data.image || res.data.imageUrl || res.data.profileImage) {
-        setImagePreview(res.data.image || res.data.imageUrl || res.data.profileImage);
+        setImagePreview(
+          res.data.image || res.data.imageUrl || res.data.profileImage
+        );
       }
 
       // ✅ Clear the file state
@@ -264,8 +266,14 @@ const Navbar = () => {
 
   // ✅ FIXED: Update imagePreview when currentUser changes (after login or profile update)
   useEffect(() => {
-    if (currentUser?.image || currentUser?.imageUrl || currentUser?.profileImage) {
-      setImagePreview(currentUser?.image || currentUser?.imageUrl || currentUser?.profileImage);
+    if (
+      currentUser?.image ||
+      currentUser?.imageUrl ||
+      currentUser?.profileImage
+    ) {
+      setImagePreview(
+        currentUser?.image || currentUser?.imageUrl || currentUser?.profileImage
+      );
     }
   }, [currentUser]);
 
@@ -282,10 +290,10 @@ const Navbar = () => {
       );
       // Reset image preview to current user's image when modal opens
       setImagePreview(
-        currentUser?.image || 
-        currentUser?.imageUrl || 
-        currentUser?.profileImage || 
-        ""
+        currentUser?.image ||
+          currentUser?.imageUrl ||
+          currentUser?.profileImage ||
+          ""
       );
       setImageFile(null);
     }
@@ -495,9 +503,15 @@ const Navbar = () => {
                 className="flex items-center gap-2 focus:outline-none group"
               >
                 {/* ✅ FIXED: Show actual profile image or fallback to icon */}
-                {currentUser?.image || currentUser?.imageUrl || currentUser?.profileImage ? (
+                {currentUser?.image ||
+                currentUser?.imageUrl ||
+                currentUser?.profileImage ? (
                   <img
-                    src={currentUser?.image || currentUser?.imageUrl || currentUser?.profileImage}
+                    src={
+                      currentUser?.image ||
+                      currentUser?.imageUrl ||
+                      currentUser?.profileImage
+                    }
                     alt="Profile"
                     className="w-10 h-10 rounded-full object-cover border-2 border-gray-300 group-hover:border-red-600 transition-colors duration-300"
                   />
@@ -661,9 +675,15 @@ const Navbar = () => {
             <div className="pt-4 border-t border-white text-sm">
               <div className="flex items-center gap-2 mb-4">
                 {/* ✅ FIXED: Show profile image in mobile menu */}
-                {currentUser?.image || currentUser?.imageUrl || currentUser?.profileImage ? (
+                {currentUser?.image ||
+                currentUser?.imageUrl ||
+                currentUser?.profileImage ? (
                   <img
-                    src={currentUser?.image || currentUser?.imageUrl || currentUser?.profileImage}
+                    src={
+                      currentUser?.image ||
+                      currentUser?.imageUrl ||
+                      currentUser?.profileImage
+                    }
                     alt="Profile"
                     className="w-8 h-8 rounded-full object-cover"
                   />
@@ -692,7 +712,7 @@ const Navbar = () => {
               </button>
               <button
                 onClick={() => {
-                  handleLogout()
+                  handleLogout();
                 }}
                 className="block w-full text-left py-1 text-white hover:underline"
               >
@@ -791,10 +811,9 @@ const Navbar = () => {
             <h2 className="text-2xl font-semibold mb-6">My Profile</h2>
 
             {/* Profile Picture */}
-            <div className="flex justify-center mb-6">
+            <div className="flex flex-col items-center mb-6">
               <div className="relative">
                 <div className="w-32 h-32 rounded-full bg-gray-200 flex items-center justify-center overflow-hidden">
-                  {/* ✅ FIXED: Use imagePreview state for immediate preview */}
                   {imagePreview ? (
                     <img
                       src={imagePreview}
@@ -805,6 +824,7 @@ const Navbar = () => {
                     <FaUserCircle size={128} className="text-gray-400" />
                   )}
                 </div>
+
                 <input
                   type="file"
                   id="profileImageInput"
@@ -827,8 +847,12 @@ const Navbar = () => {
                   </svg>
                 </label>
               </div>
-            </div>
 
+              {/* Name below image */}
+              <div className="text-center mt-1 text-lg font-bold text-gray-800">
+                {currentUser.name}
+              </div>
+            </div>
             <div className="bg-red-50 border border-red-200 rounded-md p-3 mb-6">
               <p className="text-sm text-red-600">
                 Picture can be changed. Select an image to update your profile
@@ -839,8 +863,8 @@ const Navbar = () => {
             <div>
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                 {/* Full Name */}
-                <div className="mb-4">
-                  <label className="block text-sm font-medium text-gray-700 mb-2">
+                <div className="">
+                  <label className="block text-sm font-medium text-gray-700">
                     Full Name
                   </label>
                   <input
@@ -853,23 +877,25 @@ const Navbar = () => {
                   />
                 </div>
 
-                <div className="mb-4">
-                  <label className="block text-sm font-medium text-gray-700 mb-2">
+                <div className="">
+                  <label className="block text-sm font-medium text-gray-700 ">
                     CNIC
                   </label>
                   <input
-                    type="number"
+                    type="tel"
                     name="cnic"
                     value={profileForm.cnic}
+                    placeholder=""
                     onChange={handleProfileChange}
                     className="p-2.5 w-full border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
                     required
+                    maxLength={15}
                   />
                 </div>
 
                 {/* Gender - Searchable */}
-                <div className="mb-4 relative" ref={genderDropdownRef}>
-                  <label className="block text-sm font-medium text-gray-700 mb-2">
+                <div className=" relative" ref={genderDropdownRef}>
+                  <label className="block text-sm font-medium text-gray-700">
                     Gender
                   </label>
                   <input
@@ -899,8 +925,8 @@ const Navbar = () => {
                 </div>
 
                 {/* Date of Birth */}
-                <div className="mb-4">
-                  <label className="block text-sm font-medium text-gray-700 mb-2">
+                <div className="">
+                  <label className="block text-sm font-medium text-gray-700">
                     Date of Birth
                   </label>
                   <input
@@ -914,8 +940,8 @@ const Navbar = () => {
                 </div>
 
                 {/* Country - Searchable */}
-                <div className="mb-4 relative" ref={countryDropdownRef}>
-                  <label className="block text-sm font-medium text-gray-700 mb-2">
+                <div className=" relative" ref={countryDropdownRef}>
+                  <label className="block text-sm font-medium text-gray-700">
                     Country
                   </label>
                   <input
@@ -945,8 +971,8 @@ const Navbar = () => {
                 </div>
 
                 {/* City - Searchable */}
-                <div className="mb-4 relative" ref={cityDropdownRef}>
-                  <label className="block text-sm font-medium text-gray-700 mb-2">
+                <div className=" relative" ref={cityDropdownRef}>
+                  <label className="block text-sm font-medium text-gray-700">
                     City
                   </label>
                   <input
@@ -976,8 +1002,8 @@ const Navbar = () => {
                 </div>
 
                 {/* Username */}
-                <div className="mb-4">
-                  <label className="block text-sm font-medium text-gray-700 mb-2">
+                <div className="">
+                  <label className="block text-sm font-medium text-gray-700 ">
                     Username
                   </label>
                   <input
@@ -992,8 +1018,8 @@ const Navbar = () => {
               </div>
 
               {/* Email - Full Width */}
-              <div className="mb-4">
-                <label className="block text-sm font-medium text-gray-700 mb-2">
+              <div className="my-3">
+                <label className="block text-sm font-medium text-gray-700">
                   Email
                 </label>
                 <input
@@ -1007,7 +1033,7 @@ const Navbar = () => {
 
               {/* Mobile Number - Full Width */}
               <div className="mb-6">
-                <label className="block text-sm font-medium text-gray-700 mb-2">
+                <label className="block text-sm font-medium text-gray-700 ">
                   Mobile Number
                 </label>
                 <div className="flex gap-2">
@@ -1016,15 +1042,10 @@ const Navbar = () => {
                     name="mobileNumber"
                     value={profileForm.mobileNumber}
                     onChange={handleProfileChange}
-                    placeholder="Add Mobile Number"
+                    placeholder="+9200000000000"
                     className="p-2.5 flex-1 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                    maxLength={13}
                   />
-                  <button
-                    type="button"
-                    className="px-4 py-2 bg-blue-950 text-white rounded-md"
-                  >
-                    Add Number
-                  </button>
                 </div>
               </div>
 

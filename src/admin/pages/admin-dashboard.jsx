@@ -28,17 +28,27 @@ const Dashboard = () => {
   const [liveAuctions, setLiveAuctions] = useState({});
   const [upcomingBid, setUpcompingBid] = useState({});
   const [totalCustomers, setTotalCustomers] = useState({});
+  const [bidHistory, setBidHistory] = useState([]);
 
   const handleGetAllVehicle = async () => {
     setLoading(true);
     try {
-      const res = await axios.get(`${BASE_URL}/customer/totalVehicles`);
+      const res = await axios.get(`${BASE_URL}/getApprovedVehicles`);
       setTotalVehicles(res?.data);
       setLoading(false);
     } catch (error) {
       console.log(error);
     }
     setLoading(false);
+  };
+
+  const handleGetBidHistory = async () => {
+    try {
+      const res = await axios.get(`${BASE_URL}/admin/bidsForAdmin`);
+      setBidHistory(res.data);
+    } catch (error) {
+      console.log(error);
+    }
   };
 
   const handleGetAllLiveAuction = async () => {
@@ -157,6 +167,7 @@ const Dashboard = () => {
     handleGetAllPartners();
     handleGetContactUs();
     handleGetALLCities();
+    handleGetBidHistory();
   }, []);
 
   return (
@@ -167,21 +178,21 @@ const Dashboard = () => {
         {/* Summary Stats (Desktop and Mobile) */}
         <div className="grid grid-cols-2 lg:grid-cols-4 gap-6">
           <Card
-            title={"Total Vehicles"}
-            totalData={totalVehicles.totalVehicles}
+            title={"Approval Vehicles"}
+            totalData={totalVehicles.length}
             color={"bg-blue-200"}
             icon={<FaCarSide size={28} />}
             path={"/admin/vehicles"}
           />
           <Card
-            title={"Live Auction"}
+            title={"Live Auctions"}
             totalData={liveAuctions.totalLiveAuctions}
             color={"bg-blue-200"}
             icon={<FaGavel size={28} />}
             path={"/admin/live-auctions"}
           />
           <Card
-            title={"Upcoming Auction"}
+            title={"Upcoming Auctions"}
             totalData={upcomingBid.totalUpcomingAuctions}
             color={"bg-blue-200"}
             icon={<FaCalendarAlt size={28} />}
@@ -199,7 +210,7 @@ const Dashboard = () => {
         {/* Mobile-Only Cards */}
         <div className="lg:hidden grid grid-cols-2 gap-6">
           <Card
-            title={"Approval Vehicle"}
+            title={"Non-Approval Vehicles"}
             totalData={unapprovelVehicles.length}
             color={"bg-blue-200"}
             icon={<FaCarSide size={28} />}
@@ -208,7 +219,7 @@ const Dashboard = () => {
 
           <Card
             title={"Bid History"}
-            totalData={totalVehicles.totalVehicles}
+            totalData={bidHistory.length}
             color={"bg-blue-200"}
             icon={<FaHistory size={28} />}
             path={"/admin/bid-history"}

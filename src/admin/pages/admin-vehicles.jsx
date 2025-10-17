@@ -91,6 +91,7 @@ function AddAdminVehicle({ open, setOpen, onVehicleUpdated }) {
   const [editModalOpen, setEditModalOpen] = useState(false);
   const [viewModal, setViewModal] = useState(false);
   const [search, setSearch] = useState("");
+
   const [selectedVehicle, setSelectedVehicle] = useState(null);
   const [actionMenuOpen, setActionMenuOpen] = useState(null);
   const [pageNo, setPageNo] = useState(1);
@@ -188,7 +189,7 @@ function AddAdminVehicle({ open, setOpen, onVehicleUpdated }) {
   const handleGetVehicles = async () => {
     try {
       const res = await axios.get(
-        `${BASE_URL}/getApprovedVehicles?page=${pageNo}&entry=${10}`
+        `${BASE_URL}/getApprovedVehicles?page=${pageNo}&entry=${10}?search=${search}`
       );
       setAllVehicles(res.data);
     } catch (error) {
@@ -319,7 +320,7 @@ function AddAdminVehicle({ open, setOpen, onVehicleUpdated }) {
       setLoading(false);
       await Swal.fire({
         title: "Success!",
-        text: "Vehicle Added successfully",
+        text: "Vehicle Added successfully.",
         icon: "success",
         confirmButtonColor: "#9333ea",
       });
@@ -697,7 +698,7 @@ function AddAdminVehicle({ open, setOpen, onVehicleUpdated }) {
                   <button
                     type="submit"
                     disabled={loading}
-                    className="bg-indigo-600 text-white px-5 py-2 rounded-lg shadow-md hover:bg-indigo-700 transition"
+                    className="bg-[#191970] text-white px-5 py-2 rounded-lg shadow-md hover:bg-indigo-700 transition"
                   >
                     {loading ? "loading..." : "Submit Vehicle"}
                   </button>
@@ -945,7 +946,7 @@ function AddAdminVehicle({ open, setOpen, onVehicleUpdated }) {
 
       <div className="flex justify-between mt-6 px-2 sm:px-4">
         <button
-          className={`bg-blue-950 text-white px-5 py-2 rounded  ${
+          className={`bg-[#191970] text-white px-5 py-2 rounded  ${
             pageNo > 1 ? "block" : "hidden"
           }`}
           onClick={handlePrevPage}
@@ -954,8 +955,8 @@ function AddAdminVehicle({ open, setOpen, onVehicleUpdated }) {
         </button>
         <div></div>
         <button
-          className={`bg-blue-950 text-white px-5 py-2 rounded ${
-            allVehicles.length === 0 ? "hidden" : "block"
+          className={`bg-[#191970] text-white px-5 py-2 rounded ${
+            allVehicles.length === 10 ? "block" : "hidden"
           }`}
           onClick={handleNextPage}
         >

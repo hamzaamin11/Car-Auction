@@ -91,7 +91,7 @@ export const AdminUpdatebid = ({
         >
           <MdClose size={24} />
         </button>
-        <h2 className="text-lg font-semibold mb-4 text-[#233D7B]">
+        <h2 className="text-lg font-bold mb-4 text-gray-800]">
           Update Vehicle Bid
         </h2>
 

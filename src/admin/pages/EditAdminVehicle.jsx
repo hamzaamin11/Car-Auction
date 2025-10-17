@@ -586,8 +586,6 @@ function EditAdminVehicle({
 
           {/* Image Upload */}
 
-          {<img src={vehicle} />}
-
           {/* Submit Button */}
           <div className="col-span-1 sm:col-span-2 mt-4">
             <div className="mb-6">

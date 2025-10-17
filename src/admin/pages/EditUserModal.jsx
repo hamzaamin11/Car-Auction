@@ -183,6 +183,7 @@ const EditUserModal = ({ Open, setOpen, selectedUser }) => {
                         onChange={handleChange}
                         className="mt-1 w-full rounded-xl border border-gray-300 p-3 focus:outline-none focus:ring-2 focus:ring-blue-500"
                         placeholder="+123456789"
+                        maxLength={13}
                       />
                     </div>
 
@@ -202,7 +203,7 @@ const EditUserModal = ({ Open, setOpen, selectedUser }) => {
                         <option value="customer">Customer</option>
                       </select>
                     </div>
-                       <div>
+                    <div>
                       <label className="block text-sm font-medium text-gray-700">
                         CNIC
                       </label>
@@ -213,9 +214,10 @@ const EditUserModal = ({ Open, setOpen, selectedUser }) => {
                         onChange={handleChange}
                         className="mt-1 w-full rounded-xl border border-gray-300 p-3 focus:outline-none focus:ring-2 focus:ring-blue-500"
                         placeholder="+123456789"
+                        maxLength={15}
                       />
                     </div>
-                       <div>
+                    <div>
                       <label className="block text-sm font-medium text-gray-700">
                         Address
                       </label>
@@ -226,19 +228,6 @@ const EditUserModal = ({ Open, setOpen, selectedUser }) => {
                         onChange={handleChange}
                         className="mt-1 w-full rounded-xl border border-gray-300 p-3 focus:outline-none focus:ring-2 focus:ring-blue-500"
                         placeholder="123 Main St"
-                      />
-                    </div>
-                    <div>
-                      <label className="block text-sm font-medium text-gray-700">
-                        Phone Number
-                      </label>
-                      <input
-                        type="tel"
-                        name="contact"
-                        value={user.contact}
-                        onChange={handleChange}
-                        className="mt-1 w-full rounded-xl border border-gray-300 p-3 focus:outline-none focus:ring-2 focus:ring-blue-500"
-                        placeholder="+123456789"
                       />
                     </div>
 

@@ -41,17 +41,14 @@ export const ViewBrandModal = ({ selectedVehicle, handleClick }) => {
         </button>
 
         {/* Header */}
-        <h2 className="text-xl font-semibold text-blue-700 mb-6">
-          View Vehicler
+        <h2 className="text-xl font-bold text-gray-800 mb-6">
+          View Vehicle
         </h2>
 
         {/* Grid Layout */}
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
           {/* Left: Car Details */}
           <div className="space-y-2 text-sm text-gray-800 grid grid-cols-2 gap-5 w-[100%] ">
-            <p>
-              <span className="font-bold">VIN:</span> {selectedVehicle?.vin}
-            </p>
             <p>
               <span className="font-bold">Model:</span> {selectedVehicle?.model}
             </p>

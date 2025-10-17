@@ -93,7 +93,7 @@ const CarSelector = ({ handleIsOpenToggle }) => {
         {/* Years */}
         {(activeStep === 0 || window.innerWidth >= 768) && (
           <div className="border-b md:border-r border-gray-200">
-            <h3 className="bg-gray-100 p-3 font-semibold">Model Year</h3>
+            <h3 className="bg-gray-100 p-3 font-bold">Model Year</h3>
             <div className="overflow-y-auto md:h-[60vh] h-auto">
               {calcYearVal().map((year) => (
                 <div
@@ -124,7 +124,7 @@ const CarSelector = ({ handleIsOpenToggle }) => {
         {/* Makes */}
         {(activeStep === 1 || window.innerWidth >= 768) && (
           <div className="border-b md:border-r border-gray-200">
-            <h3 className="bg-gray-100 p-3 font-semibold">Make</h3>
+            <h3 className="bg-gray-100 p-3 font-bold">Make</h3>
             <div className="overflow-y-auto md:h-[60vh] h-auto">
               {selected?.year &&
                 carMakes.map((make) => (
@@ -160,7 +160,7 @@ const CarSelector = ({ handleIsOpenToggle }) => {
         {/* Models */}
         {(activeStep === 2 || window.innerWidth >= 768) && (
           <div className="border-b md:border-r border-gray-200">
-            <h3 className="bg-gray-100 p-3 font-semibold">Model</h3>
+            <h3 className="bg-gray-100 p-3 font-bold">Model</h3>
             <div className="overflow-y-auto md:h-[60vh] h-auto">
               {selected?.make &&
                 carModels.map((model) => (
@@ -194,7 +194,7 @@ const CarSelector = ({ handleIsOpenToggle }) => {
         {/* Series */}
         {(activeStep === 3 || window.innerWidth >= 768) && (
           <div className="border-b md:border-0 border-gray-200">
-            <h3 className="bg-gray-100 p-3 font-semibold">
+            <h3 className="bg-gray-100 p-3 font-bold">
               Version (Optional)
             </h3>
             <div className="overflow-y-auto md:h-[60vh] h-auto">

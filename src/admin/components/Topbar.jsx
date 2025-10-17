@@ -29,6 +29,7 @@ export default function Topbar() {
   const [showCountryDropdown, setShowCountryDropdown] = useState(false);
   const [showCityDropdown, setShowCityDropdown] = useState(false);
   const [showGenderDropdown, setShowGenderDropdown] = useState(false);
+  const [loading, setLoading] = useState(false);
 
   // Password form state
   const [passwordForm, setPasswordForm] = useState({
@@ -186,6 +187,7 @@ export default function Topbar() {
   // Handle profile submission
   const handleProfileSubmit = async (e) => {
     e.preventDefault();
+    setLoading(true);
     try {
       const formData = new FormData();
 
@@ -218,7 +220,7 @@ export default function Topbar() {
       );
 
       console.log("Profile updated:", res.data);
-      
+
       // Update Redux state with new user data
       dispatch(authSuccess(res.data));
 
@@ -236,16 +238,20 @@ export default function Topbar() {
         icon: "success",
         confirmButtonColor: "#9333ea",
       });
+      setLoading(false);
       setProfileModalOpen(false);
     } catch (error) {
       console.error("Error updating profile:", error);
+
       await Swal.fire({
         title: "Error!",
         text: "Failed to update profile. Please try again.",
         icon: "error",
         confirmButtonColor: "#9333ea",
       });
+      setLoading(false);
     }
+    setLoading(false);
   };
 
   const handleLogout = () => {
@@ -459,10 +465,12 @@ export default function Topbar() {
       {profileModalOpen && (
         <div className="fixed inset-0 bg-blur-sm backdrop-blur-md flex items-center justify-center z-50">
           <div className="bg-white rounded-lg p-8 w-full max-w-2xl shadow-xl max-h-[90vh] overflow-y-auto">
-            <h2 className="text-2xl font-semibold mb-6">My Profile</h2>
+            <h2 className="text-2xl font-semibold mb-6 text-center">
+              My Profile
+            </h2>
 
             {/* Profile Picture */}
-            <div className="flex justify-center mb-6">
+            <div className="flex flex-col items-center mb-6">
               <div className="relative">
                 <div className="w-32 h-32 rounded-full bg-gray-200 flex items-center justify-center overflow-hidden">
                   {imagePreview ? (
@@ -475,6 +483,7 @@ export default function Topbar() {
                     <FaUserCircle size={128} className="text-gray-400" />
                   )}
                 </div>
+
                 <input
                   type="file"
                   id="profileImageInput"
@@ -497,9 +506,14 @@ export default function Topbar() {
                   </svg>
                 </label>
               </div>
+
+              {/* Name below image */}
+              <div className="text-center mt-1 text-lg font-bold text-gray-800">
+                {currentUser.name}
+              </div>
             </div>
 
-            <div className="bg-red-50 border border-red-200 rounded-md p-3 mb-6">
+            <div className="bg-red-50 border border-red-200 rounded-md p-3 mb-2">
               <p className="text-sm text-red-600">
                 Picture can be changed. Select an image to update your profile
                 picture
@@ -509,8 +523,8 @@ export default function Topbar() {
             <div>
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                 {/* Full Name */}
-                <div className="mb-4">
-                  <label className="block text-sm font-medium text-gray-700 mb-2">
+                <div className="">
+                  <label className="block text-sm font-medium text-gray-700">
                     Full Name
                   </label>
                   <input
@@ -523,23 +537,25 @@ export default function Topbar() {
                   />
                 </div>
 
-                <div className="mb-4">
-                  <label className="block text-sm font-medium text-gray-700 mb-2">
+                <div className="">
+                  <label className="block text-sm font-medium text-gray-700">
                     CNIC
                   </label>
                   <input
-                    type="number"
+                    type="tel"
+                    placeholder="00000-0000000-0"
                     name="cnic"
                     value={profileForm?.cnic}
                     onChange={handleProfileChange}
                     className="p-2.5 w-full border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
                     required
+                    maxLength={15}
                   />
                 </div>
 
                 {/* Gender - Searchable */}
-                <div className="mb-4 relative" ref={genderDropdownRef}>
-                  <label className="block text-sm font-medium text-gray-700 mb-2">
+                <div className="relative" ref={genderDropdownRef}>
+                  <label className="block text-sm font-medium text-gray-700">
                     Gender
                   </label>
                   <input
@@ -569,8 +585,8 @@ export default function Topbar() {
                 </div>
 
                 {/* Date of Birth */}
-                <div className="mb-4">
-                  <label className="block text-sm font-medium text-gray-700 mb-2">
+                <div className="">
+                  <label className="block text-sm font-medium text-gray-700">
                     Date of Birth
                   </label>
                   <input
@@ -584,8 +600,8 @@ export default function Topbar() {
                 </div>
 
                 {/* Country - Searchable */}
-                <div className="mb-4 relative" ref={countryDropdownRef}>
-                  <label className="block text-sm font-medium text-gray-700 mb-2">
+                <div className=" relative" ref={countryDropdownRef}>
+                  <label className="block text-sm font-medium text-gray-700">
                     Country
                   </label>
                   <input
@@ -615,8 +631,8 @@ export default function Topbar() {
                 </div>
 
                 {/* City - Searchable */}
-                <div className="mb-4 relative" ref={cityDropdownRef}>
-                  <label className="block text-sm font-medium text-gray-700 mb-2">
+                <div className=" relative" ref={cityDropdownRef}>
+                  <label className="block text-sm font-medium text-gray-700">
                     City
                   </label>
                   <input
@@ -646,8 +662,8 @@ export default function Topbar() {
                 </div>
 
                 {/* Username */}
-                <div className="mb-4">
-                  <label className="block text-sm font-medium text-gray-700 mb-2">
+                <div className="mb-3">
+                  <label className="block text-sm font-medium text-gray-700">
                     Username
                   </label>
                   <input
@@ -663,7 +679,7 @@ export default function Topbar() {
 
               {/* Email - Full Width */}
               <div className="mb-4">
-                <label className="block text-sm font-medium text-gray-700 mb-2">
+                <label className="block text-sm font-medium text-gray-700">
                   Email
                 </label>
                 <input
@@ -677,24 +693,19 @@ export default function Topbar() {
 
               {/* Mobile Number - Full Width */}
               <div className="mb-6">
-                <label className="block text-sm font-medium text-gray-700 mb-2">
+                <label className="block text-sm font-medium text-gray-700">
                   Mobile Number
                 </label>
-                <div className="flex gap-2">
+                <div className="flex flex-col lg:flex-row gap-2">
                   <input
                     type="tel"
                     name="mobileNumber"
                     value={profileForm.mobileNumber}
                     onChange={handleProfileChange}
-                    placeholder="Add Mobile Number"
+                    placeholder="+9200000000000"
                     className="p-2.5 flex-1 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                    maxLength={13}
                   />
-                  <button
-                    type="button"
-                    className="px-4 py-2 bg-blue-950 text-white rounded-md"
-                  >
-                    Add Number
-                  </button>
                 </div>
               </div>
 
@@ -709,10 +720,11 @@ export default function Topbar() {
                 </button>
                 <button
                   type="button"
+                  disabled={loading}
                   onClick={handleProfileSubmit}
                   className="px-4 py-2 bg-blue-950 text-white rounded-md"
                 >
-                  Save Changes
+                  {loading ? "Loading..." : "Save Changes"}
                 </button>
               </div>
             </div>

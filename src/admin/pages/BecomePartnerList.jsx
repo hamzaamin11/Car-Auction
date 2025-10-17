@@ -102,152 +102,143 @@ export const BecomePartnerList = () => {
           />
         </div>
       </div>
-
-      {loading ? (
-        <div className="flex justify-center items-center">
-          <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-blue-950"></div>
-        </div>
-      ) : (
-        <>
-          {/* Desktop Table */}
-          <div className="hidden md:block overflow-x-auto">
-            <table className="min-w-full bg-white shadow-md rounded-lg overflow-hidden text-xs sm:text-sm">
-              <thead className="bg-[#191970] text-white">
-                <tr>
-                  <th className="py-3 px-4 text-left">SR#</th>
-                  <th className="py-3 px-4 text-left">Name</th>
-                  <th className="py-3 px-4 text-left">Email</th>
-                  <th className="py-3 px-4 text-left">Contact</th>
-                  <th className="py-3 px-4 text-left">Business Type</th>
-                  <th className="py-3 px-4 text-center">Action</th>
-                </tr>
-              </thead>
-              <tbody>
-                {currentItems.length > 0 ? (
-                  currentItems.map((msg, index) => (
-                    <tr
-                      key={msg.id}
-                      className="border-b hover:bg-gray-50 transition-colors"
-                    >
-                      <td className="py-2 px-4 whitespace-nowrap">
-                        {indexOfFirstItem + index + 1}
-                      </td>
-                      <td className="py-2 px-4 whitespace-nowrap ">
-                        {msg?.name.charAt(0).toUpperCase() + msg?.name.slice(1)}
-                      </td>
-                      <td className="py-2 px-4 whitespace-nowrap text-xs">
-                        {msg?.email.charAt(0).toUpperCase() +
-                          msg?.email.slice(1)}
-                      </td>
-                      <td className="py-2 px-4 whitespace-nowrap">
-                        {msg?.contact}
-                      </td>
-                      <td className="py-2 px-4 whitespace-nowrap">
-                        {msg?.bussinessType.charAt(0).toUpperCase() +
-                          msg?.bussinessType.slice(1)}
-                      </td>
-                      <td className="py-2 px-4 flex justify-center">
-                        <button
-                          onClick={() => handleViewBtn(msg)}
-                          className="px-4 py-1 text-xs sm:text-sm border border-indigo-500 text-indigo-500 rounded-md hover:bg-indigo-600 hover:text-white transition"
-                        >
-                          View
-                        </button>
-                      </td>
-                    </tr>
-                  ))
-                ) : (
-                  <tr>
-                    <td colSpan="6" className="py-8 text-center text-gray-400">
-                      No partners found.
+      <>
+        {/* Desktop Table */}
+        <div className="hidden md:block overflow-x-auto">
+          <table className="min-w-full bg-white shadow-md rounded-lg overflow-hidden text-xs sm:text-sm">
+            <thead className="bg-[#191970] text-white">
+              <tr>
+                <th className="py-3 px-4 text-left">SR#</th>
+                <th className="py-3 px-4 text-left">Name</th>
+                <th className="py-3 px-4 text-left">Email</th>
+                <th className="py-3 px-4 text-left">Contact</th>
+                <th className="py-3 px-4 text-left">Business Type</th>
+                <th className="py-3 px-4 text-center">Action</th>
+              </tr>
+            </thead>
+            <tbody>
+              {currentItems.length > 0 ? (
+                currentItems.map((msg, index) => (
+                  <tr
+                    key={msg.id}
+                    className="border-b hover:bg-gray-50 transition-colors"
+                  >
+                    <td className="py-2 px-4 whitespace-nowrap">
+                      {indexOfFirstItem + index + 1}
                     </td>
-                  </tr>
-                )}
-              </tbody>
-            </table>
-          </div>
-
-          {/* Mobile Cards */}
-          <div className="md:hidden space-y-4">
-            {currentItems.length > 0 ? (
-              currentItems.map((msg) => (
-                <div
-                  key={msg.id}
-                  className="bg-white rounded-xl shadow-md border border-gray-200 p-4 transition-all duration-300 hover:shadow-lg"
-                >
-                  <div className="space-y-2 text-sm">
-                    <p className="flex justify-between">
-                      <span className="font-bold text-gray-900">Name</span>
-                      <span className="text-gray-700">
-                        {msg?.name.charAt(0).toUpperCase() + msg?.name.slice(1)}
-                      </span>
-                    </p>
-                    <p className="flex justify-between">
-                      <span className="font-bold text-gray-900 ">Email</span>
-                      <span className="text-gray-700 text-xs">
-                        {msg?.email.charAt(0).toUpperCase() +
-                          msg?.email.slice(1)}
-                      </span>
-                    </p>
-                    <p className="flex justify-between">
-                      <span className="font-bold text-gray-900">Contact</span>
-                      <span className="text-gray-700">{msg?.contact}</span>
-                    </p>
-                    <p className="flex justify-between">
-                      <span className="font-bold text-gray-900">
-                        Business Type
-                      </span>
-                      <span className="text-gray-700">
-                        {msg?.bussinessType.charAt(0).toUpperCase() +
-                          msg?.bussinessType.slice(1)}
-                      </span>
-                    </p>
-                    <div className="flex justify-center pt-2">
+                    <td className="py-2 px-4 whitespace-nowrap ">
+                      {msg?.name.charAt(0).toUpperCase() + msg?.name.slice(1)}
+                    </td>
+                    <td className="py-2 px-4 whitespace-nowrap text-xs">
+                      {msg?.email.charAt(0).toUpperCase() + msg?.email.slice(1)}
+                    </td>
+                    <td className="py-2 px-4 whitespace-nowrap">
+                      {msg?.contact}
+                    </td>
+                    <td className="py-2 px-4 whitespace-nowrap">
+                      {msg?.bussinessType.charAt(0).toUpperCase() +
+                        msg?.bussinessType.slice(1)}
+                    </td>
+                    <td className="py-2 px-4 flex justify-center">
                       <button
                         onClick={() => handleViewBtn(msg)}
-                        className="px-4 py-1 text-sm border border-indigo-500 text-indigo-500 rounded-md hover:bg-indigo-600 hover:text-white transition"
+                        className="px-4 py-1 text-xs sm:text-sm border border-indigo-500 text-indigo-500 rounded-md hover:bg-indigo-600 hover:text-white transition"
                       >
                         View
                       </button>
-                    </div>
+                    </td>
+                  </tr>
+                ))
+              ) : (
+                <tr>
+                  <td colSpan="6" className="py-8 text-center text-gray-400">
+                    No partners found.
+                  </td>
+                </tr>
+              )}
+            </tbody>
+          </table>
+        </div>
+
+        {/* Mobile Cards */}
+        <div className="md:hidden space-y-4">
+          {currentItems.length > 0 ? (
+            currentItems.map((msg) => (
+              <div
+                key={msg.id}
+                className="bg-white rounded-xl shadow-md border border-gray-200 p-4 transition-all duration-300 hover:shadow-lg"
+              >
+                <div className="space-y-2 text-sm">
+                  <p className="flex justify-between">
+                    <span className="font-bold text-gray-900">Name</span>
+                    <span className="text-gray-700">
+                      {msg?.name.charAt(0).toUpperCase() + msg?.name.slice(1)}
+                    </span>
+                  </p>
+                  <p className="flex justify-between">
+                    <span className="font-bold text-gray-900 ">Email</span>
+                    <span className="text-gray-700 text-xs">
+                      {msg?.email.charAt(0).toUpperCase() + msg?.email.slice(1)}
+                    </span>
+                  </p>
+                  <p className="flex justify-between">
+                    <span className="font-bold text-gray-900">Contact</span>
+                    <span className="text-gray-700">{msg?.contact}</span>
+                  </p>
+                  <p className="flex justify-between">
+                    <span className="font-bold text-gray-900">
+                      Business Type
+                    </span>
+                    <span className="text-gray-700">
+                      {msg?.bussinessType.charAt(0).toUpperCase() +
+                        msg?.bussinessType.slice(1)}
+                    </span>
+                  </p>
+                  <div className="flex justify-center pt-2">
+                    <button
+                      onClick={() => handleViewBtn(msg)}
+                      className="px-4 py-1 text-sm border border-indigo-500 text-indigo-500 rounded-md hover:bg-indigo-600 hover:text-white transition"
+                    >
+                      View
+                    </button>
                   </div>
                 </div>
-              ))
-            ) : (
-              <div className="text-center py-8 text-gray-400 text-sm">
-                No partners found.
               </div>
-            )}
-          </div>
-
-          {/* Pagination Controls */}
-          {totalPages > 1 && (
-            <div className="flex justify-between mt-6">
-              <button
-                className={`bg-blue-950 text-white px-5 py-2 rounded ${
-                  currentPage === 1 ? "opacity-50 cursor-not-allowed" : ""
-                }`}
-                onClick={handlePrevPage}
-                disabled={currentPage === 1}
-              >
-                ‹ Prev
-              </button>
-              <div></div>
-              <button
-                className={`bg-blue-950 text-white px-5 py-2 rounded ${
-                  currentPage === totalPages
-                    ? "opacity-50 cursor-not-allowed"
-                    : ""
-                }`}
-                onClick={handleNextPage}
-                disabled={currentPage === totalPages}
-              >
-                Next ›
-              </button>
+            ))
+          ) : (
+            <div className="text-center py-8 text-gray-400 text-sm">
+              No partners found.
             </div>
           )}
-        </>
-      )}
+        </div>
+
+        {/* Pagination Controls */}
+        {totalPages > 1 && (
+          <div className="flex justify-between mt-6">
+            <button
+              className={`bg-blue-950 text-white px-5 py-2 rounded ${
+                currentPage === 1 ? "opacity-50 cursor-not-allowed" : ""
+              }`}
+              onClick={handlePrevPage}
+              disabled={currentPage === 1}
+            >
+              ‹ Prev
+            </button>
+            <div></div>
+            <button
+              className={`bg-blue-950 text-white px-5 py-2 rounded ${
+                currentPage === totalPages
+                  ? "opacity-50 cursor-not-allowed"
+                  : ""
+              }`}
+              onClick={handleNextPage}
+              disabled={currentPage === totalPages}
+            >
+              Next ›
+            </button>
+          </div>
+        )}
+      </>
 
       {/* Modal */}
       {isModalOpen && selectedPartner && (

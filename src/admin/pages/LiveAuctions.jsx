@@ -129,194 +129,171 @@ export default function LiveAuctions() {
           </div>
         </div>
 
-        {loading ? (
-          <div className="flex justify-center items-center">
-            <RotateLoader />
-          </div>
-        ) : (
-          <>
-            <div className="overflow-x-auto shadow ring-1 ring-gray-300 rounded-lg">
-              <div className="hidden md:block">
-                <table className="min-w-full divide-y divide-gray-200">
-                  <thead className="bg-[#191970] text-white">
-                    <tr>
-                      {currentUser.role === "admin" && (
-                        <th className="px-4 py-3 text-left text-sm font-semibold">
-                          Owner Name
-                        </th>
-                      )}
-                      <th className="px-4 py-3 text-left text-sm font-semibold">
-                        Image
-                      </th>
-                      <th className="px-4 py-3 text-left text-sm font-semibold">
-                        Make
-                      </th>
-                      <th className="px-4 py-3 text-left text-sm font-semibold">
-                        Model
-                      </th>
-                      <th className="px-4 py-3 text-left text-sm font-semibold">
-                        Condition
-                      </th>
-                      <th className="px-4 py-3 text-left text-sm font-semibold">
-                        Seller Offer
-                      </th>
-                      <th className="px-4 py-3 text-left text-sm font-semibold">
-                        End Time
-                      </th>
-                      <th className="px-4 py-3 text-left text-sm font-semibold">
-                        Date
-                      </th>
-                    </tr>
-                  </thead>
-                  <tbody className="bg-white divide-y divide-gray-100">
-                    {filteredAuctions?.map((user, idx) => (
-                      <tr
-                        key={user.id}
-                        onClick={() => setselectedVehicle(user)}
-                        className={`${
-                          idx % 2 === 0 ? "bg-gray-50" : ""
-                        } cursor-pointer hover:bg-gray-100`}
-                      >
-                        {currentUser.role === "admin" && (
-                          <td className="px-4 py-3 font-medium text-gray-900">
-                            {user?.name}
-                          </td>
-                        )}
-                        <td className="px-4 py-3">
-                          <img
-                            src={user?.images[0]}
-                            alt={user?.name || "Vehicle"}
-                            className="w-16 h-16 object-cover rounded"
-                          />
-                        </td>
-                        <td className="px-4 py-3 text-gray-700">
-                          {user?.make}
-                        </td>
-                        <td className="px-4 py-3 text-gray-700">
-                          {user?.model}
-                        </td>
-                        <td className="px-4 py-3 text-gray-700">
-                          {user?.vehicleCondition}
-                        </td>
-                        <td className="px-4 py-3 text-gray-700">
-                          {user?.sellerOffer}
-                        </td>
-                        <td className="px-4 py-3 text-gray-700">
-                          {user.endTime
-                            ? moment(user.endTime).local().format("hh:mm:ss A")
-                            : "--"}
-                        </td>
-                        <td className="px-4 py-3 text-gray-700">
-                          {user?.endTime?.slice(0, 10)}
-                        </td>
-                      </tr>
-                    ))}
-                  </tbody>
-                </table>
-              </div>
-
-              <div className="block md:hidden space-y-4 p-3">
-                {filteredAuctions?.map((user) => (
-                  <div
+        <div className="overflow-x-auto shadow ring-1 ring-gray-300 rounded-lg">
+          <div className="hidden md:block">
+            <table className="min-w-full divide-y divide-gray-200">
+              <thead className="bg-[#191970] text-white">
+                <tr>
+                  {currentUser.role === "admin" && (
+                    <th className="px-4 py-3 text-left text-sm font-semibold">
+                      Owner Name
+                    </th>
+                  )}
+                  <th className="px-4 py-3 text-left text-sm font-semibold">
+                    Image
+                  </th>
+                  <th className="px-4 py-3 text-left text-sm font-semibold">
+                    Make
+                  </th>
+                  <th className="px-4 py-3 text-left text-sm font-semibold">
+                    Model
+                  </th>
+                  <th className="px-4 py-3 text-left text-sm font-semibold">
+                    Condition
+                  </th>
+                  <th className="px-4 py-3 text-left text-sm font-semibold">
+                    Seller Offer
+                  </th>
+                  <th className="px-4 py-3 text-left text-sm font-semibold">
+                    End Time
+                  </th>
+                  <th className="px-4 py-3 text-left text-sm font-semibold">
+                    Date
+                  </th>
+                </tr>
+              </thead>
+              <tbody className="bg-white divide-y divide-gray-100">
+                {filteredAuctions?.map((user, idx) => (
+                  <tr
                     key={user.id}
                     onClick={() => setselectedVehicle(user)}
-                    className="bg-white rounded-xl shadow-md border border-gray-200 p-4 cursor-pointer hover:shadow-lg hover:border-indigo-300 hover:bg-indigo-50/30 transition-all duration-300"
+                    className={`${
+                      idx % 2 === 0 ? "bg-gray-50" : ""
+                    } cursor-pointer hover:bg-gray-100`}
                   >
-                    <div className="flex justify-between items-center mb-3">
-                      <span className="text-gray-900 font-bold">
-                        Owner Name
-                      </span>
-                      <span className="text-gray-500">{user?.name}</span>
-                    </div>
-                    <div className="space-y-2 text-sm">
-                      <p className="flex justify-between">
-                        <span className="text-gray-900 font-bold">
-                          Vehicle Model
-                        </span>
-                        <span className="text-gray-500">
-                          {user?.make} / {user?.model}
-                        </span>
-                      </p>
-                      <p className="flex justify-between">
-                        <span className="text-gray-900 font-bold">
-                          Condition
-                        </span>
-                        <span className="text-gray-500">
-                          {user?.vehicleCondition}
-                        </span>
-                      </p>
-                      <p className="flex justify-between">
-                        <span className="text-gray-900 font-bold">
-                          Demand Price
-                        </span>
-                        <span className="text-gray-500">
-                          {user?.sellerOffer}
-                        </span>
-                      </p>
-                      <p className="flex justify-between">
-                        <span className="text-gray-900 font-bold">
-                          End Time
-                        </span>
-                        <span className="text-gray-500">
-                          {user.endTime
-                            ? moment(user.endTime).local().format("hh:mm A")
-                            : "--"}
-                        </span>
-                      </p>
-                      <p className="flex justify-between">
-                        <span className="text-gray-900 font-bold">Date</span>
-                        <span className="text-gray-500">
-                          {user?.endTime?.slice(0, 10)}
-                        </span>
-                      </p>
-                    </div>
-                  </div>
+                    {currentUser.role === "admin" && (
+                      <td className="px-4 py-3 font-medium text-gray-900">
+                        {user?.name}
+                      </td>
+                    )}
+                    <td className="px-4 py-3">
+                      <img
+                        src={user?.images[0]}
+                        alt={user?.name || "Vehicle"}
+                        className="w-16 h-16 object-cover rounded"
+                      />
+                    </td>
+                    <td className="px-4 py-3 text-gray-700">{user?.make}</td>
+                    <td className="px-4 py-3 text-gray-700">{user?.model}</td>
+                    <td className="px-4 py-3 text-gray-700">
+                      {user?.vehicleCondition}
+                    </td>
+                    <td className="px-4 py-3 text-gray-700">
+                      {user?.sellerOffer}
+                    </td>
+                    <td className="px-4 py-3 text-gray-700">
+                      {user.endTime
+                        ? moment(user.endTime).local().format("hh:mm:ss A")
+                        : "--"}
+                    </td>
+                    <td className="px-4 py-3 text-gray-700">
+                      {user?.endTime?.slice(0, 10)}
+                    </td>
+                  </tr>
                 ))}
-              </div>
-            </div>
+              </tbody>
+            </table>
+          </div>
 
-            {filteredAuctions?.length === 0 && (
-              <div className="flex items-center justify-center mt-1 font-medium lg:text-xl text-sm">
-                No Live Bid yet!
+          <div className="block md:hidden space-y-4 p-3">
+            {filteredAuctions?.map((user) => (
+              <div
+                key={user.id}
+                onClick={() => setselectedVehicle(user)}
+                className="bg-white rounded-xl shadow-md border border-gray-200 p-4 cursor-pointer hover:shadow-lg hover:border-indigo-300 hover:bg-indigo-50/30 transition-all duration-300"
+              >
+                <div className="space-y-2 text-sm">
+                  <p className="flex justify-between items-center">
+                    <p className="text-gray-900 font-bold">Owner Name</p>
+                    <span className="text-gray-500">{user?.name}</span>
+                  </p>
+                  <p className="flex justify-between">
+                    <span className="text-gray-900 font-bold">
+                      Vehicle Model
+                    </span>
+                    <span className="text-gray-500">
+                      {user?.make} / {user?.model}
+                    </span>
+                  </p>
+                  <p className="flex justify-between">
+                    <span className="text-gray-900 font-bold">Condition</span>
+                    <span className="text-gray-500">
+                      {user?.vehicleCondition}
+                    </span>
+                  </p>
+                  <p className="flex justify-between">
+                    <span className="text-gray-900 font-bold">
+                      Demand Price
+                    </span>
+                    <span className="text-gray-500">{user?.sellerOffer}</span>
+                  </p>
+                  <p className="flex justify-between">
+                    <span className="text-gray-900 font-bold">End Time</span>
+                    <span className="text-gray-500">
+                      {user.endTime
+                        ? moment(user.endTime).local().format("hh:mm A")
+                        : "--"}
+                    </span>
+                  </p>
+                  <p className="flex justify-between">
+                    <span className="text-gray-900 font-bold">Date</span>
+                    <span className="text-gray-500">
+                      {user?.endTime?.slice(0, 10)}
+                    </span>
+                  </p>
+                </div>
               </div>
-            )}
+            ))}
+          </div>
+        </div>
 
-            <div className="flex justify-between mt-6">
-              <button
-                className={`bg-blue-950 text-white px-5 py-2 rounded ${
-                  pageNo > 1 ? "block" : "hidden"
-                }`}
-                onClick={handlePrevPage}
-              >
-                ‹ Prev
-              </button>
-              <div></div>
-              <button
-                className={`bg-blue-950 text-white px-5 py-2 rounded ${
-                  filteredAuctions.length === 10 ? "block" : "hidden"
-                }`}
-                onClick={handleNextPage}
-              >
-                Next ›
-              </button>
-            </div>
-          </>
+        {filteredAuctions?.length === 0 && (
+          <div className="flex items-center justify-center mt-1 font-medium lg:text-xl text-sm">
+            No Live Bid yet!
+          </div>
         )}
 
+        <div className="flex justify-between mt-6">
+          <button
+            className={`bg-blue-950 text-white px-5 py-2 rounded ${
+              pageNo > 1 ? "block" : "hidden"
+            }`}
+            onClick={handlePrevPage}
+          >
+            ‹ Prev
+          </button>
+          <div></div>
+          <button
+            className={`bg-blue-950 text-white px-5 py-2 rounded ${
+              filteredAuctions.length === 10 ? "block" : "hidden"
+            }`}
+            onClick={handleNextPage}
+          >
+            Next ›
+          </button>
+        </div>
         {selectedAuctionId && (
           <ViewAuctionModal
             auctionId={selectedAuctionId}
             onClose={() => setSelectedAuctionId(null)}
           />
         )}
-
         {selectedVehicle && (
           <ViewBrandModal
             selectedVehicle={selectedVehicle}
             handleClick={() => setselectedVehicle(null)}
           />
         )}
-
         <ToastContainer />
       </div>
     </>

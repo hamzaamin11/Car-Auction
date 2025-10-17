@@ -109,250 +109,262 @@ const AdminBidHistory = () => {
             />
           </div>
         </div>
-
-        {loading ? (
-          <div className="flex justify-center items-center">
-            <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-blue-950"></div>
-          </div>
-        ) : (
-          <>
-            <div className="hidden md:block overflow-x-auto max-w-6xl mx-auto bg-white rounded-lg shadow">
-              <table className="min-w-full divide-y divide-gray-200">
-                <thead className="bg-[#191970] text-white">
-                  <tr>
-                    <th className="px-6 py-3 text-sm font-semibold">SR#</th>
-                    <th className="px-6 py-3 text-left text-sm font-semibold">
-                      Customer Name
-                    </th>
-                    <th className="px-6 py-3 text-left text-sm font-semibold">
-                      Vehicle
-                    </th>
-                    <th className="px-6 py-3 text-left text-sm font-semibold">
-                      Bid Amount
-                    </th>
-                    <th className="px-6 py-3 text-left text-sm font-semibold">
-                      Date
-                    </th>
-                    <th className="px-6 py-3 text-center text-sm font-semibold">
-                      Status
-                    </th>
-                  </tr>
-                </thead>
-                <tbody className="divide-y divide-gray-100">
-                  {currentItems?.length > 0 ? (
-                    currentItems.map(
-                      (
-                        {
-                          id,
-                          name,
-                          model,
-                          MonsterBid,
-                          maxBid,
-                          endTime,
-                          status,
-                          make,
-                          contact,
-                          cnic,
-                          address,
-                          date,
-                          year,
-                          engine,
-                          transmission,
-                          color,
-                          email,
-                        },
-                        index
-                      ) => (
-                        <tr
-                          key={index}
-                          className="hover:bg-gray-50 transition cursor-default"
+        <>
+          <div className="hidden md:block overflow-x-auto max-w-7xl mx-auto bg-white rounded-lg shadow">
+            <table className="min-w-full divide-y divide-gray-200">
+              <thead className="bg-[#191970] text-white">
+                <tr>
+                  <th className="px-6 py-3 text-sm font-semibold">SR#</th>
+                  <th className="px-6 py-3 text-left text-sm font-semibold">
+                    Customer Name
+                  </th>
+                  <th className="px-6 py-3 text-left text-sm font-semibold">
+                    Vehicle
+                  </th>
+                  <th className="px-6 py-3 text-left text-sm font-semibold">
+                    Bid Amount
+                  </th>
+                  <th className="px-6 py-3 text-left text-sm font-semibold">
+                    Date
+                  </th>
+                  <th className="px-6 py-3 text-center text-sm font-semibold">
+                    Status
+                  </th>
+                </tr>
+              </thead>
+              <tbody className="divide-y divide-gray-100">
+                {currentItems?.length > 0 ? (
+                  currentItems.map(
+                    (
+                      {
+                        id,
+                        name,
+                        model,
+                        MonsterBid,
+                        maxBid,
+                        endTime,
+                        status,
+                        make,
+                        contact,
+                        cnic,
+                        address,
+                        date,
+                        year,
+                        engine,
+                        transmission,
+                        color,
+                        email,
+                      },
+                      index
+                    ) => (
+                      <tr
+                        key={index}
+                        className="hover:bg-gray-50 transition cursor-default"
+                      >
+                        <td className="text-center">
+                          {indexOfFirstItem + index + 1}
+                        </td>
+                        <td
+                          onClick={() =>
+                            setSelectedCustomer({
+                              name,
+                              contact,
+                              cnic,
+                              address,
+                              email,
+                            })
+                          }
+                          className="px-6 py-4 whitespace-nowrap text-sm text-gray-700 cursor-pointer hover:text-blue-600"
                         >
-                          <td className="text-center">{indexOfFirstItem + index + 1}</td>
-                          <td
-                            onClick={() =>
-                              setSelectedCustomer({ name, contact, cnic, address , email})
-                            }
-                            className="px-6 py-4 whitespace-nowrap text-sm text-gray-700 cursor-pointer hover:text-blue-600"
+                          {name}
+                        </td>
+                        <td
+                          onClick={() => {
+                            setSelectedVehicle({
+                              make,
+                              model,
+                              year,
+                              engine,
+                              transmission,
+                              color,
+                              images: [],
+                              ...allBiders[index],
+                            });
+                            setCurrentImageIndex(0);
+                          }}
+                          className="px-6 py-4 whitespace-nowrap text-sm text-gray-700 cursor-pointer hover:text-blue-600"
+                        >
+                          {make}/{model}
+                        </td>
+                        <td className="px-6 py-4 whitespace-nowrap text-sm font-normal text-[#191970]">
+                          PKR {MonsterBid || maxBid || "0000"}
+                        </td>
+                        <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                          {date.slice(0, 10)}
+                        </td>
+                        <td className="px-6 py-4 whitespace-nowrap text-center">
+                          <span
+                            className={`inline-flex items-center justify-center px-3 py-1 text-xs rounded-full font-semibold ${
+                              status === "Highest"
+                                ? "bg-red-100 text-red-700"
+                                : "bg-green-100 text-green-800"
+                            }`}
                           >
-                            {name}
-                          </td>
-                          <td
-                            onClick={() => {
-                              setSelectedVehicle({
-                                make,
-                                model,
-                                year,
-                                engine,
-                                transmission,
-                                color,
-                                images: [],
-                                ...allBiders[index],
-                              });
-                              setCurrentImageIndex(0);
-                            }}
-                            className="px-6 py-4 whitespace-nowrap text-sm text-gray-700 cursor-pointer hover:text-blue-600"
-                          >
-                            {make}/{model}
-                          </td>
-                          <td className="px-6 py-4 whitespace-nowrap text-sm font-normal text-[#191970]">
-                            PKR {MonsterBid || maxBid || "0000"}
-                          </td>
-                          <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-                            {date.slice(0, 10)}
-                          </td>
-                          <td className="px-6 py-4 whitespace-nowrap text-center">
-                            <span
-                              className={`inline-flex items-center justify-center px-3 py-1 text-xs rounded-full font-semibold ${
-                                status === "Highest"
-                                  ? "bg-red-100 text-red-700"
-                                  : "bg-green-100 text-green-800"
-                              }`}
-                            >
-                              {status === "Y" ? <TiTick size={20} /> : "Sold"}
-                            </span>
-                          </td>
-                        </tr>
-                      )
+                            {status === "Y" ? <TiTick size={20} /> : "Sold"}
+                          </span>
+                        </td>
+                      </tr>
                     )
-                  ) : (
-                    <tr>
-                      <td colSpan="6" className="text-center py-8 text-gray-400">
-                        No bids yet.
-                      </td>
-                    </tr>
-                  )}
-                </tbody>
-              </table>
-              {totalPages > 1 && (
-                <div className="flex justify-between items-center p-4">
-                  <button
-                    onClick={() => handlePageChange(currentPage - 1)}
-                    disabled={currentPage === 1}
-                    className="px-4 py-2 bg-blue-950 text-white rounded disabled:opacity-50 hover:bg-blue-800 transition"
-                  >
-                    Previous
-                  </button>
-                  <button
-                    onClick={() => handlePageChange(currentPage + 1)}
-                    disabled={currentPage === totalPages}
-                    className="px-4 py-2 bg-blue-950 text-white rounded disabled:opacity-50 hover:bg-blue-800 transition"
-                  >
-                    Next
-                  </button>
-                </div>
-              )}
-            </div>
-
-            <div className="md:hidden space-y-4 px-3">
-              {currentItems?.length > 0 ? (
-                currentItems.map(
-                  (
-                    {
-                      id,
-                      name,
-                      model,
-                      MonsterBid,
-                      maxBid,
-                      date,
-                      status,
-                      make,
-                      contact,
-                      cnic,
-                      address,
-                      year,
-                      engine,
-                      transmission,
-                      color,
-                      email,
-                    },
-                    index
-                  ) => (
-                    <div
-                      key={index}
-                      className="bg-white rounded-xl shadow-md border border-gray-200 p-4"
-                    >
-                      <div className="flex justify-end items-center mb-3">
-                        <span
-                          className={`inline-flex items-center justify-center px-3 py-1 text-xs rounded-full font-semibold ${
-                            status === "Highest"
-                              ? "bg-red-100 text-red-700"
-                              : "bg-green-100 text-green-800"
-                          }`}
-                        >
-                          {status === "Y" ? <TiTick size={20} /> : "Sold"}
-                        </span>
-                      </div>
-                      <div className="space-y-2 text-sm">
-                        <p className="flex justify-between">
-                          <span className="text-gray-900 font-bold">Customer</span>
-                          <span
-                            onClick={() =>
-                              setSelectedCustomer({ name, contact, cnic, address })
-                            }
-                            className="text-gray-800 cursor-pointer underline"
-                          >
-                            {name}
-                          </span>
-                        </p>
-                        <p className="flex justify-between">
-                          <span className="text-gray-900 font-bold">Vehicle</span>
-                          <span
-                            onClick={() => {
-                              setSelectedVehicle({
-                                make,
-                                model,
-                                year,
-                                engine,
-                                transmission,
-                                color,
-                                images: [],
-                                ...currentItems[index],
-                              });
-                              setCurrentImageIndex(0);
-                            }}
-                            className="text-gray-800 cursor-pointer underline"
-                          >
-                            {make}/{model}
-                          </span>
-                        </p>
-                        <p className="flex justify-between">
-                          <span className="text-gray-900 font-bold">Bid Amount</span>
-                          <span className="text-[#191970] font-semibold">
-                            PKR {MonsterBid || maxBid || "0000"}
-                          </span>
-                        </p>
-                        <p className="flex justify-between">
-                          <span className="text-gray-900 font-bold">Date</span>
-                          <span className="text-gray-500">{date.slice(0, 10)}</span>
-                        </p>
-                      </div>
-                    </div>
                   )
+                ) : (
+                  <tr>
+                    <td colSpan="6" className="text-center py-8 text-gray-400">
+                      No bids yet.
+                    </td>
+                  </tr>
+                )}
+              </tbody>
+            </table>
+            {totalPages > 1 && (
+              <div className="flex justify-between items-center p-4">
+                <button
+                  onClick={() => handlePageChange(currentPage - 1)}
+                  disabled={currentPage === 1}
+                  className="px-4 py-2 bg-blue-950 text-white rounded disabled:opacity-50 hover:bg-blue-800 transition"
+                >
+                  Previous
+                </button>
+                <button
+                  onClick={() => handlePageChange(currentPage + 1)}
+                  disabled={currentPage === totalPages}
+                  className="px-4 py-2 bg-blue-950 text-white rounded disabled:opacity-50 hover:bg-blue-800 transition"
+                >
+                  Next
+                </button>
+              </div>
+            )}
+          </div>
+
+          <div className="md:hidden space-y-4 px-3">
+            {currentItems?.length > 0 ? (
+              currentItems.map(
+                (
+                  {
+                    id,
+                    name,
+                    model,
+                    MonsterBid,
+                    maxBid,
+                    date,
+                    status,
+                    make,
+                    contact,
+                    cnic,
+                    address,
+                    year,
+                    engine,
+                    transmission,
+                    color,
+                    email,
+                  },
+                  index
+                ) => (
+                  <div
+                    key={index}
+                    className="bg-white rounded-xl shadow-md border border-gray-200 p-4"
+                  >
+                    <div className="flex justify-end items-center mb-3">
+                      <span
+                        className={`inline-flex items-center justify-center px-3 py-1 text-xs rounded-full font-semibold ${
+                          status === "Highest"
+                            ? "bg-red-100 text-red-700"
+                            : "bg-green-100 text-green-800"
+                        }`}
+                      >
+                        {status === "Y" ? <TiTick size={20} /> : "Sold"}
+                      </span>
+                    </div>
+                    <div className="space-y-2 text-sm">
+                      <p className="flex justify-between">
+                        <span className="text-gray-900 font-bold">
+                          Customer
+                        </span>
+                        <span
+                          onClick={() =>
+                            setSelectedCustomer({
+                              name,
+                              contact,
+                              cnic,
+                              address,
+                            })
+                          }
+                          className="text-gray-800 cursor-pointer underline"
+                        >
+                          {name}
+                        </span>
+                      </p>
+                      <p className="flex justify-between">
+                        <span className="text-gray-900 font-bold">Vehicle</span>
+                        <span
+                          onClick={() => {
+                            setSelectedVehicle({
+                              make,
+                              model,
+                              year,
+                              engine,
+                              transmission,
+                              color,
+                              images: [],
+                              ...currentItems[index],
+                            });
+                            setCurrentImageIndex(0);
+                          }}
+                          className="text-gray-800 cursor-pointer underline"
+                        >
+                          {make}/{model}
+                        </span>
+                      </p>
+                      <p className="flex justify-between">
+                        <span className="text-gray-900 font-bold">
+                          Bid Amount
+                        </span>
+                        <span className="text-[#191970] font-semibold">
+                          PKR {MonsterBid || maxBid || "0000"}
+                        </span>
+                      </p>
+                      <p className="flex justify-between">
+                        <span className="text-gray-900 font-bold">Date</span>
+                        <span className="text-gray-500">
+                          {date.slice(0, 10)}
+                        </span>
+                      </p>
+                    </div>
+                  </div>
                 )
-              ) : (
-                <div className="text-center py-8 text-gray-400">No bids yet.</div>
-              )}
-              {totalPages > 1 && (
-                <div className="flex justify-between items-center p-4">
-                  <button
-                    onClick={() => handlePageChange(currentPage - 1)}
-                    disabled={currentPage === 1}
-                    className="px-4 py-2 bg-blue-950 text-white rounded disabled:opacity-50 hover:bg-blue-800 transition"
-                  >
-                    Previous
-                  </button>
-                  <button
-                    onClick={() => handlePageChange(currentPage + 1)}
-                    disabled={currentPage === totalPages}
-                    className="px-4 py-2 bg-blue-950 text-white rounded disabled:opacity-50 hover:bg-blue-800 transition"
-                  >
-                    Next
-                  </button>
-                </div>
-              )}
-            </div>
-          </>
-        )}
+              )
+            ) : (
+              <div className="text-center py-8 text-gray-400">No bids yet.</div>
+            )}
+            {totalPages > 1 && (
+              <div className="flex justify-between items-center p-4">
+                <button
+                  onClick={() => handlePageChange(currentPage - 1)}
+                  disabled={currentPage === 1}
+                  className="px-4 py-2 bg-blue-950 text-white rounded disabled:opacity-50 hover:bg-blue-800 transition"
+                >
+                  Previous
+                </button>
+                <button
+                  onClick={() => handlePageChange(currentPage + 1)}
+                  disabled={currentPage === totalPages}
+                  className="px-4 py-2 bg-blue-950 text-white rounded disabled:opacity-50 hover:bg-blue-800 transition"
+                >
+                  Next
+                </button>
+              </div>
+            )}
+          </div>
+        </>
 
         {/* Customer Details Modal */}
         {selectedCustomer && (
@@ -390,7 +402,7 @@ const AdminBidHistory = () => {
                       {selectedCustomer.email || "N/A"}
                     </p>
                   </div>
-                    <div>
+                  <div>
                     <p className="text-sm text-gray-500">CNIC:</p>
                     <p className="font-semibold text-gray-900">
                       {selectedCustomer.cnic || "N/A"}
@@ -407,7 +419,6 @@ const AdminBidHistory = () => {
             </div>
           </div>
         )}
-
         {/* Vehicle Details Modal */}
         {selectedVehicle && (
           <div className="fixed inset-0 z-50 flex items-center justify-center bg-blur backdrop-blur-md p-4">
@@ -532,9 +543,9 @@ const AdminBidHistory = () => {
                         <p className="text-sm text-gray-500">Price:</p>
                         <p className="font-semibold text-gray-900">
                           {selectedVehicle.buyNowPrice ||
-                           selectedVehicle.MonsterBid ||
-                           selectedVehicle.maxBid ||
-                           "N/A"}
+                            selectedVehicle.MonsterBid ||
+                            selectedVehicle.maxBid ||
+                            "N/A"}
                         </p>
                       </div>
                     </div>
@@ -543,7 +554,8 @@ const AdminBidHistory = () => {
                   {/* Right Column - Image Carousel */}
                   <div className="flex flex-col items-center">
                     <div className="relative w-full aspect-[4/3] bg-gray-100 rounded-lg overflow-hidden mb-4">
-                      {selectedVehicle.images && selectedVehicle.images.length > 0 ? (
+                      {selectedVehicle.images &&
+                      selectedVehicle.images.length > 0 ? (
                         <>
                           <img
                             src={selectedVehicle.images[currentImageIndex]}
@@ -601,27 +613,30 @@ const AdminBidHistory = () => {
                     </div>
 
                     {/* Thumbnail Navigation */}
-                    {selectedVehicle.images && selectedVehicle.images.length > 1 && (
-                      <div className="flex gap-2 justify-center flex-wrap">
-                        {selectedVehicle.images.slice(0, 5).map((img, idx) => (
-                          <button
-                            key={idx}
-                            onClick={() => setCurrentImageIndex(idx)}
-                            className={`w-16 h-16 rounded-lg overflow-hidden border-2 transition ${
-                              currentImageIndex === idx
-                                ? "border-blue-600"
-                                : "border-gray-300 hover:border-gray-400"
-                            }`}
-                          >
-                            <img
-                              src={img}
-                              alt={`Thumbnail ${idx + 1}`}
-                              className="w-full h-full object-cover"
-                            />
-                          </button>
-                        ))}
-                      </div>
-                    )}
+                    {selectedVehicle.images &&
+                      selectedVehicle.images.length > 1 && (
+                        <div className="flex gap-2 justify-center flex-wrap">
+                          {selectedVehicle.images
+                            .slice(0, 5)
+                            .map((img, idx) => (
+                              <button
+                                key={idx}
+                                onClick={() => setCurrentImageIndex(idx)}
+                                className={`w-16 h-16 rounded-lg overflow-hidden border-2 transition ${
+                                  currentImageIndex === idx
+                                    ? "border-blue-600"
+                                    : "border-gray-300 hover:border-gray-400"
+                                }`}
+                              >
+                                <img
+                                  src={img}
+                                  alt={`Thumbnail ${idx + 1}`}
+                                  className="w-full h-full object-cover"
+                                />
+                              </button>
+                            ))}
+                        </div>
+                      )}
                   </div>
                 </div>
               </div>
