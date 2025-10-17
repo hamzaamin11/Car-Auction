@@ -172,13 +172,15 @@ const Dashboard = () => {
 
   return (
     <>
-      <div className="p-6 bg-gray-50 space-y-8">
-        <h2 className="text-3xl font-bold text-[#191970]">Welcome, Admin</h2>
+      <div className="lg:p-6 p-2  bg-gray-50 lg:space-y-8 space-y-2">
+        <h2 className="lg:text-3xl text-xl font-bold text-[#191970] mt-3 lg:mt-0">
+          Welcome, Admin
+        </h2>
 
         {/* Summary Stats (Desktop and Mobile) */}
-        <div className="grid grid-cols-2 lg:grid-cols-4 gap-6">
+        <div className="grid grid-cols-2 lg:grid-cols-4 gap-2">
           <Card
-            title={"Approval Vehicles"}
+            title={"Approved Vehicles"}
             totalData={totalVehicles.length}
             color={"bg-blue-200"}
             icon={<FaCarSide size={28} />}
@@ -208,9 +210,9 @@ const Dashboard = () => {
         </div>
 
         {/* Mobile-Only Cards */}
-        <div className="lg:hidden grid grid-cols-2 gap-6">
+        <span className="lg:hidden grid grid-cols-2 gap-2">
           <Card
-            title={"Non-Approval Vehicles"}
+            title={"Un-Approved Vehicles"}
             totalData={unapprovelVehicles.length}
             color={"bg-blue-200"}
             icon={<FaCarSide size={28} />}
@@ -273,7 +275,7 @@ const Dashboard = () => {
             icon={<FaCity size={28} />}
             path={"/admin/city"}
           />
-        </div>
+        </span>
 
         {/* Charts 
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">

@@ -74,9 +74,9 @@ export const ModelList = () => {
   if (loading) return <RotateLoader />;
 
   return (
-    <div className="min-h-screen bg-gray-100 p-4 sm:p-6">
-      <div className="flex flex-col sm:flex-row justify-between items-center gap-4 mb-6">
-        <h2 className="text-3xl font-bold text-gray-800">Vehicle Model List</h2>
+    <div className="min-h-screen bg-gray-100 lg:p-6 p-2">
+      <div className="flex flex-col sm:flex-row justify-between items-center gap-4 mb-3">
+        <h2 className="lg:text-3xl text-xl font-bold text-gray-800">Vehicle Model List</h2>
         <div className="relative w-full max-w-md">
           <span className="absolute inset-y-0 left-0 flex items-center pl-3 text-gray-400">
             <svg
@@ -103,7 +103,7 @@ export const ModelList = () => {
         </div>
         <button
           onClick={() => handleToggleModal("Add")}
-          className="bg-[#191970] hover:bg-blue-900 text-white font-bold py-2 px-6 rounded-md shadow transition duration-200 hover:cursor-pointer"
+          className="bg-[#191970]  w-full lg:w-36 hover:bg-blue-900 text-white font-bold py-2 px-6 rounded-md shadow transition duration-200 hover:cursor-pointer"
         >
           Add Model
         </button>
@@ -146,7 +146,7 @@ export const ModelList = () => {
           No series found
         </div>
       )}
-   
+
       <div className="flex justify-between mt-6">
         {/* Prev Button */}
         <button

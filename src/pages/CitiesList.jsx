@@ -72,9 +72,11 @@ export const CitiesList = () => {
   }, [search, pageNo]);
 
   return (
-    <div className="min-h-screen bg-gray-100 p-4 sm:p-6">
-      <div className="flex flex-col sm:flex-row justify-between items-center gap-4 mb-6">
-        <h2 className="text-3xl font-bold text-gray-800">Cities List</h2>
+    <div className="min-h-screen bg-gray-100 p-2 lg:p-6">
+      <div className="flex flex-col sm:flex-row justify-between items-center gap-4 mb-3">
+        <h2 className="lg:text-3xl text-xl font-bold text-gray-800">
+          Cities List
+        </h2>
         <div className="relative w-full max-w-md">
           <span className="absolute inset-y-0 left-0 flex items-center pl-3 text-gray-400">
             <svg
@@ -101,7 +103,7 @@ export const CitiesList = () => {
         </div>
         <button
           onClick={() => handleToggleModal("Add")}
-          className="bg-[#191970] hover:bg-blue-900 text-white font-bold py-2 px-6 rounded-md shadow transition duration-200 hover:cursor-pointer"
+          className="w-full lg:w-32 bg-[#191970] hover:bg-blue-900 text-white font-bold py-2 px-6 rounded-md shadow transition duration-200 hover:cursor-pointer"
         >
           Add City
         </button>
@@ -109,10 +111,10 @@ export const CitiesList = () => {
 
       <div className="overflow-x-auto">
         <table className="min-w-full bg-white shadow-md rounded-lg overflow-hidden">
-          <thead className="bg-[#191970] text-white">
+          <thead className="bg-[#191970] text-white text-base">
             <tr>
               <th className="py-3 px-4 text-left">SR#</th>
-              <th className="py-3 px-4 text-left">City Name</th>
+              <th className="py-2 px-10 text-left">City Name</th>
               <th className="px-4 py-3 text-center">Action</th>
             </tr>
           </thead>
@@ -120,7 +122,7 @@ export const CitiesList = () => {
             {allCities?.map((city, index) => (
               <tr key={city.id} className="border-b">
                 <td className="py-2 px-4">{index + 1}</td>
-                <td className="py-2 px-4">
+                <td className="py-2 px-10">
                   {city.cityName.charAt(0).toUpperCase() +
                     city.cityName.slice(1)}
                 </td>

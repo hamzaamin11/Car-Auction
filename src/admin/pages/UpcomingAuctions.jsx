@@ -115,7 +115,7 @@ export default function UpcomingAuctions() {
     <>
       <div className="max-w-7xl mx-auto px-3  lg:px-0 py-6 font-sans">
         <div className="flex flex-col sm:flex-row justify-between items-center gap-4 mb-6">
-          <h1 className="text-2xl sm:text-3xl font-bold text-gray-900">
+          <h1 className="text-xl lg:text-3xl font-bold text-gray-900">
             Upcoming Auctions
           </h1>
           <div className="relative w-full max-w-md">

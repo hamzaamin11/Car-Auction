@@ -75,7 +75,7 @@ export const BecomePartnerList = () => {
     <div className="min-h-screen bg-gray-100 p-4 sm:p-6">
       <div className="flex flex-col sm:flex-row justify-between items-center gap-4 mb-6">
         <h2 className="text-2xl sm:text-3xl font-bold text-gray-800">
-          Become a Partner List
+        Partners List
         </h2>
         <div className="relative w-full max-w-md">
           <span className="absolute inset-y-0 left-0 flex items-center pl-3 text-gray-400">

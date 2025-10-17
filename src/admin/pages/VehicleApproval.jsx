@@ -100,7 +100,7 @@ export const VehicleApproval = () => {
     <div className="min-h-screen bg-gray-100 p-6">
       {/* Header */}
       <div className="flex flex-col sm:flex-row justify-between items-center mb-6">
-        <h2 className="text-3xl font-bold text-gray-800">
+        <h2 className="lg:text-3xl text-xl font-bold text-gray-800 text-center">
           Pending Vehicle Approvals
         </h2>
 
@@ -113,7 +113,20 @@ export const VehicleApproval = () => {
             className="w-full pl-10 pr-4 py-2 rounded-md border border-gray-300 shadow-sm placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-600"
           />
           <span className="absolute inset-y-0 left-0 flex items-center pl-3 text-gray-400">
-            🔍
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              className="h-5 w-5"
+              fill="none"
+              viewBox="0 0 24 24"
+              stroke="currentColor"
+            >
+              <path
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                strokeWidth="2"
+                d="M21 21l-4.35-4.35m0 0A7.5 7.5 0 104.5 4.5a7.5 7.5 0 0012.15 12.15z"
+              />
+            </svg>
           </span>
         </div>
       </div>

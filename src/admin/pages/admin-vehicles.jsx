@@ -390,11 +390,8 @@ function AddAdminVehicle({ open, setOpen, onVehicleUpdated }) {
 
   return (
     <div className="min-h-screen bg-gray-100 p-4 sm:p-6">
-      <h2 className="text-2xl sm:text-3xl font-bold text-gray-800 block sm:hidden mb-4">
-        Vehicle List
-      </h2>
-      <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center w-full gap-4 mb-6">
-        <h2 className="text-2xl sm:text-3xl font-bold text-gray-800 hidden sm:block">
+      <div className="flex flex-col sm:flex-row justify-between lg:items-start items-center w-full gap-4 mb-6">
+        <h2 className="text-xl lg:text-3xl font-bold text-gray-800 ">
           Vehicle List
         </h2>
         <div className="relative w-full max-w-md">

@@ -88,12 +88,12 @@ export const SeriesList = () => {
   }, [search, pageNo]);
 
   return (
-    <div className="min-h-screen bg-gray-100 p-3 sm:p-4 md:p-6">
+    <div className="min-h-screen bg-gray-100 lg:p-6 p-2">
       {/* Header Section */}
-      <div className="flex flex-col gap-3 sm:gap-4 mb-4 sm:mb-6">
+      <div className="flex flex-col gap-3 sm:gap-4 mb-3 sm:mb-3">
         {/* Mobile Layout - Stack everything */}
         <div className="md:hidden flex flex-col gap-3">
-          <h2 className="text-2xl font-bold text-gray-800">
+          <h2 className="lg:text-3xl text-xl font-bold text-gray-800 text-center">
             Vehicle Series List
           </h2>
           <div className="relative w-full">
@@ -209,59 +209,60 @@ export const SeriesList = () => {
       </div>
 
       {/* Mobile Card View - Hidden on Desktop */}
-      <div className="md:hidden space-y-3">
-        {allSeries?.map((series) => (
+
+      {allSeries?.length > 0 ? (
+        allSeries.map((series, index) => (
           <div
             key={series._id}
-            className="bg-white rounded-lg shadow-md p-4 space-y-3"
+            className="flex flex-col bg-white border border-gray-200 rounded-xl shadow-sm p-4 hover:shadow-md transition-all duration-200"
           >
-            <div className="space-y-2">
-              <div className="flex flex-col">
-                <span className="text-xs text-gray-500 font-medium">
-                  Make Name
-                </span>
-                <span className="text-sm font-semibold text-gray-800">
-                  {series.brandName}
-                </span>
+            {/* Header Row */}
+            <div className="flex justify-between items-center border-b border-gray-100 pb-2 mb-3">
+              <h4 className="font-bold text-gray-800  capitalize">
+                {series.seriesName}
+              </h4>
+            </div>
+
+            {/* Info Section */}
+            <div className="grid grid-cols-2 gap-y-1 text-sm">
+              <div className="text-gray-800 font-bold">Brand</div>
+              <div className="text-gray-800">
+                {series.brandName}
               </div>
 
-              <div className="flex flex-col">
-                <span className="text-xs text-gray-500 font-medium">
-                  Model Name
-                </span>
-                <span className="text-sm font-semibold text-gray-800">
-                  {series.modelName}
-                </span>
+              <div className="text-gray-800 font-bold">Model</div>
+              <div className="text-gray-800 ">
+                {series.modelName}
               </div>
 
-              <div className="flex flex-col">
-                <span className="text-xs text-gray-500 font-medium">
-                  Model Series
-                </span>
-                <span className="text-sm font-semibold text-gray-800">
-                  {series.seriesName.charAt(0).toUpperCase() +
-                    series.seriesName.slice(1)}
-                </span>
+              <div className="text-gray-800 font-bold">Series</div>
+              <div className="text-gray-800">
+                {series.seriesName}
               </div>
             </div>
 
-            <div className="flex gap-2 pt-2">
+            {/* Action Buttons */}
+            <div className="flex gap-3 mt-4">
               <button
                 onClick={() => handleEditBtn(series)}
-                className="flex-1 px-3 py-2 text-sm border border-yellow-500 text-yellow-500 rounded-md hover:bg-yellow-500 hover:text-white transition font-medium"
+                className="flex-1 px-3 py-2 text-sm font-medium rounded-md border border-yellow-500 text-yellow-600 hover:bg-yellow-500 hover:text-white transition-all"
               >
                 Edit
               </button>
               <button
                 onClick={() => handleDeleteBrand(series?.id)}
-                className="flex-1 px-3 py-2 text-sm border border-red-600 text-red-600 rounded-md hover:bg-red-600 hover:text-white transition font-medium"
+                className="flex-1 px-3 py-2 text-sm font-medium rounded-md border border-red-500 text-red-600 hover:bg-red-600 hover:text-white transition-all"
               >
                 Delete
               </button>
             </div>
           </div>
-        ))}
-      </div>
+        ))
+      ) : (
+        <p className="text-center text-gray-500 text-sm py-6">
+          No series available.
+        </p>
+      )}
 
       {/* Empty State */}
       {allSeries.length === 0 && (
