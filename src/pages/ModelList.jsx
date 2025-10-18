@@ -11,7 +11,6 @@ export const ModelList = () => {
   const [loading, setLoading] = useState(false);
   const [allBrands, setAllBrands] = useState([]);
   const [allModels, setAllModels] = useState([]);
-  const [filteredModels, setFilteredModels] = useState([]);
   const [seleteModel, setSeleteModel] = useState();
   const [search, setSearch] = useState("");
   const [pageNo, setPageNo] = useState(1);
@@ -31,13 +30,13 @@ export const ModelList = () => {
       setLoading(true);
       const res = await axios.get(`${BASE_URL}/getModels`, {
         params: {
+          search: search,
           page: pageNo,
           limit: 10,
         },
       });
       console.log(res.data);
       setAllModels(res.data);
-      setFilteredModels(res.data);
     } catch (error) {
       console.log(error);
     } finally {
@@ -68,21 +67,12 @@ export const ModelList = () => {
   // Handle search change and reset page to 1
   const handleSearchChange = (e) => {
     setSearch(e.target.value);
-    setPageNo(1); // Reset to first page when searching
+    setPageNo(1);
   };
 
   useEffect(() => {
     handleGetAllModels();
-  }, [pageNo]);
-
-  useEffect(() => {
-    const filtered = allModels.filter((model) =>
-      `${model.brandName} ${model.modelName}`
-        .toLowerCase()
-        .includes(search.toLowerCase())
-    );
-    setFilteredModels(filtered);
-  }, [search, allModels]);
+  }, [search, pageNo]);
 
   if (loading) return <RotateLoader />;
 
@@ -132,7 +122,7 @@ export const ModelList = () => {
           </tr>
         </thead>
         <tbody>
-          {filteredModels?.map((brand, index) => (
+          {allModels?.map((brand, index) => (
             <tr key={brand._id} className="border-b">
               <td className="py-2 px-4">{(pageNo - 1) * 10 + index + 1}</td>
               <td className="py-2 px-4">
@@ -155,9 +145,9 @@ export const ModelList = () => {
           ))}
         </tbody>
       </table>
-      {filteredModels?.length === 0 && (
+      {allModels?.length === 0 && (
         <div className="flex justify-center items-center text-gray-500 pt-2">
-          No series found
+          No models found
         </div>
       )}
 
@@ -173,7 +163,7 @@ export const ModelList = () => {
         <div></div>
         <button
           className={`bg-blue-950 text-white px-5 py-2 rounded-md ${
-            filteredModels.length === 10 ? "block" : "hidden"
+            allModels.length === 10 ? "block" : "hidden"
           }`}
           onClick={handleNextPage}
         >
