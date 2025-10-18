@@ -458,13 +458,15 @@ function EditAdminVehicle({
                 name="driveType"
                 value={vehicle.driveType}
                 onChange={handleChange}
-                className="border border-gray-300 px-4 py-2 rounded focus:outline-none focus:ring-2 focus:ring-indigo-500 w-full"
+                className={`border border-gray-300 px-4 py-2 rounded focus:outline-none focus:ring-2 focus:ring-indigo-500 w-full ${
+                      vehicle.driveType ? "text-gray-900" : "text-gray-400"
+                    }`}
               >
                 <option value="">Select Drive Type</option>
-                <option value="fwd">FWD (Front-Wheel Drive)</option>
-                <option value="rwd">RWD (Rear-Wheel Drive)</option>
-                <option value="awd">AWD (All-Wheel Drive)</option>
-                <option value="4wd">4WD (Four-Wheel Drive)</option>
+                <option value="fwd" className="text-gray-900">FWD (Front-Wheel Drive)</option>
+                <option value="rwd" className="text-gray-900">RWD (Rear-Wheel Drive)</option>
+                <option value="awd" className="text-gray-900">AWD (All-Wheel Drive)</option>
+                <option value="4wd" className="text-gray-900">4WD (Four-Wheel Drive)</option>
               </select>
             </div>
 
@@ -476,11 +478,13 @@ function EditAdminVehicle({
                 name="bodyStyle"
                 value={vehicle.bodyStyle}
                 onChange={handleChange}
-                className="border border-gray-300 px-4 py-2 rounded focus:outline-none focus:ring-2 focus:ring-indigo-500 w-full"
+               className={`border border-gray-300 px-4 py-2 rounded focus:outline-none focus:ring-2 focus:ring-indigo-500 w-full ${
+                      vehicle.bodyStyle ? "text-gray-900" : "text-gray-400"
+                    }`}
               >
                 <option value="">Please Select Body Style</option>
                 {bodyStyles?.map((body) => (
-                  <option key={body} value={body}>
+                  <option key={body} value={body} className="text-gray-900">
                     {body}
                   </option>
                 ))}
@@ -495,11 +499,13 @@ function EditAdminVehicle({
                 name="transmission"
                 value={vehicle?.transmission || ""}
                 onChange={handleChange}
-                className="border border-gray-300 px-4 py-2 rounded focus:outline-none focus:ring-2 focus:ring-indigo-500 w-full"
+       className={`border border-gray-300 px-4 py-2 rounded focus:outline-none focus:ring-2 focus:ring-indigo-500 w-full ${
+                      vehicle.transmission ? "text-gray-900" : "text-gray-400"
+                    }`}
               >
-                <option value="">Please Select Transmission Type</option>
-                <option value="Automatic">Automatic</option>
-                <option value="Manual">Manual</option>
+                <option value="" >Please Select Transmission Type</option>
+                <option value="Automatic" className="text-gray-900">Automatic</option>
+                <option value="Manual" className="text-gray-900">Manual</option>
               </select>
             </div>
 
@@ -529,11 +535,13 @@ function EditAdminVehicle({
                 name="color"
                 value={vehicle.color || ""}
                 onChange={handleChange}
-                className="border border-gray-300 px-4 py-2 rounded focus:outline-none focus:ring-2 focus:ring-indigo-500 w-full"
+               className={`border border-gray-300 px-4 py-2 rounded focus:outline-none focus:ring-2 focus:ring-indigo-500 w-full ${
+                      vehicle.color ? "text-gray-900" : "text-gray-400"
+                    }`}
               >
                 <option value="">Please Select Color</option>
                 {carColors?.map((color) => (
-                  <option key={color} value={color}>
+                  <option key={color} value={color} className="text-gray-900">
                     {color}
                   </option>
                 ))}
@@ -548,15 +556,17 @@ function EditAdminVehicle({
                 name="fuelType"
                 value={vehicle.fuelType}
                 onChange={handleChange}
-                className="border border-gray-300 px-4 py-2 rounded focus:outline-none focus:ring-2 focus:ring-indigo-500 w-full"
+                className={`border border-gray-300 px-4 py-2 rounded focus:outline-none focus:ring-2 focus:ring-indigo-500 w-full ${
+                      vehicle.fuelType ? "text-gray-900" : "text-gray-400"
+                    }`}
               >
                 <option value="">Select Fuel Type</option>
-                <option value="petrol">Petrol</option>
-                <option value="diesel">Diesel</option>
-                <option value="cng">CNG (Compressed Natural Gas)</option>
-                <option value="lpg">LPG (Liquefied Petroleum Gas)</option>
-                <option value="electric">Electric</option>
-                <option value="hybrid">Hybrid</option>
+                <option value="petrol" className="text-gray-900">Petrol</option>
+                <option value="diesel" className="text-gray-900">Diesel</option>
+                <option value="cng" className="text-gray-900">CNG (Compressed Natural Gas)</option>
+                <option value="lpg" className="text-gray-900">LPG (Liquefied Petroleum Gas)</option>
+                <option value="electric" className="text-gray-900">Electric</option>
+                <option value="hybrid" className="text-gray-900">Hybrid</option>
               </select>
             </div>
 
@@ -568,12 +578,14 @@ function EditAdminVehicle({
                 name="vehicleCondition"
                 value={vehicle.vehicleCondition}
                 onChange={handleChange}
-                className="border border-gray-300 px-4 py-2 rounded focus:outline-none focus:ring-2 focus:ring-indigo-500 w-full"
+                className={`border border-gray-300 px-4 py-2 rounded focus:outline-none focus:ring-2 focus:ring-indigo-500 w-full ${
+                      vehicle.vehicleCondition ? "text-gray-900" : "text-gray-400"
+                    }`}
               >
                 <option value="">Select Vehicle Condition</option>
-                <option value="new">New</option>
-                <option value="used">Used</option>
-                <option value="accidented">Accidented</option>
+                <option value="new" className="text-gray-900">New</option>
+                <option value="used" className="text-gray-900">Used</option>
+                <option value="accidented" className="text-gray-900">Accidented</option>
               </select>
             </div>
 
@@ -605,17 +617,19 @@ function EditAdminVehicle({
 
           <div>
             <label className="block text-sm font-medium text-gray-700 mb-1">
-              Certified Status <span className="text-red-500">*</span>
+              Certification Status <span className="text-red-500">*</span>
             </label>
             <select
               name="certifyStatus"
               value={vehicle.certifyStatus}
               onChange={handleChange}
-              className="border border-gray-300 px-4 py-2 rounded focus:outline-none focus:ring-2 focus:ring-indigo-500 w-full"
+              className={`border border-gray-300 px-4 py-2 rounded focus:outline-none focus:ring-2 focus:ring-indigo-500 w-full ${
+                      vehicle.certifyStatus ? "text-gray-900" : "text-gray-400"
+                    }`}
             >
               <option value="">Please Select Certify Status</option>
-              <option value="Certified">Certified</option>
-              <option value="Non-Certified">Non-Certified</option>
+              <option value="Certified" className="text-gray-900">Certified</option>
+              <option value="Non-Certified" className="text-gray-900">Non-Certified</option>
             </select>
           </div>
 

@@ -104,7 +104,7 @@ export const AddSeries = ({ handleClose, handleGetAllSeries }) => {
         <form onSubmit={handleSubmit} className="space-y-4">
           {/* Brand Dropdown */}
           <div>
-            <label className="block text-sm font-bold text-gray-900 mb-1">
+            <label className="block text-sm font-semibold text-gray-700 mb-1">
               Brand Name
             </label>
             <Select
@@ -136,7 +136,7 @@ export const AddSeries = ({ handleClose, handleGetAllSeries }) => {
 
           {/* Model Dropdown */}
           <div>
-            <label className="block text-sm font-bold text-gray-900 mb-1">
+            <label className="block text-sm font-semibold text-gray-700 mb-1">
               Model Name
             </label>
             <Select
@@ -168,7 +168,7 @@ export const AddSeries = ({ handleClose, handleGetAllSeries }) => {
 
           {/* Series Input */}
           <div>
-            <label className="block text-sm font-bold text-gray-900 mb-1">
+            <label className="block text-sm font-semibold text-gray-700 mb-1">
               Series Name
             </label>
             <input
@@ -187,7 +187,7 @@ export const AddSeries = ({ handleClose, handleGetAllSeries }) => {
             <button
               disabled={loading}
               type="submit"
-              className="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700 transition duration-200"
+              className="bg-blue-950 text-white px-4 py-2 rounded"
             >
               {loading ? "Loading..." : "Add Series"}
             </button>

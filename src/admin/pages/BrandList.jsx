@@ -67,6 +67,12 @@ export const BrandList = () => {
     }
   };
 
+  // Handle search change and reset page to 1
+  const handleSearchChange = (e) => {
+    setSearch(e.target.value);
+    setPageNo(1); // Reset to first page when searching
+  };
+
   useEffect(() => {
     handleGetAllBrands();
   }, [search, pageNo]);
@@ -95,7 +101,8 @@ export const BrandList = () => {
           <input
             type="text"
             placeholder="Search By Car Brand..."
-            onChange={(e) => setSearch(e.target.value)}
+            onChange={handleSearchChange}
+            value={search}
             className="w-full pl-10 pr-4 py-2 rounded-md border border-gray-300 shadow-sm placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500"
           />
         </div>
@@ -119,7 +126,7 @@ export const BrandList = () => {
         <tbody>
           {allBrands?.map((brand, index) => (
             <tr key={brand._id} className="border-b">
-              <td className="py-2 px-4">{index + 1}</td>
+              <td className="py-2 px-4">{(pageNo - 1) * 10 + index + 1}</td>
               <td className="py-2 px-4">
                 <img
                   src={brand.logo}

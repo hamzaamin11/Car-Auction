@@ -1,5 +1,5 @@
 import axios from "axios";
-import  { useEffect, useState, useCallback } from "react";
+import { useEffect, useState, useCallback } from "react";
 import { debounce } from "lodash";
 import { BASE_URL } from "../../components/Contant/URL";
 
@@ -71,10 +71,16 @@ export const SuggestionList = () => {
     setIsModalOpen(true);
   };
 
+  // Function to truncate suggestion text
+  const truncateSuggestion = (text, maxLength = 25) => {
+    if (!text) return "No suggestion provided.";
+    return text.length > maxLength ? text.slice(0, maxLength) + "..." : text;
+  };
+
   return (
     <div className="min-h-screen bg-gray-100 p-4 sm:p-6">
       <div className="flex flex-col sm:flex-row justify-between items-center gap-4 mb-6">
-        <h2 className="text-2xl sm:text-3xl font-bold text-gray-800">
+        <h2 className="text-3xl font-bold text-gray-800">
           Suggestion List
         </h2>
         <div className="relative w-full max-w-md">
@@ -163,7 +169,8 @@ export const SuggestionList = () => {
             currentItems.map((sugest) => (
               <div
                 key={sugest.id}
-                className="bg-white rounded-xl shadow-md border border-gray-200 p-4 transition-all duration-300 hover:shadow-lg"
+                className="bg-white rounded-xl shadow-md border border-gray-200 p-4 transition-all duration-300 hover:shadow-lg cursor-pointer"
+                onClick={() => handleViewBtn(sugest)}
               >
                 <div className="space-y-2 text-sm">
                   <p className="flex justify-between">
@@ -186,14 +193,12 @@ export const SuggestionList = () => {
                       {sugest.contactNumber}
                     </span>
                   </p>
-                  <div className="flex justify-center pt-2">
-                    <button
-                      onClick={() => handleViewBtn(sugest)}
-                      className="px-4 py-1 text-sm border border-indigo-500 text-indigo-500 rounded-md hover:bg-indigo-600 hover:text-white transition"
-                    >
-                      View
-                    </button>
-                  </div>
+                  <p className="flex justify-between">
+                    <span className="font-bold text-gray-900">Suggestion</span>
+                    <span className="text-gray-700">
+                      {truncateSuggestion(sugest.suggestion)}
+                    </span>
+                  </p>
                 </div>
               </div>
             ))

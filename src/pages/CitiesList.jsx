@@ -7,18 +7,18 @@ import { EditCityModal } from "../components/CityModal/EditCity";
 
 export const CitiesList = () => {
   const [isOpen, setIsOpen] = useState("");
-
   const [loading, setLoading] = useState(false);
-
   const [allCities, setAllCities] = useState([]);
-
   const [seleteCity, setSeleteCity] = useState();
-
   const [search, setSearch] = useState("");
-
   const [pageNo, setPageNo] = useState(1);
 
   console.log(pageNo);
+
+  const handleSearchChange = (e) => {
+    setSearch(e.target.value);
+    setPageNo(1); // Reset to page 1 on search
+  };
 
   const handleNextPage = () => {
     setPageNo(pageNo + 1);
@@ -60,7 +60,7 @@ export const CitiesList = () => {
     try {
       const res = await axios.patch(`${BASE_URL}/admin/deleteBrand/${id}`);
       console.log(res.data);
-      handleGetAllBrands();
+      handleGetAllCities();
       toast.success("Brand has been deleted successfully");
     } catch (error) {
       console.log(error);
@@ -74,7 +74,7 @@ export const CitiesList = () => {
   return (
     <div className="min-h-screen bg-gray-100 p-2 lg:p-6">
       <div className="flex flex-col sm:flex-row justify-between items-center gap-4 mb-3">
-        <h2 className="lg:text-3xl text-xl font-bold text-gray-800">
+        <h2 className="text-3xl font-bold text-gray-800">
           Cities List
         </h2>
         <div className="relative w-full max-w-md">
@@ -97,7 +97,8 @@ export const CitiesList = () => {
           <input
             type="text"
             placeholder="Search By City Name..."
-            onChange={(e) => setSearch(e.target.value)}
+            value={search}
+            onChange={handleSearchChange}
             className="w-full pl-10 pr-4 py-2 rounded-md border border-gray-300 shadow-sm placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500"
           />
         </div>
@@ -141,7 +142,7 @@ export const CitiesList = () => {
       </div>
 
       {allCities.length === 0 && (
-        <div className="text-center text-gray-500 py-4">No brands found</div>
+        <div className="text-center text-gray-500 py-4">No cities found</div>
       )}
 
       {isOpen === "Add" && (
@@ -160,9 +161,8 @@ export const CitiesList = () => {
       )}
 
       <div className="flex justify-between mt-6">
-        {/* Prev Button */}
         <button
-          className={`bg-blue-950 text-white px-5 py-2 rounded-md  ${
+          className={`bg-blue-950 text-white px-5 py-2 rounded-md ${
             pageNo > 1 ? "block" : "hidden"
           }`}
           onClick={handlePrevPage}
@@ -171,8 +171,8 @@ export const CitiesList = () => {
         </button>
         <div></div>
         <button
-          className={`bg-blue-950 text-white px-5 py-2 rounded-md  ${
-            allCities.length === 0 ? "hidden" : "block"
+          className={`bg-blue-950 text-white px-5 py-2 rounded-md ${
+            allCities.length === 10 ? "block" : "hidden"
           }`}
           onClick={handleNextPage}
         >

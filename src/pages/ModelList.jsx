@@ -8,17 +8,12 @@ import { EditModal } from "../components/ModelModal/EditModal";
 
 export const ModelList = () => {
   const [isOpen, setIsOpen] = useState("");
-
   const [loading, setLoading] = useState(false);
-
   const [allBrands, setAllBrands] = useState([]);
-
   const [allModels, setAllModels] = useState([]);
-
+  const [filteredModels, setFilteredModels] = useState([]);
   const [seleteModel, setSeleteModel] = useState();
-
   const [search, setSearch] = useState("");
-
   const [pageNo, setPageNo] = useState(1);
 
   console.log(pageNo);
@@ -33,17 +28,20 @@ export const ModelList = () => {
 
   const handleGetAllModels = async () => {
     try {
+      setLoading(true);
       const res = await axios.get(`${BASE_URL}/getModels`, {
         params: {
-          search: search,
           page: pageNo,
           limit: 10,
         },
       });
       console.log(res.data);
       setAllModels(res.data);
+      setFilteredModels(res.data);
     } catch (error) {
       console.log(error);
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -67,16 +65,31 @@ export const ModelList = () => {
     }
   };
 
+  // Handle search change and reset page to 1
+  const handleSearchChange = (e) => {
+    setSearch(e.target.value);
+    setPageNo(1); // Reset to first page when searching
+  };
+
   useEffect(() => {
     handleGetAllModels();
-  }, [search, pageNo]);
+  }, [pageNo]);
+
+  useEffect(() => {
+    const filtered = allModels.filter((model) =>
+      `${model.brandName} ${model.modelName}`
+        .toLowerCase()
+        .includes(search.toLowerCase())
+    );
+    setFilteredModels(filtered);
+  }, [search, allModels]);
 
   if (loading) return <RotateLoader />;
 
   return (
     <div className="min-h-screen bg-gray-100 lg:p-6 p-2">
       <div className="flex flex-col sm:flex-row justify-between items-center gap-4 mb-3">
-        <h2 className="lg:text-3xl text-xl font-bold text-gray-800">Vehicle Model List</h2>
+        <h2 className="text-3xl font-bold text-gray-800">Vehicle Model List</h2>
         <div className="relative w-full max-w-md">
           <span className="absolute inset-y-0 left-0 flex items-center pl-3 text-gray-400">
             <svg
@@ -96,14 +109,15 @@ export const ModelList = () => {
           </span>
           <input
             type="text"
-            placeholder="Search By Car Model..."
-            onChange={(e) => setSearch(e.target.value)}
+            placeholder="Search By Car Make or Model..."
+            onChange={handleSearchChange}
+            value={search}
             className="w-full pl-10 pr-4 py-2 rounded-md border border-gray-300 shadow-sm placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500"
           />
         </div>
         <button
           onClick={() => handleToggleModal("Add")}
-          className="bg-[#191970]  w-full lg:w-36 hover:bg-blue-900 text-white font-bold py-2 px-6 rounded-md shadow transition duration-200 hover:cursor-pointer"
+          className="bg-[#191970] w-full lg:w-36 hover:bg-blue-900 text-white font-bold py-2 px-6 rounded-md shadow transition duration-200 hover:cursor-pointer"
         >
           Add Model
         </button>
@@ -118,9 +132,9 @@ export const ModelList = () => {
           </tr>
         </thead>
         <tbody>
-          {allModels?.map((brand, index) => (
+          {filteredModels?.map((brand, index) => (
             <tr key={brand._id} className="border-b">
-              <td className="py-2 px-4">{index + 1}</td>
+              <td className="py-2 px-4">{(pageNo - 1) * 10 + index + 1}</td>
               <td className="py-2 px-4">
                 {brand.brandName.charAt(0).toUpperCase() +
                   brand.brandName.slice(1)}
@@ -141,27 +155,25 @@ export const ModelList = () => {
           ))}
         </tbody>
       </table>
-      {allModels?.length === 0 && (
+      {filteredModels?.length === 0 && (
         <div className="flex justify-center items-center text-gray-500 pt-2">
           No series found
         </div>
       )}
 
       <div className="flex justify-between mt-6">
-        {/* Prev Button */}
         <button
-          className={`bg-blue-950 text-white px-5 py-2 rounded-md  ${
+          className={`bg-blue-950 text-white px-5 py-2 rounded-md ${
             pageNo > 1 ? "block" : "hidden"
           }`}
           onClick={handlePrevPage}
         >
           ‹ Prev
         </button>
-        {/* Next Button */}
         <div></div>
         <button
-          className={`bg-blue-950 text-white px-5 py-2 rounded-md  ${
-            allModels.length === 10 ? "block" : "hidden"
+          className={`bg-blue-950 text-white px-5 py-2 rounded-md ${
+            filteredModels.length === 10 ? "block" : "hidden"
           }`}
           onClick={handleNextPage}
         >

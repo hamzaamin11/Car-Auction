@@ -101,7 +101,7 @@ export const EditBrandModal = ({
             />
           </div>
 
-          <div className="flex justify-end">
+          <div className="flex justify-center">
             <button
               type="submit"
               className="bg-blue-950 text-white px-4 py-2 rounded hover:cursor-pointer"

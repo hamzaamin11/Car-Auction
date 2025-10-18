@@ -85,7 +85,7 @@ export const EditModal = ({ handleClose, seleteModel, handleGetAllModels }) => {
         <form onSubmit={handleSubmit} className="space-y-4">
           {/* Brand Dropdown */}
           <div>
-            <label className="block text-sm font-bold text-gray-900 mb-1">
+            <label className="block text-sm font-semibold text-gray-700 mb-1">
               Brand Name
             </label>
             <Select

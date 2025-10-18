@@ -91,11 +91,11 @@ export const AddBrandModal = ({ handleClose, handleGetAllBrands }) => {
             />
           </div>
 
-          <div className="flex justify-end">
+          <div className="flex justify-center">
             <button
               disabled={loading}
               type="submit"
-              className="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700 transition duration-200"
+              className="bg-blue-950 text-white px-4 py-2 rounded align-items-center"
             >
               {loading ? "loading..." : "Add Brand"}
             </button>

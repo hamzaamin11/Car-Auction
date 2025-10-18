@@ -85,7 +85,7 @@ export const AddModel = ({ handleClose, handleGetAllModels }) => {
         <form onSubmit={handleSubmit} className="space-y-4">
           {/* Brand Name */}
           <div>
-            <label className="block text-sm font-bold text-gray-900 mb-1">
+            <label className="block text-sm font-semibold text-gray-700 mb-1">
               Brand Name
             </label>
             <Select
@@ -117,7 +117,7 @@ export const AddModel = ({ handleClose, handleGetAllModels }) => {
 
           {/* Model Name */}
           <div>
-            <label className="block text-sm font-bold text-gray-900 mb-1">
+            <label className="block text-sm font-semibold text-gray-700 mb-1">
               Model Name
             </label>
             <input
@@ -136,7 +136,7 @@ export const AddModel = ({ handleClose, handleGetAllModels }) => {
             <button
               disabled={loading}
               type="submit"
-              className="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700 transition duration-200"
+              className="bg-blue-950 text-white px-4 py-2 rounded "
             >
               {loading ? "Loading..." : "Add Model"}
             </button>

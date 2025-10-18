@@ -110,7 +110,7 @@ export default function ManageUsers() {
     <div className="max-w-7xl mx-auto px-2 sm:px-4 py-6 font-sans">
       {/* Header */}
       <div className="flex flex-col sm:flex-row justify-between items-center gap-4 mb-6">
-        <h1 className="text-2xl sm:text-3xl font-bold text-gray-900">
+        <h1 className="text-3xl font-bold text-gray-900">
           Registered Users
         </h1>
         <div className="relative w-full max-w-md">

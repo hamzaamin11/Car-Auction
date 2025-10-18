@@ -38,7 +38,7 @@ const ViewUserModal = ({ isOpen, closeModal }) => {
                 {/* Header with close */}
                 <Dialog.Title
                   as="h3"
-                  className="text-3xl font-bold text-blue-700 flex justify-between items-center mb-6"
+                  className="text-3xl font-bold text-black flex justify-between items-center mb-6"
                 >
                   User Details
                   <button
@@ -55,12 +55,12 @@ const ViewUserModal = ({ isOpen, closeModal }) => {
                     <img
                       src={userbyId?.image || UserImage}
                       alt="user-img"
-                      className="h-40 w-40 rounded-full object-cover border-4 border-purple-300 shadow-md bg-blue-500"
+                      className="h-40 w-40 rounded-full object-cover border-4 border-blue-950 shadow-md bg-blue-600"
                     />
                   </div>
 
                   {/* Divider */}
-                  <div className="hidden md:block w-px bg-gradient-to-b from-purple-300 to-purple-700" />
+                  <div className="hidden md:block w-px bg-blue-950" />
 
                   {/* Right: Info */}
                   <div className="w-full md:w-1/2">
@@ -68,18 +68,33 @@ const ViewUserModal = ({ isOpen, closeModal }) => {
                       <div className="space-y-3 text-gray-800">
                         <p>
                           <strong>Name:</strong>{" "}
-                          {userbyId.name.charAt(0).toUpperCase() +
-                            userbyId.name.slice(1) || "N/A"}
+                          {userbyId?.name?.charAt(0)?.toUpperCase() +
+                            userbyId?.name?.slice(1) || "N/A"}
                         </p>
                         <p>
                           <strong>Contact:</strong>{" "}
-                          {userbyId.contact.slice(0, 13) || "N/A"}
+                          {userbyId?.contact?.slice(0, 13) || "N/A"}
                         </p>
 
                         <p>
                           <strong>Email:</strong>{" "}
-                          {userbyId.email.charAt(0).toUpperCase() +
-                            userbyId.email.slice(1) || "N/A"}
+                          {userbyId?.email?.charAt(0)?.toUpperCase() +
+                            userbyId?.email?.slice(1) || "N/A"}
+                        </p>
+                        <p>
+                          <strong>CNIC:</strong>{" "}
+                          {userbyId?.cnic?.charAt(0)?.toUpperCase() +
+                            userbyId?.cnic?.slice(1) || "N/A"}
+                        </p>
+                        <p>
+                          <strong>Address:</strong>{" "}
+                          {userbyId?.address?.charAt(0)?.toUpperCase() +
+                            userbyId?.address?.slice(1) || "N/A"}
+                        </p>
+                        <p>
+                          <strong>Role:</strong>{" "}
+                          {userbyId?.role?.charAt(0)?.toUpperCase() +
+                            userbyId?.role?.slice(1) || "N/A"}
                         </p>
                       </div>
                     ) : (

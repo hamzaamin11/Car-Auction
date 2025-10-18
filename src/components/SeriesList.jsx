@@ -83,6 +83,12 @@ export const SeriesList = () => {
     }
   };
 
+  // Handle search change and reset page to 1
+  const handleSearchChange = (e) => {
+    setSearch(e.target.value);
+    setPageNo(1); // Reset to first page when searching
+  };
+
   useEffect(() => {
     handleGetAllSeries();
   }, [search, pageNo]);
@@ -93,7 +99,7 @@ export const SeriesList = () => {
       <div className="flex flex-col gap-3 sm:gap-4 mb-3 sm:mb-3">
         {/* Mobile Layout - Stack everything */}
         <div className="md:hidden flex flex-col gap-3">
-          <h2 className="lg:text-3xl text-xl font-bold text-gray-800 text-center">
+          <h2 className="text-3xl  font-bold text-gray-800 text-center">
             Vehicle Series List
           </h2>
           <div className="relative w-full">
@@ -116,7 +122,8 @@ export const SeriesList = () => {
             <input
               type="text"
               placeholder="Search By Car Model..."
-              onChange={(e) => setSearch(e.target.value)}
+              onChange={handleSearchChange}
+              value={search}
               className="w-full pl-10 pr-4 py-2 rounded-md border border-gray-300 shadow-sm placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500"
             />
           </div>
@@ -153,7 +160,8 @@ export const SeriesList = () => {
             <input
               type="text"
               placeholder="Search By Car Model..."
-              onChange={(e) => setSearch(e.target.value)}
+              onChange={handleSearchChange}
+              value={search}
               className="w-full pl-10 pr-4 py-2 rounded-md border border-gray-300 shadow-sm placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500"
             />
           </div>
@@ -181,7 +189,7 @@ export const SeriesList = () => {
           <tbody>
             {allSeries?.map((series, index) => (
               <tr key={series._id} className="border-b hover:bg-gray-50">
-                <td className="py-2 px-4">{index + 1}</td>
+                <td className="py-2 px-4">{(pageNo - 1) * 10 + index + 1}</td>
                 <td className="py-2 px-4">{series.brandName}</td>
                 <td className="py-2 px-4">{series.modelName}</td>
                 <td className="py-2 px-4">
@@ -214,7 +222,7 @@ export const SeriesList = () => {
         allSeries.map((series, index) => (
           <div
             key={series._id}
-            className="flex flex-col bg-white border border-gray-200 rounded-xl shadow-sm p-4 hover:shadow-md transition-all duration-200"
+            className=" flex-col block md:hidden bg-white border border-gray-200 rounded-xl shadow-sm p-4 hover:shadow-md transition-all duration-200 mb-3"
           >
             {/* Header Row */}
             <div className="flex justify-between items-center border-b border-gray-100 pb-2 mb-3">
@@ -250,7 +258,7 @@ export const SeriesList = () => {
                 Edit
               </button>
               <button
-                onClick={() => handleDeleteBrand(series?.id)}
+                onClick={() => handleDeleteBrand(series?.seriesId)}
                 className="flex-1 px-3 py-2 text-sm font-medium rounded-md border border-red-500 text-red-600 hover:bg-red-600 hover:text-white transition-all"
               >
                 Delete

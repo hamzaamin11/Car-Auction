@@ -261,7 +261,7 @@ const EditUserModal = ({ Open, setOpen, selectedUser }) => {
                   <div className="flex justify-center pt-3">
                     <button
                       type="submit"
-                      className=" p-6 flex justify-center bg-gradient-to-r from-blue-600 to-indigo-600 text-white py-3 rounded-xl shadow-md hover:scale-105 transition-transform duration-300 font-semibold hover:cursor-pointer "
+                      className=" p-6 flex justify-center bg-blue-950 text-white py-3 rounded-xl shadow-md hover:scale-105 transition-transform duration-300 font-semibold hover:cursor-pointer "
                     >
                       Update User
                     </button>
