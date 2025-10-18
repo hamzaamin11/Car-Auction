@@ -113,8 +113,8 @@ export default function UpcomingAuctions() {
 
   return (
     <>
-      <div className="max-w-7xl mx-auto px-3  lg:px-0 py-6 font-sans">
-        <div className="flex flex-col sm:flex-row justify-between items-center gap-4 mb-6">
+      <div className="max-w-7xl mx-auto px-2 lg:py-6 py-3 font-sans">
+        <div className="flex flex-col sm:flex-row justify-between items-center gap-4 mb-2">
           <h1 className="text-xl lg:text-3xl font-bold text-gray-900">
             Upcoming Auctions
           </h1>
@@ -145,7 +145,7 @@ export default function UpcomingAuctions() {
         </div>
 
         <>
-          <div className="overflow-x-auto shadow ring-1 ring-gray-300 rounded-lg">
+          <div className="overflow-x-auto  rounded-lg">
             <div className="hidden md:block">
               <table className="min-w-full divide-y divide-gray-200">
                 <thead className="bg-[#191970] text-white">
@@ -268,11 +268,11 @@ export default function UpcomingAuctions() {
               </table>
             </div>
 
-            <div className="block md:hidden space-y-4 p-3">
+            <div className="block md:hidden space-y-0 ">
               {filteredAuctions?.map((user) => (
                 <div
                   key={user.id}
-                  className="bg-white rounded-xl shadow-md border border-gray-200 p-4 hover:shadow-lg hover:border-indigo-300 hover:bg-indigo-50/30 transition-all duration-300"
+                  className="bg-white rounded shadow-md border border-gray-200 p-4 hover:shadow-lg hover:border-indigo-300 hover:bg-indigo-50/30 transition-all duration-300"
                 >
                   <p className="flex justify-between space-y-1">
                     <p className="font-bold  text-gray-900">Owner Name</p>

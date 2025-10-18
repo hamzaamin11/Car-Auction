@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import axios from "axios";
 import { useSelector } from "react-redux";
 import { BASE_URL } from "../components/Contant/URL";
@@ -53,15 +53,18 @@ const MyBids = () => {
                     className="hover:bg-gray-50 transition duration-200"
                   >
                     <td className="px-6 py-4">{index + 1}</td>
-                    <td className="px-6 py-4 text-gray-700">{bid.name}</td>
                     <td className="px-6 py-4 text-gray-700">
-                      {bid.make}/{bid.model}
+                      {bid?.buyerDetails?.name}
+                    </td>
+                    <td className="px-6 py-4 text-gray-700">
+                      {bid?.vehicleDetails?.make}/{bid?.vehicleDetails?.model}/
+                      {bid?.vehicleDetails?.series}
                     </td>
                     <td className="px-6 py-4 font-semibold text-[#191970]">
-                      PKR {bid.yourOffer || "0"}
+                      PKR {bid?.bidDetails.yourOffer || "0"}
                     </td>
                     <td className="px-6 py-4 text-gray-500">
-                      {bid?.date?.slice(0, 10)}
+                      {bid?.bidDetails?.bidCreatedAt?.slice(0, 10)}
                     </td>
                     <td className="px-6 py-4 text-center">
                       <span className="inline-flex items-center px-3 py-1 text-xs font-semibold text-green-700 bg-green-100 rounded-full">

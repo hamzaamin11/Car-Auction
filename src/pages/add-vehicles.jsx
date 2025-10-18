@@ -230,7 +230,7 @@ const AddVehicles = () => {
       const res = await axios.get(
         `${BASE_URL}/getVehiclesByUser/${
           currentUser?.id
-        }?search=${search}&entry=${10}`
+        }?search=${search}&entry=${10}?page=${pageNo}`
       );
       setAllVehicles(res.data);
     } catch (error) {
@@ -240,7 +240,7 @@ const AddVehicles = () => {
 
   useEffect(() => {
     handleGetAllVehicleById();
-  }, [search]);
+  }, [search, pageNo]);
 
   const fetchVehicles = async () => {
     setLoading(true);
@@ -490,13 +490,15 @@ const AddVehicles = () => {
 
   return (
     <div
-      className="min-h-screen p-6 bg-gradient-to-br from-gray-100 to-blue-50"
+      className="min-h-screen lg:p-6 px-2 bg-gradient-to-br from-gray-100 to-blue-50"
       onClick={handleDropdownClose}
     >
       <div className="max-w-7xl mx-auto">
         <header className="flex flex-col md:flex-row justify-between items-center ">
-          <h1 className="text-3xl font-bold text-gray-800">Vehicle List</h1>
-          <div className="relative w-full max-w-md mt-4 lg:mt-0 md:mt-0 lg:ml-[-100px] ml-0">
+          <h1 className="lg:text-3xl text-xl  font-bold text-gray-800 p-3">
+            Vehicle List
+          </h1>
+          <div className="relative w-full max-w-md ">
             <span className="absolute inset-y-0 left-0 flex items-center pl-3 text-gray-400">
               <svg
                 xmlns="http://www.w3.org/2000/svg"
@@ -538,7 +540,7 @@ const AddVehicles = () => {
                 dispatch(addModel(""));
                 dispatch(addSeries(""));
               }}
-              className="mt-4 md:mt-0 px-4 py-2 bg-blue-950 text-white text-sm rounded hover:cursor-pointer"
+              className="mt-4 md:mt-0 px-4 py-2 bg-blue-950 text-white text-sm rounded hover:cursor-pointer lg:w-32 w-full"
             >
               Add Vehicle
             </button>
@@ -853,7 +855,7 @@ const AddVehicles = () => {
             </div>
           </div>
         )}
-        <section className="mt-10 space-y-4 max-h-[55vh] overflow-y-auto pr-2 md:hidden block">
+        <section className="lg:mt-6 mt-3 space-y-4 max-h-[55vh] overflow-y-auto  md:hidden block">
           {loading ? (
             <p className="text-center text-indigo-600 font-semibold">
               Loading vehicles...
@@ -864,7 +866,7 @@ const AddVehicles = () => {
             allVehicles?.map((vehicle) => (
               <div
                 key={vehicle.newVehicleId}
-                className="bg-white border rounded-xl shadow-sm hover:shadow-md transition p-4 flex items-center justify-between gap-4"
+                className="bg-white border rounded-xl shadow-sm hover:shadow-md transition p-2 flex items-center justify-between gap-4"
               >
                 <div className="w-20 h-20 sm:w-28 sm:h-28 rounded-lg overflow-hidden bg-gray-100 flex-shrink-0">
                   <img
@@ -877,18 +879,29 @@ const AddVehicles = () => {
                   />
                 </div>
                 <div className="flex-1 min-w-0">
-                  <h2 className="font-bold text-gray-800 text-sm sm:text-base truncate">
+                  <h2 className="font-bold text-gray-800 text-xs truncate">
                     {vehicle.make || "—"} {vehicle.model || "—"}{" "}
                     {vehicle.series || "—"}
                   </h2>
-                  <p className="text-base font-bold text-gray-900">
+                  <p className="text-xs font-bold text-gray-900">
                     PKR {vehicle.buyNowPrice}
                   </p>
+
                   <p className="text-xs text-gray-600">
                     {vehicle.year || "—"} • {vehicle.fuelType || "—"} •{" "}
                     {vehicle.transmission || "—"}
                   </p>
+                  <p
+                    className={`text-[8px] text-center rounded w-16 ${
+                      vehicle.approval === "Y"
+                        ? "bg-green-500 text-white"
+                        : "bg-red-500 text-white"
+                    }`}
+                  >
+                    {vehicle.approval === "Y" ? "Approved" : "Not Approved"}
+                  </p>
                 </div>
+
                 <div className="relative flex-shrink-0">
                   <button
                     onClick={(e) => {
@@ -970,7 +983,7 @@ const AddVehicles = () => {
           )}
         </section>
         <section
-          className="mt-10 space-y-4 overflow-y-auto pr-2 md:block hidden pb-10"
+          className="lg:mt-6 space-y-4 overflow-y-auto  md:block hidden pb-10"
           style={{ maxHeight: "calc(100vh - 210px)" }}
         >
           {loading ? (
@@ -1010,7 +1023,16 @@ const AddVehicles = () => {
                     <span className=" ">{vehicle.fuelType || "—"}</span>|
                     <span className=" ">{vehicle.color || "—"}</span>|
                     <span className=" ">{vehicle.transmission || "—"}</span>|
-                    <span className="">{vehicle.cityName || "—"}</span>
+                    <span className="">{vehicle.cityName || "—"}</span>|
+                    <p
+                      className={`text-xs text-center rounded p-1 ${
+                        vehicle.approval === "Y"
+                          ? "bg-green-500 text-white"
+                          : "bg-red-500 text-white"
+                      }`}
+                    >
+                      {vehicle.approval === "Y" ? "Approved" : "Not Approved"}
+                    </p>
                   </div>
                 </div>
                 <div className="relative flex-shrink-0">
@@ -1104,7 +1126,7 @@ const AddVehicles = () => {
             <div></div>
             <button
               className={`bg-blue-950 text-white px-5 py-2 rounded ${
-                allVehicles.length === 0 ? "hidden" : "block"
+                allVehicles.length === 10 ? "block" : "hidden"
               }`}
               onClick={handleNextPage}
             >

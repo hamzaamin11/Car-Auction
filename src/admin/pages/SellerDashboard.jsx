@@ -56,13 +56,13 @@ export const SellerDashboard = () => {
     handleGetAllUpcomingAuctionsbySeller();
   }, []);
   return (
-    <div className="p-6 bg-gray-50   space-y-8">
-      <h2 className="text-3xl font-bold text-[#191970]">
+    <div className="lg:p-6 p-2 bg-gray-50   lg:space-y-8 space-y-2">
+      <h2 className="lg:text-3xl text-xl font-bold text-gray-800 text-center">
         Welcome Seller Dashboard
       </h2>
 
       {/* Summary Stats */}
-      <div className="grid grid-cols-1 lg:grid-cols-4 gap-6 sm:gap-8">
+      <div className="grid grid-cols-1 lg:grid-cols-4 lg:gap-6 gap-2">
         <Card
           title={"Total Vehicles"}
           totalData={allVehicles.length}
