@@ -48,7 +48,7 @@ import MakeBidding from "./pages/make-bidding";
 import LotsWon from "./pages/lots-won";
 import LotsLost from "./pages/lots-lost";
 import PaymentMethod from "./pages/payment";
-
+import SoldVehicles from "./pages/soldVehicles";
 // Admin pages
 import AdminLogin from "./admin/pages/admin-login";
 import AdminLayout from "./admin/components/AdminLayout";
@@ -117,7 +117,7 @@ function Layout() {
       <Routes>
         {/* Main Routes */}
         <Route path="/" element={<Home />} />
-
+<Route path="/soldVehicles" element={<SoldVehicles />} />
         <Route path="/about" element={<About />} />
 
         <Route path="/contact" element={<ContactUs />} />

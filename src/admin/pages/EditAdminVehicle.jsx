@@ -44,7 +44,6 @@ function EditAdminVehicle({
   open,
   setOpen,
   selectedVehicle,
-
   onVehicleUpdated,
 }) {
   const initialVehicleState = {
@@ -78,22 +77,18 @@ function EditAdminVehicle({
   const parsePrice = (priceStr) => {
     if (!priceStr) return "";
 
-    // ✅ hamesha string me convert karo
     const str = priceStr.toString().toLowerCase();
 
-    // Agar "Lac" likha ho
     if (str.includes("lac")) {
       const num = parseFloat(str);
-      return num * 100000; // 1 Lac = 100000
+      return num * 100000;
     }
 
-    // Agar "Crore" likha ho
     if (str.includes("crore")) {
       const num = parseFloat(str);
-      return num * 10000000; // 1 Crore = 10000000
+      return num * 10000000;
     }
 
-    // Warna number nikal lo (commas, symbols hata ke)
     const parsed = parseFloat(str.replace(/[^0-9.]/g, ""));
     return isNaN(parsed) ? "" : parsed;
   };
@@ -101,7 +96,6 @@ function EditAdminVehicle({
   const [loading, setLoading] = useState(false);
   const [imagePreview, setImagePreview] = useState(null);
   const [allCities, setAllCities] = useState([]);
-
   const [isOpen, setIsOpen] = useState(false);
 
   useEffect(() => {
@@ -122,7 +116,7 @@ function EditAdminVehicle({
         vehicleCondition: selectedVehicle.vehicleCondition || "",
         keysAvailable: selectedVehicle.keysAvailable || "",
         locationId: selectedVehicle.locationId || "",
-        cityName: selectedVehicle.cityName || "", // ✅ yeh add karo
+        cityName: selectedVehicle.cityName || "",
         saleStatus: selectedVehicle.saleStatus || "",
         auctionDate: selectedVehicle.auctionDate || "",
         buyNowPrice: parsePrice(selectedVehicle.buyNowPrice) || "",
@@ -132,26 +126,35 @@ function EditAdminVehicle({
 
       console.log("selectedVehicle", selectedVehicle);
 
-      // Set image preview if image exists
       if (selectedVehicle.image) {
         setImagePreview(selectedVehicle.image);
       }
     }
   }, [selectedVehicle]);
 
+  // Update vehicle state when CarSelector values change
+  useEffect(() => {
+    if (selected?.year || selected?.make || selected?.model || selected?.series) {
+      setVehicle((prev) => ({
+        ...prev,
+        year: selected?.year || prev.year,
+        make: selected?.make || prev.make,
+        model: selected?.model || prev.model,
+        series: selected?.series || prev.series,
+      }));
+    }
+  }, [selected]);
+
   const { user } = useAuth();
-
   const [selectedCount, setSelectedCount] = useState(0);
-
   const [price, setPrice] = useState(vehicle?.buyNowPrice || "");
 
   useEffect(() => {
     if (vehicle?.buyNowPrice) {
-      setPrice(String(vehicle.buyNowPrice)); // ✅ sync initial value
+      setPrice(String(vehicle.buyNowPrice));
     }
   }, [vehicle]);
 
-  // Indian Numbering System function
   const numberToIndianWords = (num) => {
     if (!num) return "";
 
@@ -230,8 +233,8 @@ function EditAdminVehicle({
 
   const handleFileChange = (e) => {
     const files = e.target.files;
-    setSelectedCount(files.length); // kitni images select hui hain
-    handleAddedImage(e); // aapka existing handler call karna
+    setSelectedCount(files.length);
+    handleAddedImage(e);
   };
 
   const handleChange = (e) => {
@@ -244,7 +247,6 @@ function EditAdminVehicle({
         [name]: file,
       }));
 
-      // Create preview for new image
       if (file) {
         const reader = new FileReader();
         reader.onloadend = () => {
@@ -261,20 +263,29 @@ function EditAdminVehicle({
   };
 
   const handleIsOpenToggle = (active) => {
+    // When closing the selector, update vehicle state with Redux values
+    if (active === "" && selected) {
+      setVehicle((prev) => ({
+        ...prev,
+        year: selected?.year || prev.year,
+        make: selected?.make || prev.make,
+        model: selected?.model || prev.model,
+        series: selected?.series || prev.series,
+      }));
+    }
     setIsOpen((prev) => (prev === active ? "" : active));
   };
 
   const handleSearchable = (selectedOption) => {
     setVehicle((prev) => ({
       ...prev,
-      locationId: selectedOption.value,
+      locationId: selectedOption ? selectedOption.value : "",
     }));
   };
 
   const handleGetAllCities = async () => {
     try {
       const res = await axios.get(`${BASE_URL}/getCitites`);
-
       setAllCities(res.data);
     } catch (error) {
       console.log(error);
@@ -292,18 +303,51 @@ function EditAdminVehicle({
   useEffect(() => {
     handleGetAllCities();
   }, [open]);
+
   const handleUpdateCarInfo = () => {
     handleIsOpenToggle("selector");
   };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+
+    // Validation for all required fields (except image)
+    const requiredFields = {
+      locationId: "City",
+      year: "Year",
+      make: "Make",
+      model: "Model",
+      series: "Series",
+      driveType: "Drive Type",
+      bodyStyle: "Body Style",
+      transmission: "Transmission Type",
+      mileage: "Meter Reading",
+      color: "Color",
+      fuelType: "Fuel Type",
+      vehicleCondition: "Vehicle Condition",
+      buyNowPrice: "Price",
+      certifyStatus: "Certified Status",
+    };
+
+    const missingFields = Object.entries(requiredFields)
+      .filter(([key]) => !vehicle[key] || vehicle[key] === "")
+      .map(([, value]) => value);
+
+    if (missingFields.length > 0) {
+      await Swal.fire({
+        title: "Warning",
+        text: `Please fill in the following required fields: ${missingFields.join(", ")}.`,
+        icon: "warning",
+        confirmButtonColor: "#9333ea",
+      });
+      return;
+    }
+
     setLoading(true);
 
     const formData = new FormData();
     formData.append("userId", selectedVehicle.userId);
 
-    // Append all fields to formData
     Object.entries(vehicle).forEach(([key, value]) => {
       if (value !== null && value !== undefined && key !== "id") {
         formData.append(key, value);
@@ -315,8 +359,7 @@ function EditAdminVehicle({
         `${BASE_URL}/seller/updateVehicle/${selectedVehicle?.id}`,
         {
           method: "PUT",
-          body: formData, // Send the FormData directly
-          // Don't set Content-Type header - let the browser set it with boundary
+          body: formData,
         }
       );
 
@@ -328,7 +371,7 @@ function EditAdminVehicle({
       const data = await response.json();
       await Swal.fire({
         title: "Success!",
-        text: "Vehicle Added successfully",
+        text: "Vehicle updated successfully",
         icon: "success",
         confirmButtonColor: "#9333ea",
       });
@@ -350,6 +393,14 @@ function EditAdminVehicle({
 
   if (!open) return null;
 
+  // Get the car info display value
+  const carInfoValue = `${vehicle?.year || ""} ${vehicle?.make || ""} ${
+    vehicle?.model || ""
+  } ${vehicle?.series || ""}`.trim();
+
+  // Determine if car info is complete
+  const isCarInfoComplete = vehicle.year && vehicle.make && vehicle.model && vehicle.series;
+
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/20 bg-opacity-30 px-4">
       <div className="bg-white w-full max-w-5xl max-h-[90vh] overflow-y-auto p-6 rounded-lg relative">
@@ -363,12 +414,11 @@ function EditAdminVehicle({
           </button>
         </div>
 
-        <form onSubmit={handleSubmit} className="space-y-2">
+        <div className="space-y-2">
           <div>
             <label className="block text-sm font-medium text-gray-700 mb-1">
               City <span className="text-red-500">*</span>
             </label>
-
             <Select
               onChange={handleSearchable}
               options={cityData}
@@ -380,35 +430,30 @@ function EditAdminVehicle({
               }
               isClearable
             />
-
-            <div>
-              <label className=" block text-sm font-medium text-gray-700 my-1">
-                Car Info <span className="text-red-500">*</span>
-              </label>
-              <input
-                onClick={handleUpdateCarInfo}
-                value={`${vehicle?.year || ""} ${vehicle?.make || ""} ${
-                  vehicle?.model || ""
-                } ${vehicle?.series || ""}`}
-                placeholder="Year/Make/Model/Version"
-                readOnly
-                className={`border border-gray-300 px-4 py-2 rounded focus:outline-none focus:ring-2 focus:ring-indigo-500 w-full ${
-                  vehicle.year &&
-                  vehicle.make &&
-                  vehicle.model &&
-                  vehicle.series
-                    ? "bg-green-200 text-green-700"
-                    : "bg-red-200"
-                }`}
-              />
-            </div>
           </div>
+
+          <div>
+            <label className="block text-sm font-medium text-gray-700 my-1">
+              Car Info <span className="text-red-500">*</span>
+            </label>
+            <input
+              onClick={handleUpdateCarInfo}
+              value={carInfoValue || ""}
+              placeholder="Year/Make/Model/Version"
+              readOnly
+              className={`border border-gray-300 px-4 py-2 rounded focus:outline-none focus:ring-2 focus:ring-indigo-500 w-full cursor-pointer ${
+                isCarInfoComplete
+                  ? "bg-green-200 text-green-700"
+                  : "bg-red-200"
+              }`}
+            />
+          </div>
+
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
             <div>
               <label className="block text-sm font-medium text-gray-700 mb-1">
-                Vehicle Drive Type<span className="text-red-500">*</span>
+                Vehicle Drive Type <span className="text-red-500">*</span>
               </label>
-
               <select
                 name="driveType"
                 value={vehicle.driveType}
@@ -427,17 +472,15 @@ function EditAdminVehicle({
               <label className="block text-sm font-medium text-gray-700 mb-1">
                 Vehicle Body Style <span className="text-red-500">*</span>
               </label>
-
               <select
                 name="bodyStyle"
                 value={vehicle.bodyStyle}
                 onChange={handleChange}
                 className="border border-gray-300 px-4 py-2 rounded focus:outline-none focus:ring-2 focus:ring-indigo-500 w-full"
               >
-                <option value={""}>Please Select BodyStyle</option>
-
+                <option value="">Please Select Body Style</option>
                 {bodyStyles?.map((body) => (
-                  <option id={body} value={body}>
+                  <option key={body} value={body}>
                     {body}
                   </option>
                 ))}
@@ -446,24 +489,23 @@ function EditAdminVehicle({
 
             <div>
               <label className="block text-sm font-medium text-gray-700 mb-1">
-                Vehicle Transmission Type<span className="text-red-500">*</span>
+                Vehicle Transmission Type <span className="text-red-500">*</span>
               </label>
-
               <select
                 name="transmission"
                 value={vehicle?.transmission || ""}
                 onChange={handleChange}
                 className="border border-gray-300 px-4 py-2 rounded focus:outline-none focus:ring-2 focus:ring-indigo-500 w-full"
               >
-                <option value={""}>Please Select Transmission Type</option>
-                <option value={"Automatic"}>Automatic</option>
-                <option value={"Manual"}>Manual</option>
+                <option value="">Please Select Transmission Type</option>
+                <option value="Automatic">Automatic</option>
+                <option value="Manual">Manual</option>
               </select>
             </div>
 
             <div>
-              <label className=" block text-sm font-medium text-gray-700 mb-1">
-                Vehicle Meter Reading<span className="text-red-500">*</span>
+              <label className="block text-sm font-medium text-gray-700 mb-1">
+                Vehicle Meter Reading <span className="text-red-500">*</span>
               </label>
               <input
                 name="mileage"
@@ -474,7 +516,7 @@ function EditAdminVehicle({
                     handleChange(e);
                   }
                 }}
-                placeholder="Meter Reading(KM)"
+                placeholder="Meter Reading (KM)"
                 className="border border-gray-300 px-4 py-2 rounded focus:outline-none focus:ring-2 focus:ring-indigo-500 w-full"
               />
             </div>
@@ -483,17 +525,15 @@ function EditAdminVehicle({
               <label className="block text-sm font-medium text-gray-700 mb-1">
                 Vehicle Color <span className="text-red-500">*</span>
               </label>
-
               <select
                 name="color"
                 value={vehicle.color || ""}
                 onChange={handleChange}
                 className="border border-gray-300 px-4 py-2 rounded focus:outline-none focus:ring-2 focus:ring-indigo-500 w-full"
               >
-                <option value={""}>Please Select Color</option>
-
+                <option value="">Please Select Color</option>
                 {carColors?.map((color) => (
-                  <option id={color} value={color}>
+                  <option key={color} value={color}>
                     {color}
                   </option>
                 ))}
@@ -502,13 +542,12 @@ function EditAdminVehicle({
 
             <div>
               <label className="block text-sm font-medium text-gray-700 mb-1">
-                Vehicle Fuel Type<span className="text-red-500">*</span>
+                Vehicle Fuel Type <span className="text-red-500">*</span>
               </label>
               <select
                 name="fuelType"
                 value={vehicle.fuelType}
                 onChange={handleChange}
-                placeholder="Fuel Type"
                 className="border border-gray-300 px-4 py-2 rounded focus:outline-none focus:ring-2 focus:ring-indigo-500 w-full"
               >
                 <option value="">Select Fuel Type</option>
@@ -523,14 +562,12 @@ function EditAdminVehicle({
 
             <div>
               <label className="block text-sm font-medium text-gray-700 mb-1">
-                Vehicle Condition<span className="text-red-500">*</span>
+                Vehicle Condition <span className="text-red-500">*</span>
               </label>
-
               <select
                 name="vehicleCondition"
                 value={vehicle.vehicleCondition}
                 onChange={handleChange}
-                placeholder="Vehicle Condition"
                 className="border border-gray-300 px-4 py-2 rounded focus:outline-none focus:ring-2 focus:ring-indigo-500 w-full"
               >
                 <option value="">Select Vehicle Condition</option>
@@ -541,7 +578,7 @@ function EditAdminVehicle({
             </div>
 
             <div>
-              <label className=" block text-sm font-medium text-gray-700 mb-1">
+              <label className="block text-sm font-medium text-gray-700 mb-1">
                 Add Vehicle Price <span className="text-red-500">*</span>
               </label>
               <input
@@ -551,8 +588,8 @@ function EditAdminVehicle({
                 onChange={(e) => {
                   const value = e.target.value;
                   if (/^\d*$/.test(value) && value.length <= 9) {
-                    setPrice(value); // Local state update
-                    handleChange(e); // Parent handler call
+                    setPrice(value);
+                    handleChange(e);
                   }
                 }}
                 placeholder="Add Price"
@@ -570,29 +607,23 @@ function EditAdminVehicle({
             <label className="block text-sm font-medium text-gray-700 mb-1">
               Certified Status <span className="text-red-500">*</span>
             </label>
-
             <select
               name="certifyStatus"
               value={vehicle.certifyStatus}
               onChange={handleChange}
-              placeholder="Certify Status"
               className="border border-gray-300 px-4 py-2 rounded focus:outline-none focus:ring-2 focus:ring-indigo-500 w-full"
             >
               <option value="">Please Select Certify Status</option>
               <option value="Certified">Certified</option>
-              <option value="Non-Certified">NonCertified</option>
+              <option value="Non-Certified">Non-Certified</option>
             </select>
           </div>
 
-          {/* Image Upload */}
-
-          {/* Submit Button */}
           <div className="col-span-1 sm:col-span-2 mt-4">
             <div className="mb-6">
               <label className="block text-sm font-medium text-gray-700 mb-2">
-                Vehicle Images <span className="text-red-500">*</span>
+                Vehicle Images
               </label>
-
               <div className="flex items-center justify-center w-full">
                 <label
                   htmlFor="vehicleImage"
@@ -624,8 +655,6 @@ function EditAdminVehicle({
                       You can add maximum 5 images and first image will be used
                       as front on the card
                     </p>
-
-                    {/* Selected images count show karega */}
                     {selectedCount > 0 && (
                       <p className="text-sm text-green-600 font-medium mt-2">
                         {selectedCount} image
@@ -633,7 +662,6 @@ function EditAdminVehicle({
                       </p>
                     )}
                   </div>
-
                   <input
                     id="vehicleImage"
                     type="file"
@@ -647,24 +675,25 @@ function EditAdminVehicle({
             </div>
             <div className="flex justify-center">
               <button
-                type="submit"
+                type="button"
+                onClick={handleSubmit}
                 disabled={loading}
-                className="bg-blue-950 text-white px-5 py-2 rounded-lg shadow-md hover:cursor-pointer"
+                className="bg-blue-950 text-white px-5 py-2 rounded-lg shadow-md hover:cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed"
               >
                 {loading ? "loading..." : "Submit Vehicle"}
               </button>
             </div>
           </div>
           {isOpen === "selector" && (
-            <div className="fixed inset-0 bg-opacity-40 flex items-center justify-center z-50">
-              <div className="w-full max-w-5xl bg-white p-6 rounded-lg shadow-lg relative">
+            <div className="fixed inset-0 bg-black bg-opacity-40 flex items-center justify-center z-50 p-4">
+              <div className="w-full max-w-5xl bg-white p-4 sm:p-6 rounded-lg shadow-lg relative max-h-[90vh] overflow-y-auto">
                 <CarSelector
                   handleIsOpenToggle={() => handleIsOpenToggle("")}
                 />
               </div>
             </div>
           )}
-        </form>
+        </div>
       </div>
     </div>
   );

@@ -1,4 +1,5 @@
-import React, { useEffect, useState } from "react";
+
+import React, { useEffect, useState, useRef } from "react";
 import { MoreVertical } from "lucide-react";
 import axios from "axios";
 import { BASE_URL } from "../../components/Contant/URL";
@@ -7,43 +8,9 @@ import Swal from "sweetalert2";
 export const VehicleApproval = () => {
   const [actionMenuOpen, setActionMenuOpen] = useState(null);
   const [search, setSearch] = useState("");
-
   const [vehicles, setVehicles] = useState([]);
-
-  // const [vehicles] = useState([
-  //   {
-  //     id: 1,
-  //     make: "Toyota",
-  //     model: "Corolla",
-  //     series: "Altis",
-  //     year: 2020,
-  //     fuelType: "Petrol",
-  //     transmission: "Automatic",
-  //     mileage: 42000,
-  //     color: "White",
-  //     cityName: "Karachi",
-  //     buyNowPrice: "3,200,000",
-  //     images: [
-  //       "https://images.unsplash.com/photo-1616128618694-96f6d5d1e0b3?auto=format&fit=crop&w=800&q=80",
-  //     ],
-  //   },
-  //   {
-  //     id: 2,
-  //     make: "Honda",
-  //     model: "Civic",
-  //     series: "Oriel",
-  //     year: 2019,
-  //     fuelType: "Petrol",
-  //     transmission: "Manual",
-  //     mileage: 56000,
-  //     color: "Black",
-  //     cityName: "Lahore",
-  //     buyNowPrice: "3,600,000",
-  //     images: [
-  //       "https://images.unsplash.com/photo-1605559424843-9a1fdd9c5a25?auto=format&fit=crop&w=800&q=80",
-  //     ],
-  //   },
-  // ]);
+  
+  const menuRef = useRef(null); // Ref to track the action menu
 
   const handleGetAllUnapprovalVehicles = async () => {
     try {
@@ -72,7 +39,7 @@ export const VehicleApproval = () => {
         confirmButtonColor: "#9333ea",
       });
     } catch (error) {
-      console.log(res.data);
+      console.error(error); // Fixed: Log the actual error, not res.data
       await Swal.fire({
         title: "Error!",
         text: "Something went wrong.",
@@ -87,6 +54,20 @@ export const VehicleApproval = () => {
     setActionMenuOpen(null);
   };
 
+  // Close menu when clicking outside
+  useEffect(() => {
+    const handleClickOutside = (event) => {
+      if (menuRef.current && !menuRef.current.contains(event.target)) {
+        setActionMenuOpen(null);
+      }
+    };
+
+    document.addEventListener("mousedown", handleClickOutside);
+    return () => {
+      document.removeEventListener("mousedown", handleClickOutside);
+    };
+  }, []);
+
   const filteredVehicles = vehicles.filter((v) =>
     `${v.make} ${v.model} ${v.series}`
       .toLowerCase()
@@ -96,6 +77,7 @@ export const VehicleApproval = () => {
   useEffect(() => {
     handleGetAllUnapprovalVehicles();
   }, []);
+
   return (
     <div className="min-h-screen bg-gray-100 p-6">
       {/* Header */}
@@ -136,7 +118,7 @@ export const VehicleApproval = () => {
         <div className="space-y-4">
           {filteredVehicles.map((vehicle) => (
             <div key={vehicle.id}>
-              {/* ✅ Desktop View */}
+              {/* Desktop View */}
               <div className="hidden lg:flex flex-col md:flex-row items-start md:items-center justify-between border rounded-lg bg-white hover:shadow-md transition-all duration-200 p-4 gap-4 relative">
                 <div className="w-full md:w-48 h-32 flex-shrink-0 rounded-md overflow-hidden bg-gray-100">
                   {vehicle.images?.length > 0 ? (
@@ -157,16 +139,15 @@ export const VehicleApproval = () => {
                     {vehicle.make} {vehicle.model} {vehicle.series}
                   </h2>
                   <p className="text-sm text-gray-600">
-                    {vehicle.year} | {vehicle.fuelType} | {vehicle.transmission}{" "}
-                    | {vehicle.mileage} KM | {vehicle.color} |{" "}
-                    {vehicle.cityName}
+                    {vehicle.year} | {vehicle.fuelType} | {vehicle.transmission} |{" "}
+                    {vehicle.mileage} KM | {vehicle.color} | {vehicle.cityName}
                   </p>
                   <p className="text-md font-semibold text-blue-700 mt-1">
                     PKR {vehicle.buyNowPrice}
                   </p>
                 </div>
 
-                <div className="relative">
+                <div className="relative" ref={menuRef}>
                   <button
                     onClick={() => toggleActionMenu(vehicle.id)}
                     className="p-2 rounded-full hover:bg-gray-200 transition"
@@ -201,7 +182,7 @@ export const VehicleApproval = () => {
                 </div>
               </div>
 
-              {/* ✅ Mobile View */}
+              {/* Mobile View */}
               <div className="lg:hidden border-b py-4">
                 <div className="flex items-center gap-3">
                   <div className="w-16 h-16 flex-shrink-0 rounded-md overflow-hidden bg-gray-100">
@@ -225,13 +206,13 @@ export const VehicleApproval = () => {
                       PKR {vehicle.buyNowPrice}
                     </p>
                     <p className="text-xs text-gray-500">
-                      {vehicle.year} | {vehicle.fuelType} |{" "}
-                      {vehicle.transmission} | {vehicle.mileage} KM |{" "}
-                      {vehicle.color} | {vehicle.cityName}
+                      {vehicle.year} | {vehicle.fuelType} | {vehicle.transmission}{" "}
+                      | {vehicle.mileage} KM | {vehicle.color} |{" "}
+                      {vehicle.cityName}
                     </p>
                   </div>
 
-                  <div className="relative">
+                  <div className="relative" ref={menuRef}>
                     <button
                       onClick={() => toggleActionMenu(vehicle.id)}
                       className="p-2 rounded-full hover:bg-gray-200 transition"
