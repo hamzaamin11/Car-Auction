@@ -75,7 +75,7 @@ export const BecomePartnerList = () => {
     <div className="min-h-screen bg-gray-100 p-4 sm:p-6">
       <div className="flex flex-col sm:flex-row justify-between items-center gap-4 mb-6">
         <h2 className="lg:text-3xl text-xl font-bold text-gray-800">
-        Partners List
+          Partners List
         </h2>
         <div className="relative w-full max-w-md">
           <span className="absolute inset-y-0 left-0 flex items-center pl-3 text-gray-400">
@@ -166,7 +166,8 @@ export const BecomePartnerList = () => {
             currentItems.map((msg) => (
               <div
                 key={msg.id}
-                className="bg-white rounded-xl shadow-md border border-gray-200 p-4 transition-all duration-300 hover:shadow-lg"
+                className="bg-white rounded-xl shadow-md border border-gray-200 p-4 transition-all duration-300 hover:shadow-lg cursor-pointer"
+                onClick={() => handleViewBtn(msg)}
               >
                 <div className="space-y-2 text-sm">
                   <p className="flex justify-between">
@@ -176,7 +177,7 @@ export const BecomePartnerList = () => {
                     </span>
                   </p>
                   <p className="flex justify-between">
-                    <span className="font-bold text-gray-900 ">Email</span>
+                    <span className="font-bold text-gray-900">Email</span>
                     <span className="text-gray-700 text-xs">
                       {msg?.email.charAt(0).toUpperCase() + msg?.email.slice(1)}
                     </span>
@@ -186,22 +187,20 @@ export const BecomePartnerList = () => {
                     <span className="text-gray-700">{msg?.contact}</span>
                   </p>
                   <p className="flex justify-between">
-                    <span className="font-bold text-gray-900">
-                      Business Type
-                    </span>
+                    <span className="font-bold text-gray-900">Business Type</span>
                     <span className="text-gray-700">
                       {msg?.bussinessType.charAt(0).toUpperCase() +
                         msg?.bussinessType.slice(1)}
                     </span>
                   </p>
-                  <div className="flex justify-center pt-2">
-                    <button
-                      onClick={() => handleViewBtn(msg)}
-                      className="px-4 py-1 text-sm border border-indigo-500 text-indigo-500 rounded-md hover:bg-indigo-600 hover:text-white transition"
-                    >
-                      View
-                    </button>
-                  </div>
+                  <p className="flex justify-between">
+                    <span className="font-bold text-gray-900">Details</span>
+                    <span className="text-gray-700 text-xs">
+                      {msg?.message.length > 50
+                        ? `${msg?.message.slice(0, 50)}...`
+                        : msg?.message}
+                    </span>
+                  </p>
                 </div>
               </div>
             ))

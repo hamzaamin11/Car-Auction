@@ -163,7 +163,8 @@ export const ContactList = () => {
             currentItems.map((contact) => (
               <div
                 key={contact.id}
-                className="bg-white rounded-xl shadow-md border border-gray-200 p-4 transition-all duration-300 hover:shadow-lg"
+                className="bg-white rounded-xl shadow-md border border-gray-200 p-4 transition-all duration-300 hover:shadow-lg cursor-pointer"
+                onClick={() => handleView(contact)}
               >
                 <div className="space-y-2 text-sm">
                   <p className="flex justify-between">
@@ -186,14 +187,14 @@ export const ContactList = () => {
                       {contact?.contactNumber}
                     </span>
                   </p>
-                  <div className="flex justify-center pt-2">
-                    <button
-                      onClick={() => handleView(contact)}
-                      className="px-4 py-1 text-sm border border-indigo-500 text-indigo-500 rounded-md hover:bg-indigo-600 hover:text-white transition"
-                    >
-                      View
-                    </button>
-                  </div>
+                  <p className="flex justify-between">
+                    <span className="font-bold text-gray-900"> Contact Details</span>
+                    <span className="text-gray-700 text-xs">
+                      {contact?.description?.length > 50
+                        ? `${contact?.description.slice(0, 50)}...`
+                        : contact?.description || "No message provided."}
+                    </span>
+                  </p>
                 </div>
               </div>
             ))

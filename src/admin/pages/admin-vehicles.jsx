@@ -95,7 +95,7 @@ function AddAdminVehicle({ open, setOpen, onVehicleUpdated }) {
   const [actionMenuOpen, setActionMenuOpen] = useState(null);
   const [pageNo, setPageNo] = useState(1);
   const [selectedCount, setSelectedCount] = useState(0);
-  const [price, setPrice] = useState("");
+  const [price, setPrice] = useState();
   const { getVehicles, delVehicle, getAllVehicles } =
     useContext(VehicleContext);
   const { user } = useAuth();
