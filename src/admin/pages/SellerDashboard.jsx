@@ -57,7 +57,7 @@ export const SellerDashboard = () => {
   }, []);
   return (
     <div className="lg:p-6 p-2 bg-gray-50   lg:space-y-8 space-y-2">
-      <h2 className="lg:text-3xl text-xl font-bold text-gray-800 text-center">
+      <h2 className="lg:text-3xl text-xl font-bold text-blue-950 text-center lg:text-start">
         Welcome Seller Dashboard
       </h2>
 
