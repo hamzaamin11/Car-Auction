@@ -99,7 +99,7 @@ export const SeriesList = () => {
       <div className="flex flex-col gap-3 sm:gap-4 mb-3 sm:mb-3">
         {/* Mobile Layout - Stack everything */}
         <div className="md:hidden flex flex-col gap-3">
-          <h2 className="text-3xl  font-bold text-gray-800 text-center">
+          <h2 className="lg:text-3xl text-xl font-bold text-gray-800 text-center">
             Vehicle Series List
           </h2>
           <div className="relative w-full">

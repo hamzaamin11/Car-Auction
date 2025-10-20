@@ -81,7 +81,7 @@ const AdminBidHistory = () => {
     <>
       <div className="min-h-screen bg-gray-50 p-1 md:p-6">
         <div className="flex flex-col sm:flex-row justify-between items-center gap-4 mb-6 px-3">
-          <h1 className="text-3xl font-bold text-gray-800">
+          <h1 className="lg:text-3xl text-xl font-bold text-gray-800">
             Sold Vehicles
           </h1>
           <div className="relative w-full max-w-md">
