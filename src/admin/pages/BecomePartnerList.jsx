@@ -74,7 +74,7 @@ export const BecomePartnerList = () => {
   return (
     <div className="min-h-screen bg-gray-100 p-4 sm:p-6">
       <div className="flex flex-col sm:flex-row justify-between items-center gap-4 mb-6">
-        <h2 className="text-3xl font-bold text-gray-800">
+        <h2 className="lg:text-3xl text-xl font-bold text-gray-800">
         Partners List
         </h2>
         <div className="relative w-full max-w-md">

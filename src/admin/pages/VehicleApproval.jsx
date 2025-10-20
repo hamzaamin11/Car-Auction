@@ -112,7 +112,7 @@ export const VehicleApproval = () => {
   return (
    <div className="min-h-screen bg-gray-100 p-6">
       <div className="flex flex-col sm:flex-row justify-between items-center mb-6">
-        <h2 className="text-3xl font-bold text-gray-800">
+        <h2 className="lg:text-3xl text-xl font-bold text-gray-800 text-center">
           Pending Vehicle Approvals
         </h2>
 

@@ -19,7 +19,7 @@ const Card = ({ icon, title, totalData, path }) => {
 
       {/* Text */}
       <div className="text-center sm:text-left">
-        <h3 className="text-xs sm:text-sm md:text-base font-medium text-[#191970]">
+        <h3 className="text-xs sm:text-sm md:text-base font-medium lg:font-bold text-[#191970]">
           {title}
         </h3>
         <p className="text-base sm:text-xl md:text-2xl font-semibold mt-1 text-[#191970]">
