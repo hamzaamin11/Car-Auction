@@ -425,7 +425,7 @@ const AdminBidHistory = () => {
             <div className="bg-white rounded-2xl shadow-2xl w-full max-w-5xl max-h-[90vh] overflow-y-auto relative">
               <div className="sticky top-0 bg-white z-10 px-6 py-4 border-b flex justify-between items-center">
                 <h2 className="text-2xl md:text-3xl font-bold text-[#191970]">
-                  View Vehicle
+                  View Vehicles
                 </h2>
                 <button
                   className="text-black hover:text-red-500 p-2 rounded-full shadow-md"

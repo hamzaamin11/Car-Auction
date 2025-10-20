@@ -627,13 +627,15 @@ const AddVehicles = () => {
                       name="driveType"
                       value={vehicleData.driveType}
                       onChange={handleChange}
-                      className="border border-gray-300 px-4 py-2 rounded focus:outline-none focus:ring-2 focus:ring-indigo-500 w-full"
+                      className={`border border-gray-300 px-4 py-2 rounded focus:outline-none focus:ring-2 focus:ring-indigo-500 w-full ${
+                      vehicleData.driveType ? "text-gray-900" : "text-gray-400"
+                    }`}
                     >
                       <option value="">Select Drive Type</option>
-                      <option value="fwd">FWD (Front-Wheel Drive)</option>
-                      <option value="rwd">RWD (Rear-Wheel Drive)</option>
-                      <option value="awd">AWD (All-Wheel Drive)</option>
-                      <option value="4wd">4WD (Four-Wheel Drive)</option>
+                      <option value="fwd" className="text-gray-900">FWD (Front-Wheel Drive)</option>
+                      <option value="rwd" className="text-gray-900">RWD (Rear-Wheel Drive)</option>
+                      <option value="awd" className="text-gray-900">AWD (All-Wheel Drive)</option>
+                      <option value="4wd" className="text-gray-900">4WD (Four-Wheel Drive)</option>
                     </select>
                   </div>
                   <div>
@@ -644,11 +646,13 @@ const AddVehicles = () => {
                       name="bodyStyle"
                       value={vehicleData.bodyStyle}
                       onChange={handleChange}
-                      className="border border-gray-300 px-4 py-2 rounded focus:outline-none focus:ring-2 focus:ring-indigo-500 w-full"
+                       className={`border border-gray-300 px-4 py-2 rounded focus:outline-none focus:ring-2 focus:ring-indigo-500 w-full ${
+                      vehicleData.bodyStyle ? "text-gray-900" : "text-gray-400"
+                    }`}
                     >
                       <option value="">Please Select BodyStyle</option>
                       {bodyStyles?.map((body) => (
-                        <option key={body} value={body}>
+                        <option key={body} value={body} className="text-gray-900">
                           {body}
                         </option>
                       ))}
@@ -662,11 +666,13 @@ const AddVehicles = () => {
                       name="transmission"
                       value={vehicleData?.transmission || ""}
                       onChange={handleChange}
-                      className="border border-gray-300 px-4 py-2 rounded focus:outline-none focus:ring-2 focus:ring-indigo-500 w-full"
+                      className={`border border-gray-300 px-4 py-2 rounded focus:outline-none focus:ring-2 focus:ring-indigo-500 w-full ${
+                      vehicleData.transmission ? "text-gray-900" : "text-gray-400"
+                    }`}
                     >
                       <option value="">Please Select Transmission Type</option>
-                      <option value="Automatic">Automatic</option>
-                      <option value="Manual">Manual</option>
+                      <option value="Automatic" className="text-gray-900">Automatic</option>
+                      <option value="Manual" className="text-gray-900">Manual</option>
                     </select>
                   </div>
                   <div>
@@ -694,11 +700,13 @@ const AddVehicles = () => {
                       name="color"
                       value={vehicleData.color || ""}
                       onChange={handleChange}
-                      className="border border-gray-300 px-4 py-2 rounded focus:outline-none focus:ring-2 focus:ring-indigo-500 w-full"
+                      className={`border border-gray-300 px-4 py-2 rounded focus:outline-none focus:ring-2 focus:ring-indigo-500 w-full ${
+                      vehicleData.color ? "text-gray-900" : "text-gray-400"
+                    }`}
                     >
                       <option value="">Please Select Color</option>
                       {carColors?.map((color) => (
-                        <option key={color} value={color}>
+                        <option key={color} value={color} className="text-gray-900">
                           {color}
                         </option>
                       ))}
@@ -712,15 +720,17 @@ const AddVehicles = () => {
                       name="fuelType"
                       value={vehicleData.fuelType}
                       onChange={handleChange}
-                      className="border border-gray-300 px-4 py-2 rounded focus:outline-none focus:ring-2 focus:ring-indigo-500 w-full"
+                       className={`border border-gray-300 px-4 py-2 rounded focus:outline-none focus:ring-2 focus:ring-indigo-500 w-full ${
+                      vehicleData.fuelType ? "text-gray-900" : "text-gray-400"
+                    }`}
                     >
                       <option value="">Select Fuel Type</option>
-                      <option value="petrol">Petrol</option>
-                      <option value="diesel">Diesel</option>
-                      <option value="cng">CNG (Compressed Natural Gas)</option>
-                      <option value="lpg">LPG (Liquefied Petroleum Gas)</option>
-                      <option value="electric">Electric</option>
-                      <option value="hybrid">Hybrid</option>
+                      <option value="petrol" className="text-gray-900">Petrol</option>
+                      <option value="diesel" className="text-gray-900">Diesel</option>
+                      <option value="cng" className="text-gray-900">CNG (Compressed Natural Gas)</option>
+                      <option value="lpg" className="text-gray-900">LPG (Liquefied Petroleum Gas)</option>
+                      <option value="electric" className="text-gray-900">Electric</option>
+                      <option value="hybrid" className="text-gray-900">Hybrid</option>
                     </select>
                   </div>
                   <div>
@@ -731,11 +741,13 @@ const AddVehicles = () => {
                       name="vehicleCondition"
                       value={vehicleData.vehicleCondition}
                       onChange={handleChange}
-                      className="border border-gray-300 px-4 py-2 rounded focus:outline-none focus:ring-2 focus:ring-indigo-500 w-full"
+                      className={`border border-gray-300 px-4 py-2 rounded focus:outline-none focus:ring-2 focus:ring-indigo-500 w-full ${
+                      vehicleData.vehicleCondition ? "text-gray-900" : "text-gray-400"
+                    }`}
                     >
                       <option value="">Select Vehicle Condition</option>
-                      <option value="new">New</option>
-                      <option value="used">Used</option>
+                      <option value="new" className="text-gray-900">New</option>
+                      <option value="used" className="text-gray-900">Used</option>
                     </select>
                   </div>
                   <div>
@@ -765,17 +777,19 @@ const AddVehicles = () => {
                 </div>
                 <div>
                   <label className="block text-sm font-medium text-gray-700 mb-1">
-                    Certified Status <span className="text-red-500">*</span>
+                    Certification Status <span className="text-red-500">*</span>
                   </label>
                   <select
                     name="certifyStatus"
                     value={vehicleData.certifyStatus}
                     onChange={handleChange}
-                    className="border border-gray-300 px-4 py-2 rounded focus:outline-none focus:ring-2 focus:ring-indigo-500 w-full"
+                     className={`border border-gray-300 px-4 py-2 rounded focus:outline-none focus:ring-2 focus:ring-indigo-500 w-full ${
+                      vehicleData.certifyStatus ? "text-gray-900" : "text-gray-400"
+                    }`}
                   >
-                    <option value="">Please Select Certify Status</option>
-                    <option value="Certified">Certified</option>
-                    <option value="Non-Certified">NonCertified</option>
+                    <option value="">Please Select Certification Status</option>
+                    <option value="Certified" className="text-gray-900">Certified</option>
+                    <option value="Non-Certified" className="text-gray-900">Non-Certified</option>
                   </select>
                 </div>
                 <div className="col-span-1 sm:col-span-2 mt-4">
@@ -836,7 +850,7 @@ const AddVehicles = () => {
                     <button
                       type="submit"
                       disabled={loading}
-                      className="bg-indigo-600 text-white px-5 py-2 rounded-lg shadow-md hover:bg-indigo-700 transition"
+                      className="bg-blue-950 text-white px-5 py-2 rounded-lg shadow-md"
                     >
                       {loading ? "Loading..." : "Submit Vehicle"}
                     </button>

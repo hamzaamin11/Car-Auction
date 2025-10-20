@@ -25,11 +25,12 @@ const MyBids = () => {
   return (
     <div className="min-h-screen bg-gray-100 p-4 md:p-6">
       <div className="max-w-7xl mx-auto">
-        <h1 className="text-3xl font-bold mb-6 text-gray-800">
+        <h1 className="lg:text-3xl  text-xl font-bold mb-6 text-gray-800 lg:text-start text-center">
           My Bidding History
         </h1>
 
-        <div className="overflow-x-auto bg-white rounded-2xl shadow-md border border-gray-200">
+        {/* Desktop Table View */}
+        <div className="hidden md:block overflow-x-auto bg-white rounded-2xl shadow-md border border-gray-200">
           <table className="min-w-full text-sm">
             <thead className="bg-[#191970] text-white">
               <tr>
@@ -85,6 +86,53 @@ const MyBids = () => {
               )}
             </tbody>
           </table>
+        </div>
+
+        {/* Mobile Card View */}
+        <div className="md:hidden space-y-4">
+          {allBiders && allBiders.length > 0 ? (
+            allBiders.map((bid, index) => (
+              <div
+                key={index}
+                className="bg-white rounded-xl shadow-md border border-gray-200 p-4"
+              >
+                <div className="flex justify-end items-center mb-3">
+                  <span className="inline-flex items-center justify-center px-3 py-1 text-xs rounded-full font-semibold bg-green-100 text-green-800">
+                    Sold
+                  </span>
+                </div>
+                <div className="space-y-2 text-sm">
+                  <p className="flex justify-between">
+                    <span className="text-gray-900 font-bold">Customer</span>
+                    <span className="text-gray-800 cursor-pointer underline">
+                      {bid?.buyerDetails?.name}
+                    </span>
+                  </p>
+                  <p className="flex justify-between">
+                    <span className="text-gray-900 font-bold">Vehicle</span>
+                    <span className="text-gray-800 cursor-pointer underline">
+                      {bid?.vehicleDetails?.make}/{bid?.vehicleDetails?.model}/
+                      {bid?.vehicleDetails?.series}
+                    </span>
+                  </p>
+                  <p className="flex justify-between">
+                    <span className="text-gray-900 font-bold">Bid Amount</span>
+                    <span className="text-[#191970] font-semibold">
+                      PKR {bid?.bidDetails.yourOffer || "0"}
+                    </span>
+                  </p>
+                  <p className="flex justify-between">
+                    <span className="text-gray-900 font-bold">Date</span>
+                    <span className="text-gray-500">
+                      {bid?.bidDetails?.bidCreatedAt?.slice(0, 10)}
+                    </span>
+                  </p>
+                </div>
+              </div>
+            ))
+          ) : (
+            <div className="text-center py-8 text-gray-400">No bids yet.</div>
+          )}
         </div>
       </div>
     </div>

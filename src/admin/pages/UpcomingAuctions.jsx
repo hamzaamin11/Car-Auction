@@ -17,6 +17,7 @@ import { ViewBrandModal } from "../../components/BrandModal/ViewBrandModal";
 import moment from "moment";
 import { AdminAddBid } from "../../components/AdminAddBidComponent/AdminAddBid";
 import { AdminUpdatebid } from "../AdminUpdatebid";
+import { X, ChevronLeft, ChevronRight } from "lucide-react";
 
 export default function UpcomingAuctions() {
   const { currentUser } = useSelector((state) => state?.auth);
@@ -30,13 +31,17 @@ export default function UpcomingAuctions() {
   const [pageNo, setPageNo] = useState(1);
   const [search, setSearch] = useState("");
   const [loading, setLoading] = useState(false);
+  
+  // NEW: Modal states
+  const [isViewModalOpen, setIsViewModalOpen] = useState(false);
+  const [currentImageIndex, setCurrentImageIndex] = useState(0);
 
   const id = currentUser?.id;
 
   const debouncedSearch = useCallback(
     debounce((value) => {
       setSearch(value);
-      setPageNo(1); // Reset to first page on search
+      setPageNo(1);
     }, 300),
     []
   );
@@ -93,6 +98,38 @@ export default function UpcomingAuctions() {
     }
   };
 
+  // NEW: Handle view details - opens modal
+  const handleViewDetails = (vehicle) => {
+    console.log("View Details Clicked!", vehicle);
+    setselectedVehicle(vehicle);
+    setCurrentImageIndex(0);
+    setIsViewModalOpen(true);
+  };
+
+  // NEW: Close modal
+  const handleCloseModal = () => {
+    setIsViewModalOpen(false);
+    setselectedVehicle(null);
+    setCurrentImageIndex(0);
+  };
+
+  // NEW: Image navigation
+  const handlePrevImage = () => {
+    if (selectedVehicle?.images) {
+      setCurrentImageIndex((prev) => 
+        prev === 0 ? selectedVehicle.images.length - 1 : prev - 1
+      );
+    }
+  };
+
+  const handleNextImage = () => {
+    if (selectedVehicle?.images) {
+      setCurrentImageIndex((prev) => 
+        prev === selectedVehicle.images.length - 1 ? 0 : prev + 1
+      );
+    }
+  };
+
   useEffect(() => {
     if (currentUser?.role === "admin") {
       handleGetAllUpcomingAuctions();
@@ -145,7 +182,7 @@ export default function UpcomingAuctions() {
         </div>
 
         <>
-          <div className="overflow-x-auto  rounded-lg">
+          <div className="overflow-x-auto rounded-lg">
             <div className="hidden md:block">
               <table className="min-w-full divide-y divide-gray-200">
                 <thead className="bg-[#191970] text-white">
@@ -192,12 +229,9 @@ export default function UpcomingAuctions() {
                       className={`${
                         idx % 2 === 0 ? "bg-gray-50" : ""
                       } cursor-pointer hover:bg-gray-100`}
+                      onClick={() => handleViewDetails(user)}
                     >
                       <td
-                        onClick={() => {
-                          handleToggleModel("view");
-                          setselectedVehicle(user);
-                        }}
                         className={`px-4 py-3 font-medium text-gray-900 ${
                           currentUser?.role === "seller" && "hidden"
                         }`}
@@ -211,48 +245,31 @@ export default function UpcomingAuctions() {
                           className="w-16 h-16 object-cover rounded"
                         />
                       </td>
-                      <td
-                        onClick={() => setselectedVehicle(user)}
-                        className="px-4 py-3 text-gray-700"
-                      >
+                      <td className="px-4 py-3 text-gray-700">
                         {user.make}
                       </td>
-                      <td
-                        onClick={() => setselectedVehicle(user)}
-                        className="px-4 py-3 text-gray-700"
-                      >
+                      <td className="px-4 py-3 text-gray-700">
                         {user.model}
                       </td>
-                      <td
-                        onClick={() => setselectedVehicle(user)}
-                        className="px-4 py-3 text-center text-gray-700"
-                      >
+                      <td className="px-4 py-3 text-center text-gray-700">
                         {user?.vehicleCondition}
                       </td>
-                      <td
-                        onClick={() => setselectedVehicle(user)}
-                        className="px-4 py-3 text-gray-700"
-                      >
+                      <td className="px-4 py-3 text-gray-700">
                         {user.sellerOffer}
                       </td>
-                      <td
-                        onClick={() => setselectedVehicle(user)}
-                        className="px-4 py-3 text-gray-700"
-                      >
+                      <td className="px-4 py-3 text-gray-700">
                         {user.startTime
                           ? moment(user.startTime).local().format("hh:mm:ss A")
                           : "--"}
                       </td>
-                      <td
-                        onClick={() => setselectedVehicle(user)}
-                        className="px-4 py-3 text-gray-700"
-                      >
+                      <td className="px-4 py-3 text-gray-700">
                         {user.startTime?.slice(0, 10)}
                       </td>
                       {currentUser?.role === "seller" ? null : (
                         <td
                           className="px-4 py-3"
                           onClick={(e) => {
+                            e.stopPropagation();
                             handleToggleModel("update");
                             setselectedVehicle(user);
                           }}
@@ -272,10 +289,11 @@ export default function UpcomingAuctions() {
               {filteredAuctions?.map((user) => (
                 <div
                   key={user.id}
-                  className="bg-white rounded shadow-md border border-gray-200 p-4 hover:shadow-lg hover:border-indigo-300 hover:bg-indigo-50/30 transition-all duration-300"
+                  onClick={() => handleViewDetails(user)}
+                  className="bg-white rounded shadow-md border border-gray-200 p-4 hover:shadow-lg hover:border-indigo-300 hover:bg-indigo-50/30 transition-all duration-300 cursor-pointer"
                 >
                   <p className="flex justify-between space-y-1">
-                    <p className="font-bold  text-gray-900">Owner Name</p>
+                    <p className="font-bold text-gray-900">Owner Name</p>
                     <span className="text-gray-500 font-medium">
                       {user?.name}
                     </span>
@@ -368,18 +386,205 @@ export default function UpcomingAuctions() {
             onClose={() => setSelectedAuctionId(null)}
           />
         )}
-        {isOpen === "view" && (
-          <ViewBrandModal
-            selectedVehicle={selectedVehicle}
-            handleClick={() => handleToggleModel("view")}
-          />
-        )}
+        
         {isOpen === "update" && (
           <AdminUpdatebid
             selectedVehicle={selectedVehicle}
             setIsOpenBid={() => handleToggleModel("update")}
             handleGetAllUpcomingAuctions={handleGetAllUpcomingAuctions}
           />
+        )}
+
+        {/* ============================================ */}
+        {/* VIEW VEHICLE MODAL -  */}
+        {/* ============================================ */}
+        {isViewModalOpen && (document.body.style.overflow = "hidden")}
+        {isViewModalOpen && selectedVehicle && (
+          <div className="fixed inset-0 z-50 flex items-center justify-center bg-blur backdrop-blur-md p-4">
+            <div className="bg-white rounded-lg shadow-2xl w-full max-w-4xl max-h-[90vh] overflow-y-auto relative">
+              {/* Close Button */}
+              <button
+                onClick={handleCloseModal}
+                className="absolute top-4 right-4 z-10 bg-white rounded-full p-2 shadow-lg hover:bg-gray-100 transition"
+              >
+                <X className="h-6 w-6 text-gray-700 hover:text-red-500" />
+              </button>
+
+              {/* Modal Content */}
+              <div className="p-6">
+                <h2 className="text-2xl font-bold text-gray-800 mb-6">
+                  View Vehicle
+                </h2>
+
+                <div className="grid md:grid-cols-2 gap-6">
+                  {/* Left Side - Vehicle Details */}
+                  <div className="space-y-4">
+                    <div className="grid grid-cols-2 gap-4">
+                      <div>
+                        <p className="text-sm font-bold text-gray-900">Owner Name:</p>
+                        <p className="text-base text-gray-900">{selectedVehicle.name || "—"}</p>
+                      </div>
+                      <div>
+                        <p className="text-sm font-bold text-gray-900">Make:</p>
+                        <p className="text-base text-gray-900">{selectedVehicle.make || "—"}</p>
+                      </div>
+                    </div>
+
+                    <div className="grid grid-cols-2 gap-4">
+                      <div>
+                        <p className="text-sm font-bold text-gray-900">Model:</p>
+                        <p className="text-base text-gray-900">{selectedVehicle.model || "—"}</p>
+                      </div>
+                      <div>
+                        <p className="text-sm font-bold text-gray-900">Series:</p>
+                        <p className="text-base text-gray-900">{selectedVehicle.series || "—"}</p>
+                      </div>
+                    </div>
+
+                    <div className="grid grid-cols-2 gap-4">
+                      <div>
+                        <p className="text-sm font-bold text-gray-900">Color:</p>
+                        <p className="text-base text-gray-900">{selectedVehicle.color || "—"}</p>
+                      </div>
+                      <div>
+                        <p className="text-sm font-bold text-gray-900">Transmission:</p>
+                        <p className="text-base text-gray-900">{selectedVehicle.transmission || "—"}</p>
+                      </div>
+                    </div>
+
+                    <div className="grid grid-cols-2 gap-4">
+                      <div>
+                        <p className="text-sm font-bold text-gray-900">Fuel Type:</p>
+                        <p className="text-base text-gray-900 capitalize">{selectedVehicle.fuelType || "—"}</p>
+                      </div>
+                      <div>
+                        <p className="text-sm font-bold text-gray-900">Body Style:</p>
+                        <p className="text-base text-gray-900">{selectedVehicle.bodyStyle || "—"}</p>
+                      </div>
+                    </div>
+
+                    <div className="grid grid-cols-2 gap-4">
+                      <div>
+                        <p className="text-sm font-bold text-gray-900">Certify Status:</p>
+                        <p className="text-base text-gray-900">{selectedVehicle.certifyStatus || "—"}</p>
+                      </div>
+                      <div>
+                        <p className="text-sm font-bold text-gray-900">Drive Type:</p>
+                        <p className="text-base text-gray-900 uppercase">{selectedVehicle.driveType || "—"}</p>
+                      </div>
+                    </div>
+
+                    <div className="grid grid-cols-2 gap-4">
+                      <div>
+                        <p className="text-sm font-bold text-gray-900">Meter Reading:</p>
+                        <p className="text-base text-gray-900">{selectedVehicle.mileage || "—"}</p>
+                      </div>
+                      <div>
+                        <p className="text-sm font-bold text-gray-900">Year:</p>
+                        <p className="text-base text-gray-900">{selectedVehicle.year || "—"}</p>
+                      </div>
+                    </div>
+
+                    <div className="grid grid-cols-2 gap-4">
+                      <div>
+                        <p className="text-sm font-bold text-gray-900">Condition:</p>
+                        <p className="text-base text-gray-900 capitalize">{selectedVehicle.vehicleCondition || "—"}</p>
+                      </div>
+                      <div>
+                        <p className="text-sm font-bold text-gray-900">Price:</p>
+                        <p className="text-base text-gray-900 capitalize">{selectedVehicle.sellerOffer || selectedVehicle.buyNowPrice}</p>
+                      </div>
+                    </div>
+
+                    <div className="grid grid-cols-2 gap-4">
+                      <div>
+                        <p className="text-sm font-bold text-gray-900">Start Time:</p>
+                        <p className="text-base text-gray-900">
+                          {selectedVehicle.startTime
+                            ? moment(selectedVehicle.startTime).local().format("hh:mm A")
+                            : "—"}
+                        </p>
+                      </div>
+                      <div>
+                        <p className="text-sm font-bold text-gray-900">End Time:</p>
+                        <p className="text-base text-gray-900">
+                          {selectedVehicle.endTime
+                            ? moment(selectedVehicle.endTime).local().format("hh:mm A")
+                            : "—"}
+                        </p>
+                      </div>
+                    </div>
+
+                    <div className="grid grid-cols-2 gap-4">
+                      <div>
+                        <p className="text-sm font-bold text-gray-900">Auction Status:</p>
+                        <p className="text-base text-gray-900 capitalize">{selectedVehicle.auctionStatus || "—"}</p>
+                      </div>
+                      <div>
+                        <p className="text-sm font-bold text-gray-900">Bid Status:</p>
+                        <p className="text-base text-gray-900">{selectedVehicle.bidStatus || "—"}</p>
+                      </div>
+                    </div>
+                  </div>
+
+                  {/* Right Side - Image Gallery */}
+                  <div className="flex flex-col items-center">
+                    {selectedVehicle.images && selectedVehicle.images.length > 0 ? (
+                      <>
+                        {/* Main Image */}
+                        <div className="w-full h-64 rounded-lg overflow-hidden bg-gray-100 mb-4">
+                          <img
+                            src={selectedVehicle.images[currentImageIndex]}
+                            alt={`${selectedVehicle.make} ${selectedVehicle.model}`}
+                            className="w-full h-full object-cover"
+                          />
+                        </div>
+
+                        {/* Navigation Arrows and Thumbnails */}
+                        <div className="flex items-center justify-center gap-4 w-full">
+                          {/* Previous Button */}
+                          <button
+                            onClick={handlePrevImage}
+                            className="bg-red-500 hover:bg-red-600 text-white rounded-full p-3 shadow-lg transition hover:cursor-pointer"
+                            disabled={selectedVehicle.images.length <= 1}
+                          >
+                            <ChevronLeft className="h-5 w-5" />
+                          </button>
+
+                          {/* Current Thumbnail */}
+                          <div className="w-20 h-20 rounded-lg overflow-hidden border-2 border-blue-500 bg-gray-100">
+                            <img
+                              src={selectedVehicle.images[currentImageIndex]}
+                              alt="Thumbnail"
+                              className="w-full h-full object-cover"
+                            />
+                          </div>
+
+                          {/* Next Button */}
+                          <button
+                            onClick={handleNextImage}
+                            className="bg-red-500 hover:bg-red-600 text-white rounded-full p-3 shadow-lg transition duration-200 ease-in-out transform hover:cursor-pointer"
+                            disabled={selectedVehicle.images.length <= 1}
+                          >
+                            <ChevronRight className="h-5 w-5" />
+                          </button>
+                        </div>
+
+                        {/* Image Counter */}
+                        <p className="text-sm text-gray-600 mt-2">
+                          {currentImageIndex + 1} / {selectedVehicle.images.length}
+                        </p>
+                      </>
+                    ) : (
+                      <div className="w-full h-64 rounded-lg bg-gray-100 flex items-center justify-center">
+                        <p className="text-gray-400">No images available</p>
+                      </div>
+                    )}
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
         )}
 
         <ToastContainer />
