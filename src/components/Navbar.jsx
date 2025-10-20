@@ -111,6 +111,48 @@ const Navbar = () => {
     reader.readAsDataURL(file);
   };
 
+  const handleCNICChange = (e) => {
+    let value = e.target.value.replace(/\D/g, ""); // remove all non-numeric characters
+
+    // Add dashes automatically
+    if (value.length > 5 && value.length <= 12) {
+      value = value.slice(0, 5) + "-" + value.slice(5);
+    } else if (value.length > 12) {
+      value =
+        value.slice(0, 5) +
+        "-" +
+        value.slice(5, 12) +
+        "-" +
+        value.slice(12, 13);
+    }
+
+    setProfileForm({ ...profileForm, cnic: value });
+  };
+
+  const handleMobileChange = (e) => {
+    let value = e.target.value.replace(/\D/g, ""); // remove all non-digits
+
+    // Ensure the number always starts with +92
+    if (value.startsWith("92")) {
+      value = "+" + value;
+    } else if (!value.startsWith("+92")) {
+      value = "+92" + value;
+    }
+
+    // Format it like +92-300-1234567
+    if (value.length > 3 && value.length <= 6) {
+      value = value.slice(0, 3) + "-" + value.slice(3);
+    } else if (value.length > 6 && value.length <= 10) {
+      value =
+        value.slice(0, 3) + "-" + value.slice(3, 6) + "-" + value.slice(6);
+    } else if (value.length > 10) {
+      value =
+        value.slice(0, 3) + "-" + value.slice(3, 6) + "-" + value.slice(6, 15);
+    }
+
+    setProfileForm({ ...profileForm, mobileNumber: value });
+  };
+
   // Handle password form changes
   const handlePasswordChange = (e) => {
     const { name, value } = e.target;
@@ -495,99 +537,99 @@ const Navbar = () => {
           </li>
         </ul>
         {/* Profile Dropdown */}
-   <div className="hidden md:flex gap-4 relative" ref={dropdownRef}>
-  {currentUser ? (
-    <div className="relative">
-      <button
-        onClick={toggleDropdown}
-        className="flex items-center gap-2 focus:outline-none group"
-      >
-        {currentUser?.image ||
-        currentUser?.imageUrl ||
-        currentUser?.profileImage ? (
-          <img
-            src={
-              currentUser?.image ||
-              currentUser?.imageUrl ||
-              currentUser?.profileImage
-            }
-            alt="Profile"
-            className="w-10 h-10 rounded-full object-cover border-2 border-gray-300 group-hover:border-red-600 transition-colors duration-300"
-          />
-        ) : (
-          <FaUserCircle
-            size={40}
-            className="text-gray-700 group-hover:text-red-600 transition-colors duration-300"
-          />
-        )}
-      </button>
+        <div className="hidden md:flex gap-4 relative" ref={dropdownRef}>
+          {currentUser ? (
+            <div className="relative">
+              <button
+                onClick={toggleDropdown}
+                className="flex items-center gap-2 focus:outline-none group"
+              >
+                {currentUser?.image ||
+                currentUser?.imageUrl ||
+                currentUser?.profileImage ? (
+                  <img
+                    src={
+                      currentUser?.image ||
+                      currentUser?.imageUrl ||
+                      currentUser?.profileImage
+                    }
+                    alt="Profile"
+                    className="w-10 h-10 rounded-full object-cover border-2 border-gray-300 group-hover:border-red-600 transition-colors duration-300"
+                  />
+                ) : (
+                  <FaUserCircle
+                    size={40}
+                    className="text-gray-700 group-hover:text-red-600 transition-colors duration-300"
+                  />
+                )}
+              </button>
 
-      <div
-        className={`absolute right-0 mt-2 w-44 bg-white rounded-md shadow-lg overflow-hidden transition-all duration-300 ease-in-out ${
-          dropdownOpen
-            ? "max-h-96 opacity-100 scale-100"
-            : "max-h-0 opacity-0 scale-95 pointer-events-none"
-        }`}
-      >
-        <div className="px-4 py-3 border-b border-gray-200">
-          <p className="text-sm text-gray-600">Signed in as</p>
-          <p className="text-sm font-medium text-gray-800 truncate">
-            {currentUser?.name || "--"}
-          </p>
+              <div
+                className={`absolute right-0 mt-2 w-44 bg-white rounded-md shadow-lg overflow-hidden transition-all duration-300 ease-in-out ${
+                  dropdownOpen
+                    ? "max-h-96 opacity-100 scale-100"
+                    : "max-h-0 opacity-0 scale-95 pointer-events-none"
+                }`}
+              >
+                <div className="px-4 py-3 border-b border-gray-200">
+                  <p className="text-sm text-gray-600">Signed in as</p>
+                  <p className="text-sm font-medium text-gray-800 truncate">
+                    {currentUser?.name || "--"}
+                  </p>
+                </div>
+                <div
+                  onClick={() => {
+                    setPasswordModalOpen(true);
+                    setDropdownOpen(false);
+                  }}
+                  className="flex items-center gap-2 px-4 py-3 text-gray-600 hover:bg-gray-100 cursor-pointer transition-colors duration-200"
+                >
+                  <span className="text-sm font-semibold">Change Password</span>
+                </div>
+                <div
+                  onClick={() => {
+                    setProfileModalOpen(true);
+                    setDropdownOpen(false);
+                  }}
+                  className="flex items-center gap-2 px-4 py-3 text-gray-600 hover:bg-gray-100 cursor-pointer transition-colors duration-200"
+                >
+                  <span className="text-sm font-semibold">Manage Profile</span>
+                </div>
+                <div
+                  onClick={() => {
+                    navigate("/soldVehicles");
+                    setDropdownOpen(false);
+                  }}
+                  className="flex items-center gap-2 px-4 py-3 text-gray-600 hover:bg-gray-100 cursor-pointer transition-colors duration-200"
+                >
+                  <span className="text-sm font-semibold">Sold Vehicles</span>
+                </div>
+                <div
+                  onClick={handleLogout}
+                  className="flex items-center gap-2 px-4 py-3 text-red-600 hover:bg-gray-100 cursor-pointer transition-colors duration-200"
+                >
+                  <AiOutlineLogout size={20} />
+                  <span className="text-sm font-semibold">Logout</span>
+                </div>
+              </div>
+            </div>
+          ) : (
+            <>
+              <Link
+                to="/register"
+                className="flex items-center gap-1 hover:text-red-600"
+              >
+                <FaUser /> Register
+              </Link>
+              <Link
+                to="/login"
+                className="flex items-center gap-1 hover:text-red-600"
+              >
+                <FaSignInAlt /> Signin
+              </Link>
+            </>
+          )}
         </div>
-        <div
-          onClick={() => {
-            setPasswordModalOpen(true);
-            setDropdownOpen(false);
-          }}
-          className="flex items-center gap-2 px-4 py-3 text-gray-600 hover:bg-gray-100 cursor-pointer transition-colors duration-200"
-        >
-          <span className="text-sm font-semibold">Change Password</span>
-        </div>
-        <div
-          onClick={() => {
-            setProfileModalOpen(true);
-            setDropdownOpen(false);
-          }}
-          className="flex items-center gap-2 px-4 py-3 text-gray-600 hover:bg-gray-100 cursor-pointer transition-colors duration-200"
-        >
-          <span className="text-sm font-semibold">Manage Profile</span>
-        </div>
-        <div
-          onClick={() => {
-            navigate("/soldVehicles");
-            setDropdownOpen(false);
-          }}
-          className="flex items-center gap-2 px-4 py-3 text-gray-600 hover:bg-gray-100 cursor-pointer transition-colors duration-200"
-        >
-          <span className="text-sm font-semibold">Sold Vehicles</span>
-        </div>
-        <div
-          onClick={handleLogout}
-          className="flex items-center gap-2 px-4 py-3 text-red-600 hover:bg-gray-100 cursor-pointer transition-colors duration-200"
-        >
-          <AiOutlineLogout size={20} />
-          <span className="text-sm font-semibold">Logout</span>
-        </div>
-      </div>
-    </div>
-  ) : (
-    <>
-      <Link
-        to="/register"
-        className="flex items-center gap-1 hover:text-red-600"
-      >
-        <FaUser /> Register
-      </Link>
-      <Link
-        to="/login"
-        className="flex items-center gap-1 hover:text-red-600"
-      >
-        <FaSignInAlt /> Signin
-      </Link>
-    </>
-  )}
-</div>
 
         {/* Mobile Toggle */}
         <div className="md:hidden">
@@ -599,7 +641,7 @@ const Navbar = () => {
 
       {/* Mobile Menu */}
       {menuOpen && (
-        <div className="md:hidden bg-red-600 text-white px-6 pb-6 space-y-4">
+        <div className="md:hidden bg-red-600 text-white px-6 pb-6 space-y-2">
           <Link
             to="/"
             onClick={() => setMenuOpen(false)}
@@ -656,7 +698,7 @@ const Navbar = () => {
                     activeDropdown === dropdown.id ? null : dropdown.id
                   )
                 }
-                className="w-full flex justify-between items-center py-2 font-medium"
+                className="w-full flex justify-between items-center font-medium"
               >
                 {dropdown.label}
                 <RiArrowDropDownLine size={24} />
@@ -718,14 +760,17 @@ const Navbar = () => {
               >
                 Manage Profile
               </button>
-              <button className="block w-full text-left py-1 text-white hover:underline"> </button>
+              <button className="block w-full text-left py-1 text-white hover:underline">
+                {" "}
+              </button>
               <button
                 onClick={() => {
                   handleLogout();
                 }}
-                className="block w-full text-left py-1 text-white hover:underline"
+                className="flex gap-1 w-full text-left  text-white hover:underline"
               >
-                Logout
+                <AiOutlineLogout size={20} />
+                <span className="text-sm font-semibold">Logout</span>
               </button>
             </div>
           ) : (
@@ -817,7 +862,9 @@ const Navbar = () => {
       {profileModalOpen && (
         <div className="fixed inset-0 bg-blur backdrop-blur-md flex items-center justify-center z-50">
           <div className="bg-white rounded-lg p-8 w-full max-w-2xl shadow-xl max-h-[90vh] overflow-y-auto">
-            <h2 className="text-2xl font-semibold mb-6">My Profile</h2>
+            <h2 className="text-2xl font-semibold mb-6 text-center">
+              My Profile
+            </h2>
 
             {/* Profile Picture */}
             <div className="flex flex-col items-center mb-6">
@@ -887,15 +934,15 @@ const Navbar = () => {
                 </div>
 
                 <div className="">
-                  <label className="block text-sm font-medium text-gray-700 ">
+                  <label className="block text-sm font-medium text-gray-700">
                     CNIC
                   </label>
                   <input
                     type="tel"
+                    placeholder="00000-0000000-0"
                     name="cnic"
-                    value={profileForm.cnic}
-                    placeholder=""
-                    onChange={handleProfileChange}
+                    value={profileForm?.cnic}
+                    onChange={handleCNICChange}
                     className="p-2.5 w-full border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
                     required
                     maxLength={15}
@@ -1042,18 +1089,18 @@ const Navbar = () => {
 
               {/* Mobile Number - Full Width */}
               <div className="mb-6">
-                <label className="block text-sm font-medium text-gray-700 ">
+                <label className="block text-sm font-medium text-gray-700">
                   Mobile Number
                 </label>
-                <div className="flex gap-2">
+                <div className="flex flex-col lg:flex-row gap-2">
                   <input
                     type="tel"
                     name="mobileNumber"
                     value={profileForm.mobileNumber}
-                    onChange={handleProfileChange}
-                    placeholder="+9200000000000"
+                    onChange={handleMobileChange}
+                    placeholder="+92-300-1234567"
                     className="p-2.5 flex-1 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
-                    maxLength={13}
+                    maxLength={15}
                   />
                 </div>
               </div>
@@ -1063,14 +1110,14 @@ const Navbar = () => {
                 <button
                   type="button"
                   onClick={() => setProfileModalOpen(false)}
-                  className="px-6 py-2.5 text-gray-600 hover:bg-gray-100 rounded-md border border-gray-300"
+                  className="px-6 py-2.5 text-white hover:opacity-95 rounded-md border border-gray-300 bg-red-900 hover:cursor-pointer"
                 >
                   Cancel
                 </button>
                 <button
                   type="button"
                   onClick={handleProfileSubmit}
-                  className="px-4 py-2 bg-blue-950 text-white rounded-md"
+                  className="px-4 py-2 bg-blue-950 text-white rounded-md hover:cursor-pointer"
                 >
                   Save Changes
                 </button>

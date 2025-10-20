@@ -122,7 +122,7 @@ export const CitiesList = () => {
           <tbody>
             {allCities?.map((city, index) => (
               <tr key={city.id} className="border-b">
-                <td className="py-2 px-4">{index + 1}</td>
+             <td className="py-2 px-4">{(pageNo - 1) * 10 + index + 1}</td>
                 <td className="py-2 px-10">
                   {city.cityName.charAt(0).toUpperCase() +
                     city.cityName.slice(1)}

@@ -193,7 +193,7 @@ function AddAdminVehicle({ open, setOpen, onVehicleUpdated }) {
   const handleGetVehicles = async () => {
     try {
       const res = await axios.get(
-        `${BASE_URL}/getApprovedVehicles?page=${pageNo}&entry=10`
+        `${BASE_URL}/getApprovedVehicles?page=${pageNo}&entry=10&search=${search}`
       );
       setAllVehicles(res.data);
       setFilteredVehicles(res.data);
@@ -365,20 +365,20 @@ function AddAdminVehicle({ open, setOpen, onVehicleUpdated }) {
 
   useEffect(() => {
     handleGetVehicles();
-  }, [pageNo]);
+  }, [pageNo, search]);
 
-  useEffect(() => {
-    if (search.trim() === "") {
-      setFilteredVehicles(allVehicles);
-    } else {
-      const filtered = allVehicles.filter((vehicle) =>
-        `${vehicle.make} ${vehicle.model} ${vehicle.series}`
-          .toLowerCase()
-          .includes(search.toLowerCase())
-      );
-      setFilteredVehicles(filtered);
-    }
-  }, [search, allVehicles]);
+  // useEffect(() => {
+  //   if (search.trim() === "") {
+  //     setFilteredVehicles(allVehicles);
+  //   } else {
+  //     const filtered = allVehicles.filter((vehicle) =>
+  //       `${vehicle.make} ${vehicle.model} ${vehicle.series}`
+  //         .toLowerCase()
+  //         .includes(search.toLowerCase())
+  //     );
+  //     setFilteredVehicles(filtered);
+  //   }
+  // }, [search, allVehicles]);
 
   const toggleActionMenu = (vehicleId) => {
     setActionMenuOpen((prev) => (prev === vehicleId ? null : vehicleId));
@@ -488,7 +488,7 @@ function AddAdminVehicle({ open, setOpen, onVehicleUpdated }) {
                   <label className="block text-sm font-medium text-gray-700 mb-1">
                     Vehicle Drive Type <span className="text-red-500">*</span>
                   </label>
-                     <select
+                  <select
                     name="driveType"
                     value={vehicle.driveType}
                     onChange={handleChange}
@@ -497,10 +497,18 @@ function AddAdminVehicle({ open, setOpen, onVehicleUpdated }) {
                     }`}
                   >
                     <option value="">Select Drive Type</option>
-                    <option value="fwd" className="text-gray-900">FWD (Front-Wheel Drive)</option>
-                    <option value="rwd" className="text-gray-900">RWD (Rear-Wheel Drive)</option>
-                    <option value="awd" className="text-gray-900">AWD (All-Wheel Drive)</option>
-                    <option value="4wd" className="text-gray-900">4WD (Four-Wheel Drive)</option>
+                    <option value="fwd" className="text-gray-900">
+                      FWD (Front-Wheel Drive)
+                    </option>
+                    <option value="rwd" className="text-gray-900">
+                      RWD (Rear-Wheel Drive)
+                    </option>
+                    <option value="awd" className="text-gray-900">
+                      AWD (All-Wheel Drive)
+                    </option>
+                    <option value="4wd" className="text-gray-900">
+                      4WD (Four-Wheel Drive)
+                    </option>
                   </select>
                 </div>
                 <div>
@@ -515,7 +523,9 @@ function AddAdminVehicle({ open, setOpen, onVehicleUpdated }) {
                       vehicle.bodyStyle ? "text-gray-900" : "text-gray-400"
                     }`}
                   >
-                    <option className="" value={""}>Please Select BodyStyle</option>
+                    <option className="" value={""}>
+                      Please Select BodyStyle
+                    </option>
                     {bodyStyles?.map((body) => (
                       <option key={body} value={body} className="text-gray-900">
                         {body}
@@ -536,9 +546,13 @@ function AddAdminVehicle({ open, setOpen, onVehicleUpdated }) {
                       vehicle?.transmission ? "text-gray-900" : "text-gray-400"
                     }`}
                   >
-                    <option value={"" }>Please Select Transmission Type</option>
-                    <option value={"Automatic"} className="text-gray-900">Automatic</option>
-                    <option value={"Manual"} className="text-gray-900">Manual</option>
+                    <option value={""}>Please Select Transmission Type</option>
+                    <option value={"Automatic"} className="text-gray-900">
+                      Automatic
+                    </option>
+                    <option value={"Manual"} className="text-gray-900">
+                      Manual
+                    </option>
                   </select>
                 </div>
                 <div>
@@ -567,13 +581,17 @@ function AddAdminVehicle({ open, setOpen, onVehicleUpdated }) {
                     name="color"
                     value={vehicle.color || ""}
                     onChange={handleChange}
-                  className={`border border-gray-300 px-4 py-2 rounded focus:outline-none focus:ring-2 focus:ring-indigo-500 w-full ${
+                    className={`border border-gray-300 px-4 py-2 rounded focus:outline-none focus:ring-2 focus:ring-indigo-500 w-full ${
                       vehicle.color ? "text-gray-900" : "text-gray-400"
                     }`}
                   >
-                    <option value={""} >Please Select Color</option>
+                    <option value={""}>Please Select Color</option>
                     {carColors?.map((color) => (
-                      <option key={color} value={color} className="text-gray-900">
+                      <option
+                        key={color}
+                        value={color}
+                        className="text-gray-900"
+                      >
                         {color}
                       </option>
                     ))}
@@ -587,17 +605,29 @@ function AddAdminVehicle({ open, setOpen, onVehicleUpdated }) {
                     name="fuelType"
                     value={vehicle.fuelType}
                     onChange={handleChange}
-                     className={`border border-gray-300 px-4 py-2 rounded focus:outline-none focus:ring-2 focus:ring-indigo-500 w-full ${
+                    className={`border border-gray-300 px-4 py-2 rounded focus:outline-none focus:ring-2 focus:ring-indigo-500 w-full ${
                       vehicle.fuelType ? "text-gray-900" : "text-gray-400"
                     }`}
                   >
                     <option value="">Select Fuel Type</option>
-                    <option value="petrol" className="text-gray-900">Petrol</option>
-                    <option value="diesel" className="text-gray-900">Diesel</option>
-                    <option value="cng" className="text-gray-900">CNG (Compressed Natural Gas)</option>
-                    <option value="lpg" className="text-gray-900">LPG (Liquefied Petroleum Gas)</option>
-                    <option value="electric" className="text-gray-900">Electric</option>
-                    <option value="hybrid" className="text-gray-900">Hybrid</option>
+                    <option value="petrol" className="text-gray-900">
+                      Petrol
+                    </option>
+                    <option value="diesel" className="text-gray-900">
+                      Diesel
+                    </option>
+                    <option value="cng" className="text-gray-900">
+                      CNG (Compressed Natural Gas)
+                    </option>
+                    <option value="lpg" className="text-gray-900">
+                      LPG (Liquefied Petroleum Gas)
+                    </option>
+                    <option value="electric" className="text-gray-900">
+                      Electric
+                    </option>
+                    <option value="hybrid" className="text-gray-900">
+                      Hybrid
+                    </option>
                   </select>
                 </div>
                 <div>
@@ -608,13 +638,19 @@ function AddAdminVehicle({ open, setOpen, onVehicleUpdated }) {
                     name="vehicleCondition"
                     value={vehicle.vehicleCondition}
                     onChange={handleChange}
-                     className={`border border-gray-300 px-4 py-2 rounded focus:outline-none focus:ring-2 focus:ring-indigo-500 w-full ${
-                      vehicle.vehicleCondition ? "text-gray-900" : "text-gray-400"
+                    className={`border border-gray-300 px-4 py-2 rounded focus:outline-none focus:ring-2 focus:ring-indigo-500 w-full ${
+                      vehicle.vehicleCondition
+                        ? "text-gray-900"
+                        : "text-gray-400"
                     }`}
                   >
                     <option value="">Select Vehicle Condition</option>
-                    <option value="new" className="text-gray-900">New</option>
-                    <option value="used" className="text-gray-900">Used</option>
+                    <option value="new" className="text-gray-900">
+                      New
+                    </option>
+                    <option value="used" className="text-gray-900">
+                      Used
+                    </option>
                   </select>
                 </div>
                 <div>
@@ -654,12 +690,16 @@ function AddAdminVehicle({ open, setOpen, onVehicleUpdated }) {
                   value={vehicle.certifyStatus}
                   onChange={handleChange}
                   className={`border border-gray-300 px-4 py-2 rounded focus:outline-none focus:ring-2 focus:ring-indigo-500 w-full ${
-                      vehicle.certifyStatus ? "text-gray-900" : "text-gray-400"
-                    }`}
+                    vehicle.certifyStatus ? "text-gray-900" : "text-gray-400"
+                  }`}
                 >
                   <option value="">Please Select Certification Status</option>
-                  <option value="Certified" className="text-gray-900">Certified</option>
-                  <option value="Non-Certified" className="text-gray-900">Non-Certified</option>
+                  <option value="Certified" className="text-gray-900">
+                    Certified
+                  </option>
+                  <option value="Non-Certified" className="text-gray-900">
+                    Non-Certified
+                  </option>
                 </select>
               </div>
               <div className="col-span-1 sm:col-span-2 mt-4">

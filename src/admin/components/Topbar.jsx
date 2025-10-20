@@ -141,6 +141,30 @@ export default function Topbar() {
     setShowGenderDropdown(false);
   };
 
+  const handleMobileChange = (e) => {
+    let value = e.target.value.replace(/\D/g, ""); // remove all non-digits
+
+    // Ensure the number always starts with +92
+    if (value.startsWith("92")) {
+      value = "+" + value;
+    } else if (!value.startsWith("+92")) {
+      value = "+92" + value;
+    }
+
+    // Format it like +92-300-1234567
+    if (value.length > 3 && value.length <= 6) {
+      value = value.slice(0, 3) + "-" + value.slice(3);
+    } else if (value.length > 6 && value.length <= 10) {
+      value =
+        value.slice(0, 3) + "-" + value.slice(3, 6) + "-" + value.slice(6);
+    } else if (value.length > 10) {
+      value =
+        value.slice(0, 3) + "-" + value.slice(3, 6) + "-" + value.slice(6, 15);
+    }
+
+    setProfileForm({ ...profileForm, mobileNumber: value });
+  };
+
   // Handle password submission
   const handlePasswordSubmit = async (e) => {
     e.preventDefault();
@@ -260,6 +284,24 @@ export default function Topbar() {
     setDropdownOpen(false);
   };
 
+  const handleCNICChange = (e) => {
+    let value = e.target.value.replace(/\D/g, ""); // remove all non-numeric characters
+
+    // Add dashes automatically
+    if (value.length > 5 && value.length <= 12) {
+      value = value.slice(0, 5) + "-" + value.slice(5);
+    } else if (value.length > 12) {
+      value =
+        value.slice(0, 5) +
+        "-" +
+        value.slice(5, 12) +
+        "-" +
+        value.slice(12, 13);
+    }
+
+    setProfileForm({ ...profileForm, cnic: value });
+  };
+
   const toggleDropdown = () => {
     setDropdownOpen((prev) => !prev);
   };
@@ -377,19 +419,19 @@ export default function Topbar() {
           </div>
           <div
             onClick={() => setPasswordModalOpen(true)}
-            className="flex items-center gap-2 px-4 py-3 text-gray-600 hover:bg-gray-100 cursor-pointer transition-colors duration-200"
+            className="flex items-center gap-2 px-4 py-1 text-gray-600 hover:bg-gray-100 cursor-pointer transition-colors duration-200 "
           >
             <span className="text-sm font-semibold">Change Password</span>
           </div>
           <div
             onClick={() => setProfileModalOpen(true)}
-            className="flex items-center gap-2 px-4 py-3 text-gray-600 hover:bg-gray-100 cursor-pointer transition-colors duration-200"
+            className="flex items-center gap-2 px-4 py-1 text-gray-600 hover:bg-gray-100 cursor-pointer transition-colors duration-200"
           >
             <span className="text-sm font-semibold">Manage Profile</span>
           </div>
           <div
             onClick={handleLogout}
-            className="flex items-center gap-2 px-4 py-3 text-red-600 hover:bg-gray-100 cursor-pointer transition-colors duration-200"
+            className="flex items-center gap-2 px-4 py-2 text-red-600 hover:bg-gray-100 cursor-pointer transition-colors duration-200"
           >
             <AiOutlineLogout size={20} />
             <span className="text-sm font-semibold">Logout</span>
@@ -546,7 +588,7 @@ export default function Topbar() {
                     placeholder="00000-0000000-0"
                     name="cnic"
                     value={profileForm?.cnic}
-                    onChange={handleProfileChange}
+                    onChange={handleCNICChange}
                     className="p-2.5 w-full border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
                     required
                     maxLength={15}
@@ -701,10 +743,10 @@ export default function Topbar() {
                     type="tel"
                     name="mobileNumber"
                     value={profileForm.mobileNumber}
-                    onChange={handleProfileChange}
-                    placeholder="+9200000000000"
+                    onChange={handleMobileChange}
+                    placeholder="+92-300-1234567"
                     className="p-2.5 flex-1 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
-                    maxLength={13}
+                    maxLength={15}
                   />
                 </div>
               </div>
@@ -714,7 +756,7 @@ export default function Topbar() {
                 <button
                   type="button"
                   onClick={() => setProfileModalOpen(false)}
-                  className="px-6 py-2.5 text-gray-600 hover:bg-gray-100 rounded-md border border-gray-300"
+                  className="px-6 py-2.5 text-white hover:opacity-95 rounded-md border border-gray-300 bg-red-900 hover:cursor-pointer"
                 >
                   Cancel
                 </button>
@@ -722,7 +764,7 @@ export default function Topbar() {
                   type="button"
                   disabled={loading}
                   onClick={handleProfileSubmit}
-                  className="px-4 py-2 bg-blue-950 text-white rounded-md"
+                  className="px-4 py-2 bg-blue-950 text-white rounded-md hover:cursor-pointer"
                 >
                   {loading ? "Loading..." : "Save Changes"}
                 </button>
