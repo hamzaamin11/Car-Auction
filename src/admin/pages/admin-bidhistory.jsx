@@ -230,16 +230,17 @@ const AdminBidHistory = () => {
                 <button
                   onClick={() => handlePageChange(currentPage - 1)}
                   disabled={currentPage === 1}
-                  className="px-4 py-2 bg-blue-950 text-white rounded disabled:opacity-50 hover:bg-blue-800 transition"
+                  className={`px-4 py-2 bg-blue-950 text-white rounded disabled:opacity-50  ${currentPage === 1 ? 'hidden' : 'block'}`}
                 >
-                  Previous
+                 ‹  Prev
                 </button>
+                <div></div>
                 <button
                   onClick={() => handlePageChange(currentPage + 1)}
                   disabled={currentPage === totalPages}
-                  className="px-4 py-2 bg-blue-950 text-white rounded disabled:opacity-50 hover:bg-blue-800 transition"
+                  className={`px-4 py-2 bg-blue-950 text-white rounded disabled:opacity-50 transition ${currentPage === totalPages ? 'hidden' : 'block'}`}
                 >
-                  Next
+                  Next ›
                 </button>
               </div>
             )}
@@ -350,14 +351,14 @@ const AdminBidHistory = () => {
                 <button
                   onClick={() => handlePageChange(currentPage - 1)}
                   disabled={currentPage === 1}
-                  className="px-4 py-2 bg-blue-950 text-white rounded disabled:opacity-50 hover:bg-blue-800 transition"
+                  className="px-4 py-2 bg-blue-950 text-white rounded disabled:opacity-50 "
                 >
                   Previous
                 </button>
                 <button
                   onClick={() => handlePageChange(currentPage + 1)}
                   disabled={currentPage === totalPages}
-                  className="px-4 py-2 bg-blue-950 text-white rounded disabled:opacity-50 hover:bg-blue-800 transition"
+                  className="px-4 py-2 bg-blue-950 text-white rounded disabled:opacity-50"
                 >
                   Next
                 </button>

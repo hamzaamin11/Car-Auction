@@ -129,7 +129,7 @@ export const SeriesList = () => {
           </div>
           <button
             onClick={() => handleToggleModal("Add")}
-            className="w-full bg-[#191970] hover:bg-blue-900 text-white font-bold py-2 px-4 rounded-md shadow transition duration-200"
+            className="w-full bg-[#191970] text-white font-bold py-2 px-4 rounded-md shadow transition duration-200"
           >
             Add Series
           </button>
@@ -167,7 +167,7 @@ export const SeriesList = () => {
           </div>
           <button
             onClick={() => handleToggleModal("Add")}
-            className="bg-[#191970] hover:bg-blue-900 text-white font-bold py-2 px-6 rounded-md shadow transition duration-200 whitespace-nowrap"
+            className="bg-[#191970]  text-white font-bold py-2 px-6 rounded-md shadow transition duration-200 whitespace-nowrap"
           >
             Add Series
           </button>
@@ -234,17 +234,17 @@ export const SeriesList = () => {
             {/* Info Section */}
             <div className="grid grid-cols-2 gap-y-1 text-sm">
               <div className="text-gray-800 font-bold">Brand</div>
-              <div className="text-gray-800">
+              <div className="text-gray-800 px-2">
                 {series.brandName}
               </div>
 
               <div className="text-gray-800 font-bold">Model</div>
-              <div className="text-gray-800 ">
+              <div className="text-gray-800 px-2 ">
                 {series.modelName}
               </div>
 
               <div className="text-gray-800 font-bold">Series</div>
-              <div className="text-gray-800">
+              <div className="text-gray-800 px-2">
                 {series.seriesName}
               </div>
             </div>
@@ -272,32 +272,12 @@ export const SeriesList = () => {
         </p>
       )}
 
-      {/* Empty State */}
-      {allSeries.length === 0 && (
-        <div className="flex justify-center items-center text-gray-500 py-8 bg-white rounded-lg shadow-md">
-          <div className="text-center">
-            <svg
-              className="mx-auto h-12 w-12 text-gray-400 mb-2"
-              fill="none"
-              viewBox="0 0 24 24"
-              stroke="currentColor"
-            >
-              <path
-                strokeLinecap="round"
-                strokeLinejoin="round"
-                strokeWidth={2}
-                d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"
-              />
-            </svg>
-            <p className="text-sm sm:text-base">No series found</p>
-          </div>
-        </div>
-      )}
+    
 
       {/* Pagination */}
       <div className="flex justify-between items-center mt-4 sm:mt-6 gap-2">
         <button
-          className={`bg-blue-950 text-white px-4 sm:px-5 py-2 rounded-md text-sm sm:text-base font-medium transition hover:bg-blue-900 ${
+          className={`bg-blue-950 text-white px-4 sm:px-5 py-2 rounded-md text-sm sm:text-base font-medium transition  ${
             pageNo > 1 ? "block" : "invisible"
           }`}
           onClick={handlePrevPage}
@@ -306,8 +286,8 @@ export const SeriesList = () => {
         </button>
 
         <button
-          className={`bg-blue-950 text-white px-4 sm:px-5 py-2 rounded-md text-sm sm:text-base font-medium transition hover:bg-blue-900 ${
-            allSeries.length === 0 ? "invisible" : "block"
+          className={`bg-blue-950 text-white px-4 sm:px-5 py-2 rounded-md text-sm sm:text-base font-medium transition  ${
+            allSeries.length === 10 ? "block" : "hidden"
           }`}
           onClick={handleNextPage}
         >

@@ -36,7 +36,7 @@ export const AddBrandModal = ({ handleClose, handleGetAllBrands }) => {
       setLoading(false);
       await Swal.fire({
         title: "Error!",
-        text: "Something went wrong.",
+        text: error.response?.data?.message || "An error occurred while adding the brand.",
         icon: "error",
         confirmButtonColor: "#9333ea",
       });
@@ -71,6 +71,7 @@ export const AddBrandModal = ({ handleClose, handleGetAllBrands }) => {
               placeholder="Enter brand name"
               required
               className="w-full border border-gray-300 rounded px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500"
+              maxLength={15}
             />
           </div>
 

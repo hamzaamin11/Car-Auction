@@ -73,7 +73,7 @@ export const BecomePartnerList = () => {
 
   return (
     <div className="min-h-screen bg-gray-100 p-4 sm:p-6">
-      <div className="flex flex-col sm:flex-row justify-between items-center gap-4 mb-6">
+      <div className="flex flex-col sm:flex-row justify-between items-center gap-4 mb-3">
         <h2 className="lg:text-3xl text-xl font-bold text-gray-800">
           Partners List
         </h2>
@@ -216,10 +216,10 @@ export const BecomePartnerList = () => {
           <div className="flex justify-between mt-6">
             <button
               className={`bg-blue-950 text-white px-5 py-2 rounded ${
-                currentPage === 1 ? "opacity-50 cursor-not-allowed" : ""
+                currentPage === 1 ? "hidden" : "block"
               }`}
               onClick={handlePrevPage}
-              disabled={currentPage === 1}
+             
             >
               ‹ Prev
             </button>
@@ -227,8 +227,8 @@ export const BecomePartnerList = () => {
             <button
               className={`bg-blue-950 text-white px-5 py-2 rounded ${
                 currentPage === totalPages
-                  ? "opacity-50 cursor-not-allowed"
-                  : ""
+                  ? "hidden"
+                  : "block"
               }`}
               onClick={handleNextPage}
               disabled={currentPage === totalPages}

@@ -40,7 +40,7 @@ export const ViewAdminCar = ({ selectedVehicle, handleClick }) => {
         </button>
 
         {/* Header */}
-        <h2 className="text-xl font-bold text-gray-800 mb-6">View Vehicle</h2>
+        <h2 className="text-xl font-bold text-gray-800 mb-6">Vehicle Details</h2>
 
         {/* Grid Layout */}
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
@@ -91,7 +91,7 @@ export const ViewAdminCar = ({ selectedVehicle, handleClick }) => {
             </p>
 
             <p>
-              <span className="font-bold">Certify Status:</span>{" "}
+              <span className="font-bold">Certification Status:</span>{" "}
               {selectedVehicle?.certifyStatus.charAt(0).toUpperCase() +
                 selectedVehicle?.certifyStatus.slice(1) || "--"}
             </p>
