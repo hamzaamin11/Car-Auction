@@ -14,6 +14,31 @@ const initialState = {
 export const SuggestionForm = () => {
   const [formData, setFormData] = useState(initialState);
   const [loading, setLoading] = useState(false);
+  // handle contact number change with formatting
+  const handleContactChange = (e) => {
+  let value = e.target.value.replace(/\D/g, ""); // remove all non-digits
+
+  // Ensure the number always starts with +92
+  if (value.startsWith("92")) {
+    value = "+" + value;
+  } else if (!value.startsWith("+92")) {
+    value = "+92" + value;
+  }
+
+  // Format like +92-300-1234567
+  if (value.length > 3 && value.length <= 6) {
+    value = value.slice(0, 3) + "-" + value.slice(3);
+  } else if (value.length > 6 && value.length <= 10) {
+    value =
+      value.slice(0, 3) + "-" + value.slice(3, 6) + "-" + value.slice(6);
+  } else if (value.length > 10) {
+    value =
+      value.slice(0, 3) + "-" + value.slice(3, 6) + "-" + value.slice(6, 15);
+  }
+
+  setFormData({ ...formData, contactNumber: value });
+};
+
 
   // handle input change
   const handleChange = (e) => {
@@ -81,29 +106,26 @@ export const SuggestionForm = () => {
             onChange={handleChange}
             required
             className="w-full border border-gray-500 px-4 py-3 rounded-lg focus:outline-none focus:ring-2 focus:ring-gray-500"
+            maxLength={20}
           />
         </div>
 
         {/* Contact Number */}
-        <div>
-          <label className="block mb-1 text-sm text-gray-600">
-            Contact Number
-          </label>
-          <input
-            type="tel"
-            name="contactNumber"
-            placeholder="+92XXXXXXXXX"
-            value={formData.contactNumber}
-            onChange={(e) => {
-              const value = e.target.value;
-              if (/^\d*$/.test(value)) {
-                handleChange(e);
-              }
-            }}
-            required
-            className="w-full border border-gray-500 px-4 py-3 rounded-lg focus:outline-none focus:ring-2 focus:ring-gray-500"
-          />
-        </div>
+            <div>
+  <label className="block mb-1 text-sm text-gray-600 font-semibold">
+    Contact Number
+  </label>
+  <input
+    type="tel"
+    name="contactNumber"
+    placeholder="+92-300-1234567"
+    value={formData.contactNumber}
+    onChange={handleContactChange}
+    className="w-full border border-gray-400 px-4 py-3 rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500"
+    required
+    maxLength={15}
+  />
+</div>
 
         {/* Email */}
         <div>
@@ -116,6 +138,7 @@ export const SuggestionForm = () => {
             onChange={handleChange}
             required
             className="w-full border border-gray-500 px-4 py-3 rounded-lg focus:outline-none focus:ring-2 focus:ring-gray-500"
+            maxLength={20}
           />
         </div>
 
@@ -130,6 +153,7 @@ export const SuggestionForm = () => {
             onChange={handleChange}
             required
             className="w-full border border-gray-500 px-4 py-3 rounded-lg focus:outline-none focus:ring-2 focus:ring-gray-500"
+            maxLength={100}
           />
         </div>
 
@@ -138,7 +162,7 @@ export const SuggestionForm = () => {
           <button
             disabled={loading}
             type="submit"
-            className="bg-red-600 text-white font-semibold px-6 py-3 rounded-lg hover:bg-yellow-500 transition-all disabled:opacity-70 disabled:cursor-not-allowed flex items-center gap-2"
+            className="bg-blue-950 w-full justify-center text-white font-semibold px-6 py-3 rounded-lg transition-all disabled:opacity-70 disabled:cursor-not-allowed flex items-center gap-2 hover:cursor-pointer"
           >
             {loading && (
               <svg

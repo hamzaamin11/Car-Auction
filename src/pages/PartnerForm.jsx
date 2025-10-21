@@ -16,6 +16,30 @@ const initialState = {
 export const PartnerForm = () => {
   const [formData, setFormData] = useState(initialState);
   const [loading, setLoading] = useState(false);
+  const handleContactChange = (e) => {
+  let value = e.target.value.replace(/\D/g, ""); // remove all non-digits
+
+  // Ensure the number always starts with +92
+  if (value.startsWith("92")) {
+    value = "+" + value;
+  } else if (!value.startsWith("+92")) {
+    value = "+92" + value;
+  }
+
+  // Format like +92-300-1234567
+  if (value.length > 3 && value.length <= 6) {
+    value = value.slice(0, 3) + "-" + value.slice(3);
+  } else if (value.length > 6 && value.length <= 10) {
+    value =
+      value.slice(0, 3) + "-" + value.slice(3, 6) + "-" + value.slice(6);
+  } else if (value.length > 10) {
+    value =
+      value.slice(0, 3) + "-" + value.slice(3, 6) + "-" + value.slice(6, 15);
+  }
+
+  setFormData({ ...formData, contactNumber: value });
+};
+
 
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -86,29 +110,27 @@ export const PartnerForm = () => {
               onChange={handleChange}
               className="w-full border border-gray-400 px-4 py-3 rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500"
               required
+              maxLength={15}
             />
           </div>
 
           {/* Contact Number */}
-          <div>
-            <label className="block mb-1 text-sm text-gray-600 font-semibold">
-              Contact Number
-            </label>
-            <input
-              type="tel"
-              name="contactNumber"
-              placeholder="+92XXXXXXXXXX"
-              value={formData.contactNumber}
-              onChange={(e) => {
-                const value = e.target.value;
-                if (/^\d*$/.test(value) && value.length <= 11) {
-                  handleChange(e);
-                }
-              }}
-              className="w-full border border-gray-400 px-4 py-3 rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500"
-              required
-            />
-          </div>
+        <div>
+  <label className="block mb-1 text-sm text-gray-600 font-semibold">
+    Contact Number
+  </label>
+  <input
+    type="tel"
+    name="contactNumber"
+    placeholder="+92-300-1234567"
+    value={formData.contactNumber}
+    onChange={handleContactChange}
+    className="w-full border border-gray-400 px-4 py-3 rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500"
+    required
+    maxLength={15}
+  />
+</div>
+
 
           {/* Email */}
           <div>
@@ -123,6 +145,7 @@ export const PartnerForm = () => {
               onChange={handleChange}
               className="w-full border border-gray-400 px-4 py-3 rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500"
               required
+              maxLength={20}
             />
           </div>
 
@@ -138,6 +161,7 @@ export const PartnerForm = () => {
               value={formData.businessType}
               onChange={handleChange}
               className="w-full border border-gray-400 px-4 py-3 rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500"
+              maxLength={20}
             />
           </div>
         </div>
@@ -154,6 +178,7 @@ export const PartnerForm = () => {
             value={formData.city}
             onChange={handleChange}
             className="w-full border border-gray-400 px-4 py-3 rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500"
+            maxLength={25}
           />
         </div>
 
@@ -169,6 +194,7 @@ export const PartnerForm = () => {
             value={formData.description}
             onChange={handleChange}
             className="w-full border border-gray-400 px-4 py-3 rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500"
+            maxLength={100}
           />
         </div>
 
@@ -177,7 +203,7 @@ export const PartnerForm = () => {
           <button
             type="submit"
             disabled={loading}
-            className="px-8 py-3 bg-blue-700 text-white font-semibold rounded-lg hover:bg-blue-600 transition-all hover:cursor-pointer disabled:opacity-70 disabled:cursor-not-allowed flex items-center gap-2"
+            className="px-8 py-3 bg-blue-950 w-full text-white font-semibold rounded transition-all hover:cursor-pointer disabled:opacity-70 disabled:cursor-not-allowed flex items-center gap-2 justify-center"
           >
             {loading && (
               <svg

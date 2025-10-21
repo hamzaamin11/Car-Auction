@@ -13,6 +13,30 @@ const initialState = {
 const ContactForm = () => {
   const [formData, setFormData] = useState(initialState);
   const [loading, setLoading] = useState(false);
+  const handleContactChange = (e) => {
+  let value = e.target.value.replace(/\D/g, ""); // remove all non-digits
+
+  // Ensure the number always starts with +92
+  if (value.startsWith("92")) {
+    value = "+" + value;
+  } else if (!value.startsWith("+92")) {
+    value = "+92" + value;
+  }
+
+  // Format like +92-300-1234567
+  if (value.length > 3 && value.length <= 6) {
+    value = value.slice(0, 3) + "-" + value.slice(3);
+  } else if (value.length > 6 && value.length <= 10) {
+    value =
+      value.slice(0, 3) + "-" + value.slice(3, 6) + "-" + value.slice(6);
+  } else if (value.length > 10) {
+    value =
+      value.slice(0, 3) + "-" + value.slice(3, 6) + "-" + value.slice(6, 15);
+  }
+
+  setFormData({ ...formData, contactNumber: value });
+};
+
 
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -77,27 +101,25 @@ const ContactForm = () => {
             value={formData.subject}
             onChange={handleChange}
             className="w-full border border-gray-500 px-4 py-3 rounded-lg focus:outline-none focus:ring-2 focus:ring-gray-500"
+            maxLength={20}
           />
         </div>
 
-        <div>
-          <label className="block mb-1 text-sm text-gray-600">
-            Contact Number
-          </label>
-          <input
-            type="tel"
-            name="contactNumber"
-            placeholder="+92XXX-XXXXX-X"
-            value={formData.contactNumber}
-            onChange={(e) => {
-              const value = e.target.value;
-              if (/^\d*$/.test(value) && value.length <= 11) {
-                handleChange(e);
-              }
-            }}
-            className="w-full border border-gray-500 px-4 py-3 rounded-lg focus:outline-none focus:ring-2 focus:ring-gray-500"
-          />
-        </div>
+       <div>
+  <label className="block mb-1 text-sm text-gray-600 font-semibold">
+    Contact Number
+  </label>
+  <input
+    type="tel"
+    name="contactNumber"
+    placeholder="+92-300-1234567"
+    value={formData.contactNumber}
+    onChange={handleContactChange}
+    className="w-full border border-gray-400 px-4 py-3 rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500"
+    required
+  />
+</div>
+
 
         <div>
           <label className="block mb-1 text-sm text-gray-600">Email</label>
@@ -108,6 +130,7 @@ const ContactForm = () => {
             value={formData.email}
             onChange={handleChange}
             className="w-full border border-gray-500 px-4 py-3 rounded-lg focus:outline-none focus:ring-2 focus:ring-gray-500"
+            maxLength={20}
           />
         </div>
 
@@ -120,16 +143,17 @@ const ContactForm = () => {
             value={formData.description}
             onChange={handleChange}
             className="w-full border border-gray-500 px-4 py-3 rounded-lg focus:outline-none focus:ring-2 focus:ring-gray-500"
+            maxLength={100}
           />
         </div>
 
         <button
           disabled={loading}
           type="submit"
-          className="w-full bg-red-600 text-white font-semibold p-3 rounded-lg hover:bg-yellow-500 transition-all disabled:opacity-70 disabled:cursor-not-allowed flex items-center justify-center gap-2"
+          className="w-full bg-blue-950 text-white font-semibold p-3 rounded-lg disabled:opacity-70 disabled:cursor-not-allowed flex items-center justify-center gap-2 hover:cursor-pointer"
         >
           {loading && (
-            <svg
+            <svg 
               className="animate-spin h-5 w-5 text-white"
               xmlns="http://www.w3.org/2000/svg"
               fill="none"

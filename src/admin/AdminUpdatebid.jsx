@@ -43,11 +43,25 @@ export const AdminUpdatebid = ({
     });
   };
 
-  useEffect(() => {
-    if (selectedVehicle?.images?.length > 0) {
-      setViewImage(selectedVehicle.images[0]);
-    }
-  }, [selectedVehicle]);
+useEffect(() => {
+  if (selectedVehicle?.images?.length > 0) {
+    setViewImage(selectedVehicle.images[0]);
+  }
+
+  if (selectedVehicle) {
+    setFormData((prev) => ({
+      ...prev,
+      startTime: selectedVehicle?.startTime || "",
+      endTime: selectedVehicle?.endTime || "",
+      vehicleId:
+        selectedVehicle?.id ||
+        selectedVehicle?.newVehicleId ||
+        selectedVehicle?.vehicleId,
+      userId: selectedVehicle?.userId,
+    }));
+  }
+}, [selectedVehicle]);
+
 
   const handleBidSubmit = async (e) => {
     e.preventDefault();
