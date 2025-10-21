@@ -172,7 +172,7 @@ const Dashboard = () => {
 
   return (
     <>
-      <div className="lg:p-6 p-2  bg-gray-50 lg:space-y-8 space-y-2">
+      <div className="lg:p-2 p-2  bg-gray-50 lg:space-y-8 space-y-2">
         <h2 className="lg:text-3xl text-2xl font-bold text-[#191970] my-2 lg:mt-0">
           Welcome, Admin
         </h2>

@@ -374,7 +374,9 @@ export default function Topbar() {
     <header className="bg-white shadow-md px-4 py-3 md:px-6 flex items-center justify-between relative z-50">
       {/* Logo */}
       <div className="flex items-center gap-3">
-        <Link to={currentUser?.role === "admin" ? "/admin" : "/"}>
+        <Link
+          to={currentUser?.role === "admin" ? "/admin" : "/seller/dashboard"}
+        >
           <img
             src={logo}
             alt="Logo"

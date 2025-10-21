@@ -315,6 +315,8 @@ function AddAdminVehicle({ open, setOpen, onVehicleUpdated }) {
       handleGetVehicles();
       setShowModal(false);
       setLoading(false);
+      setPrice("");
+      setSelectedCount(0);
       await Swal.fire({
         title: "Success!",
         text: "Vehicle Added successfully.",
@@ -565,11 +567,14 @@ function AddAdminVehicle({ open, setOpen, onVehicleUpdated }) {
                     value={vehicle?.mileage || ""}
                     onChange={(e) => {
                       const value = e.target.value;
-                      if (/^\d*$/.test(value) && value.length <= 7) {
+
+                      // ✅ Allow empty OR valid digits (1–9 followed by up to 6 digits)
+                      if (value === "" || /^[1-9][0-9]{0,6}$/.test(value)) {
                         handleChange(e);
                       }
                     }}
-                    placeholder="Meter Reading(KM)"
+                    placeholder="Meter Reading (KM)"
+                    inputMode="numeric"
                     className="border border-gray-300 px-4 py-2 rounded focus:outline-none focus:ring-2 focus:ring-indigo-500 w-full"
                   />
                 </div>
@@ -663,7 +668,10 @@ function AddAdminVehicle({ open, setOpen, onVehicleUpdated }) {
                     value={vehicle.buyNowPrice}
                     onChange={(e) => {
                       const value = e.target.value;
-                      if (/^\d*$/.test(value) && value.length <= 9) {
+
+                      // ✅ Allow empty OR numbers not starting with 0
+                      // This means: empty OR first digit 1-9 followed by up to 8 digits
+                      if (value === "" || /^[1-9][0-9]{0,8}$/.test(value)) {
                         setPrice(value);
                         setVehicle((prev) => ({
                           ...prev,
@@ -672,8 +680,10 @@ function AddAdminVehicle({ open, setOpen, onVehicleUpdated }) {
                       }
                     }}
                     placeholder="Add Price"
+                    inputMode="numeric"
                     className="border border-gray-300 px-4 py-2 rounded focus:outline-none focus:ring-2 focus:ring-indigo-500 w-full"
                   />
+
                   {price && (
                     <p className="mt-2 text-sm text-red-500 font-semibold">
                       {numberToIndianWords(parseInt(price))}

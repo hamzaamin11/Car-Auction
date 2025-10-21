@@ -20,6 +20,48 @@ const EditUserModal = ({ Open, setOpen, selectedUser }) => {
   });
   console.log("hit me", selectedUser?.id);
 
+  const handleMobileChange = (e) => {
+    let value = e.target.value.replace(/\D/g, ""); // remove all non-digits
+
+    // Ensure the number always starts with +92
+    if (value.startsWith("92")) {
+      value = "+" + value;
+    } else if (!value.startsWith("+92")) {
+      value = "+92" + value;
+    }
+
+    // Format it like +92-300-1234567
+    if (value.length > 3 && value.length <= 6) {
+      value = value.slice(0, 3) + "-" + value.slice(3);
+    } else if (value.length > 6 && value.length <= 10) {
+      value =
+        value.slice(0, 3) + "-" + value.slice(3, 6) + "-" + value.slice(6);
+    } else if (value.length > 10) {
+      value =
+        value.slice(0, 3) + "-" + value.slice(3, 6) + "-" + value.slice(6, 15);
+    }
+
+    setUser({ ...user, contact: value });
+  };
+
+  const handleCNICChange = (e) => {
+    let value = e.target.value.replace(/\D/g, ""); // remove all non-numeric characters
+
+    // Add dashes automatically
+    if (value.length > 5 && value.length <= 12) {
+      value = value.slice(0, 5) + "-" + value.slice(5);
+    } else if (value.length > 12) {
+      value =
+        value.slice(0, 5) +
+        "-" +
+        value.slice(5, 12) +
+        "-" +
+        value.slice(12, 13);
+    }
+
+    setUser({ ...user, cnic: value });
+  };
+
   useEffect(() => {
     if (selectedUser) {
       setUser({
@@ -180,10 +222,10 @@ const EditUserModal = ({ Open, setOpen, selectedUser }) => {
                         type="tel"
                         name="contact"
                         value={user.contact}
-                        onChange={handleChange}
+                        onChange={handleMobileChange}
+                        placeholder="+92-300-1234567"
                         className="mt-1 w-full rounded-xl border border-gray-300 p-3 focus:outline-none focus:ring-2 focus:ring-blue-500"
-                        placeholder="+123456789"
-                        maxLength={13}
+                        maxLength={15}
                       />
                     </div>
 
@@ -207,13 +249,15 @@ const EditUserModal = ({ Open, setOpen, selectedUser }) => {
                       <label className="block text-sm font-medium text-gray-700">
                         CNIC
                       </label>
+
                       <input
                         type="tel"
+                        placeholder="00000-0000000-0"
                         name="cnic"
-                        value={user.cnic}
-                        onChange={handleChange}
-                        className="mt-1 w-full rounded-xl border border-gray-300 p-3 focus:outline-none focus:ring-2 focus:ring-blue-500"
-                        placeholder="+123456789"
+                        value={user?.cnic}
+                        onChange={handleCNICChange}
+                        className="p-2.5 w-full border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                        required
                         maxLength={15}
                       />
                     </div>
@@ -228,6 +272,7 @@ const EditUserModal = ({ Open, setOpen, selectedUser }) => {
                         onChange={handleChange}
                         className="mt-1 w-full rounded-xl border border-gray-300 p-3 focus:outline-none focus:ring-2 focus:ring-blue-500"
                         placeholder="123 Main St"
+                        maxLength={20}
                       />
                     </div>
 
