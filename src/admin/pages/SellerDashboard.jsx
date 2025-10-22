@@ -72,7 +72,7 @@ export const SellerDashboard = () => {
         />
 
         <Card
-          title={"Live Auction"}
+          title={"Live Auctions"}
           totalData={allLiveAuction.length}
           color={"bg-blue-200"}
           icon={<FaGavel size={28} />}
@@ -80,10 +80,10 @@ export const SellerDashboard = () => {
         />
 
         <Card
-          title={"Upcoming Auction"}
+          title={"Upcoming Auctions"}
           totalData={allUpcoming.length}
           color={"bg-blue-200"}
-          icon=<FaCalendarAlt size={28} />
+          icon={<FaCalendarAlt size={28} />}
           path={"/seller/upcoming-auctions"}
         />
 

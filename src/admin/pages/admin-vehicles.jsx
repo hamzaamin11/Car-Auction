@@ -438,6 +438,9 @@ function AddAdminVehicle({ open, setOpen, onVehicleUpdated }) {
             dispatch(addMake(""));
             dispatch(addModel(""));
             dispatch(addSeries(""));
+             setVehicle(initialVehicleState);
+             setPrice("");
+             setSelectedCount(0);
           }}
           className="bg-[#191970] hover:bg-blue-900 text-white font-medium py-2 px-4 text-sm rounded shadow transition-all duration-200 w-full sm:w-auto"
         >
@@ -861,7 +864,7 @@ function AddAdminVehicle({ open, setOpen, onVehicleUpdated }) {
                           setEditModalOpen(true);
                           setActionMenuOpen(null);
                         }}
-                        className="w-full px-4 py-2 text-sm text-yellow-600 hover:bg-yellow-100 text-left"
+                        className="w-full px-4 py-2 text-sm text-yellow-600 hover:bg-yellow-100 text-left rounded-t-lg"
                       >
                         Edit
                       </button>
@@ -893,7 +896,7 @@ function AddAdminVehicle({ open, setOpen, onVehicleUpdated }) {
                           handleDeleteVehicle(vehicle.id);
                           setActionMenuOpen(null);
                         }}
-                        className="w-full px-4 py-2 text-sm text-red-600 hover:bg-red-100 text-left"
+                        className="w-full px-4 py-2 text-sm text-red-600 hover:bg-red-100 text-left rounded-b-lg"
                       >
                         Delete
                       </button>

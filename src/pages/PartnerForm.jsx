@@ -99,7 +99,7 @@ export const PartnerForm = () => {
         {/* Full Name */}
         <div className="grid grid-cols-2 gap-4">
           <div>
-            <label className="block mb-1 text-sm text-gray-600 font-semibold">
+            <label className="block mb-1 text-sm text-gray-900 font-bold">
               Full Name
             </label>
             <input
@@ -116,7 +116,7 @@ export const PartnerForm = () => {
 
           {/* Contact Number */}
         <div>
-  <label className="block mb-1 text-sm text-gray-600 font-semibold">
+  <label className="block mb-1 text-sm text-gray-900 font-bold">
     Contact Number
   </label>
   <input
@@ -134,7 +134,7 @@ export const PartnerForm = () => {
 
           {/* Email */}
           <div>
-            <label className="block mb-1 text-sm text-gray-600 font-semibold">
+            <label className="block mb-1 text-sm text-gray-900 font-bold">
               Email
             </label>
             <input
@@ -151,7 +151,7 @@ export const PartnerForm = () => {
 
           {/* Business Type */}
           <div>
-            <label className="block mb-1 text-sm text-gray-600 font-semibold">
+            <label className="block mb-1 text-sm text-gray-900 font-bold">
               Business Type
             </label>
             <input
@@ -168,7 +168,7 @@ export const PartnerForm = () => {
 
         {/* City */}
         <div>
-          <label className="block mb-1 text-sm text-gray-600 font-semibold">
+          <label className="block mb-1 text-sm text-gray-900 font-bold">
             City / Location
           </label>
           <input
@@ -184,7 +184,7 @@ export const PartnerForm = () => {
 
         {/* Message */}
         <div>
-          <label className="block mb-1 text-sm text-gray-600 font-semibold">
+          <label className="block mb-1 text-sm text-gray-900 font-bold">
             Message
           </label>
           <textarea
