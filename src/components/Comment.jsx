@@ -16,6 +16,7 @@ const LiveCommentsModal = ({
   phase,
   remainingTime,
   timerKey,
+  selectedPrice,
 }) => {
   const { currentUser } = useSelector((state) => state.auth);
   const userId = currentUser?.id;
@@ -36,17 +37,46 @@ const LiveCommentsModal = ({
   const numberToIndianWords = (num) => {
     if (num === 0) return "Zero";
     const ones = [
-      "", "One", "Two", "Three", "Four", "Five",
-      "Six", "Seven", "Eight", "Nine", "Ten",
-      "Eleven", "Twelve", "Thirteen", "Fourteen",
-      "Fifteen", "Sixteen", "Seventeen", "Eighteen", "Nineteen",
+      "",
+      "One",
+      "Two",
+      "Three",
+      "Four",
+      "Five",
+      "Six",
+      "Seven",
+      "Eight",
+      "Nine",
+      "Ten",
+      "Eleven",
+      "Twelve",
+      "Thirteen",
+      "Fourteen",
+      "Fifteen",
+      "Sixteen",
+      "Seventeen",
+      "Eighteen",
+      "Nineteen",
     ];
     const tens = [
-      "", "", "Twenty", "Thirty", "Forty", "Fifty",
-      "Sixty", "Seventy", "Eighty", "Ninety",
+      "",
+      "",
+      "Twenty",
+      "Thirty",
+      "Forty",
+      "Fifty",
+      "Sixty",
+      "Seventy",
+      "Eighty",
+      "Ninety",
     ];
-    const twoDigits = (n) => (n < 20 ? ones[n] : tens[Math.floor(n / 10)] + (n % 10 ? " " + ones[n % 10] : ""));
-    const threeDigits = (n) => (Math.floor(n / 100) ? ones[Math.floor(n / 100)] + " Hundred " : "") + twoDigits(n % 100);
+    const twoDigits = (n) =>
+      n < 20
+        ? ones[n]
+        : tens[Math.floor(n / 10)] + (n % 10 ? " " + ones[n % 10] : "");
+    const threeDigits = (n) =>
+      (Math.floor(n / 100) ? ones[Math.floor(n / 100)] + " Hundred " : "") +
+      twoDigits(n % 100);
 
     let words = "";
     if (Math.floor(num / 10000000) > 0) {
@@ -70,13 +100,13 @@ const LiveCommentsModal = ({
     if (!bidAmount.maxBid || bidAmount.maxBid.length < 5)
       return toast.error("Please enter a bid with at least 5 digits.");
     if (phase !== "running") return toast.error("Bidding is not active!");
-    
+
     setLoading(true);
     try {
       await onSubmitBid(bidAmount);
       setBidAmount(initialState);
       setLoading(false);
-      
+
       // Show SweetAlert success message
       Swal.fire({
         icon: "success",
@@ -88,7 +118,7 @@ const LiveCommentsModal = ({
     } catch (error) {
       console.error("Bid submission error:", error);
       setLoading(false);
-      
+
       // Show SweetAlert error message
       Swal.fire({
         icon: "error",
@@ -123,8 +153,12 @@ const LiveCommentsModal = ({
             ×
           </button>
 
-          <h2 className="text-lg font-semibold mb-4">Live Auction</h2>
-
+          <h2 className="text-lg font-semibold ">Live Auction</h2>
+          <h2 className="text-lg font-semibold ">
+            {" "}
+            {selectedPrice.make} {selectedPrice.model} {"   "}
+            {selectedPrice.buyNowPrice}
+          </h2>
           <CountdownCircleTimer
             key={timerKey}
             isPlaying={phase !== "ended"}
@@ -205,7 +239,12 @@ const LiveCommentsModal = ({
             value={bidAmount.maxBid}
             onChange={(e) => {
               const val = e.target.value;
-              if (/^\d*$/.test(val) && val.length <= 9) handleChange(e);
+              if (
+                (val === "" || /^[1-9][0-9]{0,8}$/.test(val)) &&
+                /^\d*$/.test(val) &&
+                val.length <= 9
+              )
+                handleChange(e);
             }}
             placeholder="Enter bid amount"
             className="flex-1 border border-gray-300 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-600"

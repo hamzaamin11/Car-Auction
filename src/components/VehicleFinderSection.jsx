@@ -27,6 +27,8 @@ const VehicleFinderSection = () => {
   const [startIndex, setStartIndex] = useState(0);
   const cardsPerPage = 4;
 
+  console.log("=>", startIndex);
+
   const navigate = useNavigate();
 
   // Fetch cars from API
@@ -312,7 +314,9 @@ const VehicleFinderSection = () => {
         </button>
         <button
           onClick={nextCards}
-          className="bg-blue-950 text-white px-5 py-2 rounded "
+          className={`bg-blue-950 text-white px-5 py-2 rounded  ${
+            allCars.length >= startIndex ? "block" : "hidden"
+          }`}
         >
           Next ›
         </button>

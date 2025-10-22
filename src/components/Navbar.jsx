@@ -625,7 +625,7 @@ const Navbar = () => {
                 to="/login"
                 className="flex items-center gap-1 hover:text-red-600"
               >
-                <FaSignInAlt /> Signin
+                <FaSignInAlt /> Sign In
               </Link>
             </>
           )}
@@ -760,14 +760,14 @@ const Navbar = () => {
               >
                 Manage Profile
               </button>
-               <button
-                  onClick={() => {
-                    navigate("/soldVehicles");
-                  }}
-                  className="block w-full text-left py-1 text-white hover:underline"
-                >
-                  <span className="text-sm font-semibold">Sold Vehicles</span>
-                </button>
+              <button
+                onClick={() => {
+                  navigate("/soldVehicles");
+                }}
+                className="block w-full text-left py-1 text-white hover:underline"
+              >
+                <span className="text-sm font-semibold">Sold Vehicles</span>
+              </button>
               <button className="block w-full text-left py-1 text-white hover:underline">
                 {" "}
               </button>
@@ -780,7 +780,6 @@ const Navbar = () => {
                 <AiOutlineLogout size={20} />
                 <span className="text-sm font-semibold">Logout</span>
               </button>
-              
             </div>
           ) : (
             <div className="flex flex-col space-y-2 pt-4 border-t border-white">

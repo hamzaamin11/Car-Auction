@@ -32,7 +32,7 @@ const AudiQ2Prices = () => {
         Add Bid on {carType} Cars
       </h3>
 
-      <div className="overflow-x-auto ">
+      <div className="overflow-y-auto max-h-80">
         <table className="min-w-[600px] w-full border border-gray-300 text-left text-sm sm:text-base">
           <thead className="bg-gray-100">
             <tr>
@@ -45,7 +45,7 @@ const AudiQ2Prices = () => {
           <tbody>
             {allPrices.map((item, idx) => (
               <tr key={idx} className="hover:bg-gray-50">
-                <td className="p-1 border text-center ">{idx + 1}.</td>
+                <td className="p-1 border text-center ">{idx + 1}</td>
                 <td className="p-1 border text-center ">
                   <span
                     onClick={() => navigate(`/detailbid/${item.id}`)}

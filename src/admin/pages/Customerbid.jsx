@@ -8,6 +8,8 @@ import { toast, ToastContainer } from "react-toastify";
 import LiveCommentsModal from "../../components/Comment";
 import moment from "moment";
 import { io } from "socket.io-client";
+import { current } from "@reduxjs/toolkit";
+import Swal from "sweetalert2";
 
 export const Customerbid = () => {
   const { currentUser } = useSelector((state) => state.auth);
@@ -20,10 +22,20 @@ export const Customerbid = () => {
 
   const [selectedPrice, setSelectedPrice] = useState(null);
 
+  const currentTime = new Date();
+  const startTime = selectedPrice?.startTime
+    ? new Date(selectedPrice.startTime)
+    : null;
+
+  // Check if auction has started
+  const hasStarted = startTime && currentTime >= startTime;
+
   // Socket and bid states
   const [allCustomerBid, setAllCustomerBid] = useState([]);
   const [socket, setSocket] = useState(null);
   const [remainingTime, setRemainingTime] = useState(0);
+
+  console.log("=>", remainingTime);
   const [phase, setPhase] = useState("loading");
   const [key, setKey] = useState(0);
 
@@ -284,6 +296,9 @@ export const Customerbid = () => {
                 <strong>Model:</strong> {selectedPrice?.model}
               </li>
               <li>
+                <strong>City:</strong> {selectedPrice?.locationId}
+              </li>
+              <li>
                 <strong>Body Style:</strong> {selectedPrice?.bodyStyle}
               </li>
               <li>
@@ -304,7 +319,7 @@ export const Customerbid = () => {
           {/* Bid Section */}
           <div className="bg-white rounded-xl shadow-md p-6 border-t-4 border-[#233D7B]">
             <h2 className="text-xl font-bold text-[#233D7B] mb-3 border-b pb-2">
-              Bid Detail
+              Bid Details
             </h2>
 
             <p className="text-sm mb-2">
@@ -335,10 +350,59 @@ export const Customerbid = () => {
 
             {selectedPrice?.auctionStatus !== "end" && currentUser && (
               <button
-                onClick={() => setIsOpen(true)}
-                className="w-full bg-[#233D7B] hover:bg-[#1a2f63] text-white py-3 rounded-lg font-semibold transition-all"
+                disabled={!hasStarted} // 🔹 disable jab tak auction start nahi hua
+                onClick={() => {
+                  if (!currentUser.cnic) {
+                    Swal.fire({
+                      icon: "warning",
+                      title: "CNIC Required",
+                      text: "Please add your CNIC first before bidding.",
+                      confirmButtonColor: "#233D7B",
+                    });
+                  } else {
+                    setIsOpen(true);
+                  }
+                }}
+                className={`w-full py-3 rounded-lg font-semibold transition-all text-white ${
+                  hasStarted
+                    ? "bg-[#233D7B] hover:bg-[#1a2f63]"
+                    : "bg-red-900 cursor-not-allowed"
+                }`}
               >
-                Start Bidding
+                {selectedPrice?.startTime ? (
+                  hasStarted ? (
+                    "Start Bidding"
+                  ) : (
+                    <div className="text-center">
+                      {(() => {
+                        const hours = Math.floor(remainingTime / 3600);
+                        const minutes = Math.floor((remainingTime % 3600) / 60);
+                        const seconds = remainingTime % 60;
+                        const formatted = `${hours
+                          .toString()
+                          .padStart(2, "0")}:${minutes
+                          .toString()
+                          .padStart(2, "0")}:${seconds
+                          .toString()
+                          .padStart(2, "0")}`;
+                        return (
+                          <>
+                            <div className="text-xl font-bold">{formatted}</div>
+                            <div className="text-xs text-blue-100 mt-1">
+                              {phase === "before"
+                                ? "Starts In"
+                                : phase === "running"
+                                ? "Time Left"
+                                : "Ended"}
+                            </div>
+                          </>
+                        );
+                      })()}
+                    </div>
+                  )
+                ) : (
+                  "Start Bidding"
+                )}
               </button>
             )}
           </div>
@@ -363,6 +427,9 @@ export const Customerbid = () => {
               <strong>Model:</strong> {selectedPrice?.model}
             </li>
             <li>
+              <strong>City:</strong> {selectedPrice?.locationId}
+            </li>
+            <li>
               <strong>Body Style:</strong> {selectedPrice?.bodyStyle}
             </li>
             <li>
@@ -383,9 +450,8 @@ export const Customerbid = () => {
         {/* Bid Section */}
         <div className="bg-white rounded-xl shadow-md p-6 border-t-4 border-[#233D7B]">
           <h2 className="text-xl font-bold text-[#233D7B] mb-3 border-b pb-2">
-            Bid Detail
+            Bid Details
           </h2>
-
           <p className="text-sm mb-2">
             <strong>Bid Date:</strong>{" "}
             {selectedPrice?.startTime
@@ -404,7 +470,6 @@ export const Customerbid = () => {
               moment(selectedPrice?.endTime).local().format("hh:mm A")) ||
               "N/A"}
           </p>
-
           <p className="text-xl font-bold mb-4">
             Demand Price:{" "}
             <span className="text-green-700">
@@ -414,10 +479,59 @@ export const Customerbid = () => {
 
           {selectedPrice?.auctionStatus !== "end" && currentUser && (
             <button
-              onClick={() => setIsOpen(true)}
-              className="w-full bg-[#233D7B] hover:bg-[#1a2f63] text-white py-3 rounded-lg font-semibold transition-all"
+              disabled={!hasStarted} // 🔹 disable jab tak auction start nahi hua
+              onClick={() => {
+                if (!currentUser.cnic) {
+                  Swal.fire({
+                    icon: "warning",
+                    title: "CNIC Required",
+                    text: "Please add your CNIC first before bidding.",
+                    confirmButtonColor: "#233D7B",
+                  });
+                } else {
+                  setIsOpen(true);
+                }
+              }}
+              className={`w-full py-3 rounded-lg font-semibold transition-all text-white ${
+                hasStarted
+                  ? "bg-[#233D7B] hover:bg-[#1a2f63]"
+                  : "bg-red-900 cursor-not-allowed"
+              }`}
             >
-              Start Bidding
+              {selectedPrice?.startTime ? (
+                hasStarted ? (
+                  "Start Bidding"
+                ) : (
+                  <div className="text-center">
+                    {(() => {
+                      const hours = Math.floor(remainingTime / 3600);
+                      const minutes = Math.floor((remainingTime % 3600) / 60);
+                      const seconds = remainingTime % 60;
+                      const formatted = `${hours
+                        .toString()
+                        .padStart(2, "0")}:${minutes
+                        .toString()
+                        .padStart(2, "0")}:${seconds
+                        .toString()
+                        .padStart(2, "0")}`;
+                      return (
+                        <>
+                          <div className="text-xl font-bold">{formatted}</div>
+                          <div className="text-xs text-blue-100 mt-1">
+                            {phase === "before"
+                              ? "Starts In"
+                              : phase === "running"
+                              ? "Time Left"
+                              : "Ended"}
+                          </div>
+                        </>
+                      );
+                    })()}
+                  </div>
+                )
+              ) : (
+                "Start Bidding"
+              )}
             </button>
           )}
         </div>
@@ -432,6 +546,7 @@ export const Customerbid = () => {
           phase={phase}
           remainingTime={remainingTime}
           timerKey={key}
+          selectedPrice={selectedPrice}
         />
       )}
       <ToastContainer />
