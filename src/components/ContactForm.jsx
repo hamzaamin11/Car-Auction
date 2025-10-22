@@ -93,7 +93,7 @@ const ContactForm = () => {
         <h2 className="text-3xl font-bold text-gray-800">Send a Message</h2>
 
         <div>
-          <label className="block mb-1 text-sm text-gray-600">Name</label>
+          <label className="block mb-1 text-sm text-gray-900 font-bold">Name</label>
           <input
             type="text"
             name="subject"
@@ -106,7 +106,7 @@ const ContactForm = () => {
         </div>
 
        <div>
-  <label className="block mb-1 text-sm text-gray-600 font-semibold">
+  <label className="block mb-1 text-sm text-gray-900 font-bold">
     Contact Number
   </label>
   <input
@@ -122,7 +122,7 @@ const ContactForm = () => {
 
 
         <div>
-          <label className="block mb-1 text-sm text-gray-600">Email</label>
+          <label className="block mb-1 text-sm text-gray-900 font-bold">Email</label>
           <input
             type="email"
             name="email"
@@ -130,12 +130,12 @@ const ContactForm = () => {
             value={formData.email}
             onChange={handleChange}
             className="w-full border border-gray-500 px-4 py-3 rounded-lg focus:outline-none focus:ring-2 focus:ring-gray-500"
-            maxLength={20}
+            maxLength={30}
           />
         </div>
 
         <div>
-          <label className="block mb-1 text-sm text-gray-600">Message</label>
+          <label className="block mb-1 text-sm text-gray-900 font-bold">Message</label>
           <textarea
             rows="5"
             name="description"

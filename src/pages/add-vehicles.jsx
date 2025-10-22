@@ -123,9 +123,42 @@ const AddVehicles = () => {
   const [allCities, setAllCities] = useState([]);
   const dispatch = useDispatch();
   const [selectedCount, setSelectedCount] = useState(0);
-  const [price, setPrice] = useState(vehicleData?.buyNowPrice || "");
+  const [price, setPrice] = useState("");
   const [isDropdownOpen, setIsDropdownOpen] = useState(null);
+  console.log("vehicleData:", vehicleData);
 
+  // Convert numerical price to Indian format (e.g., 2800000 -> "28 Lac")
+  const formatPriceToIndian = (num) => {
+    if (!num) return "";
+    num = parseInt(num);
+    if (num >= 10000000) {
+      return `${(num / 10000000).toFixed(2)} Crore`;
+    } else if (num >= 100000) {
+      return `${(num / 100000).toFixed(2)} Lac`;
+    } else if (num >= 1000) {
+      return `${(num / 1000).toFixed(2)} Thousand`;
+    }
+    return num.toString();
+  };
+
+  // Parse user input (e.g., "10 Lac" -> 1000000)
+  const parsePrice = (priceStr) => {
+    if (!priceStr) return "";
+    priceStr = priceStr.toString().toLowerCase().trim();
+    if (priceStr.includes("crore")) {
+      const num = parseFloat(priceStr);
+      return num * 10000000;
+    } else if (priceStr.includes("lac")) {
+      const num = parseFloat(priceStr);
+      return num * 100000;
+    } else if (priceStr.includes("thousand")) {
+      const num = parseFloat(priceStr);
+      return num * 1000;
+    }
+    return parseInt(priceStr) || "";
+  };
+
+  // Convert number to Indian words (e.g., 1000000 -> "Ten Lac")
   const numberToIndianWords = (num) => {
     if (!num) return "";
     const ones = [
@@ -257,19 +290,6 @@ const AddVehicles = () => {
     }
   };
 
-  const parsePrice = (priceStr) => {
-    if (!priceStr) return "";
-    if (priceStr.toLowerCase().includes("lac")) {
-      const num = parseFloat(priceStr);
-      return num * 100000;
-    }
-    if (priceStr.toLowerCase().includes("crore")) {
-      const num = parseFloat(priceStr);
-      return num * 10000000;
-    }
-    return priceStr;
-  };
-
   const fetchAuctionVehicles = async () => {
     try {
       const res = await fetch(`${BASE_URL}/seller/getAuctionVehicle`);
@@ -302,15 +322,49 @@ const AddVehicles = () => {
     setVehicleData((prev) => ({ ...prev, image: [...prev.image, ...files] }));
   };
 
-  const handleEdit = (vehicle) => {
-    setVehicleData(vehicle);
-    setImagePreview(vehicle.image || null);
-    setFormOpen(true);
-    setEditId(vehicle.newVehicleId);
+ const handleEdit = (vehicle) => {
+  // Parse the buyNowPrice string (e.g., "34 Lac") to a raw number (e.g., "3400000")
+  const rawPrice = parsePrice(vehicle.buyNowPrice).toString();
+  console.log("Parsed buyNowPrice:", rawPrice); // Debug to confirm parsing
+  setVehicleData({
+    ...vehicle,
+    buyNowPrice: rawPrice, // Update vehicleData with raw number
+  });
+  setImagePreview(vehicle.image || null);
+  setPrice(rawPrice); // Set price state to raw number
+  setFormOpen(true);
+  setEditId(vehicle.newVehicleId);
+};
+
+  const handlePriceChange = (e) => {
+    const value = e.target.value;
+    if (
+      value === "" ||
+      /^\d*\.?\d*\s*(lac|crore|thousand)?$/i.test(value)
+    ) {
+      setPrice(value);
+      const parsedValue = parsePrice(value);
+      setVehicleData((prev) => ({
+        ...prev,
+        buyNowPrice: parsedValue.toString(), // Update correct field
+      }));
+    }
   };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+
+    if (editId && vehicleData.approval === 'Y') {
+      await Swal.fire({
+        title: "Cannot Edit Vehicle",
+        text: "Your vehicle is approved now, you cannot edit it.",
+        icon: "error",
+        confirmButtonColor: "#9333ea",
+        confirmButtonText: "OK",
+      });
+      return;
+    }
+
     const requiredFields = {
       year: "Year",
       make: "Make",
@@ -324,7 +378,7 @@ const AddVehicles = () => {
       mileage: "Mileage",
       vehicleCondition: "Vehicle Condition",
       locationId: "Location",
-      buyNowPrice: "buyNowPrice",
+      buyNowPrice: "Buy Now Price",
       certifyStatus: "Certify Status",
       image: "Image",
     };
@@ -353,12 +407,7 @@ const AddVehicles = () => {
           formData.append("image", value);
         }
       } else if (value !== null && value !== undefined) {
-        if (key === "buyNowPrice") {
-          const parsed = parsePrice(value.toString());
-          formData.append("buyNowPrice", parsed.toString());
-        } else {
-          formData.append(key, value.toString());
-        }
+        formData.append(key, value.toString());
       }
     });
 
@@ -373,7 +422,9 @@ const AddVehicles = () => {
       setVehicleData(initialFields);
       setImage(null);
       setImagePreview(null);
+      setPrice("");
       setFormOpen(false);
+      setEditId(null);
       setEditId(null);
       toast.success(
         editId ? "Vehicle updated successfully" : "Vehicle added successfully"
@@ -489,16 +540,16 @@ const AddVehicles = () => {
   };
 
   return (
-    <div
+    <><div
       className="min-h-screen lg:p-6 px-2 bg-gradient-to-br from-gray-100 to-blue-50"
       onClick={handleDropdownClose}
     >
       <div className="max-w-7xl mx-auto">
-        <header className="flex flex-col md:flex-row justify-between items-center ">
-          <h1 className="lg:text-3xl text-xl  font-bold text-gray-800 p-3">
+        <header className="flex flex-col md:flex-row justify-between items-center">
+          <h1 className="lg:text-3xl text-xl font-bold text-gray-800 p-3">
             Vehicle List
           </h1>
-          <div className="relative w-full max-w-md ">
+          <div className="relative w-full max-w-md">
             <span className="absolute inset-y-0 left-0 flex items-center pl-3 text-gray-400">
               <svg
                 xmlns="http://www.w3.org/2000/svg"
@@ -511,16 +562,14 @@ const AddVehicles = () => {
                   strokeLinecap="round"
                   strokeLinejoin="round"
                   strokeWidth="2"
-                  d="M21 21l-4.35-4.35m0 0A7.5 7.5 0 104.5 4.5a7.5 7.5 0 0012.15 12.15z"
-                />
+                  d="M21 21l-4.35-4.35m0 0A7.5 7.5 0 104.5 4.5a7.5 7.5 0 0012.15 12.15z" />
               </svg>
             </span>
             <input
               type="text"
               placeholder="Search By Car Name"
               onChange={(e) => setSearch(e.target.value)}
-              className="w-full pl-10 pr-4 py-2 rounded-lg border border-gray-300 shadow-sm placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500 placeholder:text-sm"
-            />
+              className="w-full pl-10 pr-4 py-2 rounded-lg border border-gray-300 shadow-sm placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500 placeholder:text-sm" />
           </div>
           {!isCustomer && (
             <button
@@ -533,13 +582,14 @@ const AddVehicles = () => {
                 setImage(null);
                 setImagePreview(null);
                 setEditId(null);
+                setPrice("");
                 setErrorMsg("");
                 setSuccessMsg("");
                 dispatch(addYear(""));
                 dispatch(addMake(""));
                 dispatch(addModel(""));
                 dispatch(addSeries(""));
-              }}
+              } }
               className="mt-4 md:mt-0 px-4 py-2 bg-blue-950 text-white text-sm rounded hover:cursor-pointer lg:w-32 w-full"
             >
               Add Vehicle
@@ -549,11 +599,9 @@ const AddVehicles = () => {
 
         {(errorMsg || successMsg) && (
           <div
-            className={`mb-6 p-4 rounded ${
-              errorMsg
+            className={`mb-6 p-4 rounded ${errorMsg
                 ? "bg-red-100 text-red-700"
-                : "bg-green-100 text-green-700"
-            }`}
+                : "bg-green-100 text-green-700"}`}
           >
             {errorMsg || successMsg}
           </div>
@@ -581,41 +629,30 @@ const AddVehicles = () => {
                   <Select
                     onChange={handleSearchable}
                     options={cityData}
-                    value={
-                      cityData.find(
-                        (option) =>
-                          String(option.value) ===
-                          String(vehicleData?.locationId)
-                      ) || null
-                    }
-                    isClearable
-                  />
+                    value={cityData.find(
+                      (option) => String(option.value) ===
+                        String(vehicleData?.locationId)
+                    ) || null}
+                    isClearable />
                   <div>
                     <label className="block text-sm font-medium text-gray-700 my-1">
                       Car Info <span className="text-red-500">*</span>
                     </label>
                     <input
                       onClick={handleUpdateCarInfo}
-                      value={`${selected?.year || vehicleData?.year} ${
-                        selected?.make || vehicleData?.make
-                      } ${selected?.model || vehicleData?.model} ${
-                        selected?.series || vehicleData?.series
-                      }`}
+                      value={`${selected?.year || vehicleData?.year} ${selected?.make || vehicleData?.make} ${selected?.model || vehicleData?.model} ${selected?.series || vehicleData?.series}`}
                       placeholder="Year/Make/Model/Version"
                       readOnly
-                      className={`border border-gray-300 px-4 py-2 rounded focus:outline-none focus:ring-2 focus:ring-indigo-500 w-full ${
-                        (selected.year &&
+                      className={`border border-gray-300 px-4 py-2 rounded focus:outline-none focus:ring-2 focus:ring-indigo-500 w-full ${(selected.year &&
                           selected.make &&
                           selected.model &&
                           selected.series) ||
-                        (vehicleData?.year &&
-                          vehicleData?.make &&
-                          vehicleData?.model &&
-                          vehicleData?.series)
+                          (vehicleData?.year &&
+                            vehicleData?.make &&
+                            vehicleData?.model &&
+                            vehicleData?.series)
                           ? "bg-green-200 text-green-700"
-                          : "bg-red-200"
-                      }`}
-                    />
+                          : "bg-red-200"}`} />
                   </div>
                 </div>
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
@@ -627,15 +664,21 @@ const AddVehicles = () => {
                       name="driveType"
                       value={vehicleData.driveType}
                       onChange={handleChange}
-                      className={`border border-gray-300 px-4 py-2 rounded focus:outline-none focus:ring-2 focus:ring-indigo-500 w-full ${
-                      vehicleData.driveType ? "text-gray-900" : "text-gray-400"
-                    }`}
+                      className={`border border-gray-300 px-4 py-2 rounded focus:outline-none focus:ring-2 focus:ring-indigo-500 w-full ${vehicleData.driveType ? "text-gray-900" : "text-gray-400"}`}
                     >
                       <option value="">Select Drive Type</option>
-                      <option value="fwd" className="text-gray-900">FWD (Front-Wheel Drive)</option>
-                      <option value="rwd" className="text-gray-900">RWD (Rear-Wheel Drive)</option>
-                      <option value="awd" className="text-gray-900">AWD (All-Wheel Drive)</option>
-                      <option value="4wd" className="text-gray-900">4WD (Four-Wheel Drive)</option>
+                      <option value="fwd" className="text-gray-900">
+                        FWD (Front-Wheel Drive)
+                      </option>
+                      <option value="rwd" className="text-gray-900">
+                        RWD (Rear-Wheel Drive)
+                      </option>
+                      <option value="awd" className="text-gray-900">
+                        AWD (All-Wheel Drive)
+                      </option>
+                      <option value="4wd" className="text-gray-900">
+                        4WD (Four-Wheel Drive)
+                      </option>
                     </select>
                   </div>
                   <div>
@@ -646,9 +689,7 @@ const AddVehicles = () => {
                       name="bodyStyle"
                       value={vehicleData.bodyStyle}
                       onChange={handleChange}
-                       className={`border border-gray-300 px-4 py-2 rounded focus:outline-none focus:ring-2 focus:ring-indigo-500 w-full ${
-                      vehicleData.bodyStyle ? "text-gray-900" : "text-gray-400"
-                    }`}
+                      className={`border border-gray-300 px-4 py-2 rounded focus:outline-none focus:ring-2 focus:ring-indigo-500 w-full ${vehicleData.bodyStyle ? "text-gray-900" : "text-gray-400"}`}
                     >
                       <option value="">Please Select BodyStyle</option>
                       {bodyStyles?.map((body) => (
@@ -666,13 +707,17 @@ const AddVehicles = () => {
                       name="transmission"
                       value={vehicleData?.transmission || ""}
                       onChange={handleChange}
-                      className={`border border-gray-300 px-4 py-2 rounded focus:outline-none focus:ring-2 focus:ring-indigo-500 w-full ${
-                      vehicleData.transmission ? "text-gray-900" : "text-gray-400"
-                    }`}
+                      className={`border border-gray-300 px-4 py-2 rounded focus:outline-none focus:ring-2 focus:ring-indigo-500 w-full ${vehicleData.transmission
+                          ? "text-gray-900"
+                          : "text-gray-400"}`}
                     >
                       <option value="">Please Select Transmission Type</option>
-                      <option value="Automatic" className="text-gray-900">Automatic</option>
-                      <option value="Manual" className="text-gray-900">Manual</option>
+                      <option value="Automatic" className="text-gray-900">
+                        Automatic
+                      </option>
+                      <option value="Manual" className="text-gray-900">
+                        Manual
+                      </option>
                     </select>
                   </div>
                   <div>
@@ -687,10 +732,9 @@ const AddVehicles = () => {
                         if (/^\d*$/.test(value) && value.length <= 7) {
                           handleChange(e);
                         }
-                      }}
+                      } }
                       placeholder="Meter Reading(KM)"
-                      className="border border-gray-300 px-4 py-2 rounded focus:outline-none focus:ring-2 focus:ring-indigo-500 w-full"
-                    />
+                      className="border border-gray-300 px-4 py-2 rounded focus:outline-none focus:ring-2 focus:ring-indigo-500 w-full" />
                   </div>
                   <div>
                     <label className="block text-sm font-medium text-gray-700 mb-1">
@@ -700,9 +744,7 @@ const AddVehicles = () => {
                       name="color"
                       value={vehicleData.color || ""}
                       onChange={handleChange}
-                      className={`border border-gray-300 px-4 py-2 rounded focus:outline-none focus:ring-2 focus:ring-indigo-500 w-full ${
-                      vehicleData.color ? "text-gray-900" : "text-gray-400"
-                    }`}
+                      className={`border border-gray-300 px-4 py-2 rounded focus:outline-none focus:ring-2 focus:ring-indigo-500 w-full ${vehicleData.color ? "text-gray-900" : "text-gray-400"}`}
                     >
                       <option value="">Please Select Color</option>
                       {carColors?.map((color) => (
@@ -720,17 +762,27 @@ const AddVehicles = () => {
                       name="fuelType"
                       value={vehicleData.fuelType}
                       onChange={handleChange}
-                       className={`border border-gray-300 px-4 py-2 rounded focus:outline-none focus:ring-2 focus:ring-indigo-500 w-full ${
-                      vehicleData.fuelType ? "text-gray-900" : "text-gray-400"
-                    }`}
+                      className={`border border-gray-300 px-4 py-2 rounded focus:outline-none focus:ring-2 focus:ring-indigo-500 w-full ${vehicleData.fuelType ? "text-gray-900" : "text-gray-400"}`}
                     >
                       <option value="">Select Fuel Type</option>
-                      <option value="petrol" className="text-gray-900">Petrol</option>
-                      <option value="diesel" className="text-gray-900">Diesel</option>
-                      <option value="cng" className="text-gray-900">CNG (Compressed Natural Gas)</option>
-                      <option value="lpg" className="text-gray-900">LPG (Liquefied Petroleum Gas)</option>
-                      <option value="electric" className="text-gray-900">Electric</option>
-                      <option value="hybrid" className="text-gray-900">Hybrid</option>
+                      <option value="petrol" className="text-gray-900">
+                        Petrol
+                      </option>
+                      <option value="diesel" className="text-gray-900">
+                        Diesel
+                      </option>
+                      <option value="cng" className="text-gray-900">
+                        CNG (Compressed Natural Gas)
+                      </option>
+                      <option value="lpg" className="text-gray-900">
+                        LPG (Liquefied Petroleum Gas)
+                      </option>
+                      <option value="electric" className="text-gray-900">
+                        Electric
+                      </option>
+                      <option value="hybrid" className="text-gray-900">
+                        Hybrid
+                      </option>
                     </select>
                   </div>
                   <div>
@@ -741,13 +793,17 @@ const AddVehicles = () => {
                       name="vehicleCondition"
                       value={vehicleData.vehicleCondition}
                       onChange={handleChange}
-                      className={`border border-gray-300 px-4 py-2 rounded focus:outline-none focus:ring-2 focus:ring-indigo-500 w-full ${
-                      vehicleData.vehicleCondition ? "text-gray-900" : "text-gray-400"
-                    }`}
+                      className={`border border-gray-300 px-4 py-2 rounded focus:outline-none focus:ring-2 focus:ring-indigo-500 w-full ${vehicleData.vehicleCondition
+                          ? "text-gray-900"
+                          : "text-gray-400"}`}
                     >
                       <option value="">Select Vehicle Condition</option>
-                      <option value="new" className="text-gray-900">New</option>
-                      <option value="used" className="text-gray-900">Used</option>
+                      <option value="new" className="text-gray-900">
+                        New
+                      </option>
+                      <option value="used" className="text-gray-900">
+                        Used
+                      </option>
                     </select>
                   </div>
                   <div>
@@ -758,19 +814,12 @@ const AddVehicles = () => {
                       type="text"
                       name="buyNowPrice"
                       value={price}
-                      onChange={(e) => {
-                        const value = e.target.value;
-                        if (/^\d*$/.test(value) && value.length <= 9) {
-                          setPrice(value);
-                          handleChange(e);
-                        }
-                      }}
-                      placeholder="Add Price"
-                      className="border border-gray-300 px-4 py-2 rounded focus:outline-none focus:ring-2 focus:ring-indigo-500 w-full"
-                    />
+                      onChange={handlePriceChange}
+                      placeholder="Add Price "
+                      className="border border-gray-300 px-4 py-2 rounded focus:outline-none focus:ring-2 focus:ring-indigo-500 w-full" />
                     {price && (
                       <p className="mt-2 text-sm text-red-500 font-semibold">
-                        {numberToIndianWords(parseInt(price))}
+                        {numberToIndianWords(parsePrice(price))}
                       </p>
                     )}
                   </div>
@@ -783,13 +832,17 @@ const AddVehicles = () => {
                     name="certifyStatus"
                     value={vehicleData.certifyStatus}
                     onChange={handleChange}
-                     className={`border border-gray-300 px-4 py-2 rounded focus:outline-none focus:ring-2 focus:ring-indigo-500 w-full ${
-                      vehicleData.certifyStatus ? "text-gray-900" : "text-gray-400"
-                    }`}
+                    className={`border border-gray-300 px-4 py-2 rounded focus:outline-none focus:ring-2 focus:ring-indigo-500 w-full ${vehicleData.certifyStatus
+                        ? "text-gray-900"
+                        : "text-gray-400"}`}
                   >
                     <option value="">Please Select Certification Status</option>
-                    <option value="Certified" className="text-gray-900">Certified</option>
-                    <option value="Non-Certified" className="text-gray-900">Non-Certified</option>
+                    <option value="Certified" className="text-gray-900">
+                      Certified
+                    </option>
+                    <option value="Non-Certified" className="text-gray-900">
+                      Non-Certified
+                    </option>
                   </select>
                 </div>
                 <div className="col-span-1 sm:col-span-2 mt-4">
@@ -813,8 +866,7 @@ const AddVehicles = () => {
                             <path
                               strokeLinecap="round"
                               strokeLinejoin="round"
-                              d="M7 16a4 4 0 01-.88-7.903A5.002 5.002 0 0115.9 6H16a5 5 0 010 10h-1m-4 4v-8m0 0l-3 3m3-3l3 3"
-                            />
+                              d="M7 16a4 4 0 01-.88-7.903A5.002 5.002 0 0115.9 6H16a5 5 0 010 10h-1m-4 4v-8m0 0l-3 3m3-3l3 3" />
                           </svg>
                           <p className="text-sm text-gray-600">
                             <span className="font-medium text-indigo-600">
@@ -841,8 +893,7 @@ const AddVehicles = () => {
                           multiple
                           name="image"
                           onChange={handleFileChange}
-                          className="hidden"
-                        />
+                          className="hidden" />
                       </label>
                     </div>
                   </div>
@@ -861,15 +912,14 @@ const AddVehicles = () => {
                 <div className="fixed inset-0 bg-opacity-40 flex items-center justify-center z-50">
                   <div className="w-full max-w-5xl bg-white p-6 rounded-lg shadow-lg relative">
                     <CarSelector
-                      handleIsOpenToggle={() => handleIsOpenToggle("")}
-                    />
+                      handleIsOpenToggle={() => handleIsOpenToggle("")} />
                   </div>
                 </div>
               )}
             </div>
           </div>
         )}
-        <section className="lg:mt-6 mt-3 space-y-4 max-h-[55vh] overflow-y-auto  md:hidden block">
+        <section className="lg:mt-6 mt-3 space-y-4 max-h-[55vh] overflow-y-auto md:hidden block">
           {loading ? (
             <p className="text-center text-indigo-600 font-semibold">
               Loading vehicles...
@@ -889,8 +939,7 @@ const AddVehicles = () => {
                     className="w-full h-full object-cover hover:cursor-pointer"
                     onClick={() => (
                       setSelectVehicle(vehicle), handleIsOpenToggle("View")
-                    )}
-                  />
+                    )} />
                 </div>
                 <div className="flex-1 min-w-0">
                   <h2 className="font-bold text-gray-800 text-xs truncate">
@@ -900,28 +949,24 @@ const AddVehicles = () => {
                   <p className="text-xs font-bold text-gray-900">
                     PKR {vehicle.buyNowPrice}
                   </p>
-
                   <p className="text-xs text-gray-600">
                     {vehicle.year || "—"} • {vehicle.fuelType || "—"} •{" "}
                     {vehicle.transmission || "—"}
                   </p>
                   <p
-                    className={`text-[8px] text-center rounded w-16 ${
-                      vehicle.approval === "Y"
+                    className={`text-[8px] text-center rounded w-16 ${vehicle.approval === "Y"
                         ? "bg-green-500 text-white"
-                        : "bg-red-500 text-white"
-                    }`}
+                        : "bg-red-500 text-white"}`}
                   >
                     {vehicle.approval === "Y" ? "Approved" : "Not Approved"}
                   </p>
                 </div>
-
                 <div className="relative flex-shrink-0">
                   <button
                     onClick={(e) => {
                       e.stopPropagation();
                       toggleDropdown(vehicle.newVehicleId);
-                    }}
+                    } }
                     className="px-3 py-1 text-gray-600 text-xl"
                   >
                     <BsThreeDotsVertical />
@@ -934,8 +979,8 @@ const AddVehicles = () => {
                             onClick={(e) => {
                               e.stopPropagation();
                               handleEdit(vehicle);
-                            }}
-                            className="block w-full text-left px-4 py-2 text-sm text-yellow-500 hover:bg-yellow-500 hover:text-white"
+                            } }
+                            className="block w-full px-4 py-2 text-sm text-yellow-600 hover:bg-yellow-100 text-left rounded-t-lg"
                           >
                             Edit
                           </button>
@@ -945,8 +990,8 @@ const AddVehicles = () => {
                                 e.stopPropagation();
                                 handleEndBidding(vehicle.bidId);
                                 handleIsOpenToggle("bid");
-                              }}
-                              className="block w-full text-left px-4 py-2 text-sm text-green-500 hover:bg-green-500 hover:text-white"
+                              } }
+                              className="block w-full px-4 py-2 text-sm text-green-600 hover:bg-green-100 text-left"
                             >
                               Bid Added
                             </button>
@@ -956,8 +1001,8 @@ const AddVehicles = () => {
                                 e.stopPropagation();
                                 setSelectVehicle(vehicle);
                                 handleIsOpenToggle("View");
-                              }}
-                              className="block w-full text-left px-4 py-2 text-sm text-green-500 hover:bg-green-500 hover:text-white"
+                              } }
+                              className="block w-full text-left px-4 py-2 text-sm text-green-600 hover:bg-green-100"
                             >
                               View
                             </button>
@@ -966,8 +1011,8 @@ const AddVehicles = () => {
                             onClick={(e) => {
                               e.stopPropagation();
                               handleDelete(vehicle.newVehicleId);
-                            }}
-                            className="block w-full text-left px-4 py-2 text-sm text-red-500 hover:bg-red-500 hover:text-white"
+                            } }
+                            className="block w-full text-left px-4 py-2 text-sm text-red-600 hover:bg-red-100 rounded-b-lg"
                           >
                             Delete
                           </button>
@@ -983,7 +1028,7 @@ const AddVehicles = () => {
                               monsterBid: "",
                             });
                             setIsCustomerBidModalOpen(true);
-                          }}
+                          } }
                           className="block w-full text-left px-4 py-2 text-sm text-blue-500 hover:bg-blue-500 hover:text-white"
                         >
                           Create Bid
@@ -996,158 +1041,153 @@ const AddVehicles = () => {
             ))
           )}
         </section>
-        <section
-          className="lg:mt-6 space-y-4 overflow-y-auto  md:block hidden pb-10"
-          style={{ maxHeight: "calc(100vh - 210px)" }}
-        >
-          {loading ? (
-            <p className="text-center text-indigo-600 font-semibold">
-              Loading vehicles...
-            </p>
-          ) : allVehicles.length === 0 ? (
-            <p className="text-center text-gray-600">No vehicles found.</p>
-          ) : (
-            allVehicles?.map((vehicle) => (
-              <div
-                key={vehicle.newVehicleId}
-                className="bg-white border rounded-xl shadow-sm hover:shadow-md transition p-4 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4"
-              >
-                <div className="w-full sm:w-40 sm:h-28 rounded-lg overflow-hidden bg-gray-100">
-                  <img
-                    src={vehicle.images[0]}
-                    alt={`${vehicle.make} ${vehicle.model}`}
-                    className="w-full h-full object-cover hover:cursor-pointer"
-                    onClick={() => (
-                      setSelectVehicle(vehicle), handleIsOpenToggle("View")
-                    )}
-                  />
-                </div>
-                <div className="flex-1 min-w-0 space-y-1">
-                  <h2 className="font-bold text-gray-800">
-                    {vehicle.make || "—"} {vehicle.model || "—"}{" "}
-                    {vehicle.series || "—"}
-                  </h2>
-                  <p className="text-lg font-bold text-gray-800">
-                    PKR {vehicle.buyNowPrice}
-                  </p>
 
-                  <div className="flex flex-wrap gap-1 text-sm text-gray-500 ">
-                    <span className=" ">{vehicle.year || "—"}</span>|
-                    <span className="">{vehicle.mileage || "—"}KM</span>|
-                    <span className=" ">{vehicle.fuelType || "—"}</span>|
-                    <span className=" ">{vehicle.color || "—"}</span>|
-                    <span className=" ">{vehicle.transmission || "—"}</span>|
-                    <span className="">{vehicle.cityName || "—"}</span>|
-                    <p
-                      className={`text-xs text-center rounded p-1 ${
-                        vehicle.approval === "Y"
-                          ? "bg-green-500 text-white"
-                          : "bg-red-500 text-white"
-                      }`}
-                    >
-                      {vehicle.approval === "Y" ? "Approved" : "Not Approved"}
-                    </p>
-                  </div>
-                </div>
-                <div className="relative flex-shrink-0">
+<section
+  className="lg:mt-6 space-y-4 overflow-y-auto md:block hidden pb-10"
+  style={{ maxHeight: "calc(100vh - 210px)" }}
+>
+  {loading ? (
+    <p className="text-center text-indigo-600 font-semibold">
+      Loading vehicles...
+    </p>
+  ) : allVehicles.length === 0 ? (
+    <p className="text-center text-gray-600">No vehicles found.</p>
+  ) : (
+    allVehicles?.map((vehicle) => (
+      <div
+        key={vehicle.newVehicleId}
+        className="bg-white border rounded-xl shadow-sm hover:shadow-md transition p-4 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4"
+      >
+        <div className="w-full sm:w-40 sm:h-28 rounded-lg overflow-hidden bg-gray-100">
+          <img
+            src={vehicle.images[0]}
+            alt={`${vehicle.make} ${vehicle.model}`}
+            className="w-full h-full object-cover hover:cursor-pointer"
+            onClick={() => (
+              setSelectVehicle(vehicle), handleIsOpenToggle("View")
+            )}
+          />
+        </div>
+        <div className="flex-1 min-w-0 space-y-1">
+          <h2 className="font-bold text-gray-800">
+            {vehicle.make || "—"} {vehicle.model || "—"}{" "}
+            {vehicle.series || "—"}
+          </h2>
+          <p className="text-lg font-bold text-gray-800">
+            PKR {vehicle.buyNowPrice}
+          </p>
+          <div className="flex flex-wrap gap-1 text-sm text-gray-500">
+            <span>{vehicle.year || "—"}</span>|
+            <span>{vehicle.mileage || "—"}KM</span>|
+            <span>{vehicle.fuelType || "—"}</span>|
+            <span>{vehicle.color || "—"}</span>|
+            <span>{vehicle.transmission || "—"}</span>|
+            <span>{vehicle.cityName || "—"}</span>|
+            <span
+              className={`text-xs text-center rounded p-1 ${vehicle.approval === "Y"
+                ? "bg-green-500 text-white"
+                : "bg-red-500 text-white"}`}
+            >
+              {vehicle.approval === "Y" ? "Approved" : "Not Approved"}
+            </span>
+          </div>
+        </div>
+        <div className="relative flex-shrink-0">
+          <button
+            onClick={(e) => {
+              e.stopPropagation();
+              toggleDropdown(vehicle.newVehicleId);
+            }}
+            className="px-3 py-1 text-gray-600 text-xl"
+          >
+            <BsThreeDotsVertical />
+          </button>
+          {isDropdownOpen === vehicle.newVehicleId && (
+            <div className="absolute right-0 mt-2 w-32 bg-white border rounded-lg shadow-lg z-10">
+              {!isCustomer ? (
+                <>
                   <button
                     onClick={(e) => {
                       e.stopPropagation();
-                      toggleDropdown(vehicle.newVehicleId);
+                      handleEdit(vehicle);
                     }}
-                    className="px-3 py-1 text-gray-600 text-xl"
+                    className="block w-full text-left px-4 py-2 text-sm text-yellow-600 hover:bg-yellow-100 rounded-t-lg"
                   >
-                    <BsThreeDotsVertical />
+                    Edit
                   </button>
-                  {isDropdownOpen === vehicle.newVehicleId && (
-                    <div className="absolute right-0 mt-2 w-32 bg-white border rounded-lg shadow-lg z-10">
-                      {!isCustomer ? (
-                        <>
-                          <button
-                            onClick={(e) => {
-                              e.stopPropagation();
-                              handleEdit(vehicle);
-                            }}
-                            className="block w-full text-left px-4 py-2 text-sm text-yellow-500 hover:bg-yellow-500 hover:text-white"
-                          >
-                            Edit
-                          </button>
-                          {vehicle.bidId ? (
-                            <button
-                              onClick={(e) => {
-                                e.stopPropagation();
-                                handleEndBidding(vehicle.bidId);
-                                handleIsOpenToggle("bid");
-                              }}
-                              className="block w-full text-left px-4 py-2 text-sm text-green-500 hover:bg-green-500 hover:text-white"
-                            >
-                              Bid Added
-                            </button>
-                          ) : (
-                            <button
-                              onClick={(e) => {
-                                e.stopPropagation();
-                                setSelectVehicle(vehicle);
-                                handleIsOpenToggle("View");
-                              }}
-                              className="block w-full text-left px-4 py-2 text-sm text-green-500 hover:bg-green-500 hover:text-white"
-                            >
-                              View
-                            </button>
-                          )}
-                          <button
-                            onClick={(e) => {
-                              e.stopPropagation();
-                              handleDelete(vehicle.newVehicleId);
-                            }}
-                            className="block w-full text-left px-4 py-2 text-sm text-red-500 hover:bg-red-500 hover:text-white"
-                          >
-                            Delete
-                          </button>
-                        </>
-                      ) : (
-                        <button
-                          onClick={(e) => {
-                            e.stopPropagation();
-                            setCustomerBidData({
-                              userId: user?.id,
-                              vehicleId: vehicle.id,
-                              maxBid: "",
-                              monsterBid: "",
-                            });
-                            setIsCustomerBidModalOpen(true);
-                          }}
-                          className="block w-full text-left px-4 py-2 text-sm text-blue-500 hover:bg-blue-500 hover:text-white"
-                        >
-                          Create Bid
-                        </button>
-                      )}
-                    </div>
+                  {vehicle.bidId ? (
+                    <button
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        handleEndBidding(vehicle.bidId);
+                        handleIsOpenToggle("bid");
+                      }}
+                      className="block w-full text-left px-4 py-2 text-sm text-green-500 hover:bg-green-500 hover:text-white"
+                    >
+                      Bid Added
+                    </button>
+                  ) : (
+                    <button
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        setSelectVehicle(vehicle);
+                        handleIsOpenToggle("View");
+                      }}
+                      className="block w-full text-left px-4 py-2 text-sm text-green-600 hover:bg-green-100 rounded"
+                    >
+                      View
+                    </button>
                   )}
-                </div>
-              </div>
-            ))
-          )}{" "}
-          <div className="flex justify-between mt-6 px-2 sm:px-4">
-            <button
-              className={`bg-blue-950 text-white px-5 py-2 rounded  ${
-                pageNo > 1 ? "block" : "hidden"
-              }`}
-              onClick={handlePrevPage}
-            >
-              ‹ Prev
-            </button>
-            <div></div>
-            <button
-              className={`bg-blue-950 text-white px-5 py-2 rounded ${
-                allVehicles.length === 10 ? "block" : "hidden"
-              }`}
-              onClick={handleNextPage}
-            >
-              Next ›
-            </button>
-          </div>
-        </section>
+                  <button
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      handleDelete(vehicle.newVehicleId);
+                    }}
+                    className="block w-full text-left px-4 py-2 text-sm text-red-600 hover:bg-red-100 rounded-b-lg"
+                  >
+                    Delete
+                  </button>
+                </>
+              ) : (
+                <button
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    setCustomerBidData({
+                      userId: user?.id,
+                      vehicleId: vehicle.id,
+                      maxBid: "",
+                      monsterBid: "",
+                    });
+                    setIsCustomerBidModalOpen(true);
+                  }}
+                  className="block w-full text-left px-4 py-2 text-sm text-blue-500 hover:bg-blue-500 hover:text-white"
+                >
+                  Create Bid
+                </button>
+              )}
+            </div>
+          )}
+        </div>
+      </div>
+    ))
+  )}
+  <div className="flex justify-between mt-6 px-2 sm:px-4">
+    <button
+      className={`bg-blue-950 text-white px-5 py-2 rounded ${pageNo > 1 ? "block" : "hidden"}`}
+      onClick={handlePrevPage}
+    >
+      ‹ Prev
+    </button>
+    <div></div>
+    <button
+      className={`bg-blue-950 text-white px-5 py-2 rounded ${allVehicles.length === 10 ? "block" : "hidden"}`}
+      onClick={handleNextPage}
+    >
+      Next ›
+    </button>
+  </div>
+</section>
+
       </div>
       {isOpen === "View" && (
         <ViewAdminCar
@@ -1164,6 +1204,7 @@ const AddVehicles = () => {
       )}
       <ToastContainer />
     </div>
+    </>
   );
 };
 
