@@ -31,11 +31,12 @@ const bodyStyles = [
   "Crossover",
   "Hatchback",
   "Minivan",
-  "Pickup Truck",
+  "Pickup ",
   "Sedan",
   "Station Wagon",
   "SUV",
   "Van",
+  "Truck",
 ];
 
 const carColors = [

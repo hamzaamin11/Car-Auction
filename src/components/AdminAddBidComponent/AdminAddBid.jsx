@@ -4,7 +4,7 @@ import { MdClose } from "react-icons/md";
 import { BASE_URL } from "../Contant/URL";
 import moment from "moment";
 import { toast, ToastContainer } from "react-toastify";
-
+import Swal from "sweetalert2";
 export const AdminAddBid = ({
   setIsOpenBid,
   selectedVehicle,
@@ -46,21 +46,44 @@ export const AdminAddBid = ({
     }
   }, [selectedVehicle]);
 
-  const handleBidSubmit = async (e) => {
-    e.preventDefault();
-    setLoading(true);
-    try {
-      const res = await axios.post(`${BASE_URL}/seller/createBid`, formData);
-      console.log("res", res.data);
-      getAllVehicles();
-      setIsOpenBid(false);
-      toast.success("Vehicle has been added for bid");
-      setLoading(false);
-    } catch (error) {
-      console.log(error);
-      setLoading(false);
-    }
-  };
+ 
+
+const handleBidSubmit = async (e) => {
+  e.preventDefault();
+  setLoading(true);
+
+  try {
+    const res = await axios.post(`${BASE_URL}/seller/createBid`, formData);
+    console.log("res", res.data);
+
+    getAllVehicles();
+    setIsOpenBid(false);
+
+    // ✅ SweetAlert Success Message
+    Swal.fire({
+      title: "Success!",
+      text: "Your bid has been added successfully.",
+      icon: "success",
+      confirmButtonText: "OK",
+      confirmButtonColor: "#3085d6",
+    });
+
+    setLoading(false);
+  } catch (error) {
+    console.log(error);
+    setLoading(false);
+
+    // ❌ Optional: Show error alert too
+    Swal.fire({
+      title: "Error!",
+      text: "Something went wrong while adding your bid.",
+      icon: "error",
+      confirmButtonText: "Try Again",
+      confirmButtonColor: "#d33",
+    });
+  }
+};
+
 
   return (
     <div className="fixed inset-0 z-50 bg-black/30 backdrop-blur flex justify-center items-center">

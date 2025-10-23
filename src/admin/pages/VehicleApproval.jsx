@@ -51,9 +51,42 @@ export const VehicleApproval = () => {
     }
   };
 
-  const handleReject = (vehicle) => {
-    alert(`${vehicle.make} ${vehicle.model} has been rejected ❌`);
-    setActionMenuOpen(null);
+ const handleReject = async (vehicle) => {
+    try {
+      const result = await Swal.fire({
+        title: "Are you sure?",
+        text: `Do you want to reject ${vehicle.make} ${vehicle.model}?`,
+        icon: "warning",
+        showCancelButton: true,
+        confirmButtonColor: "#dc2626",
+        cancelButtonColor: "#6b7280",
+        confirmButtonText: "Yes, reject it!",
+        cancelButtonText: "Cancel"
+      });
+
+      if (result.isConfirmed) {
+        // Add your API call here to reject the vehicle
+        // const res = await axios.put(`${BASE_URL}/RejectVehicles/${vehicle.id}`);
+        
+        setActionMenuOpen(null);
+        handleGetAllUnapprovalVehicles();
+        
+        await Swal.fire({
+          title: "Rejected!",
+          text: `${vehicle.make} ${vehicle.model} has been rejected successfully.`,
+          icon: "success",
+          confirmButtonColor: "#9333ea",
+        });
+      }
+    } catch (error) {
+      console.error(error);
+      await Swal.fire({
+        title: "Error!",
+        text: "Something went wrong while rejecting the vehicle.",
+        icon: "error",
+        confirmButtonColor: "#9333ea",
+      });
+    }
   };
 
   const handleViewDetails = (vehicle) => {

@@ -188,7 +188,7 @@ export const ContactList = () => {
                     </span>
                   </p>
                   <p className="flex justify-between">
-                    <span className="font-bold text-gray-900"> Contact Details</span>
+                    <span className="font-bold text-gray-900"> Customer Message</span>
                     <span className="text-gray-700 text-xs">
                       {contact?.description?.length > 50
                         ? `${contact?.description.slice(0, 50)}...`

@@ -1,9 +1,9 @@
 import axios from "axios";
 import React, { useEffect, useState, useMemo } from "react";
 import { useNavigate, useParams } from "react-router-dom";
-import Select from "react-select"; // Import react-select for searchable dropdowns
+import Select from "react-select";
 import { BASE_URL } from "../components/Contant/URL";
-import numberToWords from "number-to-words"; // Import number-to-words for basic number conversion
+import numberToWords from "number-to-words";
 
 const BodyType = [
   { label: "Mini Vehicles", value: "Mini Vehicles" },
@@ -32,24 +32,21 @@ const BodyType = [
 
 const FilterPriceCars = () => {
   const { name, value } = useParams();
-  console.log({ name, value });
-
   const navigate = useNavigate();
 
   const [allMake, setAllMake] = useState([]);
-  const [selectMake, setSelectMake] = useState();
+  const [allCities, setAllCities] = useState([]);
   const [filterData, setFilterData] = useState({
-    vehicleType: name === "bodyStyle" ? value : "",
+    vehicleType: name === "bodyStyle" ? decodeURIComponent(value || "") : "",
     selectYear: "",
-    allMakes: name === "make" ? value : "",
-    allModels: name === "model" ? value : "",
-    location: name === "city" ? value : "",
-    formCash: name === "budget" ? value.split("-")[0] || "" : "",
-    toCash: name === "budget" ? value.split("-")[1] || "" : "",
+    allMakes: "",
+    allModels: name === "model" ? decodeURIComponent(value || "") : "",
+    location: "",
+    formCash: name === "budget" ? decodeURIComponent(value || "").split("-")[0] || "" : "",
+    toCash: name === "budget" ? decodeURIComponent(value || "").split("-")[1] || "" : "",
   });
   const [allFilterCars, setAllFilterCars] = useState([]);
   const [filterModel, setFilterModel] = useState([]);
-  const [allCities, setAllCities] = useState([]);
   const [activeTab, setActiveTab] = useState("all");
   const [sorting, setSorting] = useState("");
   const [loading, setLoading] = useState(false);
@@ -94,15 +91,35 @@ const FilterPriceCars = () => {
     [filterModel]
   );
 
+  // Map URL value to option value (ID) for city and make
+  useEffect(() => {
+    if (name === "city" && value && allCities.length > 0) {
+      const selectedCity = allCities.find(
+        (city) => city.cityName.toLowerCase() === decodeURIComponent(value).toLowerCase()
+      );
+      if (selectedCity) {
+        setFilterData((prev) => ({ ...prev, location: selectedCity.id }));
+      }
+    }
+    if (name === "make" && value && allMake.length > 0) {
+      const selectedMake = allMake.find(
+        (make) => make.brandName.toLowerCase() === decodeURIComponent(value).toLowerCase()
+      );
+      if (selectedMake) {
+        setFilterData((prev) => ({ ...prev, allMakes: selectedMake.id }));
+      }
+    }
+  }, [name, value, allCities, allMake]);
+
   // Fetch vehicles with all filters
   const handleGetFilterByVehicle = async () => {
     setLoading(true);
     try {
       const res = await axios.get(`${BASE_URL}/getApprovedVehicles`, {
         params: {
-          locationId: filterData?.location || "",
-          make: selectMake?.brandName || filterData.allMakes || "",
-          model: filterData?.allModels || "",
+          locationId: filterData.location || "",
+          make: filterData.allMakes || "", // Send make ID to API
+          model: filterData.allModels || "",
           bodyStyle: filterData.vehicleType || "",
           minPrice: filterData.formCash || "",
           maxPrice: filterData.toCash || "",
@@ -115,6 +132,7 @@ const FilterPriceCars = () => {
       setLoading(false);
     } catch (error) {
       console.log("Error fetching cars:", error);
+      setAllFilterCars([]);
       setLoading(false);
     }
   };
@@ -131,18 +149,8 @@ const FilterPriceCars = () => {
       );
       setFilterModel(res.data);
     } catch (error) {
-      console.log(error);
-    }
-  };
-
-  const handleSelectMake = async () => {
-    try {
-      const res = await axios.get(
-        `${BASE_URL}/getBrandById/${filterData.allMakes}`
-      );
-      setSelectMake(res.data);
-    } catch (error) {
-      console.log(error);
+      console.log("Error fetching models:", error);
+      setFilterModel([]);
     }
   };
 
@@ -151,7 +159,8 @@ const FilterPriceCars = () => {
       const res = await axios.get(`${BASE_URL}/admin/getBrands`);
       setAllMake(res.data);
     } catch (error) {
-      console.log(error);
+      console.log("Error fetching makes:", error);
+      setAllMake([]);
     }
   };
 
@@ -160,7 +169,8 @@ const FilterPriceCars = () => {
       const res = await axios.get(`${BASE_URL}/getCitites`);
       setAllCities(res.data);
     } catch (error) {
-      console.log(error);
+      console.log("Error fetching cities:", error);
+      setAllCities([]);
     }
   };
 
@@ -176,22 +186,19 @@ const FilterPriceCars = () => {
 
   useEffect(() => {
     handleGetFilterByVehicle();
-  }, [activeTab, sorting, filterData.location]);
+  }, [activeTab, sorting, filterData]);
 
   useEffect(() => {
     handleGetFilterModel();
-    handleSelectMake();
   }, [filterData.allMakes]);
 
-  // Convert number to Pakistani words (e.g., 2600000 -> "twenty-six lakhs")
+  // Convert number to Pakistani words
   const convertToPakistaniWords = (number) => {
     if (!number || isNaN(number)) return "";
     const num = Number(number);
 
-    // Helper function to convert numbers less than 1000 to words
     const toWords = (n) => (n === 0 ? "" : numberToWords.toWords(n));
 
-    // Break down the number into crores, lakhs, thousands, and remainder
     const crore = Math.floor(num / 10000000);
     const lakh = Math.floor((num % 10000000) / 100000);
     const thousand = Math.floor((num % 100000) / 1000);
@@ -211,9 +218,7 @@ const FilterPriceCars = () => {
       result.push(toWords(remainder));
     }
 
-    // Join parts with proper formatting
-    if (result.length === 0) return "";
-    return result.join(" ");
+    return result.length === 0 ? "" : result.join(" ");
   };
 
   return (
@@ -254,7 +259,9 @@ const FilterPriceCars = () => {
             onChange={(selected) => {
               handleChange("vehicleType", selected.value);
               if (selected.value) {
-                navigate(`/filterprice/bodyStyle/${selected.value}`);
+                navigate(`/filterprice/bodyStyle/${encodeURIComponent(selected.value)}`);
+              } else {
+                navigate(`/filterprice`);
               }
             }}
             placeholder="Select Body Style"
@@ -300,8 +307,14 @@ const FilterPriceCars = () => {
             }
             onChange={(selected) => {
               handleChange("allMakes", selected.value);
+              handleChange("allModels", "");
               if (selected.value) {
-                navigate(`/filterprice/make/${selected.label}`);
+                const selectedMake = allMake.find(
+                  (make) => make.id === selected.value
+                );
+                navigate(`/filterprice/make/${encodeURIComponent(selectedMake.brandName)}`);
+              } else {
+                navigate(`/filterprice`);
               }
             }}
             placeholder="Select Make"
@@ -327,7 +340,14 @@ const FilterPriceCars = () => {
                 value: "",
               }
             }
-            onChange={(selected) => handleChange("allModels", selected.value)}
+            onChange={(selected) => {
+              handleChange("allModels", selected.value);
+              if (selected.value) {
+                navigate(`/filterprice/model/${encodeURIComponent(selected.value)}`);
+              } else {
+                navigate(`/filterprice`);
+              }
+            }}
             placeholder="Select Model"
             isSearchable
             className="w-full"
@@ -354,7 +374,12 @@ const FilterPriceCars = () => {
             onChange={(selected) => {
               handleChange("location", selected.value);
               if (selected.value) {
-                navigate(`/filterprice/city/${selected.value}`);
+                const selectedCity = allCities.find(
+                  (city) => city.id === selected.value
+                );
+                navigate(`/filterprice/city/${encodeURIComponent(selectedCity.cityName)}`);
+              } else {
+                navigate(`/filterprice`);
               }
             }}
             placeholder="Select Location"
@@ -408,6 +433,18 @@ const FilterPriceCars = () => {
               )}
             </div>
           </div>
+          {filterData.formCash && filterData.toCash && (
+            <button
+              onClick={() =>
+                navigate(
+                  `/filterprice/budget/${filterData.formCash}-${filterData.toCash}`
+                )
+              }
+              className="mt-2 bg-blue-500 p-2 px-4 text-white rounded hover:cursor-pointer"
+            >
+              Apply Price Filter
+            </button>
+          )}
         </div>
 
         <div className="flex items-center justify-center">
@@ -450,14 +487,11 @@ const FilterPriceCars = () => {
                   : "bg-white"
               }`}
             >
-              {/* Certified Badge */}
               {car.certifyStatus === "Certified" && (
                 <div className="absolute top-2 left-2 bg-green-600 text-white text-xs font-bold px-3 py-1 rounded-full shadow-md">
                   ✅ Certified
                 </div>
               )}
-
-              {/* Image */}
               <div className="w-full md:w-40 h-48 md:h-28 overflow-hidden rounded-md mb-4 md:mb-0 md:mr-4">
                 <img
                   src={car.images[0]}
@@ -465,8 +499,6 @@ const FilterPriceCars = () => {
                   className="w-full h-full object-cover"
                 />
               </div>
-
-              {/* Details */}
               <div className="flex-grow">
                 <div className="flex flex-col sm:flex-row justify-between sm:items-center">
                   <h3
@@ -509,7 +541,6 @@ const FilterPriceCars = () => {
               </div>
             </div>
           ))}
-
           {allFilterCars.length === 0 && (
             <div className="text-center text-gray-600 mt-10">No cars found</div>
           )}

@@ -23,11 +23,12 @@ const bodyStyles = [
   "Crossover",
   "Hatchback",
   "Minivan",
-  "Pickup Truck",
+  "Pickup ",
   "Sedan",
   "Station Wagon",
   "SUV",
   "Van",
+  "Truck",
 ];
 
 const carColors = [
@@ -263,7 +264,7 @@ const AddVehicles = () => {
       const res = await axios.get(
         `${BASE_URL}/getVehiclesByUser/${
           currentUser?.id
-        }?search=${search}&entry=${10}?page=${pageNo}`
+        }?search=${search}&Entry=${10}&page=${pageNo}`
       );
       setAllVehicles(res.data);
     } catch (error) {
@@ -338,10 +339,7 @@ const AddVehicles = () => {
 
   const handlePriceChange = (e) => {
     const value = e.target.value;
-    if (
-      value === "" ||
-      /^\d*\.?\d*\s*(lac|crore|thousand)?$/i.test(value)
-    ) {
+     if (value === "" || /^[1-9][0-9]{0,8}$/.test(value)) {
       setPrice(value);
       const parsedValue = parsePrice(value);
       setVehicleData((prev) => ({
@@ -437,31 +435,57 @@ const AddVehicles = () => {
       setLoading(false);
     }
   };
-
-  const handleDelete = async (vehicleId) => {
-    const result = await Swal.fire({
-      title: "Are you sure?",
-      text: "This vehicle will be deleted.",
-      icon: "warning",
-      showCancelButton: true,
+const handleDelete = async (vehicleId, approval) => {
+  // Prevent deletion if approval is 'Y'
+  if (approval === 'Y') {
+    await Swal.fire({
+      title: "Cannot Delete Vehicle",
+      text: "Your vehicle is approved now, you cannot delete it.",
+      icon: "error",
       confirmButtonColor: "#9333ea",
-      cancelButtonColor: "#d33",
-      confirmButtonText: "Yes, delete it!",
+      confirmButtonText: "OK",
+    });
+    return;
+  }
+
+  // Ask for confirmation
+  const result = await Swal.fire({
+    title: "Are you sure?",
+    text: "This vehicle will be deleted.",
+    icon: "warning",
+    showCancelButton: true,
+    confirmButtonColor: "#9333ea",
+    cancelButtonColor: "#d33",
+    confirmButtonText: "Yes, delete it!",
+  });
+
+  if (!result.isConfirmed) return;
+
+  // Proceed with deletion
+  try {
+    const res = await fetch(`${BASE_URL}/seller/deleteVehicle/${vehicleId}`, {
+      method: "PATCH",
+    });
+    if (!res.ok) throw new Error("Failed to delete vehicle");
+
+    await Swal.fire({
+      title: "Deleted!",
+      text: "Vehicle has been deleted successfully.",
+      icon: "success",
+      confirmButtonColor: "#9333ea",
     });
 
-    if (!result.isConfirmed) return;
-    try {
-      const res = await fetch(`${BASE_URL}/seller/deleteVehicle/${vehicleId}`, {
-        method: "PATCH",
-      });
-      if (!res.ok) throw new Error("Failed to delete vehicle");
-      setSuccessMsg("Vehicle deleted.");
-      setTimeout(() => setSuccessMsg(""), 3000);
-      handleGetAllVehicleById();
-    } catch (err) {
-      setErrorMsg(err.message);
-    }
-  };
+    handleGetAllVehicleById(); // Refresh vehicle list
+  } catch (err) {
+    await Swal.fire({
+      title: "Error",
+      text: err.message || "Something went wrong.",
+      icon: "error",
+      confirmButtonColor: "#9333ea",
+    });
+  }
+};
+
 
   const handleSubmitSellerBid = async (userId, bidData) => {
     try {
@@ -729,7 +753,7 @@ const AddVehicles = () => {
                       value={vehicleData?.mileage || ""}
                       onChange={(e) => {
                         const value = e.target.value;
-                        if (/^\d*$/.test(value) && value.length <= 7) {
+                       if (value === "" || /^[1-9][0-9]{0,6}$/.test(value)) {
                           handleChange(e);
                         }
                       } }
@@ -919,128 +943,130 @@ const AddVehicles = () => {
             </div>
           </div>
         )}
-        <section className="lg:mt-6 mt-3 space-y-4 max-h-[55vh] overflow-y-auto md:hidden block">
-          {loading ? (
-            <p className="text-center text-indigo-600 font-semibold">
-              Loading vehicles...
-            </p>
-          ) : allVehicles.length === 0 ? (
-            <p className="text-center text-gray-600">No vehicles found.</p>
-          ) : (
-            allVehicles?.map((vehicle) => (
-              <div
-                key={vehicle.newVehicleId}
-                className="bg-white border rounded-xl shadow-sm hover:shadow-md transition p-2 flex items-center justify-between gap-4"
-              >
-                <div className="w-20 h-20 sm:w-28 sm:h-28 rounded-lg overflow-hidden bg-gray-100 flex-shrink-0">
-                  <img
-                    src={vehicle.images[0]}
-                    alt={`${vehicle.make} ${vehicle.model}`}
-                    className="w-full h-full object-cover hover:cursor-pointer"
-                    onClick={() => (
-                      setSelectVehicle(vehicle), handleIsOpenToggle("View")
-                    )} />
-                </div>
-                <div className="flex-1 min-w-0">
-                  <h2 className="font-bold text-gray-800 text-xs truncate">
-                    {vehicle.make || "—"} {vehicle.model || "—"}{" "}
-                    {vehicle.series || "—"}
-                  </h2>
-                  <p className="text-xs font-bold text-gray-900">
-                    PKR {vehicle.buyNowPrice}
-                  </p>
-                  <p className="text-xs text-gray-600">
-                    {vehicle.year || "—"} • {vehicle.fuelType || "—"} •{" "}
-                    {vehicle.transmission || "—"}
-                  </p>
-                  <p
-                    className={`text-[8px] text-center rounded w-16 ${vehicle.approval === "Y"
-                        ? "bg-green-500 text-white"
-                        : "bg-red-500 text-white"}`}
-                  >
-                    {vehicle.approval === "Y" ? "Approved" : "Not Approved"}
-                  </p>
-                </div>
-                <div className="relative flex-shrink-0">
+       <section className="lg:mt-6 mt-3 space-y-4 max-h-[55vh] overflow-y-auto md:hidden block">
+  {loading ? (
+    <p className="text-center text-indigo-600 font-semibold">
+      Loading vehicles...
+    </p>
+  ) : allVehicles.length === 0 ? (
+    <p className="text-center text-gray-600">No vehicles found.</p>
+  ) : (
+    allVehicles?.map((vehicle) => (
+      <div
+        key={vehicle.newVehicleId}
+        className="bg-white border rounded-xl shadow-sm hover:shadow-md transition p-2 flex items-center justify-between gap-4"
+      >
+        <div className="w-20 h-20 sm:w-28 sm:h-28 rounded-lg overflow-hidden bg-gray-100 flex-shrink-0">
+          <img
+            src={vehicle.images[0]}
+            alt={`${vehicle.make} ${vehicle.model}`}
+            className="w-full h-full object-cover hover:cursor-pointer"
+            onClick={() => (
+              setSelectVehicle(vehicle), handleIsOpenToggle("View")
+            )}
+          />
+        </div>
+        <div className="flex-1 min-w-0">
+          <h2 className="font-bold text-gray-800 text-xs truncate">
+            {vehicle.make || "—"} {vehicle.model || "—"} {vehicle.series || "—"}
+          </h2>
+          <p className="text-xs font-bold text-gray-900">
+            PKR {vehicle.buyNowPrice}
+          </p>
+          <p className="text-xs text-gray-600">
+            {vehicle.year || "—"} • {vehicle.fuelType || "—"} •{" "}
+            {vehicle.transmission || "—"}
+          </p>
+          <p
+            className={`text-[8px] text-center rounded w-16 ${
+              vehicle.approval === "Y"
+                ? "bg-green-500 text-white"
+                : "bg-red-500 text-white"
+            }`}
+          >
+            {vehicle.approval === "Y" ? "Approved" : "Not Approved"}
+          </p>
+        </div>
+        <div className="relative flex-shrink-0">
+          <button
+            onClick={(e) => {
+              e.stopPropagation();
+              toggleDropdown(vehicle.newVehicleId);
+            }}
+            className="px-3 py-1 text-gray-600 text-xl"
+          >
+            <BsThreeDotsVertical />
+          </button>
+          {isDropdownOpen === vehicle.newVehicleId && (
+            <div className="absolute right-0 mt-2 w-32 bg-white border rounded-lg shadow-lg z-10">
+              {!isCustomer ? (
+                <>
                   <button
                     onClick={(e) => {
                       e.stopPropagation();
-                      toggleDropdown(vehicle.newVehicleId);
-                    } }
-                    className="px-3 py-1 text-gray-600 text-xl"
+                      handleEdit(vehicle);
+                    }}
+                    className="block w-full px-4 py-2 text-sm text-yellow-600 hover:bg-yellow-100 text-left rounded-t-lg"
                   >
-                    <BsThreeDotsVertical />
+                    Edit
                   </button>
-                  {isDropdownOpen === vehicle.newVehicleId && (
-                    <div className="absolute right-0 mt-2 w-32 bg-white border rounded-lg shadow-lg z-10">
-                      {!isCustomer ? (
-                        <>
-                          <button
-                            onClick={(e) => {
-                              e.stopPropagation();
-                              handleEdit(vehicle);
-                            } }
-                            className="block w-full px-4 py-2 text-sm text-yellow-600 hover:bg-yellow-100 text-left rounded-t-lg"
-                          >
-                            Edit
-                          </button>
-                          {vehicle.bidId ? (
-                            <button
-                              onClick={(e) => {
-                                e.stopPropagation();
-                                handleEndBidding(vehicle.bidId);
-                                handleIsOpenToggle("bid");
-                              } }
-                              className="block w-full px-4 py-2 text-sm text-green-600 hover:bg-green-100 text-left"
-                            >
-                              Bid Added
-                            </button>
-                          ) : (
-                            <button
-                              onClick={(e) => {
-                                e.stopPropagation();
-                                setSelectVehicle(vehicle);
-                                handleIsOpenToggle("View");
-                              } }
-                              className="block w-full text-left px-4 py-2 text-sm text-green-600 hover:bg-green-100"
-                            >
-                              View
-                            </button>
-                          )}
-                          <button
-                            onClick={(e) => {
-                              e.stopPropagation();
-                              handleDelete(vehicle.newVehicleId);
-                            } }
-                            className="block w-full text-left px-4 py-2 text-sm text-red-600 hover:bg-red-100 rounded-b-lg"
-                          >
-                            Delete
-                          </button>
-                        </>
-                      ) : (
-                        <button
-                          onClick={(e) => {
-                            e.stopPropagation();
-                            setCustomerBidData({
-                              userId: user?.id,
-                              vehicleId: vehicle.id,
-                              maxBid: "",
-                              monsterBid: "",
-                            });
-                            setIsCustomerBidModalOpen(true);
-                          } }
-                          className="block w-full text-left px-4 py-2 text-sm text-blue-500 hover:bg-blue-500 hover:text-white"
-                        >
-                          Create Bid
-                        </button>
-                      )}
-                    </div>
+                  {vehicle.bidId ? (
+                    <button
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        handleEndBidding(vehicle.bidId);
+                        handleIsOpenToggle("bid");
+                      }}
+                      className="block w-full px-4 py-2 text-sm text-green-600 hover:bg-green-100 text-left"
+                    >
+                      Bid Added
+                    </button>
+                  ) : (
+                    <button
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        setSelectVehicle(vehicle);
+                        handleIsOpenToggle("View");
+                      }}
+                      className="block w-full text-left px-4 py-2 text-sm text-green-600 hover:bg-green-100"
+                    >
+                      View
+                    </button>
                   )}
-                </div>
-              </div>
-            ))
+                  <button
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      handleDelete(vehicle.newVehicleId, vehicle.approval); // Pass vehicleId and approval
+                    }}
+                    className="block w-full text-left px-4 py-2 text-sm text-red-600 hover:bg-red-100 rounded-b-lg"
+                  >
+                    Delete
+                  </button>
+                </>
+              ) : (
+                <button
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    setCustomerBidData({
+                      userId: user?.id,
+                      vehicleId: vehicle.id,
+                      maxBid: "",
+                      monsterBid: "",
+                    });
+                    setIsCustomerBidModalOpen(true);
+                  }}
+                  className="block w-full text-left px-4 py-2 text-sm text-blue-500 hover:bg-blue-500 hover:text-white"
+                >
+                  Create Bid
+                </button>
+              )}
+            </div>
           )}
-        </section>
+        </div>
+      </div>
+    ))
+  )}
+</section>
 
 <section
   className="lg:mt-6 space-y-4 overflow-y-auto md:block hidden pb-10"
@@ -1070,8 +1096,7 @@ const AddVehicles = () => {
         </div>
         <div className="flex-1 min-w-0 space-y-1">
           <h2 className="font-bold text-gray-800">
-            {vehicle.make || "—"} {vehicle.model || "—"}{" "}
-            {vehicle.series || "—"}
+            {vehicle.make || "—"} {vehicle.model || "—"} {vehicle.series || "—"}
           </h2>
           <p className="text-lg font-bold text-gray-800">
             PKR {vehicle.buyNowPrice}
@@ -1084,9 +1109,11 @@ const AddVehicles = () => {
             <span>{vehicle.transmission || "—"}</span>|
             <span>{vehicle.cityName || "—"}</span>|
             <span
-              className={`text-xs text-center rounded p-1 ${vehicle.approval === "Y"
-                ? "bg-green-500 text-white"
-                : "bg-red-500 text-white"}`}
+              className={`text-xs text-center rounded p-1 ${
+                vehicle.approval === "Y"
+                  ? "bg-green-500 text-white"
+                  : "bg-red-500 text-white"
+              }`}
             >
               {vehicle.approval === "Y" ? "Approved" : "Not Approved"}
             </span>
@@ -1141,7 +1168,7 @@ const AddVehicles = () => {
                   <button
                     onClick={(e) => {
                       e.stopPropagation();
-                      handleDelete(vehicle.newVehicleId);
+                      handleDelete(vehicle.newVehicleId, vehicle.approval); // Pass vehicleId and approval
                     }}
                     className="block w-full text-left px-4 py-2 text-sm text-red-600 hover:bg-red-100 rounded-b-lg"
                   >
@@ -1187,6 +1214,8 @@ const AddVehicles = () => {
     </button>
   </div>
 </section>
+
+
 
       </div>
       {isOpen === "View" && (

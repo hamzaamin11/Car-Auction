@@ -246,7 +246,7 @@ const EditUserModal = ({ Open, setOpen, selectedUser }) => {
                       </select>
                     </div>
                     <div>
-                      <label className="block text-sm font-medium text-gray-700">
+                      <label className="block text-sm font-medium text-gray-700 ">
                         CNIC
                       </label>
 
@@ -256,7 +256,7 @@ const EditUserModal = ({ Open, setOpen, selectedUser }) => {
                         name="cnic"
                         value={user?.cnic}
                         onChange={handleCNICChange}
-                        className="p-2.5 w-full border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                        className="mt-1 w-full rounded-xl border border-gray-300 p-3 focus:outline-none focus:ring-2 focus:ring-blue-500"
                         required
                         maxLength={15}
                       />

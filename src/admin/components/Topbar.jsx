@@ -269,7 +269,7 @@ export default function Topbar() {
 
       await Swal.fire({
         title: "Error!",
-        text: "Failed to update profile. Please try again.",
+        text: error.response?.data?.error || "Failed to update profile. Please try again.",
         icon: "error",
         confirmButtonColor: "#9333ea",
       });
@@ -447,7 +447,7 @@ export default function Topbar() {
           <div className="bg-white rounded-lg p-6 w-full max-w-md shadow-xl">
             <h2 className="text-xl font-semibold mb-4">Change Password</h2>
             <div>
-              <div className="mb-4">
+              {/* <div className="mb-4">
                 <label className="block text-sm font-medium text-gray-700">
                   Current Password
                 </label>
@@ -459,7 +459,7 @@ export default function Topbar() {
                   className="mt-1 p-2 w-full border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
                   required
                 />
-              </div>
+              </div> */}
               <div className="mb-4">
                 <label className="block text-sm font-medium text-gray-700">
                   New Password
@@ -489,7 +489,7 @@ export default function Topbar() {
               <div className="flex justify-end gap-2">
                 <button
                   onClick={() => setPasswordModalOpen(false)}
-                  className="px-4 py-2 text-gray-600 hover:bg-gray-100 rounded-md"
+                  className="px-4 py-2 text-white  bg-red-900 hover:opacity-95 rounded-md"
                 >
                   Cancel
                 </button>

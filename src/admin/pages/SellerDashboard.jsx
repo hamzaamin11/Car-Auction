@@ -14,6 +14,10 @@ export const SellerDashboard = () => {
 
   const [allUpcoming, setAllUpcoming] = useState([]);
 
+  const [bidHistory, setBidHistory] = useState([]);
+
+  console.log("history =>", bidHistory);
+
   console.log("all vehicle =>", allVehicles);
 
   const handleGetAllVehicles = async () => {
@@ -39,6 +43,18 @@ export const SellerDashboard = () => {
     }
   };
 
+
+  const handleGetAllHistorybySeller = async () => {
+    try {
+      const res = await axios.get(
+        `${BASE_URL}/customer/myBids/${currentUser?.id}`
+      );
+      setBidHistory(res.data);
+    } catch (error) {
+      console.log(error);
+    }
+  };
+
   const handleGetAllUpcomingAuctionsbySeller = async () => {
     try {
       const res = await axios.get(
@@ -54,6 +70,7 @@ export const SellerDashboard = () => {
     handleGetAllVehicles();
     handleGetAllLivebySeller();
     handleGetAllUpcomingAuctionsbySeller();
+    handleGetAllHistorybySeller();
   }, []);
   return (
     <div className="lg:p-6 p-2 bg-gray-50   lg:space-y-8 space-y-2">
@@ -89,7 +106,7 @@ export const SellerDashboard = () => {
 
         <Card
           title={"Bid History"}
-          totalData={"0"}
+          totalData={bidHistory.length}
           color={"bg-blue-200"}
           icon={<FaHistory size={28} />}
           path={"/seller/my-bids"}
