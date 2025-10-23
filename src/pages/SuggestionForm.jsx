@@ -16,29 +16,28 @@ export const SuggestionForm = () => {
   const [loading, setLoading] = useState(false);
   // handle contact number change with formatting
   const handleContactChange = (e) => {
-  let value = e.target.value.replace(/\D/g, ""); // remove all non-digits
+    let value = e.target.value.replace(/\D/g, ""); // remove all non-digits
 
-  // Ensure the number always starts with +92
-  if (value.startsWith("92")) {
-    value = "+" + value;
-  } else if (!value.startsWith("+92")) {
-    value = "+92" + value;
-  }
+    // Ensure the number always starts with +92
+    if (value.startsWith("92")) {
+      value = "+" + value;
+    } else if (!value.startsWith("+92")) {
+      value = "+92" + value;
+    }
 
-  // Format like +92-300-1234567
-  if (value.length > 3 && value.length <= 6) {
-    value = value.slice(0, 3) + "-" + value.slice(3);
-  } else if (value.length > 6 && value.length <= 10) {
-    value =
-      value.slice(0, 3) + "-" + value.slice(3, 6) + "-" + value.slice(6);
-  } else if (value.length > 10) {
-    value =
-      value.slice(0, 3) + "-" + value.slice(3, 6) + "-" + value.slice(6, 15);
-  }
+    // Format like +92-300-1234567
+    if (value.length > 3 && value.length <= 6) {
+      value = value.slice(0, 3) + "-" + value.slice(3);
+    } else if (value.length > 6 && value.length <= 10) {
+      value =
+        value.slice(0, 3) + "-" + value.slice(3, 6) + "-" + value.slice(6);
+    } else if (value.length > 10) {
+      value =
+        value.slice(0, 3) + "-" + value.slice(3, 6) + "-" + value.slice(6, 15);
+    }
 
-  setFormData({ ...formData, contactNumber: value });
-};
-
+    setFormData({ ...formData, contactNumber: value });
+  };
 
   // handle input change
   const handleChange = (e) => {
@@ -93,11 +92,13 @@ export const SuggestionForm = () => {
         onSubmit={handleSubmit}
         className="lg:w-1/3 w-full bg-white bg-opacity-95 p-6 rounded-lg shadow-lg space-y-5"
       >
-        <h2 className="text-3xl font-bold text-gray-800">Send a Suggestion</h2>
+        <h2 className="text-3xl font-bold text-gray-800 text-center">Send a Suggestion</h2>
 
         {/* Name */}
         <div>
-          <label className="block mb-1 text-sm text-gray-900 font-bold">Name</label>
+          <label className="block mb-1 text-sm text-gray-900 font-semibold">
+            Name
+          </label>
           <input
             type="text"
             name="name"
@@ -111,25 +112,27 @@ export const SuggestionForm = () => {
         </div>
 
         {/* Contact Number */}
-            <div>
-  <label className="block mb-1 text-sm text-gray-900 font-bold">
-    Contact Number
-  </label>
-  <input
-    type="tel"
-    name="contactNumber"
-    placeholder="+92-300-1234567"
-    value={formData.contactNumber}
-    onChange={handleContactChange}
-    className="w-full border border-gray-400 px-4 py-3 rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500"
-    required
-    maxLength={15}
-  />
-</div>
+        <div>
+          <label className="block mb-1 text-sm text-gray-900 font-bold">
+            Contact Number
+          </label>
+          <input
+            type="tel"
+            name="contactNumber"
+            placeholder="+92-300-1234567"
+            value={formData.contactNumber}
+            onChange={handleContactChange}
+            className="w-full border border-gray-400 px-4 py-3 rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500"
+            required
+            maxLength={15}
+          />
+        </div>
 
         {/* Email */}
         <div>
-          <label className="block mb-1 text-sm text-gray-900 font-bold">Email</label>
+          <label className="block mb-1 text-sm text-gray-900 font-bold">
+            Email
+          </label>
           <input
             type="email"
             name="email"
@@ -144,7 +147,9 @@ export const SuggestionForm = () => {
 
         {/* Suggestion */}
         <div>
-          <label className="block mb-1 text-sm text-gray-900 font-bold">Suggestion</label>
+          <label className="block mb-1 text-sm text-gray-900 font-bold">
+            Suggestion
+          </label>
           <textarea
             rows="5"
             name="suggestion"
@@ -153,7 +158,7 @@ export const SuggestionForm = () => {
             onChange={handleChange}
             required
             className="w-full border border-gray-500 px-4 py-3 rounded-lg focus:outline-none focus:ring-2 focus:ring-gray-500"
-            maxLength={100}
+            maxLength={150}
           />
         </div>
 

@@ -88,9 +88,9 @@ const ContactForm = () => {
     >
       <form
         onSubmit={handleSubmit}
-        className="lg:w-1/3 w-full p-6 rounded-lg shadow-lg space-y-5"
+        className="lg:w-1/3 w-full bg-white p-6 rounded-lg shadow-lg space-y-5 mt-3"
       >
-        <h2 className="text-3xl font-bold text-gray-800">Send a Message</h2>
+        <h2 className="text-3xl font-bold text-center text-gray-800">Send a Message</h2>
 
         <div>
           <label className="block mb-1 text-sm text-gray-900 font-bold">Name</label>

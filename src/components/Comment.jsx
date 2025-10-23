@@ -205,7 +205,7 @@ const LiveCommentsModal = ({
             </div>
           ) : (
             allCustomerBid
-              .filter((bid) => bid.role !== "admin")
+              .filter((bid) => bid.role !== "admin" || bid.role !== "seller")
               .map((bid, i) => (
                 <div
                   key={i}

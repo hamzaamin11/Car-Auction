@@ -302,7 +302,14 @@ export const Customerbid = () => {
                 <strong>Body Style:</strong> {selectedPrice?.bodyStyle}
               </li>
               <li>
+                <strong>Certification Status:</strong>{" "}
+                {selectedPrice?.certifyStatus}
+              </li>
+              <li>
                 <strong>Transmission:</strong> {selectedPrice?.transmission}
+              </li>
+              <li>
+                <strong>Meter Reading:</strong> {selectedPrice?.mileage}
               </li>
               <li>
                 <strong>Drive:</strong> {selectedPrice?.driveType}
@@ -311,7 +318,10 @@ export const Customerbid = () => {
                 <strong>Fuel:</strong> {selectedPrice?.fuelType}
               </li>
               <li>
-                <strong>Color:</strong> {selectedPrice?.color || "Gray"}
+                <strong>Color:</strong> {selectedPrice?.color}
+              </li>
+              <li>
+                <strong>Condition:</strong> {selectedPrice?.vehicleCondition}
               </li>
             </ul>
           </div>
@@ -436,13 +446,23 @@ export const Customerbid = () => {
               <strong>Transmission:</strong> {selectedPrice?.transmission}
             </li>
             <li>
+              <strong>Certification Status:</strong>{" "}
+              {selectedPrice?.certifyStatus}
+            </li>
+            <li>
+              <strong>Meter Reading:</strong> {selectedPrice?.mileage}
+            </li>
+            <li>
               <strong>Drive:</strong> {selectedPrice?.driveType}
             </li>
             <li>
               <strong>Fuel:</strong> {selectedPrice?.fuelType}
             </li>
             <li>
-              <strong>Color:</strong> {selectedPrice?.color || "Gray"}
+              <strong>Color:</strong> {selectedPrice?.color}
+            </li>
+            <li>
+              <strong>Condition:</strong> {selectedPrice?.vehicleCondition}
             </li>
           </ul>
         </div>
