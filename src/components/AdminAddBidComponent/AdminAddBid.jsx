@@ -136,52 +136,97 @@ const handleBidSubmit = async (e) => {
             </div>
 
             {/* Inputs */}
-            <div className="space-y-3 mt-4">
-              {/* Start Time */}
-              <div>
-                <label className="block text-xs mb-1 font-medium">
-                  Start Date & Time
-                </label>
-                <input
-                  type="datetime-local"
-                  name="startTime"
-                  value={
-                    formData.startTime
-                      ? moment(formData.startTime).format("YYYY-MM-DDTHH:mm") // UTC → local
-                      : ""
-                  }
-                  onChange={handleChange}
-                  className="w-full border px-3 py-2 rounded text-sm"
-                />
-              </div>
+    
 
-              {/* End Time */}
-              <div>
-                <label className="block text-xs mb-1 font-medium">
-                  End Date & Time
-                </label>
-                <input
-                  type="datetime-local"
-                  name="endTime"
-                  value={
-                    formData.endTime
-                      ? moment(formData.endTime).format("YYYY-MM-DDTHH:mm") // UTC → local
-                      : ""
-                  }
-                  onChange={handleChange}
-                  className="w-full border px-3 py-2 rounded text-sm"
-                />
-              </div>
+<div className="space-y-3 mt-4">
+  {/* Start Time */}
+  <div>
+    <label className="block text-xs mb-1 font-medium">
+      Start Date & Time
+    </label>
+    <input
+      type="datetime-local"
+      name="startTime"
+      min={moment().format("YYYY-MM-DDTHH:mm")} // 🚫 Disable past times
+      value={
+        formData.startTime
+          ? moment(formData.startTime).format("YYYY-MM-DDTHH:mm")
+          : ""
+      }
+      onChange={handleChange}
+      className="w-full border px-3 py-2 rounded text-sm"
+    />
+  </div>
 
-              {/* Submit */}
-              <button
-                disabled={loading}
-                onClick={handleBidSubmit}
-                className="mt-2 w-full bg-blue-600 text-white py-2 rounded text-sm hover:bg-blue-700"
-              >
-                {loading ? "Loading..." : "Submit Bid"}
-              </button>
-            </div>
+  {/* End Time */}
+  <div>
+    <label className="block text-xs mb-1 font-medium">
+      End Date & Time
+    </label>
+    <input
+      type="datetime-local"
+      name="endTime"
+      min={moment().format("YYYY-MM-DDTHH:mm")} // 🚫 Disable past times
+      value={
+        formData.endTime
+          ? moment(formData.endTime).format("YYYY-MM-DDTHH:mm")
+          : ""
+      }
+      onChange={handleChange}
+      className="w-full border px-3 py-2 rounded text-sm"
+    />
+  </div>
+
+  {/* Submit */}
+  <button
+    disabled={loading}
+    onClick={(e) => {
+      e.preventDefault();
+
+      const start = moment(formData.startTime);
+      const end = moment(formData.endTime);
+
+      // ✅ Validation checks
+      if (!start.isValid() || !end.isValid()) {
+        Swal.fire({
+          icon: "warning",
+          title: "Invalid Time",
+          text: "Please select both start and end times.",
+          confirmButtonColor: "#6366f1",
+        });
+        return;
+      }
+
+      if (end.isBefore(start)) {
+        Swal.fire({
+          icon: "warning",
+          title: "Invalid Time Range",
+          text: "End time cannot be before start time.",
+          confirmButtonColor: "#6366f1",
+        });
+        return;
+      }
+
+      const diffMinutes = end.diff(start, "minutes");
+      if (diffMinutes < 30) {
+        Swal.fire({
+          icon: "warning",
+          title: "Time Difference Too Short",
+          text: "There must be at least a 30-minute difference between start and end time.",
+          confirmButtonColor: "#6366f1",
+        });
+        return;
+      }
+
+      // ✅ All good → proceed
+      handleBidSubmit(e);
+    }}
+    className="mt-2 w-full bg-blue-600 text-white py-2 rounded text-sm hover:bg-blue-700"
+  >
+    {loading ? "Loading..." : "Add Bid"}
+  </button>
+</div>
+
           </div>
 
           {/* Right Side (Images) */}
