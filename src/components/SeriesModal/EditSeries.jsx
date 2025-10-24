@@ -63,7 +63,7 @@ export const EditSeries = ({
     setLoading(true);
     try {
       const res = await axios.put(
-        `${BASE_URL}/updateSeries/${formData.brandId}`,
+        `${BASE_URL}/updateSeries/${formData.seriesId}`,
         formData
       );
 

@@ -416,18 +416,9 @@ const Navbar = () => {
     },
   ];
 
-  const sellerOnly = {
-    id: 4,
-    label: "Sell a Vehicle",
-    items: [
-      { to: "/buy", label: "We will buy your vehicle" },
-      { to: "/sell", label: "Sell in auction" },
-    ],
-  };
-
   const dropdowns = [
     ...commonDropdowns,
-    ...(user?.role === "seller" ? [sellerOnly] : []),
+    ...(user?.role === "seller" ? [] : []),
   ];
 
   return (
@@ -808,7 +799,6 @@ const Navbar = () => {
           <div className="bg-white rounded-lg p-6 w-full max-w-md shadow-xl">
             <h2 className="text-xl font-semibold mb-4">Change Password</h2>
             <div>
-            
               <div className="mb-4">
                 <label className="block text-sm font-medium text-gray-700">
                   New Password

@@ -72,8 +72,8 @@ export const AddSeries = ({ handleClose, handleGetAllSeries }) => {
       console.log(error);
       await Swal.fire({
         title: "error",
-        text: "Something went wrong!",
-        icon: "success",
+        text: error.response.data.message,
+        icon: "error",
         confirmButtonColor: "#9333ea",
       });
     } finally {

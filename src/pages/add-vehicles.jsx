@@ -314,7 +314,7 @@ const AddVehicles = () => {
   const handleSearchable = (selectedOption) => {
     setVehicleData((prev) => ({
       ...prev,
-      locationId: selectedOption.value,
+      locationId: selectedOption?.value,
     }));
   };
 
@@ -323,23 +323,23 @@ const AddVehicles = () => {
     setVehicleData((prev) => ({ ...prev, image: [...prev.image, ...files] }));
   };
 
- const handleEdit = (vehicle) => {
-  // Parse the buyNowPrice string (e.g., "34 Lac") to a raw number (e.g., "3400000")
-  const rawPrice = parsePrice(vehicle.buyNowPrice).toString();
-  console.log("Parsed buyNowPrice:", rawPrice); // Debug to confirm parsing
-  setVehicleData({
-    ...vehicle,
-    buyNowPrice: rawPrice, // Update vehicleData with raw number
-  });
-  setImagePreview(vehicle.image || null);
-  setPrice(rawPrice); // Set price state to raw number
-  setFormOpen(true);
-  setEditId(vehicle.newVehicleId);
-};
+  const handleEdit = (vehicle) => {
+    // Parse the buyNowPrice string (e.g., "34 Lac") to a raw number (e.g., "3400000")
+    const rawPrice = parsePrice(vehicle.buyNowPrice).toString();
+    console.log("Parsed buyNowPrice:", rawPrice); // Debug to confirm parsing
+    setVehicleData({
+      ...vehicle,
+      buyNowPrice: rawPrice, // Update vehicleData with raw number
+    });
+    setImagePreview(vehicle.image || null);
+    setPrice(rawPrice); // Set price state to raw number
+    setFormOpen(true);
+    setEditId(vehicle.newVehicleId);
+  };
 
   const handlePriceChange = (e) => {
     const value = e.target.value;
-     if (value === "" || /^[1-9][0-9]{0,8}$/.test(value)) {
+    if (value === "" || /^[1-9][0-9]{0,8}$/.test(value)) {
       setPrice(value);
       const parsedValue = parsePrice(value);
       setVehicleData((prev) => ({
@@ -352,7 +352,7 @@ const AddVehicles = () => {
   const handleSubmit = async (e) => {
     e.preventDefault();
 
-    if (editId && vehicleData.approval === 'Y') {
+    if (editId && vehicleData.approval === "Y") {
       await Swal.fire({
         title: "Cannot Edit Vehicle",
         text: "Your vehicle is approved now, you cannot edit it.",
@@ -390,7 +390,16 @@ const AddVehicles = () => {
         return;
       }
     }
-
+    if (vehicleData.buyNowPrice < 10000) {
+      await Swal.fire({
+        title: "Cannot Edit Vehicle",
+        text: "Your vehicle Price is less than 10000",
+        icon: "error",
+        confirmButtonColor: "#9333ea",
+        confirmButtonText: "OK",
+      });
+      return;
+    }
     setLoading(true);
     const formData = new FormData();
     formData.append("userId", currentUser?.id);
@@ -435,57 +444,56 @@ const AddVehicles = () => {
       setLoading(false);
     }
   };
-const handleDelete = async (vehicleId, approval) => {
-  // Prevent deletion if approval is 'Y'
-  if (approval === 'Y') {
-    await Swal.fire({
-      title: "Cannot Delete Vehicle",
-      text: "Your vehicle is approved now, you cannot delete it.",
-      icon: "error",
+  const handleDelete = async (vehicleId, approval) => {
+    // Prevent deletion if approval is 'Y'
+    if (approval === "Y") {
+      await Swal.fire({
+        title: "Cannot Delete Vehicle",
+        text: "Your vehicle is approved now, you cannot delete it.",
+        icon: "error",
+        confirmButtonColor: "#9333ea",
+        confirmButtonText: "OK",
+      });
+      return;
+    }
+
+    // Ask for confirmation
+    const result = await Swal.fire({
+      title: "Are you sure?",
+      text: "This vehicle will be deleted.",
+      icon: "warning",
+      showCancelButton: true,
       confirmButtonColor: "#9333ea",
-      confirmButtonText: "OK",
-    });
-    return;
-  }
-
-  // Ask for confirmation
-  const result = await Swal.fire({
-    title: "Are you sure?",
-    text: "This vehicle will be deleted.",
-    icon: "warning",
-    showCancelButton: true,
-    confirmButtonColor: "#9333ea",
-    cancelButtonColor: "#d33",
-    confirmButtonText: "Yes, delete it!",
-  });
-
-  if (!result.isConfirmed) return;
-
-  // Proceed with deletion
-  try {
-    const res = await fetch(`${BASE_URL}/seller/deleteVehicle/${vehicleId}`, {
-      method: "PATCH",
-    });
-    if (!res.ok) throw new Error("Failed to delete vehicle");
-
-    await Swal.fire({
-      title: "Deleted!",
-      text: "Vehicle has been deleted successfully.",
-      icon: "success",
-      confirmButtonColor: "#9333ea",
+      cancelButtonColor: "#d33",
+      confirmButtonText: "Yes, delete it!",
     });
 
-    handleGetAllVehicleById(); // Refresh vehicle list
-  } catch (err) {
-    await Swal.fire({
-      title: "Error",
-      text: err.message || "Something went wrong.",
-      icon: "error",
-      confirmButtonColor: "#9333ea",
-    });
-  }
-};
+    if (!result.isConfirmed) return;
 
+    // Proceed with deletion
+    try {
+      const res = await fetch(`${BASE_URL}/seller/deleteVehicle/${vehicleId}`, {
+        method: "PATCH",
+      });
+      if (!res.ok) throw new Error("Failed to delete vehicle");
+
+      await Swal.fire({
+        title: "Deleted!",
+        text: "Vehicle has been deleted successfully.",
+        icon: "success",
+        confirmButtonColor: "#9333ea",
+      });
+
+      handleGetAllVehicleById(); // Refresh vehicle list
+    } catch (err) {
+      await Swal.fire({
+        title: "Error",
+        text: err.message || "Something went wrong.",
+        icon: "error",
+        confirmButtonColor: "#9333ea",
+      });
+    }
+  };
 
   const handleSubmitSellerBid = async (userId, bidData) => {
     try {
@@ -564,7 +572,7 @@ const handleDelete = async (vehicleId, approval) => {
   };
 
   return (
-    <><div
+    <div
       className="min-h-screen lg:p-6 px-2 bg-gradient-to-br from-gray-100 to-blue-50"
       onClick={handleDropdownClose}
     >
@@ -586,14 +594,16 @@ const handleDelete = async (vehicleId, approval) => {
                   strokeLinecap="round"
                   strokeLinejoin="round"
                   strokeWidth="2"
-                  d="M21 21l-4.35-4.35m0 0A7.5 7.5 0 104.5 4.5a7.5 7.5 0 0012.15 12.15z" />
+                  d="M21 21l-4.35-4.35m0 0A7.5 7.5 0 104.5 4.5a7.5 7.5 0 0012.15 12.15z"
+                />
               </svg>
             </span>
             <input
               type="text"
               placeholder="Search By Car Name"
               onChange={(e) => setSearch(e.target.value)}
-              className="w-full pl-10 pr-4 py-2 rounded-lg border border-gray-300 shadow-sm placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500 placeholder:text-sm" />
+              className="w-full pl-10 pr-4 py-2 rounded-lg border border-gray-300 shadow-sm placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500 placeholder:text-sm"
+            />
           </div>
           {!isCustomer && (
             <button
@@ -613,7 +623,7 @@ const handleDelete = async (vehicleId, approval) => {
                 dispatch(addMake(""));
                 dispatch(addModel(""));
                 dispatch(addSeries(""));
-              } }
+              }}
               className="mt-4 md:mt-0 px-4 py-2 bg-blue-950 text-white text-sm rounded hover:cursor-pointer lg:w-32 w-full"
             >
               Add Vehicle
@@ -623,9 +633,11 @@ const handleDelete = async (vehicleId, approval) => {
 
         {(errorMsg || successMsg) && (
           <div
-            className={`mb-6 p-4 rounded ${errorMsg
+            className={`mb-6 p-4 rounded ${
+              errorMsg
                 ? "bg-red-100 text-red-700"
-                : "bg-green-100 text-green-700"}`}
+                : "bg-green-100 text-green-700"
+            }`}
           >
             {errorMsg || successMsg}
           </div>
@@ -653,42 +665,57 @@ const handleDelete = async (vehicleId, approval) => {
                   <Select
                     onChange={handleSearchable}
                     options={cityData}
-                    value={cityData.find(
-                      (option) => String(option.value) ===
-                        String(vehicleData?.locationId)
-                    ) || null}
-                    isClearable />
+                    value={
+                      cityData.find(
+                        (option) =>
+                          String(option.value) ===
+                          String(vehicleData?.locationId)
+                      ) || null
+                    }
+                    isClearable
+                  />
                   <div>
                     <label className="block text-sm font-medium text-gray-700 my-1">
                       Car Info <span className="text-red-500">*</span>
                     </label>
                     <input
                       onClick={handleUpdateCarInfo}
-                      value={`${selected?.year || vehicleData?.year} ${selected?.make || vehicleData?.make} ${selected?.model || vehicleData?.model} ${selected?.series || vehicleData?.series}`}
+                      value={`${selected?.year || vehicleData?.year} ${
+                        selected?.make || vehicleData?.make
+                      } ${selected?.model || vehicleData?.model} ${
+                        selected?.series || vehicleData?.series
+                      }`}
                       placeholder="Year/Make/Model/Version"
                       readOnly
-                      className={`border border-gray-300 px-4 py-2 rounded focus:outline-none focus:ring-2 focus:ring-indigo-500 w-full ${(selected.year &&
+                      className={`border border-gray-300 px-4 py-2 rounded focus:outline-none focus:ring-2 focus:ring-indigo-500 w-full ${
+                        (selected.year &&
                           selected.make &&
                           selected.model &&
                           selected.series) ||
-                          (vehicleData?.year &&
-                            vehicleData?.make &&
-                            vehicleData?.model &&
-                            vehicleData?.series)
+                        (vehicleData?.year &&
+                          vehicleData?.make &&
+                          vehicleData?.model &&
+                          vehicleData?.series)
                           ? "bg-green-200 text-green-700"
-                          : "bg-red-200"}`} />
+                          : "bg-red-200"
+                      }`}
+                    />
                   </div>
                 </div>
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                   <div>
                     <label className="block text-sm font-medium text-gray-700 mb-1">
-                      Vehicle Drive Type
+                      Vehicle Drive Type <span className="text-red-500">*</span>
                     </label>
                     <select
                       name="driveType"
                       value={vehicleData.driveType}
                       onChange={handleChange}
-                      className={`border border-gray-300 px-4 py-2 rounded focus:outline-none focus:ring-2 focus:ring-indigo-500 w-full ${vehicleData.driveType ? "text-gray-900" : "text-gray-400"}`}
+                      className={`border border-gray-300 px-4 py-2 rounded focus:outline-none focus:ring-2 focus:ring-indigo-500 w-full ${
+                        vehicleData.driveType
+                          ? "text-gray-900"
+                          : "text-gray-400"
+                      }`}
                     >
                       <option value="">Select Drive Type</option>
                       <option value="fwd" className="text-gray-900">
@@ -713,11 +740,19 @@ const handleDelete = async (vehicleId, approval) => {
                       name="bodyStyle"
                       value={vehicleData.bodyStyle}
                       onChange={handleChange}
-                      className={`border border-gray-300 px-4 py-2 rounded focus:outline-none focus:ring-2 focus:ring-indigo-500 w-full ${vehicleData.bodyStyle ? "text-gray-900" : "text-gray-400"}`}
+                      className={`border border-gray-300 px-4 py-2 rounded focus:outline-none focus:ring-2 focus:ring-indigo-500 w-full ${
+                        vehicleData.bodyStyle
+                          ? "text-gray-900"
+                          : "text-gray-400"
+                      }`}
                     >
                       <option value="">Please Select BodyStyle</option>
                       {bodyStyles?.map((body) => (
-                        <option key={body} value={body} className="text-gray-900">
+                        <option
+                          key={body}
+                          value={body}
+                          className="text-gray-900"
+                        >
                           {body}
                         </option>
                       ))}
@@ -725,15 +760,18 @@ const handleDelete = async (vehicleId, approval) => {
                   </div>
                   <div>
                     <label className="block text-sm font-medium text-gray-700 mb-1">
-                      Vehicle Transmission Type
+                      Vehicle Transmission Type{" "}
+                      <span className="text-red-500">*</span>
                     </label>
                     <select
                       name="transmission"
                       value={vehicleData?.transmission || ""}
                       onChange={handleChange}
-                      className={`border border-gray-300 px-4 py-2 rounded focus:outline-none focus:ring-2 focus:ring-indigo-500 w-full ${vehicleData.transmission
+                      className={`border border-gray-300 px-4 py-2 rounded focus:outline-none focus:ring-2 focus:ring-indigo-500 w-full ${
+                        vehicleData.transmission
                           ? "text-gray-900"
-                          : "text-gray-400"}`}
+                          : "text-gray-400"
+                      }`}
                     >
                       <option value="">Please Select Transmission Type</option>
                       <option value="Automatic" className="text-gray-900">
@@ -746,19 +784,21 @@ const handleDelete = async (vehicleId, approval) => {
                   </div>
                   <div>
                     <label className="block text-sm font-medium text-gray-700 mb-1">
-                      Vehicle Meter Reading
+                      Vehicle Meter Reading{" "}
+                      <span className="text-red-500">*</span>
                     </label>
                     <input
                       name="mileage"
                       value={vehicleData?.mileage || ""}
                       onChange={(e) => {
                         const value = e.target.value;
-                       if (value === "" || /^[1-9][0-9]{0,6}$/.test(value)) {
+                        if (value === "" || /^[1-9][0-9]{0,6}$/.test(value)) {
                           handleChange(e);
                         }
-                      } }
+                      }}
                       placeholder="Meter Reading(KM)"
-                      className="border border-gray-300 px-4 py-2 rounded focus:outline-none focus:ring-2 focus:ring-indigo-500 w-full" />
+                      className="border border-gray-300 px-4 py-2 rounded focus:outline-none focus:ring-2 focus:ring-indigo-500 w-full"
+                    />
                   </div>
                   <div>
                     <label className="block text-sm font-medium text-gray-700 mb-1">
@@ -768,11 +808,17 @@ const handleDelete = async (vehicleId, approval) => {
                       name="color"
                       value={vehicleData.color || ""}
                       onChange={handleChange}
-                      className={`border border-gray-300 px-4 py-2 rounded focus:outline-none focus:ring-2 focus:ring-indigo-500 w-full ${vehicleData.color ? "text-gray-900" : "text-gray-400"}`}
+                      className={`border border-gray-300 px-4 py-2 rounded focus:outline-none focus:ring-2 focus:ring-indigo-500 w-full ${
+                        vehicleData.color ? "text-gray-900" : "text-gray-400"
+                      }`}
                     >
                       <option value="">Please Select Color</option>
                       {carColors?.map((color) => (
-                        <option key={color} value={color} className="text-gray-900">
+                        <option
+                          key={color}
+                          value={color}
+                          className="text-gray-900"
+                        >
                           {color}
                         </option>
                       ))}
@@ -780,13 +826,15 @@ const handleDelete = async (vehicleId, approval) => {
                   </div>
                   <div>
                     <label className="block text-sm font-medium text-gray-700 mb-1">
-                      Vehicle Fuel Type
+                      Vehicle Fuel Type <span className="text-red-500">*</span>
                     </label>
                     <select
                       name="fuelType"
                       value={vehicleData.fuelType}
                       onChange={handleChange}
-                      className={`border border-gray-300 px-4 py-2 rounded focus:outline-none focus:ring-2 focus:ring-indigo-500 w-full ${vehicleData.fuelType ? "text-gray-900" : "text-gray-400"}`}
+                      className={`border border-gray-300 px-4 py-2 rounded focus:outline-none focus:ring-2 focus:ring-indigo-500 w-full ${
+                        vehicleData.fuelType ? "text-gray-900" : "text-gray-400"
+                      }`}
                     >
                       <option value="">Select Fuel Type</option>
                       <option value="petrol" className="text-gray-900">
@@ -817,9 +865,11 @@ const handleDelete = async (vehicleId, approval) => {
                       name="vehicleCondition"
                       value={vehicleData.vehicleCondition}
                       onChange={handleChange}
-                      className={`border border-gray-300 px-4 py-2 rounded focus:outline-none focus:ring-2 focus:ring-indigo-500 w-full ${vehicleData.vehicleCondition
+                      className={`border border-gray-300 px-4 py-2 rounded focus:outline-none focus:ring-2 focus:ring-indigo-500 w-full ${
+                        vehicleData.vehicleCondition
                           ? "text-gray-900"
-                          : "text-gray-400"}`}
+                          : "text-gray-400"
+                      }`}
                     >
                       <option value="">Select Vehicle Condition</option>
                       <option value="new" className="text-gray-900">
@@ -840,7 +890,8 @@ const handleDelete = async (vehicleId, approval) => {
                       value={price}
                       onChange={handlePriceChange}
                       placeholder="Add Price "
-                      className="border border-gray-300 px-4 py-2 rounded focus:outline-none focus:ring-2 focus:ring-indigo-500 w-full" />
+                      className="border border-gray-300 px-4 py-2 rounded focus:outline-none focus:ring-2 focus:ring-indigo-500 w-full"
+                    />
                     {price && (
                       <p className="mt-2 text-sm text-red-500 font-semibold">
                         {numberToIndianWords(parsePrice(price))}
@@ -856,9 +907,11 @@ const handleDelete = async (vehicleId, approval) => {
                     name="certifyStatus"
                     value={vehicleData.certifyStatus}
                     onChange={handleChange}
-                    className={`border border-gray-300 px-4 py-2 rounded focus:outline-none focus:ring-2 focus:ring-indigo-500 w-full ${vehicleData.certifyStatus
+                    className={`border border-gray-300 px-4 py-2 rounded focus:outline-none focus:ring-2 focus:ring-indigo-500 w-full ${
+                      vehicleData.certifyStatus
                         ? "text-gray-900"
-                        : "text-gray-400"}`}
+                        : "text-gray-400"
+                    }`}
                   >
                     <option value="">Please Select Certification Status</option>
                     <option value="Certified" className="text-gray-900">
@@ -890,7 +943,8 @@ const handleDelete = async (vehicleId, approval) => {
                             <path
                               strokeLinecap="round"
                               strokeLinejoin="round"
-                              d="M7 16a4 4 0 01-.88-7.903A5.002 5.002 0 0115.9 6H16a5 5 0 010 10h-1m-4 4v-8m0 0l-3 3m3-3l3 3" />
+                              d="M7 16a4 4 0 01-.88-7.903A5.002 5.002 0 0115.9 6H16a5 5 0 010 10h-1m-4 4v-8m0 0l-3 3m3-3l3 3"
+                            />
                           </svg>
                           <p className="text-sm text-gray-600">
                             <span className="font-medium text-indigo-600">
@@ -917,7 +971,8 @@ const handleDelete = async (vehicleId, approval) => {
                           multiple
                           name="image"
                           onChange={handleFileChange}
-                          className="hidden" />
+                          className="hidden"
+                        />
                       </label>
                     </div>
                   </div>
@@ -936,287 +991,297 @@ const handleDelete = async (vehicleId, approval) => {
                 <div className="fixed inset-0 bg-opacity-40 flex items-center justify-center z-50">
                   <div className="w-full max-w-5xl bg-white p-6 rounded-lg shadow-lg relative">
                     <CarSelector
-                      handleIsOpenToggle={() => handleIsOpenToggle("")} />
+                      handleIsOpenToggle={() => handleIsOpenToggle("")}
+                    />
                   </div>
                 </div>
               )}
             </div>
           </div>
         )}
-       <section className="lg:mt-6 mt-3 space-y-4 max-h-[55vh] overflow-y-auto md:hidden block">
-  {loading ? (
-    <p className="text-center text-indigo-600 font-semibold">
-      Loading vehicles...
-    </p>
-  ) : allVehicles.length === 0 ? (
-    <p className="text-center text-gray-600">No vehicles found.</p>
-  ) : (
-    allVehicles?.map((vehicle) => (
-      <div
-        key={vehicle.newVehicleId}
-        className="bg-white border rounded-xl shadow-sm hover:shadow-md transition p-2 flex items-center justify-between gap-4"
-      >
-        <div className="w-20 h-20 sm:w-28 sm:h-28 rounded-lg overflow-hidden bg-gray-100 flex-shrink-0">
-          <img
-            src={vehicle.images[0]}
-            alt={`${vehicle.make} ${vehicle.model}`}
-            className="w-full h-full object-cover hover:cursor-pointer"
-            onClick={() => (
-              setSelectVehicle(vehicle), handleIsOpenToggle("View")
-            )}
-          />
-        </div>
-        <div className="flex-1 min-w-0">
-          <h2 className="font-bold text-gray-800 text-xs truncate">
-            {vehicle.make || "—"} {vehicle.model || "—"} {vehicle.series || "—"}
-          </h2>
-          <p className="text-xs font-bold text-gray-900">
-            PKR {vehicle.buyNowPrice}
-          </p>
-          <p className="text-xs text-gray-600">
-            {vehicle.year || "—"} • {vehicle.fuelType || "—"} •{" "}
-            {vehicle.transmission || "—"}
-          </p>
-          <p
-            className={`text-[8px] text-center rounded w-16 ${
-              vehicle.approval === "Y"
-                ? "bg-green-500 text-white"
-                : "bg-red-500 text-white"
-            }`}
-          >
-            {vehicle.approval === "Y" ? "Approved" : "Not Approved"}
-          </p>
-        </div>
-        <div className="relative flex-shrink-0">
-          <button
-            onClick={(e) => {
-              e.stopPropagation();
-              toggleDropdown(vehicle.newVehicleId);
-            }}
-            className="px-3 py-1 text-gray-600 text-xl"
-          >
-            <BsThreeDotsVertical />
-          </button>
-          {isDropdownOpen === vehicle.newVehicleId && (
-            <div className="absolute right-0 mt-2 w-32 bg-white border rounded-lg shadow-lg z-10">
-              {!isCustomer ? (
-                <>
+        <section className="lg:mt-6 mt-3 space-y-4 max-h-[55vh] overflow-y-auto md:hidden block">
+          {loading ? (
+            <p className="text-center text-indigo-600 font-semibold">
+              Loading vehicles...
+            </p>
+          ) : allVehicles.length === 0 ? (
+            <p className="text-center text-gray-600">No vehicles found.</p>
+          ) : (
+            allVehicles?.map((vehicle) => (
+              <div
+                key={vehicle.newVehicleId}
+                className="bg-white border rounded-xl shadow-sm hover:shadow-md transition p-2 flex items-center justify-between gap-4"
+              >
+                <div className="w-20 h-20 sm:w-28 sm:h-28 rounded-lg overflow-hidden bg-gray-100 flex-shrink-0">
+                  <img
+                    src={vehicle.images[0]}
+                    alt={`${vehicle.make} ${vehicle.model}`}
+                    className="w-full h-full object-cover hover:cursor-pointer"
+                    onClick={() => (
+                      setSelectVehicle(vehicle), handleIsOpenToggle("View")
+                    )}
+                  />
+                </div>
+                <div className="flex-1 min-w-0">
+                  <h2 className="font-bold text-gray-800 text-xs truncate">
+                    {vehicle.make || "—"} {vehicle.model || "—"}{" "}
+                    {vehicle.series || "—"}
+                  </h2>
+                  <p className="text-xs font-bold text-gray-900">
+                    PKR {vehicle.buyNowPrice}
+                  </p>
+                  <p className="text-xs text-gray-600">
+                    {vehicle.year || "—"} • {vehicle.fuelType || "—"} •{" "}
+                    {vehicle.transmission || "—"}
+                  </p>
+                  <p
+                    className={`text-[8px] text-center rounded w-16 ${
+                      vehicle.approval === "Y"
+                        ? "bg-green-500 text-white"
+                        : "bg-red-500 text-white"
+                    }`}
+                  >
+                    {vehicle.approval === "Y" ? "Approved" : "Not Approved"}
+                  </p>
+                </div>
+                <div className="relative flex-shrink-0">
                   <button
                     onClick={(e) => {
                       e.stopPropagation();
-                      handleEdit(vehicle);
+                      toggleDropdown(vehicle.newVehicleId);
                     }}
-                    className="block w-full px-4 py-2 text-sm text-yellow-600 hover:bg-yellow-100 text-left rounded-t-lg"
+                    className="px-3 py-1 text-gray-600 text-xl"
                   >
-                    Edit
+                    <BsThreeDotsVertical />
                   </button>
-                  {vehicle.bidId ? (
-                    <button
-                      onClick={(e) => {
-                        e.stopPropagation();
-                        handleEndBidding(vehicle.bidId);
-                        handleIsOpenToggle("bid");
-                      }}
-                      className="block w-full px-4 py-2 text-sm text-green-600 hover:bg-green-100 text-left"
-                    >
-                      Bid Added
-                    </button>
-                  ) : (
-                    <button
-                      onClick={(e) => {
-                        e.stopPropagation();
-                        setSelectVehicle(vehicle);
-                        handleIsOpenToggle("View");
-                      }}
-                      className="block w-full text-left px-4 py-2 text-sm text-green-600 hover:bg-green-100"
-                    >
-                      View
-                    </button>
+                  {isDropdownOpen === vehicle.newVehicleId && (
+                    <div className="absolute right-0 mt-2 w-32 bg-white border rounded-lg shadow-lg z-10">
+                      {!isCustomer ? (
+                        <>
+                          <button
+                            onClick={(e) => {
+                              e.stopPropagation();
+                              handleEdit(vehicle);
+                            }}
+                            className="block w-full px-4 py-2 text-sm text-yellow-600 hover:bg-yellow-100 text-left rounded-t-lg"
+                          >
+                            Edit
+                          </button>
+                          {vehicle.bidId ? (
+                            <button
+                              onClick={(e) => {
+                                e.stopPropagation();
+                                handleEndBidding(vehicle.bidId);
+                                handleIsOpenToggle("bid");
+                              }}
+                              className="block w-full px-4 py-2 text-sm text-green-600 hover:bg-green-100 text-left"
+                            >
+                              Bid Added
+                            </button>
+                          ) : (
+                            <button
+                              onClick={(e) => {
+                                e.stopPropagation();
+                                setSelectVehicle(vehicle);
+                                handleIsOpenToggle("View");
+                              }}
+                              className="block w-full text-left px-4 py-2 text-sm text-green-600 hover:bg-green-100"
+                            >
+                              View
+                            </button>
+                          )}
+                          <button
+                            onClick={(e) => {
+                              e.stopPropagation();
+                              handleDelete(
+                                vehicle.newVehicleId,
+                                vehicle.approval
+                              ); // Pass vehicleId and approval
+                            }}
+                            className="block w-full text-left px-4 py-2 text-sm text-red-600 hover:bg-red-100 rounded-b-lg"
+                          >
+                            Delete
+                          </button>
+                        </>
+                      ) : (
+                        <button
+                          onClick={(e) => {
+                            e.stopPropagation();
+                            setCustomerBidData({
+                              userId: user?.id,
+                              vehicleId: vehicle.id,
+                              maxBid: "",
+                              monsterBid: "",
+                            });
+                            setIsCustomerBidModalOpen(true);
+                          }}
+                          className="block w-full text-left px-4 py-2 text-sm text-blue-500 hover:bg-blue-500 hover:text-white"
+                        >
+                          Create Bid
+                        </button>
+                      )}
+                    </div>
                   )}
+                </div>
+              </div>
+            ))
+          )}
+        </section>
+
+        <section
+          className="lg:mt-6  overflow-y-auto md:block hidden pb-10 lg:grid lg:grid-cols-2 gap-2"
+          style={{ maxHeight: "calc(100vh - 210px)" }}
+        >
+          {loading ? (
+            <p className="text-center text-indigo-600 font-semibold">
+              Loading vehicles...
+            </p>
+          ) : allVehicles.length === 0 ? (
+            <p className="text-center text-gray-600">No vehicles found.</p>
+          ) : (
+            allVehicles?.map((vehicle) => (
+              <div
+                key={vehicle.newVehicleId}
+                className="bg-white border rounded-xl shadow-sm hover:shadow-md transition p-4 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4"
+              >
+                <div className="w-full sm:w-40 sm:h-28 rounded-lg overflow-hidden bg-gray-100">
+                  <img
+                    src={vehicle.images[0]}
+                    alt={`${vehicle.make} ${vehicle.model}`}
+                    className="w-full h-full object-cover hover:cursor-pointer"
+                    onClick={() => (
+                      setSelectVehicle(vehicle), handleIsOpenToggle("View")
+                    )}
+                  />
+                </div>
+                <div className="flex-1 min-w-0 space-y-1">
+                  <h2 className="font-bold text-gray-800">
+                    {vehicle.make || "—"} {vehicle.model || "—"}{" "}
+                    {vehicle.series || "—"}
+                  </h2>
+                  <p className="text-lg font-bold text-gray-800">
+                    PKR {vehicle.buyNowPrice}
+                  </p>
+                  <div className="flex flex-wrap gap-1 text-sm text-gray-500">
+                    <span>{vehicle.year || "—"}</span>|
+                    <span>{vehicle.mileage || "—"}KM</span>|
+                    <span>{vehicle.fuelType || "—"}</span>|
+                    <span>{vehicle.color || "—"}</span>|
+                    <span>{vehicle.transmission || "—"}</span>|
+                    <span>{vehicle.cityName || "—"}</span>|
+                    <span
+                      className={`text-xs text-center rounded p-1 ${
+                        vehicle.approval === "Y"
+                          ? "bg-green-500 text-white"
+                          : "bg-red-500 text-white"
+                      }`}
+                    >
+                      {vehicle.approval === "Y" ? "Approved" : "Not Approved"}
+                    </span>
+                  </div>
+                </div>
+                <div className="relative flex-shrink-0">
                   <button
                     onClick={(e) => {
                       e.stopPropagation();
-                      handleDelete(vehicle.newVehicleId, vehicle.approval); // Pass vehicleId and approval
+                      toggleDropdown(vehicle.newVehicleId);
                     }}
-                    className="block w-full text-left px-4 py-2 text-sm text-red-600 hover:bg-red-100 rounded-b-lg"
+                    className="px-3 py-1 text-gray-600 text-xl"
                   >
-                    Delete
+                    <BsThreeDotsVertical />
                   </button>
-                </>
-              ) : (
-                <button
-                  onClick={(e) => {
-                    e.stopPropagation();
-                    setCustomerBidData({
-                      userId: user?.id,
-                      vehicleId: vehicle.id,
-                      maxBid: "",
-                      monsterBid: "",
-                    });
-                    setIsCustomerBidModalOpen(true);
-                  }}
-                  className="block w-full text-left px-4 py-2 text-sm text-blue-500 hover:bg-blue-500 hover:text-white"
-                >
-                  Create Bid
-                </button>
-              )}
-            </div>
+                  {isDropdownOpen === vehicle.newVehicleId && (
+                    <div className="absolute right-0 mt-2 w-32 bg-white border rounded-lg shadow-lg z-10">
+                      {!isCustomer ? (
+                        <>
+                          <button
+                            onClick={(e) => {
+                              e.stopPropagation();
+                              handleEdit(vehicle);
+                            }}
+                            className="block w-full text-left px-4 py-2 text-sm text-yellow-600 hover:bg-yellow-100 rounded-t-lg"
+                          >
+                            Edit
+                          </button>
+                          {vehicle.bidId ? (
+                            <button
+                              onClick={(e) => {
+                                e.stopPropagation();
+                                handleEndBidding(vehicle.bidId);
+                                handleIsOpenToggle("bid");
+                              }}
+                              className="block w-full text-left px-4 py-2 text-sm text-green-500 hover:bg-green-500 hover:text-white"
+                            >
+                              Bid Added
+                            </button>
+                          ) : (
+                            <button
+                              onClick={(e) => {
+                                e.stopPropagation();
+                                setSelectVehicle(vehicle);
+                                handleIsOpenToggle("View");
+                              }}
+                              className="block w-full text-left px-4 py-2 text-sm text-green-600 hover:bg-green-100 rounded"
+                            >
+                              View
+                            </button>
+                          )}
+                          <button
+                            onClick={(e) => {
+                              e.stopPropagation();
+                              handleDelete(
+                                vehicle.newVehicleId,
+                                vehicle.approval
+                              ); // Pass vehicleId and approval
+                            }}
+                            className="block w-full text-left px-4 py-2 text-sm text-red-600 hover:bg-red-100 rounded-b-lg"
+                          >
+                            Delete
+                          </button>
+                        </>
+                      ) : (
+                        <button
+                          onClick={(e) => {
+                            e.stopPropagation();
+                            setCustomerBidData({
+                              userId: user?.id,
+                              vehicleId: vehicle.id,
+                              maxBid: "",
+                              monsterBid: "",
+                            });
+                            setIsCustomerBidModalOpen(true);
+                          }}
+                          className="block w-full text-left px-4 py-2 text-sm text-blue-500 hover:bg-blue-500 hover:text-white"
+                        >
+                          Create Bid
+                        </button>
+                      )}
+                    </div>
+                  )}
+                </div>
+              </div>
+            ))
           )}
-        </div>
-      </div>
-    ))
-  )}
-</section>
-
-<section
-  className="lg:mt-6 space-y-4 overflow-y-auto md:block hidden pb-10"
-  style={{ maxHeight: "calc(100vh - 210px)" }}
->
-  {loading ? (
-    <p className="text-center text-indigo-600 font-semibold">
-      Loading vehicles...
-    </p>
-  ) : allVehicles.length === 0 ? (
-    <p className="text-center text-gray-600">No vehicles found.</p>
-  ) : (
-    allVehicles?.map((vehicle) => (
-      <div
-        key={vehicle.newVehicleId}
-        className="bg-white border rounded-xl shadow-sm hover:shadow-md transition p-4 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4"
-      >
-        <div className="w-full sm:w-40 sm:h-28 rounded-lg overflow-hidden bg-gray-100">
-          <img
-            src={vehicle.images[0]}
-            alt={`${vehicle.make} ${vehicle.model}`}
-            className="w-full h-full object-cover hover:cursor-pointer"
-            onClick={() => (
-              setSelectVehicle(vehicle), handleIsOpenToggle("View")
-            )}
-          />
-        </div>
-        <div className="flex-1 min-w-0 space-y-1">
-          <h2 className="font-bold text-gray-800">
-            {vehicle.make || "—"} {vehicle.model || "—"} {vehicle.series || "—"}
-          </h2>
-          <p className="text-lg font-bold text-gray-800">
-            PKR {vehicle.buyNowPrice}
-          </p>
-          <div className="flex flex-wrap gap-1 text-sm text-gray-500">
-            <span>{vehicle.year || "—"}</span>|
-            <span>{vehicle.mileage || "—"}KM</span>|
-            <span>{vehicle.fuelType || "—"}</span>|
-            <span>{vehicle.color || "—"}</span>|
-            <span>{vehicle.transmission || "—"}</span>|
-            <span>{vehicle.cityName || "—"}</span>|
-            <span
-              className={`text-xs text-center rounded p-1 ${
-                vehicle.approval === "Y"
-                  ? "bg-green-500 text-white"
-                  : "bg-red-500 text-white"
+          <div className="flex justify-between mt-6 px-2 sm:px-4">
+            <button
+              className={`bg-blue-950 text-white px-5 py-2 rounded ${
+                pageNo > 1 ? "block" : "hidden"
               }`}
+              onClick={handlePrevPage}
             >
-              {vehicle.approval === "Y" ? "Approved" : "Not Approved"}
-            </span>
+              ‹ Prev
+            </button>
+            <div></div>
+            <button
+              className={`bg-blue-950 text-white px-5 py-2 rounded ${
+                allVehicles.length === 10 ? "block" : "hidden"
+              }`}
+              onClick={handleNextPage}
+            >
+              Next ›
+            </button>
           </div>
-        </div>
-        <div className="relative flex-shrink-0">
-          <button
-            onClick={(e) => {
-              e.stopPropagation();
-              toggleDropdown(vehicle.newVehicleId);
-            }}
-            className="px-3 py-1 text-gray-600 text-xl"
-          >
-            <BsThreeDotsVertical />
-          </button>
-          {isDropdownOpen === vehicle.newVehicleId && (
-            <div className="absolute right-0 mt-2 w-32 bg-white border rounded-lg shadow-lg z-10">
-              {!isCustomer ? (
-                <>
-                  <button
-                    onClick={(e) => {
-                      e.stopPropagation();
-                      handleEdit(vehicle);
-                    }}
-                    className="block w-full text-left px-4 py-2 text-sm text-yellow-600 hover:bg-yellow-100 rounded-t-lg"
-                  >
-                    Edit
-                  </button>
-                  {vehicle.bidId ? (
-                    <button
-                      onClick={(e) => {
-                        e.stopPropagation();
-                        handleEndBidding(vehicle.bidId);
-                        handleIsOpenToggle("bid");
-                      }}
-                      className="block w-full text-left px-4 py-2 text-sm text-green-500 hover:bg-green-500 hover:text-white"
-                    >
-                      Bid Added
-                    </button>
-                  ) : (
-                    <button
-                      onClick={(e) => {
-                        e.stopPropagation();
-                        setSelectVehicle(vehicle);
-                        handleIsOpenToggle("View");
-                      }}
-                      className="block w-full text-left px-4 py-2 text-sm text-green-600 hover:bg-green-100 rounded"
-                    >
-                      View
-                    </button>
-                  )}
-                  <button
-                    onClick={(e) => {
-                      e.stopPropagation();
-                      handleDelete(vehicle.newVehicleId, vehicle.approval); // Pass vehicleId and approval
-                    }}
-                    className="block w-full text-left px-4 py-2 text-sm text-red-600 hover:bg-red-100 rounded-b-lg"
-                  >
-                    Delete
-                  </button>
-                </>
-              ) : (
-                <button
-                  onClick={(e) => {
-                    e.stopPropagation();
-                    setCustomerBidData({
-                      userId: user?.id,
-                      vehicleId: vehicle.id,
-                      maxBid: "",
-                      monsterBid: "",
-                    });
-                    setIsCustomerBidModalOpen(true);
-                  }}
-                  className="block w-full text-left px-4 py-2 text-sm text-blue-500 hover:bg-blue-500 hover:text-white"
-                >
-                  Create Bid
-                </button>
-              )}
-            </div>
-          )}
-        </div>
-      </div>
-    ))
-  )}
-  <div className="flex justify-between mt-6 px-2 sm:px-4">
-    <button
-      className={`bg-blue-950 text-white px-5 py-2 rounded ${pageNo > 1 ? "block" : "hidden"}`}
-      onClick={handlePrevPage}
-    >
-      ‹ Prev
-    </button>
-    <div></div>
-    <button
-      className={`bg-blue-950 text-white px-5 py-2 rounded ${allVehicles.length === 10 ? "block" : "hidden"}`}
-      onClick={handleNextPage}
-    >
-      Next ›
-    </button>
-  </div>
-</section>
-
-
-
+        </section>
       </div>
       {isOpen === "View" && (
         <ViewAdminCar
@@ -1233,7 +1298,6 @@ const handleDelete = async (vehicleId, approval) => {
       )}
       <ToastContainer />
     </div>
-    </>
   );
 };
 

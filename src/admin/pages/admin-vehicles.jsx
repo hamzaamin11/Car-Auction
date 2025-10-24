@@ -439,9 +439,9 @@ function AddAdminVehicle({ open, setOpen, onVehicleUpdated }) {
             dispatch(addMake(""));
             dispatch(addModel(""));
             dispatch(addSeries(""));
-             setVehicle(initialVehicleState);
-             setPrice("");
-             setSelectedCount(0);
+            setVehicle(initialVehicleState);
+            setPrice("");
+            setSelectedCount(0);
           }}
           className="bg-[#191970] hover:bg-blue-900 text-white font-medium py-2 px-4 text-sm rounded shadow transition-all duration-200 w-full sm:w-auto"
         >
