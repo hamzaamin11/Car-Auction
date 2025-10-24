@@ -111,6 +111,37 @@ const FilterPriceCars = () => {
     }
   }, [name, value, allCities, allMake]);
 
+  // Build URL with current filters
+  const buildFilterUrl = (updatedFilterData) => {
+    const filters = [];
+    if (updatedFilterData.vehicleType) {
+      filters.push(`bodyStyle/${encodeURIComponent(updatedFilterData.vehicleType)}`);
+    }
+    if (updatedFilterData.selectYear) {
+      filters.push(`year/${encodeURIComponent(updatedFilterData.selectYear)}`);
+    }
+    if (updatedFilterData.allMakes) {
+      const selectedMake = allMake.find((make) => make.id === updatedFilterData.allMakes);
+      if (selectedMake) {
+        filters.push(`make/${encodeURIComponent(selectedMake.brandName)}`);
+      }
+    }
+    if (updatedFilterData.allModels) {
+      filters.push(`model/${encodeURIComponent(updatedFilterData.allModels)}`);
+    }
+    if (updatedFilterData.location) {
+      const selectedCity = allCities.find((city) => city.id === updatedFilterData.location);
+      if (selectedCity) {
+        filters.push(`city/${encodeURIComponent(selectedCity.cityName)}`);
+      }
+    }
+    if (updatedFilterData.formCash && updatedFilterData.toCash) {
+      filters.push(`budget/${updatedFilterData.formCash}-${updatedFilterData.toCash}`);
+    }
+
+    return filters.length > 0 ? `/filterprice/${filters[0]}` : "/filterprice";
+  };
+
   // Fetch vehicles with all filters
   const handleGetFilterByVehicle = async () => {
     setLoading(true);
@@ -118,7 +149,7 @@ const FilterPriceCars = () => {
       const res = await axios.get(`${BASE_URL}/getApprovedVehicles`, {
         params: {
           locationId: filterData.location || "",
-          make: filterData.allMakes || "", // Send make ID to API
+          make: filterData.allMakes || "",
           model: filterData.allModels || "",
           bodyStyle: filterData.vehicleType || "",
           minPrice: filterData.formCash || "",
@@ -176,7 +207,12 @@ const FilterPriceCars = () => {
 
   // Update state from form
   const handleChange = (name, value) => {
-    setFilterData((prev) => ({ ...prev, [name]: value }));
+    const updatedFilterData = { ...filterData, [name]: value };
+    if (name === "allMakes") {
+      updatedFilterData.allModels = ""; // Reset model when make changes
+    }
+    setFilterData(updatedFilterData);
+    navigate(buildFilterUrl(updatedFilterData));
   };
 
   useEffect(() => {
@@ -256,14 +292,7 @@ const FilterPriceCars = () => {
                 (option) => option.value === filterData.vehicleType
               ) || { label: "Select All Type", value: "" }
             }
-            onChange={(selected) => {
-              handleChange("vehicleType", selected.value);
-              if (selected.value) {
-                navigate(`/filterprice/bodyStyle/${encodeURIComponent(selected.value)}`);
-              } else {
-                navigate(`/filterprice`);
-              }
-            }}
+            onChange={(selected) => handleChange("vehicleType", selected.value)}
             placeholder="Select Body Style"
             isSearchable
             className="w-full"
@@ -305,18 +334,7 @@ const FilterPriceCars = () => {
                 value: "",
               }
             }
-            onChange={(selected) => {
-              handleChange("allMakes", selected.value);
-              handleChange("allModels", "");
-              if (selected.value) {
-                const selectedMake = allMake.find(
-                  (make) => make.id === selected.value
-                );
-                navigate(`/filterprice/make/${encodeURIComponent(selectedMake.brandName)}`);
-              } else {
-                navigate(`/filterprice`);
-              }
-            }}
+            onChange={(selected) => handleChange("allMakes", selected.value)}
             placeholder="Select Make"
             isSearchable
             className="w-full"
@@ -340,14 +358,7 @@ const FilterPriceCars = () => {
                 value: "",
               }
             }
-            onChange={(selected) => {
-              handleChange("allModels", selected.value);
-              if (selected.value) {
-                navigate(`/filterprice/model/${encodeURIComponent(selected.value)}`);
-              } else {
-                navigate(`/filterprice`);
-              }
-            }}
+            onChange={(selected) => handleChange("allModels", selected.value)}
             placeholder="Select Model"
             isSearchable
             className="w-full"
@@ -371,17 +382,7 @@ const FilterPriceCars = () => {
                 value: "",
               }
             }
-            onChange={(selected) => {
-              handleChange("location", selected.value);
-              if (selected.value) {
-                const selectedCity = allCities.find(
-                  (city) => city.id === selected.value
-                );
-                navigate(`/filterprice/city/${encodeURIComponent(selectedCity.cityName)}`);
-              } else {
-                navigate(`/filterprice`);
-              }
-            }}
+            onChange={(selected) => handleChange("location", selected.value)}
             placeholder="Select Location"
             isSearchable
             className="w-full"
@@ -435,11 +436,10 @@ const FilterPriceCars = () => {
           </div>
           {filterData.formCash && filterData.toCash && (
             <button
-              onClick={() =>
-                navigate(
-                  `/filterprice/budget/${filterData.formCash}-${filterData.toCash}`
-                )
-              }
+              onClick={() => {
+                const updatedFilterData = { ...filterData };
+                navigate(buildFilterUrl(updatedFilterData));
+              }}
               className="mt-2 bg-blue-500 p-2 px-4 text-white rounded hover:cursor-pointer"
             >
               Apply Price Filter
