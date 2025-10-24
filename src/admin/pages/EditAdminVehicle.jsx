@@ -72,7 +72,7 @@ function EditAdminVehicle({
 
   const [vehicle, setVehicle] = useState(initialVehicleState);
   const selected = useSelector((state) => state.carSelector);
-  console.log("vehicleData", selectedVehicle);
+
 
   const parsePrice = (priceStr) => {
     if (!priceStr) return "";
@@ -309,6 +309,7 @@ function EditAdminVehicle({
   };
 
   const handleSubmit = async (e) => {
+    
     e.preventDefault();
 
     // Validation for all required fields (except image)
@@ -589,30 +590,50 @@ function EditAdminVehicle({
               </select>
             </div>
 
-            <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1">
-                Add Vehicle Price <span className="text-red-500">*</span>
-              </label>
-              <input
-                type="text"
-                name="buyNowPrice"
-                value={parsePrice(vehicle.buyNowPrice)}
-                onChange={(e) => {
-                  const value = e.target.value;
-                  if (/^\d*$/.test(value) && value.length <= 9) {
-                    setPrice(value);
-                    handleChange(e);
-                  }
-                }}
-                placeholder="Add Price"
-                className="border border-gray-300 px-4 py-2 rounded focus:outline-none focus:ring-2 focus:ring-indigo-500 w-full"
-              />
-              {price && (
-                <p className="mt-2 text-sm text-red-500 font-semibold">
-                  {numberToIndianWords(parseInt(price))}
-                </p>
-              )}
-            </div>
+          
+
+<div>
+  <label className="block text-sm font-medium text-gray-700 mb-1">
+    Add Vehicle Price <span className="text-red-500">*</span>
+  </label>
+  <input
+    type="text"
+    name="buyNowPrice"
+    value={parsePrice(vehicle.buyNowPrice)}
+    onChange={(e) => {
+      const value = e.target.value;
+
+      // ✅ Allow only numbers, no leading 0, up to 9 digits
+      if (value === "" || (/^[1-9][0-9]{0,8}$/.test(value) && value.length <= 9)) {
+        setPrice(value);
+        handleChange(e);
+      }
+    }}
+    onBlur={() => {
+      // 🚫 Show SweetAlert if value is less than 5 digits (below 10000)
+      if (price && parseInt(price) < 100000) {
+        Swal.fire({
+          title: "Invalid Price",
+          text: "Please enter at least a 6-digit price (minimum 100000).",
+          icon: "warning",
+          confirmButtonColor: "#6366f1", // Indigo
+        });
+        setPrice("");
+        handleChange({ target: { name: "buyNowPrice", value: "" } });
+      }
+    }}
+    placeholder="Add Price"
+    inputMode="numeric"
+    className="border border-gray-300 px-4 py-2 rounded focus:outline-none focus:ring-2 focus:ring-indigo-500 w-full"
+  />
+
+  {price && (
+    <p className="mt-2 text-sm text-red-500 font-semibold">
+      {numberToIndianWords(parseInt(price))}
+    </p>
+  )}
+</div>
+
           </div>
 
           <div>

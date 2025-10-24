@@ -313,7 +313,7 @@ export default function UpcomingAuctions() {
                     </p>
                     <p className="flex justify-between">
                       <span className="text-gray-900 font-bold">
-                        Seller Offer
+                        Price
                       </span>
                       <span className="text-gray-500">{user?.sellerOffer}</span>
                     </p>

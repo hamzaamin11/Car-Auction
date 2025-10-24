@@ -1,12 +1,10 @@
 import { Dialog, Transition } from "@headlessui/react";
-import { Fragment, useContext, useEffect, useState } from "react";
-import { MdClose, MdPassword } from "react-icons/md";
-// import userImg from "../../assets/userImg.webp"
-import UserContext from "../../context/UserContext";
+import { Fragment, useEffect, useState } from "react";
+import { MdClose } from "react-icons/md";
 import { toast } from "react-toastify";
 import { BASE_URL } from "../../components/Contant/URL";
 
-const EditUserModal = ({ Open, setOpen, selectedUser }) => {
+const EditUserModal = ({ Open, setOpen, selectedUser, onUserUpdated }) => {
   const [user, setUser] = useState({
     name: "",
     email: "",
@@ -18,53 +16,11 @@ const EditUserModal = ({ Open, setOpen, selectedUser }) => {
     password: "",
     role: "",
   });
-  console.log("hit me", selectedUser?.id);
-
-  const handleMobileChange = (e) => {
-    let value = e.target.value.replace(/\D/g, ""); // remove all non-digits
-
-    // Ensure the number always starts with +92
-    if (value.startsWith("92")) {
-      value = "+" + value;
-    } else if (!value.startsWith("+92")) {
-      value = "+92" + value;
-    }
-
-    // Format it like +92-300-1234567
-    if (value.length > 3 && value.length <= 6) {
-      value = value.slice(0, 3) + "-" + value.slice(3);
-    } else if (value.length > 6 && value.length <= 10) {
-      value =
-        value.slice(0, 3) + "-" + value.slice(3, 6) + "-" + value.slice(6);
-    } else if (value.length > 10) {
-      value =
-        value.slice(0, 3) + "-" + value.slice(3, 6) + "-" + value.slice(6, 15);
-    }
-
-    setUser({ ...user, contact: value });
-  };
-
-  const handleCNICChange = (e) => {
-    let value = e.target.value.replace(/\D/g, ""); // remove all non-numeric characters
-
-    // Add dashes automatically
-    if (value.length > 5 && value.length <= 12) {
-      value = value.slice(0, 5) + "-" + value.slice(5);
-    } else if (value.length > 12) {
-      value =
-        value.slice(0, 5) +
-        "-" +
-        value.slice(5, 12) +
-        "-" +
-        value.slice(12, 13);
-    }
-
-    setUser({ ...user, cnic: value });
-  };
 
   useEffect(() => {
     if (selectedUser) {
       setUser({
+        id: selectedUser.id || "",
         name: selectedUser.name || "",
         email: selectedUser.email || "",
         contact: selectedUser.contact || "",
@@ -86,12 +42,39 @@ const EditUserModal = ({ Open, setOpen, selectedUser }) => {
     }));
   };
 
+  const handleMobileChange = (e) => {
+    let value = e.target.value.replace(/\D/g, ""); // Remove all non-digits
+    if (value.startsWith("92")) {
+      value = "+" + value;
+    } else if (!value.startsWith("+92")) {
+      value = "+92" + value;
+    }
+    if (value.length > 3 && value.length <= 6) {
+      value = value.slice(0, 3) + "-" + value.slice(3);
+    } else if (value.length > 6 && value.length <= 10) {
+      value = value.slice(0, 3) + "-" + value.slice(3, 6) + "-" + value.slice(6);
+    } else if (value.length > 10) {
+      value = value.slice(0, 3) + "-" + value.slice(3, 6) + "-" + value.slice(6, 15);
+    }
+    setUser({ ...user, contact: value });
+  };
+
+  const handleCNICChange = (e) => {
+    let value = e.target.value.replace(/\D/g, "");
+    if (value.length > 5 && value.length <= 12) {
+      value = value.slice(0, 5) + "-" + value.slice(5);
+    } else if (value.length > 12) {
+      value = value.slice(0, 5) + "-" + value.slice(5, 12) + "-" + value.slice(12, 13);
+    }
+    setUser({ ...user, cnic: value });
+  };
+
   const handleImageChange = (e) => {
     const file = e.target.files[0];
     if (file) {
       setUser((prev) => ({
         ...prev,
-        image: file, // Store the file object directly
+        image: file,
       }));
     }
   };
@@ -107,10 +90,9 @@ const EditUserModal = ({ Open, setOpen, selectedUser }) => {
     formData.append("cnic", user.cnic);
     formData.append("password", user.password);
     formData.append("role", user.role);
-    if (user.image) {
+    if (user.image && user.image instanceof File) {
       formData.append("image", user.image);
     }
-    console.log("user to edit:", selectedUser.id);
 
     try {
       const response = await fetch(
@@ -121,20 +103,22 @@ const EditUserModal = ({ Open, setOpen, selectedUser }) => {
         }
       );
 
-      console.log("form ka data", formData);
+      if (!response.ok) {
+        throw new Error("Failed to update user");
+      }
 
+      const updatedUser = await response.json();
       toast.success("User updated successfully!", {
         autoClose: 3000,
       });
+      onUserUpdated(updatedUser); // Call the callback with updated user data
       setOpen(false);
-      getAllUsers();
-      console.log("User updated successfully:", response);
     } catch (error) {
       console.error("Error updating user:", error);
+      toast.error("Failed to update user.");
     }
   };
 
-  const { getAllUsers } = useContext(UserContext);
   const closeModal = () => setOpen(false);
 
   return (
@@ -170,7 +154,7 @@ const EditUserModal = ({ Open, setOpen, selectedUser }) => {
               <Dialog.Panel className="w-full max-w-3xl transform overflow-hidden rounded-3xl bg-white p-8 text-left align-middle shadow-2xl transition-all">
                 <Dialog.Title
                   as="h3"
-                  className="text-2xl flex flex-row justify-between items-center font-bold leading-6  mb-4"
+                  className="text-2xl flex flex-row justify-between items-center font-bold leading-6 mb-4"
                 >
                   Edit User
                   <div>
@@ -184,9 +168,9 @@ const EditUserModal = ({ Open, setOpen, selectedUser }) => {
                   </div>
                 </Dialog.Title>
 
-                <form onSubmit={handleEditUser} className="">
-                  <div className=" grid  grid-cols-2 gap-2">
-                    <div className="">
+                <form onSubmit={handleEditUser}>
+                  <div className="grid grid-cols-2 gap-2">
+                    <div>
                       <label className="block text-sm font-medium text-gray-700">
                         Full Name
                       </label>
@@ -199,7 +183,6 @@ const EditUserModal = ({ Open, setOpen, selectedUser }) => {
                         placeholder="John Doe"
                       />
                     </div>
-
                     <div>
                       <label className="block text-sm font-medium text-gray-700">
                         Email Address
@@ -213,7 +196,6 @@ const EditUserModal = ({ Open, setOpen, selectedUser }) => {
                         placeholder="john@example.com"
                       />
                     </div>
-
                     <div>
                       <label className="block text-sm font-medium text-gray-700">
                         Phone Number
@@ -228,7 +210,6 @@ const EditUserModal = ({ Open, setOpen, selectedUser }) => {
                         maxLength={15}
                       />
                     </div>
-
                     <div>
                       <label className="block text-sm font-medium text-gray-700">
                         Role
@@ -246,15 +227,14 @@ const EditUserModal = ({ Open, setOpen, selectedUser }) => {
                       </select>
                     </div>
                     <div>
-                      <label className="block text-sm font-medium text-gray-700 ">
+                      <label className="block text-sm font-medium text-gray-700">
                         CNIC
                       </label>
-
                       <input
                         type="tel"
                         placeholder="00000-0000000-0"
                         name="cnic"
-                        value={user?.cnic}
+                        value={user.cnic}
                         onChange={handleCNICChange}
                         className="mt-1 w-full rounded-xl border border-gray-300 p-3 focus:outline-none focus:ring-2 focus:ring-blue-500"
                         required
@@ -275,7 +255,6 @@ const EditUserModal = ({ Open, setOpen, selectedUser }) => {
                         maxLength={20}
                       />
                     </div>
-
                     <div>
                       <label className="block text-sm font-medium text-gray-700">
                         User Image
@@ -287,26 +266,22 @@ const EditUserModal = ({ Open, setOpen, selectedUser }) => {
                         accept="image/*"
                         className="mt-1 w-full rounded-xl border border-gray-300 p-3 focus:outline-none focus:ring-2 focus:ring-blue-500"
                       />
-                      {user.image &&
-                        typeof user.image === "string" &&
-                        user.image !== "null" && (
-                          <div className="mt-3">
-                            <p className="text-xs text-gray-500 mb-1">
-                              Current Image:
-                            </p>
-                            <img
-                              src={user.image}
-                              alt="Profile"
-                              className="h-24 w-24 object-cover rounded-full border-2 border-indigo-400 shadow-sm"
-                            />
-                          </div>
-                        )}
+                      {user.image && typeof user.image === "string" && user.image !== "null" && (
+                        <div className="mt-3">
+                          <p className="text-xs text-gray-500 mb-1">Current Image:</p>
+                          <img
+                            src={user.image}
+                            alt="Profile"
+                            className="h-24 w-24 object-cover rounded-full border-2 border-indigo-400 shadow-sm"
+                          />
+                        </div>
+                      )}
                     </div>
                   </div>
                   <div className="flex justify-center pt-3">
                     <button
                       type="submit"
-                      className=" p-6 flex justify-center bg-blue-950 text-white py-3 rounded-xl shadow-md hover:scale-105 transition-transform duration-300 font-semibold hover:cursor-pointer "
+                      className="p-6 flex justify-center bg-blue-950 text-white py-3 rounded-xl shadow-md hover:scale-105 transition-transform duration-300 font-semibold hover:cursor-pointer"
                     >
                       Update User
                     </button>

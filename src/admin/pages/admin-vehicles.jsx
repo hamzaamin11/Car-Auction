@@ -93,13 +93,14 @@ function AddAdminVehicle({ open, setOpen, onVehicleUpdated }) {
   const [viewModal, setViewModal] = useState(false);
   const [search, setSearch] = useState("");
   const [selectedVehicle, setSelectedVehicle] = useState(null);
+
+  console.log("selectedVehicle", selectedVehicle);
   const [actionMenuOpen, setActionMenuOpen] = useState(null);
   const [pageNo, setPageNo] = useState(1);
   const [selectedCount, setSelectedCount] = useState(0);
   const [price, setPrice] = useState();
-  const { getVehicles, delVehicle, getAllVehicles } =
-    useContext(VehicleContext);
-  const { user } = useAuth();
+  
+
   const dispatch = useDispatch();
 
   const numberToIndianWords = (num) => {
@@ -401,6 +402,8 @@ function AddAdminVehicle({ open, setOpen, onVehicleUpdated }) {
     }
   };
 
+console.log(" =>>>>>>>>>>>>>>filteredVehicles");
+
   return (
     <div className="min-h-screen bg-gray-100 p-4 sm:p-6">
       <div className="flex flex-col sm:flex-row justify-between lg:items-start items-center w-full gap-4 mb-6">
@@ -662,38 +665,54 @@ function AddAdminVehicle({ open, setOpen, onVehicleUpdated }) {
                     </option>
                   </select>
                 </div>
-                <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-1">
-                    Add Vehicle Price <span className="text-red-500">*</span>
-                  </label>
-                  <input
-                    type="text"
-                    name="buyNowPrice"
-                    value={vehicle.buyNowPrice}
-                    onChange={(e) => {
-                      const value = e.target.value;
+              <div>
+  <label className="block text-sm font-medium text-gray-700 mb-1">
+    Add Vehicle Price <span className="text-red-500">*</span>
+  </label>
+  <input
+    type="text"
+    name="buyNowPrice"
+    value={vehicle.buyNowPrice}
+    onChange={(e) => {
+      const value = e.target.value;
 
-                      // ✅ Allow empty OR numbers not starting with 0
-                      // This means: empty OR first digit 1-9 followed by up to 8 digits
-                      if (value === "" || /^[1-9][0-9]{0,8}$/.test(value)) {
-                        setPrice(value);
-                        setVehicle((prev) => ({
-                          ...prev,
-                          buyNowPrice: value,
-                        }));
-                      }
-                    }}
-                    placeholder="Add Price"
-                    inputMode="numeric"
-                    className="border border-gray-300 px-4 py-2 rounded focus:outline-none focus:ring-2 focus:ring-indigo-500 w-full"
-                  />
+      // ✅ Allow only numbers not starting with 0 and up to 9 digits
+      if (value === "" || /^[1-9][0-9]{0,8}$/.test(value)) {
+        setPrice(value);
+        setVehicle((prev) => ({
+          ...prev,
+          buyNowPrice: value,
+        }));
+      }
+    }}
+    onBlur={() => {
+      // 🚫 Prevent value less than 5 digits (100000)
+      if (price && parseInt(price) < 100000) {
+       Swal.fire({
+        title: "Error!",
+        text: "VEHICLE PRICE MUST BE 6 DIGITS.",
+        icon: "error",
+        confirmButtonColor: "#9333ea",
+      });
+        setPrice("");
+        setVehicle((prev) => ({
+          ...prev,
+          buyNowPrice: "",
+        }));
+      }
+    }}
+    placeholder="Add Price"
+    inputMode="numeric"
+    className="border border-gray-300 px-4 py-2 rounded focus:outline-none focus:ring-2 focus:ring-indigo-500 w-full"
+  />
 
-                  {price && (
-                    <p className="mt-2 text-sm text-red-500 font-semibold">
-                      {numberToIndianWords(parseInt(price))}
-                    </p>
-                  )}
-                </div>
+  {price && (
+    <p className="mt-2 text-sm text-red-500 font-semibold">
+      {numberToIndianWords(parseInt(price))}
+    </p>
+  )}
+</div>
+
               </div>
               <div>
                 <label className="block text-sm font-medium text-gray-700 mb-1">
@@ -907,7 +926,7 @@ function AddAdminVehicle({ open, setOpen, onVehicleUpdated }) {
               </div>
 
               {/* Mobile: List View */}
-              <div className="lg:hidden border-b py-4">
+              <div className="lg:hidden border-b py-4  ">
                 <div className="flex items-center gap-3">
                   <div
                     className="w-16 h-16 flex-shrink-0 rounded-md overflow-hidden bg-gray-100"

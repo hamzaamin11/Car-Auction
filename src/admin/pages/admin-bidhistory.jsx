@@ -188,7 +188,7 @@ const AdminBidHistory = () => {
                               transmission,
                               color,
                               images: [],
-                              ...allBiders[index],
+                             ...currentItems[index],
                             });
                             setCurrentImageIndex(0);
                           }}
