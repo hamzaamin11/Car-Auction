@@ -2,7 +2,7 @@ import axios from "axios";
 import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { BASE_URL } from "./Contant/URL";
-
+import { Search } from "lucide-react";
 export default function AuctionsTable() {
   const navigate = useNavigate();
   const [searchTerm, setSearchTerm] = useState("");
@@ -40,18 +40,24 @@ export default function AuctionsTable() {
   return (
     <div className="px-4 sm:px-6 lg:px-8 pt-2">
       {/* 🔍 Search Input and Title */}
-      <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between py-4 gap-4">
-        <h1 className="text-lg sm:text-2xl lg:text-3xl font-bold text-gray-800">
-          Today's Auctions
-        </h1>
-        <input
-          type="text"
-          placeholder="Search Auctions..."
-          value={searchTerm}
-          onChange={(e) => setSearchTerm(e.target.value)}
-          className="w-full sm:w-auto px-4 py-2 border rounded focus:outline-none focus:ring-2 focus:ring-blue-500"
-        />
-      </div>
+    
+
+<div className="flex flex-col sm:flex-row sm:items-center sm:justify-between py-4 gap-4">
+  <h1 className="text-lg sm:text-2xl lg:text-3xl font-bold text-gray-800">
+    Today's Auctions
+  </h1>
+  
+  <div className="relative w-full sm:w-auto">
+    <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 w-5 h-5 pointer-events-none" />
+    <input
+      type="text"
+      placeholder="Search Auctions..."
+      value={searchTerm}
+      onChange={(e) => setSearchTerm(e.target.value)}
+      className="w-full sm:w-auto pl-10 pr-4 py-2 border rounded focus:outline-none focus:ring-2 focus:ring-blue-500"
+    />
+  </div>
+</div>
 
       {/* 🧾 Auctions Table */}
       <div className="overflow-x-auto">

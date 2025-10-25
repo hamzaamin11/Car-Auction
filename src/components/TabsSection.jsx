@@ -222,47 +222,47 @@ const TabsSection = () => {
 
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 mx-6">
         <div className="max-w-xs">
-          <SearchableOption
-            datas={[{ label: "Select City", value: "" }, ...cityData]}
-            placeholder="Search City"
-            name="city"
-            value={filterData.city}
-            onChange={handleChange}
-          />
+         <SearchableOption
+  datas={cityData}
+  placeholder="Search City"
+  name="city"
+  value={filterData.city || ""}
+  onChange={handleChange}
+/>
         </div>
         <div className="max-w-xs">
           <SearchableOption
-            datas={[{ label: "Select Make", value: "" }, ...makeData]}
+            datas={makeData}
             placeholder="Search Make"
             name="make"
-            value={filterData.make}
+            value={filterData.make || ""}
             onChange={handleChange}
           />
         </div>
         <div className="max-w-xs">
           <SearchableOption
-            datas={[{ label: "Select Body Style", value: "" }, ...bodyData]}
+            datas={bodyData}
             placeholder="Search BodyStyle"
             name="bodyStyle"
-            value={filterData.bodyStyle}
+            value={filterData.bodyStyle || ""}
             onChange={handleChange}
           />
         </div>
         <div className="max-w-xs">
           <SearchableOption
-            datas={[{ label: "Select Budget", value: "" }, ...budgetData.map((b) => ({
-              label: b.label,
-              value: `${b.min}-${b.max}`,
-            }))]}
-            placeholder="Search Budget"
-            name="budget"
-            value={
-              filterData.budget.min
-                ? `${filterData.budget.min}-${filterData.budget.max}`
-                : ""
-            }
-            onChange={handleFilterPrice}
-          />
+  datas={budgetData.map((b) => ({
+    label: b.label,
+    value: `${b.min}-${b.max}`,
+  }))}
+  placeholder="Search Budget"
+  name="budget"
+  value={
+    filterData.budget.min
+      ? `${filterData.budget.min}-${filterData.budget.max}`
+      : ""
+  }
+  onChange={handleFilterPrice}
+/>
         </div>
       </div>
     </div>

@@ -295,7 +295,7 @@ const VehicleFinderSection = () => {
 
                 <div className="mt-3 flex justify-between">
                   <button className="bg-[#b73439] text-white text-sm px-3 py-1 rounded hover:bg-red-700">
-                    Detail View
+                     View Details
                   </button>
                 </div>
               </div>

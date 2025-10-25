@@ -174,7 +174,7 @@ const ContactForm = () => {
               ></path>
             </svg>
           )}
-          {loading ? "Submitting..." : "Submit"}
+          {loading ? "Submitting..." : "Send Message"}
         </button>
       </form>
     </div>

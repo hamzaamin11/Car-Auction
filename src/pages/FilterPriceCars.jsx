@@ -281,12 +281,12 @@ const FilterPriceCars = () => {
         </div>
 
         {/* Filters */}
-        <div className="relative w-full max-w-sm">
+      <div className="relative w-full max-w-sm">
           <label className="block text-sm font-medium text-gray-700">
             Select Body Style
           </label>
           <Select
-            options={[{ label: "Select All Type", value: "" }, ...BodyType]}
+            options={[{ label: "Select All Type " , value: "" }, ...BodyType]}
             value={
               BodyType.find(
                 (option) => option.value === filterData.vehicleType
@@ -296,6 +296,12 @@ const FilterPriceCars = () => {
             placeholder="Select Body Style"
             isSearchable
             className="w-full"
+            styles={{
+              singleValue: (provided, state) => ({
+                ...provided,
+                color: state.data.value === "" ? "#d1d5db" : "#111827",
+              }),
+            }}
           />
         </div>
 
@@ -317,6 +323,12 @@ const FilterPriceCars = () => {
             placeholder="Select Year"
             isSearchable
             className="w-full"
+            styles={{
+              singleValue: (provided, state) => ({
+                ...provided,
+                color: state.data.value === "" ? "#d1d5db" : "#111827",
+              }),
+            }}
           />
         </div>
 
@@ -338,6 +350,12 @@ const FilterPriceCars = () => {
             placeholder="Select Make"
             isSearchable
             className="w-full"
+            styles={{
+              singleValue: (provided, state) => ({
+                ...provided,
+                color: state.data.value === "" ? "#d1d5db" : "#111827",
+              }),
+            }}
           />
         </div>
 
@@ -362,6 +380,12 @@ const FilterPriceCars = () => {
             placeholder="Select Model"
             isSearchable
             className="w-full"
+            styles={{
+              singleValue: (provided, state) => ({
+                ...provided,
+                color: state.data.value === "" ? "#d1d5db" : "#111827",
+              }),
+            }}
           />
         </div>
 
@@ -386,6 +410,12 @@ const FilterPriceCars = () => {
             placeholder="Select Location"
             isSearchable
             className="w-full"
+            styles={{
+              singleValue: (provided, state) => ({
+                ...provided,
+                color: state.data.value === "" ? "#d1d5db" : "#111827",
+              }),
+            }}
           />
         </div>
 

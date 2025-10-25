@@ -169,7 +169,7 @@ export const PartnerForm = () => {
         {/* City */}
         <div>
           <label className="block mb-1 text-sm text-gray-900 font-bold">
-            City / Location
+            City 
           </label>
           <input
             type="text"
