@@ -22,11 +22,11 @@ const Sidebar = () => {
       icon: <FaCar />,
       children: [
         { name: "Vehicle List", path: "/admin/vehicles" },
-        { name: "ForApprovalVehicles", path: "/admin/approval" },
-        { name: "Vehicle Make List", path: "/admin/addbrand" },
+        { name: "For Approval Vehicles", path: "/admin/approval" },
+        { name: "Vehicle Brand List", path: "/admin/addbrand" },
         { name: "Vehicle Model List", path: "/admin/addmodel" },
         { name: "Vehicle Series List", path: "/admin/addseries" },
-        { name: "Add City", path: "/admin/city" },
+        { name: "City List", path: "/admin/city" },
 
         // { name: "View Details", path: "/admin/vehicle-details" },
       ],

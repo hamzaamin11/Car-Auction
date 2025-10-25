@@ -57,7 +57,7 @@ const JoinAuctionTable = ({ allLive, upComing }) => {
         {/* Desktop Table */}
         <div className="hidden md:block bg-white rounded-xl shadow-lg overflow-hidden border border-gray-100">
           <div className="bg-blue-900 p-3 text-white font-semibold text-sm uppercase tracking-wide">
-            Current Live Auctions
+           Live Auctions
           </div>
           <table className="w-full text-sm">
             <thead className="bg-gray-50 text-gray-700 border-b">

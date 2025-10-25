@@ -181,7 +181,7 @@ export default function ManageUsers() {
                   key={user.id}
                   className="hover:bg-indigo-50 transition-colors"
                 >
-                  <td className="px-6 py-4">
+                  <td className="px-6 ">
                     <div className="flex items-center gap-3">
                       <UserImage user={user} size="md" />
                       <span className="font-medium text-gray-900">

@@ -111,26 +111,33 @@ export const CitiesList = () => {
       </div>
 
       <div className="overflow-x-auto">
-        <table className="min-w-full bg-white shadow-md rounded-lg overflow-hidden">
+        <table className="min-w-full bg-white shadow-md rounded-lg overflow-hidden table-auto">
           <thead className="bg-[#191970] text-white text-base">
             <tr>
-              <th className="py-3 px-4 text-left">SR#</th>
-              <th className="py-2 px-10 text-left">City Name</th>
-              <th className="px-4 py-3 text-center">Action</th>
+              <th className="py-3 px-6 text-left w-1/12">SR#</th>
+              <th className="py-3 px-6 text-center w-full">City Name</th>
+              <th className="py-3 px-6 text-center w-4/12">Action</th>
             </tr>
           </thead>
+
           <tbody>
             {allCities?.map((city, index) => (
-              <tr key={city.id} className="border-b">
-             <td className="py-2 px-4">{(pageNo - 1) * 10 + index + 1}</td>
-                <td className="py-2 px-10">
-                  {city.cityName.charAt(0).toUpperCase() +
-                    city.cityName.slice(1)}
+              <tr
+                key={city.id}
+                className="border-b hover:bg-gray-50 transition-colors duration-200"
+              >
+                <td className="py-3 px-6 text-gray-700">
+                  {(pageNo - 1) * 10 + index + 1}
                 </td>
-                <td className="py-2 px-4 flex gap-2 justify-center">
+
+                <td className="py-3 px-6 text-gray-800 capitalize  text-center w-full">
+                  {city.cityName}
+                </td>
+
+                <td className="py-3 px-6 text-center">
                   <button
                     onClick={() => handleEditBtn(city)}
-                    className="px-3 py-1 text-sm border border-yellow-500 text-yellow-500 rounded-md hover:bg-yellow-500 hover:text-white transition hover:cursor-pointer"
+                    className="px-4 py-1 text-sm border border-yellow-500 text-yellow-600 rounded-md hover:bg-yellow-500 hover:text-white transition"
                   >
                     Edit
                   </button>

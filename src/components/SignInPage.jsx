@@ -77,7 +77,7 @@ const SignInPage = () => {
     >
       {/* Form Box */}
       <div className="bg-white/90 backdrop-blur-md rounded-2xl shadow-2xl max-w-md w-full p-8">
-        <h2 className="text-3xl font-extrabold text-gray-800 mb-6 text-center">
+        <h2 className="text-3xl font-bold text-gray-800 mb-6 text-center">
           Sign In
         </h2>
 

@@ -105,16 +105,23 @@ export const ContactList = () => {
       <>
         {/* Desktop Table */}
         <div className="hidden md:block">
-          <table className="w-full bg-white shadow-md rounded-lg text-xs sm:text-sm">
-            <thead className="bg-[#191970] text-white">
+          <table className="w-full bg-white shadow-md rounded-lg overflow-hidden text-xs sm:text-sm">
+            {/* Header */}
+            <thead className="bg-[#191970] text-white rounded-t-lg">
               <tr>
-                <th className="py-3 px-4 text-left w-[10%]">SR#</th>
+                <th className="py-3 px-4 text-left w-[10%] rounded-tl-lg">
+                  SR#
+                </th>
                 <th className="py-3 px-4 text-left w-[25%]">Name</th>
                 <th className="py-3 px-4 text-left w-[30%]">Email</th>
                 <th className="py-3 px-4 text-left w-[20%]">Contact</th>
-                <th className="py-3 px-4 text-center w-[15%]">Action</th>
+                <th className="py-3 px-4 text-center w-[15%] rounded-tr-lg">
+                  Action
+                </th>
               </tr>
             </thead>
+
+            {/* Body */}
             <tbody>
               {currentItems.length > 0 ? (
                 currentItems.map((contact, index) => (
@@ -125,18 +132,12 @@ export const ContactList = () => {
                     <td className="py-2 px-4 whitespace-nowrap">
                       {indexOfFirstItem + index + 1}
                     </td>
-                    <td className="py-2 px-4">
-                      {contact?.subject.charAt(0).toUpperCase() +
-                        contact?.subject.slice(1)}
-                    </td>
-                    <td className="py-2 px-4">
-                      {contact?.email.charAt(0).toUpperCase() +
-                        contact?.email.slice(1)}
-                    </td>
+                    <td className="py-2 px-4 capitalize">{contact?.subject}</td>
+                    <td className="py-2 px-4">{contact?.email}</td>
                     <td className="py-2 px-4 whitespace-nowrap">
                       {contact?.contactNumber}
                     </td>
-                    <td className="py-2 px-4 flex justify-center">
+                    <td className="py-2 px-4 text-center">
                       <button
                         onClick={() => handleView(contact)}
                         className="px-4 py-1 text-xs sm:text-sm border border-indigo-500 text-indigo-500 rounded-md hover:bg-indigo-600 hover:text-white transition"
@@ -188,7 +189,10 @@ export const ContactList = () => {
                     </span>
                   </p>
                   <p className="flex justify-between">
-                    <span className="font-bold text-gray-900"> Customer Message</span>
+                    <span className="font-bold text-gray-900">
+                      {" "}
+                      Customer Message
+                    </span>
                     <span className="text-gray-700 text-xs">
                       {contact?.description?.length > 50
                         ? `${contact?.description.slice(0, 50)}...`
@@ -213,19 +217,15 @@ export const ContactList = () => {
                 currentPage === 1 ? "hidden" : "block"
               }`}
               onClick={handlePrevPage}
-         
             >
               ‹ Prev
             </button>
             <div></div>
             <button
               className={`bg-blue-950 text-white px-5 py-2 rounded ${
-                currentPage === totalPages
-                  ? "hidden"
-                  : "block"
+                currentPage === totalPages ? "hidden" : "block"
               }`}
               onClick={handleNextPage}
-              
             >
               Next ›
             </button>
@@ -251,7 +251,7 @@ export const ContactList = () => {
                 <span className="block font-semibold text-gray-700 mb-2">
                   Customer Message:
                 </span>
-                <div className="bg-gray-100 p-3 rounded-md text-gray-800 text-sm leading-relaxed shadow-inner">
+                <div className="bg-gray-100 p-3 rounded-md text-gray-800 text-sm  break-words overflow-y-auto">
                   {selectedContact?.description || "No message provided."}
                 </div>
               </div>

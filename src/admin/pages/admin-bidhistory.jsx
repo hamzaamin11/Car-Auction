@@ -188,7 +188,7 @@ const AdminBidHistory = () => {
                               transmission,
                               color,
                               images: [],
-                             ...currentItems[index],
+                              ...currentItems[index],
                             });
                             setCurrentImageIndex(0);
                           }}
@@ -230,15 +230,19 @@ const AdminBidHistory = () => {
                 <button
                   onClick={() => handlePageChange(currentPage - 1)}
                   disabled={currentPage === 1}
-                  className={`px-4 py-2 bg-blue-950 text-white rounded disabled:opacity-50  ${currentPage === 1 ? 'hidden' : 'block'}`}
+                  className={`px-4 py-2 bg-blue-950 text-white rounded disabled:opacity-50  ${
+                    currentPage === 1 ? "hidden" : "block"
+                  }`}
                 >
-                 ‹  Prev
+                  ‹ Prev
                 </button>
                 <div></div>
                 <button
                   onClick={() => handlePageChange(currentPage + 1)}
                   disabled={currentPage === totalPages}
-                  className={`px-4 py-2 bg-blue-950 text-white rounded disabled:opacity-50 transition ${currentPage === totalPages ? 'hidden' : 'block'}`}
+                  className={`px-4 py-2 bg-blue-950 text-white rounded disabled:opacity-50 transition ${
+                    currentPage === totalPages ? "hidden" : "block"
+                  }`}
                 >
                   Next ›
                 </button>
@@ -505,7 +509,9 @@ const AdminBidHistory = () => {
 
                     <div className="grid grid-cols-2 gap-4">
                       <div>
-                        <p className="text-sm text-gray-500">Certify Status:</p>
+                        <p className="text-sm text-gray-500">
+                          Certification Status:
+                        </p>
                         <p className="font-semibold text-gray-900">
                           {selectedVehicle.certifyStatus || "N/A"}
                         </p>
@@ -520,7 +526,7 @@ const AdminBidHistory = () => {
 
                     <div className="grid grid-cols-2 gap-4">
                       <div>
-                        <p className="text-sm text-gray-500">Mileage:</p>
+                        <p className="text-sm text-gray-500">Meter Reading:</p>
                         <p className="font-semibold text-gray-900">
                           {selectedVehicle.mileage || "N/A"}
                         </p>

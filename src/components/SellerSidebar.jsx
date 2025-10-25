@@ -19,7 +19,7 @@ const SellerSidebar = () => {
       name: "Vehicles",
       icon: <FaCar />,
       children: [
-        { name: "Add Vehicle", path: "/seller/addVehicle" }, // Matches <AddAdminVehicle />
+        { name: "Vehicle List ", path: "/seller/addVehicle" }, // Matches <AddAdminVehicle />
         // { name: "Add Prices", path: "/seller/vehicle-prices" }, // Matches <SellerVehiclePrices />
         // { name: "Add Specs", path: "/seller/vehicle-spects" }, // Matches <SellerVehicleSpects />
         // { name: "View Details", path: "/seller/vehicle-details" }, // Matches <SellerVehicleDetails />
@@ -37,7 +37,7 @@ const SellerSidebar = () => {
       name: "My Bids",
       icon: <FaHistory />,
       children: [
-        { name: "My Bids", path: "/seller/my-bids" }, // Matches <MyBids />
+        { name: "Bid Hsitory", path: "/seller/my-bids" }, // Matches <MyBids />
         //   { name: "Lots Lost", path: "/seller/lots-lost" },  // Matches <LotsLost />
         //   { name: "Lots Won", path: "/seller/lots-won" },  // Matches <LotsWon />
       ],

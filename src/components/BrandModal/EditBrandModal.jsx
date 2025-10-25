@@ -46,7 +46,7 @@ export const EditBrandModal = ({
       console.log("Error updating brand:", error);
       await Swal.fire({
         title: "Error!",
-        text: "Something went wrong.",
+        text: error?.response?.data?.message,
         icon: "error",
         confirmButtonColor: "#9333ea",
       });
@@ -82,6 +82,7 @@ export const EditBrandModal = ({
               placeholder="Enter brand name"
               className="w-full border border-gray-300 rounded px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500"
               required
+              maxLength={15}
             />
           </div>
 

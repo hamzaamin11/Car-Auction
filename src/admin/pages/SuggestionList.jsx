@@ -217,16 +217,13 @@ export const SuggestionList = () => {
                 currentPage === 1 ? "hidden" : "block"
               }`}
               onClick={handlePrevPage}
-          
             >
               ‹ Prev
             </button>
             <div></div>
             <button
               className={`bg-blue-950 text-white px-5 py-2 rounded ${
-                currentPage === totalPages
-                  ? "hidden"
-                  : "block"
+                currentPage === totalPages ? "hidden" : "block"
               }`}
               onClick={handleNextPage}
               disabled={currentPage === totalPages}
@@ -255,9 +252,9 @@ export const SuggestionList = () => {
                 <span className="font-semibold text-gray-600">
                   Customer Suggestion:
                 </span>
-                <p className="mt-1 text-gray-700 bg-gray-50 p-3 rounded-md shadow-sm">
+                <div className="bg-gray-100 p-3 rounded-md text-gray-800 text-sm break-words overflow-y-auto">
                   {selectedSuggestion.suggestion || "No suggestion provided."}
-                </p>
+                </div>
               </div>
             </div>
           </div>

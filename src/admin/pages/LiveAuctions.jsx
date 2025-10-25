@@ -152,7 +152,7 @@ export default function LiveAuctions() {
                     Condition
                   </th>
                   <th className="px-4 py-3 text-left text-sm font-semibold">
-                    Seller Offer
+                    Price
                   </th>
                   <th className="px-4 py-3 text-left text-sm font-semibold">
                     End Time

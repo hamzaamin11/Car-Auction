@@ -130,7 +130,7 @@ export const BecomePartnerList = () => {
                       {msg?.name.charAt(0).toUpperCase() + msg?.name.slice(1)}
                     </td>
                     <td className="py-2 px-4 whitespace-nowrap text-xs">
-                      {msg?.email.charAt(0).toUpperCase() + msg?.email.slice(1)}
+                      {msg?.email.charAt(0).toUpperCase() + msg?.email.slice(1)}.
                     </td>
                     <td className="py-2 px-4 whitespace-nowrap">
                       {msg?.contact}
@@ -187,7 +187,9 @@ export const BecomePartnerList = () => {
                     <span className="text-gray-700">{msg?.contact}</span>
                   </p>
                   <p className="flex justify-between">
-                    <span className="font-bold text-gray-900">Business Type</span>
+                    <span className="font-bold text-gray-900">
+                      Business Type
+                    </span>
                     <span className="text-gray-700">
                       {msg?.bussinessType.charAt(0).toUpperCase() +
                         msg?.bussinessType.slice(1)}
@@ -219,16 +221,13 @@ export const BecomePartnerList = () => {
                 currentPage === 1 ? "hidden" : "block"
               }`}
               onClick={handlePrevPage}
-             
             >
               ‹ Prev
             </button>
             <div></div>
             <button
               className={`bg-blue-950 text-white px-5 py-2 rounded ${
-                currentPage === totalPages
-                  ? "hidden"
-                  : "block"
+                currentPage === totalPages ? "hidden" : "block"
               }`}
               onClick={handleNextPage}
               disabled={currentPage === totalPages}
@@ -257,7 +256,7 @@ export const BecomePartnerList = () => {
                 <span className="block font-semibold text-gray-700 mb-2">
                   Partner Message:
                 </span>
-                <div className="bg-gray-100 p-3 rounded-md text-gray-800 text-sm leading-relaxed shadow-inner">
+                <div className="bg-gray-100 p-3 rounded-md text-gray-800 text-sm break-words overflow-y-auto">
                   {selectedPartner.message}
                 </div>
               </div>

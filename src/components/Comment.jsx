@@ -22,6 +22,8 @@ const LiveCommentsModal = ({
   const userId = currentUser?.id;
   const { id: vehicleId } = useParams();
 
+  console.log(" =>", allCustomerBid);
+
   const initialState = { vehicleId, userId, maxBid: "" };
   const [bidAmount, setBidAmount] = useState(initialState);
   const [loading, setLoading] = useState(false);
@@ -205,7 +207,7 @@ const LiveCommentsModal = ({
             </div>
           ) : (
             allCustomerBid
-              .filter((bid) => bid.role !== "admin" || bid.role !== "seller")
+              .filter((bid) => bid.role !== "admin" && bid.role !== "seller")
               .map((bid, i) => (
                 <div
                   key={i}
@@ -216,7 +218,7 @@ const LiveCommentsModal = ({
                       {bid.name || "Anonymous"}
                     </p>
                     <p className="text-xs text-gray-400">
-                      {moment(bid.createdAt).format("hh:mm A")}
+                      {moment(bid.bidUpdatedAt).format("hh:mm A")}
                     </p>
                   </div>
                   <p className="text-green-600 font-bold text-lg">

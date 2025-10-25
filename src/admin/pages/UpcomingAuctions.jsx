@@ -31,7 +31,7 @@ export default function UpcomingAuctions() {
   const [pageNo, setPageNo] = useState(1);
   const [search, setSearch] = useState("");
   const [loading, setLoading] = useState(false);
-  
+
   // NEW: Modal states
   const [isViewModalOpen, setIsViewModalOpen] = useState(false);
   const [currentImageIndex, setCurrentImageIndex] = useState(0);
@@ -116,7 +116,7 @@ export default function UpcomingAuctions() {
   // NEW: Image navigation
   const handlePrevImage = () => {
     if (selectedVehicle?.images) {
-      setCurrentImageIndex((prev) => 
+      setCurrentImageIndex((prev) =>
         prev === 0 ? selectedVehicle.images.length - 1 : prev - 1
       );
     }
@@ -124,7 +124,7 @@ export default function UpcomingAuctions() {
 
   const handleNextImage = () => {
     if (selectedVehicle?.images) {
-      setCurrentImageIndex((prev) => 
+      setCurrentImageIndex((prev) =>
         prev === selectedVehicle.images.length - 1 ? 0 : prev + 1
       );
     }
@@ -150,13 +150,13 @@ export default function UpcomingAuctions() {
 
   return (
     <>
-      <div className="max-w-7xl mx-auto px-2 lg:py-6 py-3 font-sans">
+      <div className="max-w-8xl mx-4 px-2 lg:py-6 py-3 font-sans">
         <div className="flex flex-col sm:flex-row justify-between items-center gap-4 mb-2">
           <h1 className="text-xl lg:text-3xl font-bold text-gray-900">
             Upcoming Auctions
           </h1>
-          <div className="relative w-full max-w-md">
-            <span className="absolute inset-y-0 left-0 flex items-center pl-3 text-gray-400">
+          <div className="relative w-full max-w-md mb-1">
+            <span className="absolute inset-y-0 left-0 flex items-center pl-3 text-gray-400 ">
               <svg
                 xmlns="http://www.w3.org/2000/svg"
                 className="h-5 w-5"
@@ -245,12 +245,8 @@ export default function UpcomingAuctions() {
                           className="w-16 h-16 object-cover rounded"
                         />
                       </td>
-                      <td className="px-4 py-3 text-gray-700">
-                        {user.make}
-                      </td>
-                      <td className="px-4 py-3 text-gray-700">
-                        {user.model}
-                      </td>
+                      <td className="px-4 py-3 text-gray-700">{user.make}</td>
+                      <td className="px-4 py-3 text-gray-700">{user.model}</td>
                       <td className="px-4 py-3 text-center text-gray-700">
                         {user?.vehicleCondition}
                       </td>
@@ -259,7 +255,7 @@ export default function UpcomingAuctions() {
                       </td>
                       <td className="px-4 py-3 text-gray-700">
                         {user.startTime
-                          ? moment(user.startTime).local().format("hh:mm:ss A")
+                          ? moment(user.startTime).local().format("hh:mm A")
                           : "--"}
                       </td>
                       <td className="px-4 py-3 text-gray-700">
@@ -312,9 +308,7 @@ export default function UpcomingAuctions() {
                       </span>
                     </p>
                     <p className="flex justify-between">
-                      <span className="text-gray-900 font-bold">
-                        Price
-                      </span>
+                      <span className="text-gray-900 font-bold">Price</span>
                       <span className="text-gray-500">{user?.sellerOffer}</span>
                     </p>
                     <p className="flex justify-between">
@@ -386,7 +380,7 @@ export default function UpcomingAuctions() {
             onClose={() => setSelectedAuctionId(null)}
           />
         )}
-        
+
         {isOpen === "update" && (
           <AdminUpdatebid
             selectedVehicle={selectedVehicle}
@@ -421,95 +415,156 @@ export default function UpcomingAuctions() {
                   <div className="space-y-4">
                     <div className="grid grid-cols-2 gap-4">
                       <div>
-                        <p className="text-sm font-bold text-gray-900">Owner Name:</p>
-                        <p className="text-base text-gray-900">{selectedVehicle.name || "—"}</p>
+                        <p className="text-sm font-bold text-gray-900">
+                          Owner Name:
+                        </p>
+                        <p className="text-base text-gray-900">
+                          {selectedVehicle.name || "—"}
+                        </p>
                       </div>
                       <div>
                         <p className="text-sm font-bold text-gray-900">Make:</p>
-                        <p className="text-base text-gray-900">{selectedVehicle.make || "—"}</p>
+                        <p className="text-base text-gray-900">
+                          {selectedVehicle.make || "—"}
+                        </p>
                       </div>
                     </div>
 
                     <div className="grid grid-cols-2 gap-4">
                       <div>
-                        <p className="text-sm font-bold text-gray-900">Model:</p>
-                        <p className="text-base text-gray-900">{selectedVehicle.model || "—"}</p>
+                        <p className="text-sm font-bold text-gray-900">
+                          Model:
+                        </p>
+                        <p className="text-base text-gray-900">
+                          {selectedVehicle.model || "—"}
+                        </p>
                       </div>
                       <div>
-                        <p className="text-sm font-bold text-gray-900">Series:</p>
-                        <p className="text-base text-gray-900">{selectedVehicle.series || "—"}</p>
-                      </div>
-                    </div>
-
-                    <div className="grid grid-cols-2 gap-4">
-                      <div>
-                        <p className="text-sm font-bold text-gray-900">Color:</p>
-                        <p className="text-base text-gray-900">{selectedVehicle.color || "—"}</p>
-                      </div>
-                      <div>
-                        <p className="text-sm font-bold text-gray-900">Transmission:</p>
-                        <p className="text-base text-gray-900">{selectedVehicle.transmission || "—"}</p>
+                        <p className="text-sm font-bold text-gray-900">
+                          Series:
+                        </p>
+                        <p className="text-base text-gray-900">
+                          {selectedVehicle.series || "—"}
+                        </p>
                       </div>
                     </div>
 
                     <div className="grid grid-cols-2 gap-4">
                       <div>
-                        <p className="text-sm font-bold text-gray-900">Fuel Type:</p>
-                        <p className="text-base text-gray-900 capitalize">{selectedVehicle.fuelType || "—"}</p>
+                        <p className="text-sm font-bold text-gray-900">
+                          Color:
+                        </p>
+                        <p className="text-base text-gray-900">
+                          {selectedVehicle.color || "—"}
+                        </p>
                       </div>
                       <div>
-                        <p className="text-sm font-bold text-gray-900">Body Style:</p>
-                        <p className="text-base text-gray-900">{selectedVehicle.bodyStyle || "—"}</p>
-                      </div>
-                    </div>
-
-                    <div className="grid grid-cols-2 gap-4">
-                      <div>
-                        <p className="text-sm font-bold text-gray-900">Certify Status:</p>
-                        <p className="text-base text-gray-900">{selectedVehicle.certifyStatus || "—"}</p>
-                      </div>
-                      <div>
-                        <p className="text-sm font-bold text-gray-900">Drive Type:</p>
-                        <p className="text-base text-gray-900 uppercase">{selectedVehicle.driveType || "—"}</p>
+                        <p className="text-sm font-bold text-gray-900">
+                          Transmission:
+                        </p>
+                        <p className="text-base text-gray-900">
+                          {selectedVehicle.transmission || "—"}
+                        </p>
                       </div>
                     </div>
 
                     <div className="grid grid-cols-2 gap-4">
                       <div>
-                        <p className="text-sm font-bold text-gray-900">Meter Reading:</p>
-                        <p className="text-base text-gray-900">{selectedVehicle.mileage || "—"}</p>
+                        <p className="text-sm font-bold text-gray-900">
+                          Fuel Type:
+                        </p>
+                        <p className="text-base text-gray-900 capitalize">
+                          {selectedVehicle.fuelType || "—"}
+                        </p>
+                      </div>
+                      <div>
+                        <p className="text-sm font-bold text-gray-900">
+                          Body Style:
+                        </p>
+                        <p className="text-base text-gray-900">
+                          {selectedVehicle.bodyStyle || "—"}
+                        </p>
+                      </div>
+                    </div>
+
+                    <div className="grid grid-cols-2 gap-4">
+                      <div>
+                        <p className="text-sm font-bold text-gray-900">
+                          Certify Status:
+                        </p>
+                        <p className="text-base text-gray-900">
+                          {selectedVehicle.certifyStatus || "—"}
+                        </p>
+                      </div>
+                      <div>
+                        <p className="text-sm font-bold text-gray-900">
+                          Drive Type:
+                        </p>
+                        <p className="text-base text-gray-900 uppercase">
+                          {selectedVehicle.driveType || "—"}
+                        </p>
+                      </div>
+                    </div>
+
+                    <div className="grid grid-cols-2 gap-4">
+                      <div>
+                        <p className="text-sm font-bold text-gray-900">
+                          Meter Reading:
+                        </p>
+                        <p className="text-base text-gray-900">
+                          {selectedVehicle.mileage || "—"}
+                        </p>
                       </div>
                       <div>
                         <p className="text-sm font-bold text-gray-900">Year:</p>
-                        <p className="text-base text-gray-900">{selectedVehicle.year || "—"}</p>
+                        <p className="text-base text-gray-900">
+                          {selectedVehicle.year || "—"}
+                        </p>
                       </div>
                     </div>
 
                     <div className="grid grid-cols-2 gap-4">
                       <div>
-                        <p className="text-sm font-bold text-gray-900">Condition:</p>
-                        <p className="text-base text-gray-900 capitalize">{selectedVehicle.vehicleCondition || "—"}</p>
+                        <p className="text-sm font-bold text-gray-900">
+                          Condition:
+                        </p>
+                        <p className="text-base text-gray-900 capitalize">
+                          {selectedVehicle.vehicleCondition || "—"}
+                        </p>
                       </div>
                       <div>
-                        <p className="text-sm font-bold text-gray-900">Price:</p>
-                        <p className="text-base text-gray-900 capitalize">{selectedVehicle.sellerOffer || selectedVehicle.buyNowPrice}</p>
+                        <p className="text-sm font-bold text-gray-900">
+                          Price:
+                        </p>
+                        <p className="text-base text-gray-900 capitalize">
+                          {selectedVehicle.sellerOffer ||
+                            selectedVehicle.buyNowPrice}
+                        </p>
                       </div>
                     </div>
 
                     <div className="grid grid-cols-2 gap-4">
                       <div>
-                        <p className="text-sm font-bold text-gray-900">Start Time:</p>
+                        <p className="text-sm font-bold text-gray-900">
+                          Start Time:
+                        </p>
                         <p className="text-base text-gray-900">
                           {selectedVehicle.startTime
-                            ? moment(selectedVehicle.startTime).local().format("hh:mm A")
+                            ? moment(selectedVehicle.startTime)
+                                .local()
+                                .format("hh:mm A")
                             : "—"}
                         </p>
                       </div>
                       <div>
-                        <p className="text-sm font-bold text-gray-900">End Time:</p>
+                        <p className="text-sm font-bold text-gray-900">
+                          End Time:
+                        </p>
                         <p className="text-base text-gray-900">
                           {selectedVehicle.endTime
-                            ? moment(selectedVehicle.endTime).local().format("hh:mm A")
+                            ? moment(selectedVehicle.endTime)
+                                .local()
+                                .format("hh:mm A")
                             : "—"}
                         </p>
                       </div>
@@ -517,19 +572,20 @@ export default function UpcomingAuctions() {
 
                     <div className="grid grid-cols-2 gap-4">
                       <div>
-                        <p className="text-sm font-bold text-gray-900">Auction Status:</p>
-                        <p className="text-base text-gray-900 capitalize">{selectedVehicle.auctionStatus || "—"}</p>
-                      </div>
-                      <div>
-                        <p className="text-sm font-bold text-gray-900">Bid Status:</p>
-                        <p className="text-base text-gray-900">{selectedVehicle.bidStatus || "—"}</p>
+                        <p className="text-sm font-bold text-gray-900">
+                          Auction Status:
+                        </p>
+                        <p className="text-base text-gray-900 capitalize">
+                          {selectedVehicle.auctionStatus || "—"}
+                        </p>
                       </div>
                     </div>
                   </div>
 
                   {/* Right Side - Image Gallery */}
                   <div className="flex flex-col items-center">
-                    {selectedVehicle.images && selectedVehicle.images.length > 0 ? (
+                    {selectedVehicle.images &&
+                    selectedVehicle.images.length > 0 ? (
                       <>
                         {/* Main Image */}
                         <div className="w-full h-64 rounded-lg overflow-hidden bg-gray-100 mb-4">
@@ -572,7 +628,8 @@ export default function UpcomingAuctions() {
 
                         {/* Image Counter */}
                         <p className="text-sm text-gray-600 mt-2">
-                          {currentImageIndex + 1} / {selectedVehicle.images.length}
+                          {currentImageIndex + 1} /{" "}
+                          {selectedVehicle.images.length}
                         </p>
                       </>
                     ) : (
