@@ -10,6 +10,7 @@ const SearchableOption = ({ datas, placeholder, name, value, onChange }) => {
   const [activeIndex, setActiveIndex] = useState(-1);
   const containerRef = useRef(null);
 
+  // Update filtered data based on search input
   useEffect(() => {
     setFilteredData(
       datas.filter((item) =>
@@ -19,20 +20,23 @@ const SearchableOption = ({ datas, placeholder, name, value, onChange }) => {
     setActiveIndex(-1);
   }, [search, datas]);
 
+  // Handle selection of an option
   const handleSelect = (val) => {
     onChange({ target: { name, value: val } });
-    setSearch("");
+    setSearch(""); // Clear search after selection
     setShowOptions(false);
+    setActiveIndex(-1);
   };
 
+  // Handle keyboard navigation
   const handleKeyDown = (e) => {
-    if (!showOptions) return;
-
     if (e.key === "ArrowDown") {
       e.preventDefault();
+      setShowOptions(true);
       setActiveIndex((prev) => Math.min(prev + 1, filteredData.length - 1));
     } else if (e.key === "ArrowUp") {
       e.preventDefault();
+      setShowOptions(true);
       setActiveIndex((prev) => Math.max(prev - 1, 0));
     } else if (e.key === "Enter") {
       e.preventDefault();
@@ -40,32 +44,46 @@ const SearchableOption = ({ datas, placeholder, name, value, onChange }) => {
         handleSelect(filteredData[activeIndex].value);
       }
     } else if (e.key === "Escape") {
+      setSearch("");
       setShowOptions(false);
+      setActiveIndex(-1);
     }
   };
 
+  // Close dropdown when clicking outside
   useEffect(() => {
     const handleClickOutside = (event) => {
       if (containerRef.current && !containerRef.current.contains(event.target)) {
         setShowOptions(false);
+        setSearch(""); // Clear search on outside click
+        setActiveIndex(-1);
       }
     };
     document.addEventListener("mousedown", handleClickOutside);
     return () => document.removeEventListener("mousedown", handleClickOutside);
   }, []);
 
+  // Determine input value
+  const inputValue =
+    search || // Show search text when typing
+    (value ? datas.find((d) => d.value === value)?.label : "") || // Show selected label if value exists
+    ""; // Empty if no value or search
+
   return (
     <div className="relative w-full" ref={containerRef}>
       <input
         type="text"
-        placeholder={placeholder}
+        placeholder={value ? "" : placeholder} // Show placeholder only if no value is selected
         className="border p-2 rounded w-full"
-        value={search || datas.find((d) => d.value === value)?.label || ""}
+        value={inputValue}
         onChange={(e) => {
           setSearch(e.target.value);
           setShowOptions(true);
         }}
-        onFocus={() => setShowOptions(true)}
+        onFocus={() => {
+          setShowOptions(true);
+          if (!value) setSearch(""); // Clear search on focus if no value is selected
+        }}
         onKeyDown={handleKeyDown}
       />
       {showOptions && filteredData.length > 0 && (

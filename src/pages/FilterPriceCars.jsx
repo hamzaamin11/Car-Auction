@@ -434,17 +434,7 @@ const FilterPriceCars = () => {
               )}
             </div>
           </div>
-          {filterData.formCash && filterData.toCash && (
-            <button
-              onClick={() => {
-                const updatedFilterData = { ...filterData };
-                navigate(buildFilterUrl(updatedFilterData));
-              }}
-              className="mt-2 bg-blue-500 p-2 px-4 text-white rounded hover:cursor-pointer"
-            >
-              Apply Price Filter
-            </button>
-          )}
+        
         </div>
 
         <div className="flex items-center justify-center">
