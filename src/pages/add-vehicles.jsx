@@ -1129,7 +1129,7 @@ const AddVehicles = () => {
         </section>
 
         <section
-          className="lg:mt-6  overflow-y-auto md:block hidden pb-10 lg:grid lg:grid-cols-2 gap-2"
+          className="lg:mt-6  overflow-y-auto md:block hidden pb-10 space-y-2"
           style={{ maxHeight: "calc(100vh - 210px)" }}
         >
           {loading ? (
