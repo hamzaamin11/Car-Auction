@@ -93,13 +93,10 @@ function AddAdminVehicle({ open, setOpen, onVehicleUpdated }) {
   const [viewModal, setViewModal] = useState(false);
   const [search, setSearch] = useState("");
   const [selectedVehicle, setSelectedVehicle] = useState(null);
-
-  console.log("selectedVehicle", selectedVehicle);
   const [actionMenuOpen, setActionMenuOpen] = useState(null);
   const [pageNo, setPageNo] = useState(1);
   const [selectedCount, setSelectedCount] = useState(0);
   const [price, setPrice] = useState();
-  
 
   const dispatch = useDispatch();
 
@@ -170,9 +167,25 @@ function AddAdminVehicle({ open, setOpen, onVehicleUpdated }) {
   };
 
   const handleFileChange = (e) => {
-    const files = e.target.files;
-    setSelectedCount(files.length);
-    handleAddedImage(e);
+    const files = Array.from(e.target.files);
+    
+    // Check if adding new files would exceed the limit of 5
+    if (vehicle.image.length + files.length > 5) {
+      toast.error("You can add a maximum of 5 images");
+      return;
+    }
+
+    // Update the vehicle state with new images
+    setVehicle((prev) => ({
+      ...prev,
+      image: [...prev.image, ...files],
+    }));
+    
+    // Update selected count to reflect total images
+    setSelectedCount(vehicle.image.length + files.length);
+
+    // Reset the file input to prevent accumulation
+    e.target.value = null;
   };
 
   const handleChange = (e) => {
@@ -263,15 +276,6 @@ function AddAdminVehicle({ open, setOpen, onVehicleUpdated }) {
         confirmButtonColor: "#9333ea",
       });
     }
-  };
-
-  const handleAddedImage = (e) => {
-    const files = Array.from(e.target.files);
-    if (files.length > 5) return toast.error("You can add maximum 5 images");
-    setVehicle((prev) => ({
-      ...prev,
-      image: [...prev.image, ...files],
-    }));
   };
 
   const handleToggle = (prev) => setViewModal(!prev);
@@ -371,19 +375,6 @@ function AddAdminVehicle({ open, setOpen, onVehicleUpdated }) {
     handleGetVehicles();
   }, [pageNo, search]);
 
-  // useEffect(() => {
-  //   if (search.trim() === "") {
-  //     setFilteredVehicles(allVehicles);
-  //   } else {
-  //     const filtered = allVehicles.filter((vehicle) =>
-  //       `${vehicle.make} ${vehicle.model} ${vehicle.series}`
-  //         .toLowerCase()
-  //         .includes(search.toLowerCase())
-  //     );
-  //     setFilteredVehicles(filtered);
-  //   }
-  // }, [search, allVehicles]);
-
   const toggleActionMenu = (vehicleId) => {
     setActionMenuOpen((prev) => (prev === vehicleId ? null : vehicleId));
   };
@@ -401,8 +392,6 @@ function AddAdminVehicle({ open, setOpen, onVehicleUpdated }) {
       setActionMenuOpen(null);
     }
   };
-
-console.log(" =>>>>>>>>>>>>>>filteredVehicles");
 
   return (
     <div className="min-h-screen bg-gray-100 p-4 sm:p-6">
@@ -492,9 +481,9 @@ console.log(" =>>>>>>>>>>>>>>filteredVehicles");
                   />
                 </div>
               </div>
-              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+              <div className="gap-4">
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-1">
+                  <label className="text-sm font-medium text-gray-700 mb-1">
                     Vehicle Drive Type <span className="text-red-500">*</span>
                   </label>
                   <select
@@ -502,7 +491,7 @@ console.log(" =>>>>>>>>>>>>>>filteredVehicles");
                     value={vehicle.driveType}
                     onChange={handleChange}
                     className={`border border-gray-300 px-4 py-2 rounded focus:outline-none focus:ring-2 focus:ring-indigo-500 w-full ${
-                      vehicle.driveType ? "text-gray-900" : "text-gray-400"
+                      vehicle.driveType ? "text-gray-900" : "text-gray-400 "
                     }`}
                   >
                     <option value="">Select Drive Type</option>
@@ -521,7 +510,7 @@ console.log(" =>>>>>>>>>>>>>>filteredVehicles");
                   </select>
                 </div>
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-1 ">
+                  <label className="block text-sm font-medium text-gray-700 mb-1">
                     Vehicle Body Style <span className="text-red-500">*</span>
                   </label>
                   <select
@@ -574,8 +563,6 @@ console.log(" =>>>>>>>>>>>>>>filteredVehicles");
                     value={vehicle?.mileage || ""}
                     onChange={(e) => {
                       const value = e.target.value;
-
-                      // ✅ Allow empty OR valid digits (1–9 followed by up to 6 digits)
                       if (value === "" || /^[1-9][0-9]{0,6}$/.test(value)) {
                         handleChange(e);
                       }
@@ -665,54 +652,49 @@ console.log(" =>>>>>>>>>>>>>>filteredVehicles");
                     </option>
                   </select>
                 </div>
-              <div>
-  <label className="block text-sm font-medium text-gray-700 mb-1">
-    Add Vehicle Price <span className="text-red-500">*</span>
-  </label>
-  <input
-    type="text"
-    name="buyNowPrice"
-    value={vehicle.buyNowPrice}
-    onChange={(e) => {
-      const value = e.target.value;
-
-      // ✅ Allow only numbers not starting with 0 and up to 9 digits
-      if (value === "" || /^[1-9][0-9]{0,8}$/.test(value)) {
-        setPrice(value);
-        setVehicle((prev) => ({
-          ...prev,
-          buyNowPrice: value,
-        }));
-      }
-    }}
-    onBlur={() => {
-      // 🚫 Prevent value less than 5 digits (100000)
-      if (price && parseInt(price) < 100000) {
-       Swal.fire({
-        title: "Error!",
-        text: "VEHICLE PRICE MUST BE 6 DIGITS.",
-        icon: "error",
-        confirmButtonColor: "#9333ea",
-      });
-        setPrice("");
-        setVehicle((prev) => ({
-          ...prev,
-          buyNowPrice: "",
-        }));
-      }
-    }}
-    placeholder="Add Price"
-    inputMode="numeric"
-    className="border border-gray-300 px-4 py-2 rounded focus:outline-none focus:ring-2 focus:ring-indigo-500 w-full"
-  />
-
-  {price && (
-    <p className="mt-2 text-sm text-red-500 font-semibold">
-      {numberToIndianWords(parseInt(price))}
-    </p>
-  )}
-</div>
-
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-1">
+                    Add Vehicle Price <span className="text-red-500">*</span>
+                  </label>
+                  <input
+                    type="text"
+                    name="buyNowPrice"
+                    value={vehicle.buyNowPrice}
+                    onChange={(e) => {
+                      const value = e.target.value;
+                      if (value === "" || /^[1-9][0-9]{0,8}$/.test(value)) {
+                        setPrice(value);
+                        setVehicle((prev) => ({
+                          ...prev,
+                          buyNowPrice: value,
+                        }));
+                      }
+                    }}
+                    onBlur={() => {
+                      if (price && parseInt(price) < 100000) {
+                        Swal.fire({
+                          title: "Error!",
+                          text: "VEHICLE PRICE MUST BE 6 DIGITS.",
+                          icon: "error",
+                          confirmButtonColor: "#9333ea",
+                        });
+                        setPrice("");
+                        setVehicle((prev) => ({
+                          ...prev,
+                          buyNowPrice: "",
+                        }));
+                      }
+                    }}
+                    placeholder="Add Price"
+                    inputMode="numeric"
+                    className="border border-gray-300 px-4 py-2 rounded focus:outline-none focus:ring-2 focus:ring-indigo-500 w-full"
+                  />
+                  {price && (
+                    <p className="mt-2 text-sm text-red-500 font-semibold">
+                      {numberToIndianWords(parseInt(price))}
+                    </p>
+                  )}
+                </div>
               </div>
               <div>
                 <label className="block text-sm font-medium text-gray-700 mb-1">
@@ -788,6 +770,7 @@ console.log(" =>>>>>>>>>>>>>>filteredVehicles");
                       />
                     </label>
                   </div>
+
                 </div>
                 <div className="flex justify-center">
                   <button
@@ -821,7 +804,6 @@ console.log(" =>>>>>>>>>>>>>>filteredVehicles");
               onClick={(e) => handleOutsideClick(e, vehicle.id)}
               className="relative"
             >
-              {/* Desktop: Card View */}
               <div className="hidden lg:flex flex-col lg:flex-row items-start lg:items-center justify-between border rounded-lg hover:shadow-md transition-all duration-200 p-4 gap-4">
                 <div
                   className="relative w-full lg:w-40 h-40 lg:h-24 flex-shrink-0 rounded-md overflow-hidden"
@@ -924,9 +906,7 @@ console.log(" =>>>>>>>>>>>>>>filteredVehicles");
                   )}
                 </div>
               </div>
-
-              {/* Mobile: List View */}
-              <div className="lg:hidden border-b py-4  ">
+              <div className="lg:hidden border-b py-4">
                 <div className="flex items-center gap-3">
                   <div
                     className="w-16 h-16 flex-shrink-0 rounded-md overflow-hidden bg-gray-100"
@@ -1041,7 +1021,7 @@ console.log(" =>>>>>>>>>>>>>>filteredVehicles");
 
       <div className="flex justify-between mt-6 px-2 sm:px-4">
         <button
-          className={`bg-[#191970] text-white px-5 py-2 rounded  ${
+          className={`bg-[#191970] text-white px-5 py-2 rounded ${
             pageNo > 1 ? "block" : "hidden"
           }`}
           onClick={handlePrevPage}

@@ -706,7 +706,9 @@ function EditAdminVehicle({
                     className="hidden"
                   />
                 </label>
+                
               </div>
+              
             </div>
             <div className="flex justify-center">
               <button

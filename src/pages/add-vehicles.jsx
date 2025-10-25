@@ -227,9 +227,35 @@ const AddVehicles = () => {
   };
 
   const handleFileChange = (e) => {
-    const files = e.target.files;
-    setSelectedCount(files.length);
-    handleAddedImage(e);
+    const files = Array.from(e.target.files);
+
+    if (editId) {
+      // Edit mode: Allow up to 5 new images, ignore existing image count
+      if (files.length > 5) {
+        toast.error("You can add a maximum of 5 new images in edit mode.");
+        return;
+      }
+      setVehicleData((prev) => ({
+        ...prev,
+        image: [...(prev.image || []), ...files], // Append new files only
+      }));
+      setSelectedCount(files.length); // Count only new files
+    } else {
+      // Add mode: Limit to 5 images total
+      const currentImageCount = vehicleData.image.length;
+      if (currentImageCount + files.length > 5) {
+        toast.error("You can add a maximum of 5 images.");
+        return;
+      }
+      setVehicleData((prev) => ({
+        ...prev,
+        image: [...prev.image, ...files],
+      }));
+      setSelectedCount(currentImageCount + files.length);
+    }
+
+    // Reset the file input to prevent accumulation
+    e.target.value = null;
   };
 
   const handleGetAllCities = async () => {
@@ -262,9 +288,7 @@ const AddVehicles = () => {
   const handleGetAllVehicleById = async () => {
     try {
       const res = await axios.get(
-        `${BASE_URL}/getVehiclesByUser/${
-          currentUser?.id
-        }?search=${search}&Entry=${10}&page=${pageNo}`
+        `${BASE_URL}/getVehiclesByUser/${currentUser?.id}?search=${search}&Entry=${10}&page=${pageNo}`
       );
       setAllVehicles(res.data);
     } catch (error) {
@@ -318,20 +342,17 @@ const AddVehicles = () => {
     }));
   };
 
-  const handleAddedImage = (e) => {
-    const files = Array.from(e.target.files);
-    setVehicleData((prev) => ({ ...prev, image: [...prev.image, ...files] }));
-  };
-
   const handleEdit = (vehicle) => {
     // Parse the buyNowPrice string (e.g., "34 Lac") to a raw number (e.g., "3400000")
     const rawPrice = parsePrice(vehicle.buyNowPrice).toString();
     console.log("Parsed buyNowPrice:", rawPrice); // Debug to confirm parsing
     setVehicleData({
       ...vehicle,
-      buyNowPrice: rawPrice, // Update vehicleData with raw number
+      buyNowPrice: rawPrice,
+      image: [], // Reset image array to empty for new selections only
     });
-    setImagePreview(vehicle.image || null);
+    setImagePreview(null); // No preview in edit mode
+    setSelectedCount(0); // Reset count to 0, ignoring previous images
     setPrice(rawPrice); // Set price state to raw number
     setFormOpen(true);
     setEditId(vehicle.newVehicleId);
@@ -410,8 +431,6 @@ const AddVehicles = () => {
           value.forEach((file) => {
             formData.append("image", file);
           });
-        } else if (!editId) {
-          formData.append("image", value);
         }
       } else if (value !== null && value !== undefined) {
         formData.append(key, value.toString());
@@ -429,9 +448,9 @@ const AddVehicles = () => {
       setVehicleData(initialFields);
       setImage(null);
       setImagePreview(null);
+      setSelectedCount(0);
       setPrice("");
       setFormOpen(false);
-      setEditId(null);
       setEditId(null);
       toast.success(
         editId ? "Vehicle updated successfully" : "Vehicle added successfully"
@@ -444,8 +463,8 @@ const AddVehicles = () => {
       setLoading(false);
     }
   };
+
   const handleDelete = async (vehicleId, approval) => {
-    // Prevent deletion if approval is 'Y'
     if (approval === "Y") {
       await Swal.fire({
         title: "Cannot Delete Vehicle",
@@ -457,7 +476,6 @@ const AddVehicles = () => {
       return;
     }
 
-    // Ask for confirmation
     const result = await Swal.fire({
       title: "Are you sure?",
       text: "This vehicle will be deleted.",
@@ -470,7 +488,6 @@ const AddVehicles = () => {
 
     if (!result.isConfirmed) return;
 
-    // Proceed with deletion
     try {
       const res = await fetch(`${BASE_URL}/seller/deleteVehicle/${vehicleId}`, {
         method: "PATCH",
@@ -484,7 +501,7 @@ const AddVehicles = () => {
         confirmButtonColor: "#9333ea",
       });
 
-      handleGetAllVehicleById(); // Refresh vehicle list
+      handleGetAllVehicleById();
     } catch (err) {
       await Swal.fire({
         title: "Error",
@@ -616,6 +633,7 @@ const AddVehicles = () => {
                 setImage(null);
                 setImagePreview(null);
                 setEditId(null);
+                setSelectedCount(0);
                 setPrice("");
                 setErrorMsg("");
                 setSuccessMsg("");
@@ -975,6 +993,7 @@ const AddVehicles = () => {
                         />
                       </label>
                     </div>
+                 
                   </div>
                   <div className="flex justify-center">
                     <button
@@ -1096,7 +1115,7 @@ const AddVehicles = () => {
                               handleDelete(
                                 vehicle.newVehicleId,
                                 vehicle.approval
-                              ); // Pass vehicleId and approval
+                              );
                             }}
                             className="block w-full text-left px-4 py-2 text-sm text-red-600 hover:bg-red-100 rounded-b-lg"
                           >
@@ -1129,7 +1148,7 @@ const AddVehicles = () => {
         </section>
 
         <section
-          className="lg:mt-6  overflow-y-auto md:block hidden pb-10 lg:grid lg:grid-cols-2 gap-2"
+          className="lg:mt-6 overflow-y-auto md:block hidden pb-10 lg:grid lg:grid-cols-2 gap-2"
           style={{ maxHeight: "calc(100vh - 210px)" }}
         >
           {loading ? (
@@ -1232,7 +1251,7 @@ const AddVehicles = () => {
                               handleDelete(
                                 vehicle.newVehicleId,
                                 vehicle.approval
-                              ); // Pass vehicleId and approval
+                              );
                             }}
                             className="block w-full text-left px-4 py-2 text-sm text-red-600 hover:bg-red-100 rounded-b-lg"
                           >
