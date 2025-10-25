@@ -62,7 +62,7 @@ const AudiQ2Prices = () => {
                     onClick={() => navigate(`/detailbid/${item.id}`)}
                     className="bg-red-600 text-white px-3 py-1 text-sm rounded hover:cursor-pointer"
                   >
-                    Bid Place
+                    View Detail
                   </button>
                 </td>
               </tr>
