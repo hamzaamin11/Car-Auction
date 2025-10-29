@@ -6,6 +6,7 @@ import { toast, ToastContainer } from "react-toastify";
 import AuctionsContext from "../../context/AuctionsContext";
 import ViewAuctionModal from "./ViewAuctionModal";
 import { useDispatch, useSelector } from "react-redux";
+import CustomAdd from "../../CustomAdd";
 import {
   navigationStart,
   navigationSuccess,
@@ -185,7 +186,7 @@ export default function UpcomingAuctions() {
           <div className="overflow-x-auto rounded-lg">
             <div className="hidden md:block">
               <table className="min-w-full divide-y divide-gray-200">
-                <thead className="bg-[#191970] text-white">
+                <thead className="bg-blue-950 text-white">
                   <tr>
                     <th
                       className={`px-4 py-3 text-left text-sm font-semibold ${
@@ -261,20 +262,24 @@ export default function UpcomingAuctions() {
                       <td className="px-4 py-3 text-gray-700">
                         {user.startTime?.slice(0, 10)}
                       </td>
-                      {currentUser?.role === "seller" ? null : (
-                        <td
-                          className="px-4 py-3"
-                          onClick={(e) => {
-                            e.stopPropagation();
-                            handleToggleModel("update");
-                            setselectedVehicle(user);
-                          }}
-                        >
-                          <span className="px-3 py-1 text-sm border border-yellow-500 text-yellow-500 rounded-md hover:bg-yellow-500 hover:text-white transition hover:cursor-pointer">
-                            Edit
-                          </span>
-                        </td>
-                      )}
+                     {currentUser?.role === "seller" ? null : (
+  <td
+    className="px-4 py-3"
+    onClick={(e) => {
+      e.stopPropagation();
+    }}
+  >
+    <CustomAdd
+      text="Edit"
+      variant="edit"
+      onClick={() => {
+        handleToggleModel("update");
+        setselectedVehicle(user);
+      }}
+    />
+  </td>
+)}
+
                     </tr>
                   ))}
                 </tbody>
@@ -330,16 +335,16 @@ export default function UpcomingAuctions() {
                   </div>
                   {currentUser?.role !== "seller" && (
                     <div className="mt-4">
-                      <button
-                        onClick={(e) => {
-                          e.stopPropagation();
-                          handleToggleModel("update");
-                          setselectedVehicle(user);
-                        }}
-                        className="w-full py-2.5 bg-blue-950 text-white text-sm font-medium rounded-lg hover:cursor-pointer"
-                      >
-                        Edit
-                      </button>
+                    <CustomAdd
+  text="Edit"
+  variant="edit"
+  onClick={(e) => {
+    e.stopPropagation();
+    handleToggleModel("update");
+    setselectedVehicle(user);
+  }}
+  className="w-full py-2.5"
+/>
                     </div>
                   )}
                 </div>

@@ -112,7 +112,7 @@ const AdminBidHistory = () => {
         <>
           <div className="hidden md:block overflow-x-auto max-w-7xl mx-auto bg-white rounded-lg shadow">
             <table className="min-w-full divide-y divide-gray-200">
-              <thead className="bg-[#191970] text-white">
+              <thead className="bg-blue-950 text-white">
                 <tr>
                   <th className="px-6 py-3 text-sm font-semibold">SR#</th>
                   <th className="px-6 py-3 text-left text-sm font-semibold">
@@ -174,7 +174,7 @@ const AdminBidHistory = () => {
                               email,
                             })
                           }
-                          className="px-6 py-4 whitespace-nowrap text-sm text-gray-700 cursor-pointer hover:text-blue-600"
+                          className="px-6 py-4 whitespace-nowrap text-sm text-gray-700 cursor-pointer hover:text-blue-950"
                         >
                           {name}
                         </td>

@@ -79,8 +79,8 @@ export const SellerDashboard = () => {
       </h2>
 
       {/* Summary Stats */}
-      <div className="grid grid-cols-1 lg:grid-cols-4 lg:gap-2 gap-2">
-        <Card
+      <div className="grid grid-cols-1 lg:grid-cols-4 lg:gap-2 gap-2 ">
+        <Card 
           title={"Total Vehicles"}
           totalData={allVehicles.length}
           color={"bg-blue-200"}

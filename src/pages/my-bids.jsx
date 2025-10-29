@@ -42,7 +42,7 @@ const MyBids = () => {
           {/* Desktop Table View */}
           <div className="hidden md:block w-full">
             <table className="min-w-full text-sm table-auto">
-              <thead className="bg-[#191970] text-white sticky top-0">
+              <thead className="bg-blue-950 text-white sticky top-0">
                 <tr>
                   <th className="px-6 py-3 text-left font-semibold">SR#</th>
                   <th className="px-6 py-3 text-left font-semibold">

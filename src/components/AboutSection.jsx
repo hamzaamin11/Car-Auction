@@ -70,7 +70,7 @@ const AboutSection = () => {
             {/* Button */}
             <Link
               to="/about"
-              className="mt-3 inline-block bg-[#b73439] text-white font-medium px-5 py-2.5 rounded hover:brightness-110 transition duration-300"
+              className="mt-3 inline-block bg-red-600 text-white font-medium px-5 py-2.5 rounded hover:brightness-110 transition duration-300"
             >
               Learn More →
             </Link>

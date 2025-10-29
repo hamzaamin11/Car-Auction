@@ -4,7 +4,7 @@ import axios from "axios";
 import { BASE_URL } from "../../components/Contant/URL";
 import { EditBrandModal } from "../../components/BrandModal/EditBrandModal";
 import { toast, ToastContainer } from "react-toastify";
-
+import CustomAdd from "../../CustomAdd";
 export const BrandList = () => {
   const [isOpen, setIsOpen] = useState("");
 
@@ -106,16 +106,14 @@ export const BrandList = () => {
             className="w-full pl-10 pr-4 py-2 rounded-md border border-gray-300 shadow-sm placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500"
           />
         </div>
-        <button
-          onClick={() => handleToggleModal("Add")}
-          className="w-full lg:w-32 bg-[#191970] hover:bg-blue-900 text-white font-bold py-2 px-4 rounded-md shadow transition duration-200"
-        >
-          Add Brand
-        </button>
+       <CustomAdd
+  text="Add Brand"
+  onClick={() => handleToggleModal("Add")}
+/>
       </div>
 
       <table className="min-w-full bg-white shadow-md rounded-lg overflow-hidden">
-        <thead className="bg-[#191970] text-white">
+        <thead className="bg-blue-950 text-white">
           <tr>
             <th className="py-3 px-4 text-left">SR#</th>
             <th className="py-3 px-4 text-left">Brand Image</th>
@@ -138,12 +136,11 @@ export const BrandList = () => {
                 {brand.brandName.charAt(0) + brand.brandName.slice(1)}
               </td>
               <td className="py-2 px-4 flex gap-2 justify-center">
-                <button
-                  onClick={() => handleEditBtn(brand)}
-                  className="px-3 py-1 mt-3 text-sm border border-yellow-500 text-yellow-500 rounded-md hover:bg-yellow-500 hover:text-white transition hover:cursor-pointer"
-                >
-                  Edit
-                </button>
+                <CustomAdd
+  text="Edit"
+  variant="edit"
+  onClick={() => handleEditBtn(brand)}
+/>
               </td>
             </tr>
           ))}

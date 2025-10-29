@@ -12,7 +12,7 @@ import googleIcon from "../../src/assets/google.png";
 import PhoneModal from "./PhoneModal";
 import { EmailLoginModal } from "./EmailLoginModal";
 import { EmailSignUpModal } from "./EmailSignUpModal";
-
+import CustomButton from "../CustomButton";
 const SignInPage = () => {
   const [formData, setFormData] = useState({ email: "", password: "" });
   const [loading, setLoading] = useState(false);
@@ -113,17 +113,7 @@ const SignInPage = () => {
             />
           </div>
 
-          <button
-            type="submit"
-            disabled={loading}
-            className={`w-full ${
-              loading
-                ? "bg-gray-400"
-                : "bg-gradient-to-r from-blue-800 to-blue-800 hover:from-blue-700 hover:to-blue-900"
-            } text-white font-semibold py-3 rounded-lg shadow-md transition`}
-          >
-            {loading ? "Signing In..." : "Sign In"}
-          </button>
+       <CustomButton text="SignIn" /> 
         </form>
 
         {/* Divider */}
@@ -171,7 +161,7 @@ const SignInPage = () => {
           Don&apos;t have an account?{" "}
           <Link
             to="/register"
-            className="text-blue-600 hover:underline font-medium "
+            className="text-blue-950 hover:underline font-medium "
           >
             Register here
           </Link>

@@ -2,7 +2,7 @@ import axios from "axios";
 import React, { useEffect, useState, useCallback } from "react";
 import { debounce } from "lodash";
 import { BASE_URL } from "../../components/Contant/URL";
-
+import CustomAdd from "../../CustomAdd";
 export const ContactList = () => {
   const [allContacts, setAllContacts] = useState([]);
   const [filteredContacts, setFilteredContacts] = useState([]);
@@ -107,7 +107,7 @@ export const ContactList = () => {
         <div className="hidden md:block">
           <table className="w-full bg-white shadow-md rounded-lg overflow-hidden text-xs sm:text-sm">
             {/* Header */}
-            <thead className="bg-[#191970] text-white rounded-t-lg">
+            <thead className="bg-blue-950 text-white rounded-t-lg">
               <tr>
                 <th className="py-3 px-4 text-left w-[10%] rounded-tl-lg">
                   SR#
@@ -138,12 +138,12 @@ export const ContactList = () => {
                       {contact?.contactNumber}
                     </td>
                     <td className="py-2 px-4 text-center">
-                      <button
-                        onClick={() => handleView(contact)}
-                        className="px-4 py-1 text-xs sm:text-sm border border-indigo-500 text-indigo-500 rounded-md hover:bg-indigo-600 hover:text-white transition"
-                      >
-                        View
-                      </button>
+                     <CustomAdd
+  text="View"
+  variant="view"
+  onClick={() => handleView(contact)}
+  className="text-xs sm:text-sm"
+/>
                     </td>
                   </tr>
                 ))

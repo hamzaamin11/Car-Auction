@@ -132,7 +132,7 @@ export default function LiveAuctions() {
         <div className="overflow-x-auto rounded-lg">
           <div className="hidden md:block">
             <table className="min-w-full divide-y divide-gray-200">
-              <thead className="bg-[#191970] text-white">
+              <thead className="bg-blue-950 text-white">
                 <tr>
                   {currentUser.role === "admin" && (
                     <th className="px-4 py-3 text-left text-sm font-semibold">

@@ -31,7 +31,7 @@ const CarCard = ({ car }) => {
         </p>
         <span
           onClick={() => navigate(`/detailbid/${car.id}`)}
-          className="block bg-[#ed3237] hover:bg-red-700 text-center text-sm font-semibold text-white py-2 rounded transition hover:cursor-pointer mt-auto"
+          className="block bg-red-600  text-center text-sm font-semibold text-white py-2 rounded transition hover:cursor-pointer mt-auto"
         >
           View Details
         </span>

@@ -5,7 +5,7 @@ import { BASE_URL } from "../components/Contant/URL";
 import { RotateLoader } from "../components/Loader/RotateLoader";
 import { AddModel } from "../components/ModelModal/AddModel";
 import { EditModal } from "../components/ModelModal/EditModal";
-
+import CustomAdd from "../CustomAdd";
 export const ModelList = () => {
   const [isOpen, setIsOpen] = useState("");
   const [loading, setLoading] = useState(false);
@@ -105,15 +105,10 @@ export const ModelList = () => {
             className="w-full pl-10 pr-4 py-2 rounded-md border border-gray-300 shadow-sm placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500"
           />
         </div>
-        <button
-          onClick={() => handleToggleModal("Add")}
-          className="bg-[#191970] w-full lg:w-36 hover:bg-blue-900 text-white font-bold py-2 px-6 rounded-md shadow transition duration-200 hover:cursor-pointer"
-        >
-          Add Model
-        </button>
+     <CustomAdd text="Add Model" onClick={() => handleToggleModal("Add")} />
       </div>
       <table className="min-w-full bg-white shadow-md rounded-lg overflow-hidden">
-        <thead className="bg-[#191970] text-white">
+        <thead className="bg-blue-950 text-white">
           <tr>
             <th className="py-3 px-4 text-left">SR#</th>
             <th className="py-3 px-4 text-left">Make Name</th>
@@ -134,12 +129,11 @@ export const ModelList = () => {
                   brand.modelName.slice(1)}
               </td>
               <td className="py-2 px-4 flex gap-2 justify-center">
-                <button
-                  onClick={() => handleEditBtn(brand)}
-                  className="px-3 py-1 text-sm border border-yellow-500 text-yellow-500 rounded-md hover:bg-yellow-500 hover:text-white transition hover:cursor-pointer"
-                >
-                  Edit
-                </button>
+              <CustomAdd
+  text="Edit"
+  variant="edit"
+  onClick={() => handleEditBtn(brand)}
+/>
               </td>
             </tr>
           ))}

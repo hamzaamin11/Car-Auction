@@ -8,6 +8,7 @@ import "react-toastify/dist/ReactToastify.css";
 import axios from "axios";
 import { BASE_URL } from "./Contant/URL";
 import LoginImage from "../../src/assets/copart3.jpg";
+import CustomButton from "../../src/CustomButton"
 
 const RegistrationPage = () => {
   const navigate = useNavigate();
@@ -69,7 +70,7 @@ const RegistrationPage = () => {
           {/* Role Selection */}
           <div className="md:col-span-2">
             <div className="flex gap-4">
-              <label className="block text-sm font-bold text-gray-700 ">
+              <label className="block text-sm font-bold text-gray-700  ">
                 Select Role
               </label>
               <label className="flex items-center">
@@ -79,7 +80,7 @@ const RegistrationPage = () => {
                   value="customer"
                   checked={formData.role === "customer"}
                   onChange={handleChange}
-                  className="mr-2"
+                  className="mr-2 accent-blue-950"
                 />
                 Customer
               </label>
@@ -90,7 +91,7 @@ const RegistrationPage = () => {
                   value="seller"
                   checked={formData.role === "seller"}
                   onChange={handleChange}
-                  className="mr-2"
+                  className="mr-2 accent-blue-950 "
                 />
                 Seller
               </label>
@@ -161,12 +162,7 @@ const RegistrationPage = () => {
           </div>
 
           {/* Submit */}
-          <button
-            type="submit"
-            className="w-full bg-blue-500 text-white font-semibold py-2 rounded-lg shadow-md hover:bg-blue-600 transition text-sm"
-          >
-            Register
-          </button>
+        <CustomButton text="Register" /> 
         </form>
       </div>
     </div>

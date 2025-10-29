@@ -13,7 +13,7 @@ import { RotateLoader } from "../../components/Loader/RotateLoader";
 import axios from "axios";
 import { BASE_URL } from "../../components/Contant/URL";
 import { User } from "lucide-react";
-
+import CustomAdd from "../../CustomAdd";
 export default function ManageUsers() {
   const { getUserbyId, delUser } = useContext(UserContext);
   const [isModalOpen, setIsModalOpen] = useState(false);
@@ -166,7 +166,7 @@ export default function ManageUsers() {
       <div className="hidden md:block overflow-hidden rounded-2xl border border-gray-200 shadow-lg">
         <div className="overflow-x-auto">
           <table className="min-w-full divide-y divide-gray-200 text-sm">
-            <thead className="bg-[#191970] text-white">
+            <thead className="bg-blue-950 text-white">
               <tr>
                 <th className="px-6 py-4 text-left font-semibold">User</th>
                 <th className="px-6 py-4 text-left font-semibold">Email</th>
@@ -211,27 +211,27 @@ export default function ManageUsers() {
                     </span>
                   </td>
                   <td className="px-6 py-4 flex items-center justify-center gap-2">
-                    <button
-                      onClick={() => {
-                        setSelectedUser(user);
-                        setIsModalOpen(true);
-                      }}
-                      className="px-4 py-1 rounded-lg border border-yellow-500 text-yellow-600 hover:bg-yellow-500 hover:text-white transition"
-                    >
-                      Edit
-                    </button>
-                    <button
-                      onClick={() => handleView(user)}
-                      className="px-4 py-1 rounded-lg border border-indigo-600 text-indigo-600 hover:bg-indigo-600 hover:text-white transition"
-                    >
-                      View
-                    </button>
-                    <button
-                      onClick={() => handleDeleteUser(user.id)}
-                      className="px-4 py-1 rounded-lg border border-red-600 text-red-600 hover:bg-red-600 hover:text-white transition"
-                    >
-                      Delete
-                    </button>
+                  <CustomAdd
+  text="Edit"
+  variant="edit"
+  onClick={() => {
+    setSelectedUser(user);
+    setIsModalOpen(true);
+  }}
+/>
+
+<CustomAdd
+  text="View"
+  variant="view"
+  onClick={() => handleView(user)}
+/>
+
+<CustomAdd
+  text="Delete"
+  variant="delete"
+  onClick={() => handleDeleteUser(user.id)}
+/>
+
                   </td>
                 </tr>
               ))}
@@ -277,27 +277,29 @@ export default function ManageUsers() {
               </p>
             </div>
             <div className="flex gap-2">
-              <button
-                onClick={() => {
-                  setSelectedUser(user);
-                  setIsModalOpen(true);
-                }}
-                className="flex-1 px-4 py-1 rounded-lg border border-yellow-500 text-yellow-600 hover:bg-yellow-500 hover:text-white transition"
-              >
-                Edit
-              </button>
-              <button
-                onClick={() => handleView(user)}
-                className="flex-1 px-4 py-1 rounded-lg border border-indigo-600 text-indigo-600 hover:bg-indigo-600 hover:text-white transition"
-              >
-                View
-              </button>
-              <button
-                onClick={() => handleDeleteUser(user.id)}
-                className="flex-1 px-4 py-1 rounded-lg border border-red-600 text-red-600 hover:bg-red-600 hover:text-white transition"
-              >
-                Delete
-              </button>
+            <CustomAdd
+    text="Edit"
+    variant="edit"
+    onClick={() => {
+      setSelectedUser(user);
+      setIsModalOpen(true);
+    }}
+    className="flex-1"
+  />
+
+  <CustomAdd
+    text="View"
+    variant="view"
+    onClick={() => handleView(user)}
+    className="flex-1"
+  />
+
+  <CustomAdd
+    text="Delete"
+    variant="delete"
+    onClick={() => handleDeleteUser(user.id)}
+    className="flex-1"
+  />
             </div>
           </div>
         ))}

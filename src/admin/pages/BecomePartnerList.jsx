@@ -2,7 +2,7 @@ import axios from "axios";
 import React, { useEffect, useState, useCallback } from "react";
 import { debounce } from "lodash";
 import { BASE_URL } from "../../components/Contant/URL";
-
+import CustomAdd from "../../CustomAdd";
 export const BecomePartnerList = () => {
   const [allPartner, setAllPartner] = useState([]);
   const [filteredPartners, setFilteredPartners] = useState([]);
@@ -106,7 +106,7 @@ export const BecomePartnerList = () => {
         {/* Desktop Table */}
         <div className="hidden md:block overflow-x-auto">
           <table className="min-w-full bg-white shadow-md rounded-lg overflow-hidden text-xs sm:text-sm">
-            <thead className="bg-[#191970] text-white">
+            <thead className="bg-blue-950 text-white">
               <tr>
                 <th className="py-3 px-4 text-left">SR#</th>
                 <th className="py-3 px-4 text-left">Name</th>
@@ -140,12 +140,12 @@ export const BecomePartnerList = () => {
                         msg?.bussinessType.slice(1)}
                     </td>
                     <td className="py-2 px-4 flex justify-center">
-                      <button
-                        onClick={() => handleViewBtn(msg)}
-                        className="px-4 py-1 text-xs sm:text-sm border border-indigo-500 text-indigo-500 rounded-md hover:bg-indigo-600 hover:text-white transition"
-                      >
-                        View
-                      </button>
+                    <CustomAdd
+  text="View"
+  variant="view"
+  onClick={() => handleViewBtn(msg)}
+  className="text-xs sm:text-sm"
+/>
                     </td>
                   </tr>
                 ))

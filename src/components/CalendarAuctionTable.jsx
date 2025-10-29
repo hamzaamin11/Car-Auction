@@ -12,7 +12,7 @@ export default function CalendarAuctionTable({ showTime, allAuctions }) {
   return (
     <div className="overflow-x-auto lg:mt-6 mt-2  ">
       <table className="min-w-full border-collapse rounded-xl overflow-hidden shadow-md ">
-        <thead className="bg-[#b73439] text-white text-left text-sm sm:text-base">
+        <thead className="bg-red-600 text-white text-left text-sm sm:text-base">
           <tr>
             <th className="px-4 py-3">Date</th>
             <th className="px-4 py-3">Day</th>

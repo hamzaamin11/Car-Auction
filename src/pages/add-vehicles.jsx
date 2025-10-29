@@ -9,6 +9,7 @@ import { ViewAdminCar } from "../components/ViewAdminCar";
 import Swal from "sweetalert2";
 import { AdminAddBid } from "../components/AdminAddBidComponent/AdminAddBid";
 import CarSelector from "../components/CarSelector";
+import CustomAdd from "../CustomAdd";
 import {
   addMake,
   addModel,
@@ -623,29 +624,29 @@ const AddVehicles = () => {
             />
           </div>
           {!isCustomer && (
-            <button
-              onClick={() => {
-                setFormOpen(!formOpen);
-                setVehicleData({
-                  ...initialFields,
-                  userId: currentUser?.id || "",
-                });
-                setImage(null);
-                setImagePreview(null);
-                setEditId(null);
-                setSelectedCount(0);
-                setPrice("");
-                setErrorMsg("");
-                setSuccessMsg("");
-                dispatch(addYear(""));
-                dispatch(addMake(""));
-                dispatch(addModel(""));
-                dispatch(addSeries(""));
-              }}
-              className="mt-4 md:mt-0 px-4 py-2 bg-blue-950 text-white text-sm rounded hover:cursor-pointer lg:w-32 w-full"
-            >
-              Add Vehicle
-            </button>
+         <CustomAdd
+  text="Add Vehicle"
+  variant="add"
+  onClick={() => {
+    setFormOpen(!formOpen);
+    setVehicleData({
+      ...initialFields,
+      userId: currentUser?.id || "",
+    });
+    setImage(null);
+    setImagePreview(null);
+    setEditId(null);
+    setSelectedCount(0);
+    setPrice("");
+    setErrorMsg("");
+    setSuccessMsg("");
+    dispatch(addYear(""));
+    dispatch(addMake(""));
+    dispatch(addModel(""));
+    dispatch(addSeries(""));
+  }}
+  
+/>
           )}
         </header>
 

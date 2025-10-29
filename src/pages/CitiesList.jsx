@@ -4,7 +4,7 @@ import axios from "axios";
 import { toast } from "react-toastify";
 import { AddCityModal } from "../components/CityModal/AddCity";
 import { EditCityModal } from "../components/CityModal/EditCity";
-
+import CustomAdd from "../CustomAdd";
 export const CitiesList = () => {
   const [isOpen, setIsOpen] = useState("");
   const [loading, setLoading] = useState(false);
@@ -102,17 +102,12 @@ export const CitiesList = () => {
             className="w-full pl-10 pr-4 py-2 rounded-md border border-gray-300 shadow-sm placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500"
           />
         </div>
-        <button
-          onClick={() => handleToggleModal("Add")}
-          className="w-full lg:w-32 bg-[#191970] hover:bg-blue-900 text-white font-bold py-2 px-6 rounded-md shadow transition duration-200 hover:cursor-pointer"
-        >
-          Add City
-        </button>
+      <CustomAdd text="Add City" onClick={() => handleToggleModal("Add")} />
       </div>
 
       <div className="overflow-x-auto">
         <table className="min-w-full bg-white shadow-md rounded-lg overflow-hidden table-auto">
-          <thead className="bg-[#191970] text-white text-base">
+          <thead className="bg-blue-950 text-white text-base">
             <tr>
               <th className="py-3 px-6 text-left w-1/12">SR#</th>
               <th className="py-3 px-6 text-center w-full">City Name</th>
@@ -135,12 +130,8 @@ export const CitiesList = () => {
                 </td>
 
                 <td className="py-3 px-6 text-center">
-                  <button
-                    onClick={() => handleEditBtn(city)}
-                    className="px-4 py-1 text-sm border border-yellow-500 text-yellow-600 rounded-md hover:bg-yellow-500 hover:text-white transition"
-                  >
-                    Edit
-                  </button>
+               <CustomAdd text="Edit" variant="edit" onClick={() => handleEditBtn(city)} />
+
                 </td>
               </tr>
             ))}

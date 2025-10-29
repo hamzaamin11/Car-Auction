@@ -608,15 +608,15 @@ const Navbar = () => {
             <>
               <Link
                 to="/register"
-                className="flex items-center gap-1 hover:text-red-600"
+                className="flex items-center gap-1 hover:text-red-600 font-semibold"
               >
-                <FaUser /> Register
+                 Register
               </Link>
               <Link
                 to="/login"
-                className="flex items-center gap-1 hover:text-red-600"
+                className="flex items-center gap-1 hover:text-red-600 font-semibold"
               >
-                <FaSignInAlt /> Sign In
+                Sign In
               </Link>
             </>
           )}
@@ -773,20 +773,20 @@ const Navbar = () => {
               </button>
             </div>
           ) : (
-            <div className="flex flex-col space-y-2 pt-4 border-t border-white">
+            <div className="flex flex-col space-y-2 pt-4 border-t border-white font-semibold">
               <Link
                 to="/register"
                 onClick={() => setMenuOpen(false)}
                 className="flex items-center"
               >
-                <FaUser className="mr-1" /> Register
+                Register
               </Link>
               <Link
                 to="/login"
                 onClick={() => setMenuOpen(false)}
                 className="flex items-center"
               >
-                <FaSignInAlt className="mr-1" /> Signin
+                 Signin
               </Link>
             </div>
           )}

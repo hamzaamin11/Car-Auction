@@ -49,14 +49,14 @@ const JoinAuctionTable = ({ allLive, upComing }) => {
           <h2 className="text-2xl font-semibold text-gray-800">
             Live Auctions
           </h2>
-          <span className="px-3 py-1 text-sm rounded bg-blue-900 text-white font-medium">
+          <span className="px-3 py-1 text-sm rounded bg-blue-950 text-white font-medium">
             {allLive?.length} Active
           </span>
         </div>
 
         {/* Desktop Table */}
         <div className="hidden md:block bg-white rounded-xl shadow-lg overflow-hidden border border-gray-100">
-          <div className="bg-blue-900 p-3 text-white font-semibold text-sm uppercase tracking-wide">
+          <div className="bg-blue-950 p-3 text-white font-semibold text-sm uppercase tracking-wide">
            Live Auctions
           </div>
           <table className="w-full text-sm">
