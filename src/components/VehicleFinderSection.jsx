@@ -1,12 +1,12 @@
 import axios from "axios";
 import React, { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
-import Select from "react-select"; // Import react-select for searchable dropdowns
+import Select from "react-select";
 import { BASE_URL } from "./Contant/URL";
+import { useDispatch, useSelector } from "react-redux";
+import { addMake, addModel } from "./Redux/SelectorCarSlice";
 
 const initialState = {
-  model: "",
-  make: "",
   year: "",
   price: "",
   condition: "all",
@@ -14,36 +14,37 @@ const initialState = {
 
 const VehicleFinderSection = () => {
   const [filters, setFilters] = useState(initialState);
-
-  console.log("filter data =>", filters);
-
   const [allCars, setAllCars] = useState([]);
   const [allMakes, setAllMakes] = useState([]);
   const [allModels, setAllModels] = useState([]);
   const [selectMake, setSelectMake] = useState(null);
-
-  console.log("all Selected make", selectMake);
-
   const [startIndex, setStartIndex] = useState(0);
   const cardsPerPage = 4;
-
-  console.log("=>", startIndex);
-
   const navigate = useNavigate();
+  const dispatch = useDispatch();
 
-  // Fetch cars from API
+  // 🧩 Get selected make and model from Redux
+  const vehicleData = useSelector((state) => state.carSelector);
+
+  // ✅ Fetch Cars API
   const handleGetCars = async () => {
     try {
+      // Use Redux values for make & model (instead of local filter)
+      const make = vehicleData.make || "";
+      const model = vehicleData.model || "";
+      const { condition, year, price } = filters;
+
       const res = await axios.get(
-        `${BASE_URL}/getApprovedVehicles?vehicleCondition=${filters.condition}&make=${filters.make}&model=${filters.model}&year=${filters.year}&buyNowPrice=${filters.price}`
+        `${BASE_URL}/getApprovedVehicles?vehicleCondition=${condition}&make=${make}&model=${model}&year=${year}&buyNowPrice=${price}`
       );
+
       setAllCars(res.data || []);
     } catch (error) {
       console.log(error);
     }
   };
 
-  // Fetch all makes
+  // ✅ Fetch all makes
   const handleGetMakes = async () => {
     try {
       const res = await axios.get(`${BASE_URL}/admin/getBrands`);
@@ -53,121 +54,87 @@ const VehicleFinderSection = () => {
     }
   };
 
-  // Fetch selected make details
-  const handleSelectMake = async () => {
-    if (!filters.make) return;
-    try {
-      const res = await axios.get(`${BASE_URL}/getBrandById/${filters.make}`);
-      setSelectMake(res.data);
-    } catch (error) {
-      console.log(error);
-    }
-  };
-
-  // Fetch models based on selected make
+  // ✅ Fetch models by selected make
   const handleGetModels = async () => {
-    if (!filters.make) return;
+    if (!vehicleData.make) return;
     try {
-      const res = await axios.get(`${BASE_URL}/getModelById/${filters.make}`);
+      const res = await axios.get(
+        `${BASE_URL}/getModelById/${vehicleData.make}`
+      );
       setAllModels(res.data || []);
     } catch (error) {
       console.log(error);
     }
   };
 
-  // Update state from form
-  const handleChange = (name, value) => {
-    setFilters((prev) => ({ ...prev, [name]: value }));
+  // ✅ Fetch selected make details
+  const handleSelectMake = async () => {
+    if (!vehicleData.make) return;
+    try {
+      const res = await axios.get(
+        `${BASE_URL}/getBrandById/${vehicleData.make}`
+      );
+      setSelectMake(res.data);
+    } catch (error) {
+      console.log(error);
+    }
   };
 
+  // ✅ Handle change for year/price/condition only (make/model via redux)
+  const handleChange = (name, value) => {
+    setFilters({ ...filters, [name]: value });
+  };
+
+  // ✅ Tabs for condition
   const handleTabClick = (tab) => {
     setFilters({ ...filters, condition: tab });
     setStartIndex(0);
   };
 
-  // Transform makes for react-select
+  // ✅ Convert makes and models for dropdowns
   const totalMakes = allMakes.map((make) => ({
-    label: make.brandName,
+    label: `${make.brandName} (${make.vehicleCount})`,
     value: make.id,
   }));
 
-  // Transform models for react-select
   const totalModels = allModels.map((model) => ({
-    label: model.modelName,
+    label: `${model.modelName} (${model.vehicleCount})`,
     value: model.modelName,
   }));
 
-  // Generate years for react-select
   const calcYearVal = () => {
-    const possibleYearValue = [];
+    const arr = [];
     const currentYear = new Date().getFullYear();
     for (let i = 1970; i <= currentYear; i++) {
-      possibleYearValue.unshift({ label: i.toString(), value: i.toString() });
+      arr.unshift({ label: i.toString(), value: i.toString() });
     }
-    return possibleYearValue;
+    return arr;
   };
   const years = calcYearVal();
 
-  // Generate prices (not used in this version, but kept for consistency)
-  const generateCarPrices = () => {
-    const prices = [];
-    const start = 1000000;
-    const end = 200000000;
-    const step = 2000000;
-    for (let price = start; price <= end; price += step) {
-      prices.push(price);
-    }
-    return prices;
-  };
-  const allPrices = generateCarPrices();
-
-  const renderStars = (rating) => {
-    const fullStars = Math.floor(rating);
-    const emptyStars = 5 - fullStars;
-    return (
-      <span className="text-yellow-400 text-lg">
-        {"★".repeat(fullStars)}
-        {"☆".repeat(emptyStars)}
-      </span>
-    );
-  };
-
-  const prevCards = () => {
-    setStartIndex((prev) =>
-      prev - cardsPerPage < 0
-        ? Math.max(allCars.length - cardsPerPage, 0)
-        : prev - cardsPerPage
-    );
-  };
-
-  const nextCards = () => {
-    setStartIndex((prev) =>
-      prev + cardsPerPage >= allCars.length ? 0 : prev + cardsPerPage
-    );
-  };
-
-  // useEffect calls
+  // ✅ useEffects
   useEffect(() => {
-    handleGetCars();
     handleGetMakes();
+  }, []);
+
+  useEffect(() => {
     handleGetModels();
+    handleSelectMake();
+    handleGetCars(); // 🚀 Fetch new cars whenever make/model changes from Redux
   }, [
+    vehicleData.make,
+    vehicleData.model,
     filters.condition,
-    filters.make,
-    filters.model,
     filters.year,
     filters.price,
   ]);
 
-  useEffect(() => {
-    handleSelectMake();
-  }, [filters.make]);
-
+  // ✅ Render
   return (
     <div className="max-w-7xl mx-auto p-6 font-sans">
       {/* Filters */}
-
       <div className="flex lg:flex-row flex-col items-center justify-between gap-4 mb-4">
+        {/* MAKE */}
         <div className="w-full">
           <label className="block text-sm font-medium text-gray-700 mb-1">
             Select Make
@@ -175,18 +142,23 @@ const VehicleFinderSection = () => {
           <Select
             options={[{ label: "Select Make", value: "" }, ...totalMakes]}
             value={
-              totalMakes.find((option) => option.value === filters.make) || {
+              totalMakes.find(
+                (option) => option.value === vehicleData.make
+              ) || {
                 label: "Select Make",
                 value: "",
               }
             }
-            onChange={(selected) => handleChange("make", selected.value)}
+            onChange={(selected) => {
+              dispatch(addMake(selected.value));
+              dispatch(addModel(""));
+            }}
             placeholder="Select Make"
             isSearchable
-            className="w-full"
           />
         </div>
 
+        {/* MODEL */}
         <div className="w-full">
           <label className="block text-sm font-medium text-gray-700 mb-1">
             Select Model
@@ -194,18 +166,20 @@ const VehicleFinderSection = () => {
           <Select
             options={[{ label: "Select Model", value: "" }, ...totalModels]}
             value={
-              totalModels.find((option) => option.value === filters.model) || {
+              totalModels.find(
+                (option) => option.value === vehicleData.model
+              ) || {
                 label: "Select Model",
                 value: "",
               }
             }
-            onChange={(selected) => handleChange("model", selected.value)}
+            onChange={(selected) => dispatch(addModel(selected.value))}
             placeholder="Select Model"
             isSearchable
-            className="w-full"
           />
         </div>
 
+        {/* YEAR */}
         <div className="w-full">
           <label className="block text-sm font-medium text-gray-700 mb-1">
             Select Year
@@ -221,9 +195,10 @@ const VehicleFinderSection = () => {
             onChange={(selected) => handleChange("year", selected.value)}
             placeholder="Select Year"
             isSearchable
-            className="w-full"
           />
         </div>
+
+        {/* SEARCH BUTTON */}
         <button
           onClick={handleGetCars}
           className="bg-[#b73439] text-white rounded px-5 py-2 font-semibold hover:bg-[#518ecb] transition w-full md:mt-5 mt-0"
@@ -232,7 +207,7 @@ const VehicleFinderSection = () => {
         </button>
       </div>
 
-      {/* Tabs */}
+      {/* Condition Tabs */}
       <div className="flex space-x-4 mb-6 justify-center">
         {["all", "new", "used"].map((tab) => (
           <button
@@ -249,10 +224,10 @@ const VehicleFinderSection = () => {
         ))}
       </div>
 
-      {/* Cars */}
+      {/* Car Cards */}
       {allCars.length === 0 ? (
-        <div className="flex items-center justify-center text-xl font-bold text-gray-500">
-          No car found
+        <div className="text-center text-lg font-semibold text-gray-500">
+          No cars found
         </div>
       ) : (
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
@@ -260,14 +235,13 @@ const VehicleFinderSection = () => {
             <div
               key={car.id}
               onClick={() => navigate(`/detailbid/${car.id}`)}
-              className="bg-white rounded-lg shadow-md hover:shadow-xl transition duration-300 flex flex-col hover:cursor-pointer"
+              className="bg-white rounded-lg shadow-md hover:shadow-xl transition flex flex-col cursor-pointer"
             >
               <img
                 src={car?.images?.[0]}
                 alt="car"
-                className="w-full h-64 object-cover rounded-t-lg bg-white"
+                className="w-full h-64 object-cover rounded-t-lg"
               />
-
               <div className="p-4 flex flex-col justify-between flex-grow">
                 <div>
                   <h3 className="text-lg font-semibold mb-1">
@@ -292,35 +266,14 @@ const VehicleFinderSection = () => {
                     Model Year: <span>{car.year}</span>
                   </p>
                 </div>
-
-                <div className="mt-3 flex justify-between">
-                  <button className="bg-[#b73439] text-white text-sm px-3 py-1 rounded hover:bg-red-700">
-                     View Details
-                  </button>
-                </div>
+                <button className="bg-[#b73439] text-white text-sm px-3 py-1 rounded mt-3 hover:bg-red-700">
+                  View Details
+                </button>
               </div>
             </div>
           ))}
         </div>
       )}
-
-      {/* Pagination */}
-      <div className="flex justify-between mt-6">
-        <button
-          onClick={prevCards}
-          className="bg-blue-950 text-white px-5 py-2 rounded "
-        >
-          ‹ Prev
-        </button>
-        <button
-          onClick={nextCards}
-          className={`bg-blue-950 text-white px-5 py-2 rounded  ${
-            allCars.length >= startIndex ? "block" : "hidden"
-          }`}
-        >
-          Next ›
-        </button>
-      </div>
     </div>
   );
 };

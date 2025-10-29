@@ -42,8 +42,14 @@ const FilterPriceCars = () => {
     allMakes: "",
     allModels: name === "model" ? decodeURIComponent(value || "") : "",
     location: "",
-    formCash: name === "budget" ? decodeURIComponent(value || "").split("-")[0] || "" : "",
-    toCash: name === "budget" ? decodeURIComponent(value || "").split("-")[1] || "" : "",
+    formCash:
+      name === "budget"
+        ? decodeURIComponent(value || "").split("-")[0] || ""
+        : "",
+    toCash:
+      name === "budget"
+        ? decodeURIComponent(value || "").split("-")[1] || ""
+        : "",
   });
   const [allFilterCars, setAllFilterCars] = useState([]);
   const [filterModel, setFilterModel] = useState([]);
@@ -75,8 +81,10 @@ const FilterPriceCars = () => {
   const allMakes = useMemo(
     () =>
       allMake.map((make) => ({
-        label: make.brandName,
-        value: make.id,
+        label: `${make.brandName} (${make.vehicleCount})`, // visible text in dropdown
+        value: make.id, // dropdown value (used to identify selection)
+        brandName: make.brandName, // actual brand name for URL
+        vehicleCount: make.vehicleCount,
       })),
     [allMake]
   );
@@ -85,8 +93,10 @@ const FilterPriceCars = () => {
   const allModels = useMemo(
     () =>
       filterModel.map((m) => ({
-        label: m.modelName,
-        value: m.modelName,
+        label: `${m.modelName} (${m.vehicleCount})`, // visible text in dropdown
+        value: m.modelName, // dropdown value (used to identify selection)
+        brandName: m.modelName, // actual brand name for URL
+        vehicleCount: m.vehicleCount,
       })),
     [filterModel]
   );
@@ -95,7 +105,9 @@ const FilterPriceCars = () => {
   useEffect(() => {
     if (name === "city" && value && allCities.length > 0) {
       const selectedCity = allCities.find(
-        (city) => city.cityName.toLowerCase() === decodeURIComponent(value).toLowerCase()
+        (city) =>
+          city.cityName.toLowerCase() ===
+          decodeURIComponent(value).toLowerCase()
       );
       if (selectedCity) {
         setFilterData((prev) => ({ ...prev, location: selectedCity.id }));
@@ -103,7 +115,9 @@ const FilterPriceCars = () => {
     }
     if (name === "make" && value && allMake.length > 0) {
       const selectedMake = allMake.find(
-        (make) => make.brandName.toLowerCase() === decodeURIComponent(value).toLowerCase()
+        (make) =>
+          make.brandName.toLowerCase() ===
+          decodeURIComponent(value).toLowerCase()
       );
       if (selectedMake) {
         setFilterData((prev) => ({ ...prev, allMakes: selectedMake.id }));
@@ -115,13 +129,17 @@ const FilterPriceCars = () => {
   const buildFilterUrl = (updatedFilterData) => {
     const filters = [];
     if (updatedFilterData.vehicleType) {
-      filters.push(`bodyStyle/${encodeURIComponent(updatedFilterData.vehicleType)}`);
+      filters.push(
+        `bodyStyle/${encodeURIComponent(updatedFilterData.vehicleType)}`
+      );
     }
     if (updatedFilterData.selectYear) {
       filters.push(`year/${encodeURIComponent(updatedFilterData.selectYear)}`);
     }
     if (updatedFilterData.allMakes) {
-      const selectedMake = allMake.find((make) => make.id === updatedFilterData.allMakes);
+      const selectedMake = allMake.find(
+        (make) => make.id === updatedFilterData.allMakes
+      );
       if (selectedMake) {
         filters.push(`make/${encodeURIComponent(selectedMake.brandName)}`);
       }
@@ -130,13 +148,17 @@ const FilterPriceCars = () => {
       filters.push(`model/${encodeURIComponent(updatedFilterData.allModels)}`);
     }
     if (updatedFilterData.location) {
-      const selectedCity = allCities.find((city) => city.id === updatedFilterData.location);
+      const selectedCity = allCities.find(
+        (city) => city.id === updatedFilterData.location
+      );
       if (selectedCity) {
         filters.push(`city/${encodeURIComponent(selectedCity.cityName)}`);
       }
     }
     if (updatedFilterData.formCash && updatedFilterData.toCash) {
-      filters.push(`budget/${updatedFilterData.formCash}-${updatedFilterData.toCash}`);
+      filters.push(
+        `budget/${updatedFilterData.formCash}-${updatedFilterData.toCash}`
+      );
     }
 
     return filters.length > 0 ? `/filterprice/${filters[0]}` : "/filterprice";
@@ -148,13 +170,13 @@ const FilterPriceCars = () => {
     try {
       const res = await axios.get(`${BASE_URL}/getApprovedVehicles`, {
         params: {
-          locationId: filterData.location || "",
-          make: filterData.allMakes || "",
-          model: filterData.allModels || "",
-          bodyStyle: filterData.vehicleType || "",
-          minPrice: filterData.formCash || "",
-          maxPrice: filterData.toCash || "",
-          sortType: sorting || "",
+          locationId: filterData?.location,
+          make: filterData?.allMakes,
+          model: filterData?.allModels,
+          bodyStyle: filterData?.vehicleType,
+          minPrice: filterData?.formCash,
+          maxPrice: filterData?.toCash,
+          sortType: sorting,
           year: filterData.selectYear || "",
           vehicleCondition: activeTab !== "all" ? activeTab : undefined,
         },
@@ -281,12 +303,12 @@ const FilterPriceCars = () => {
         </div>
 
         {/* Filters */}
-      <div className="relative w-full max-w-sm">
+        <div className="relative w-full max-w-sm">
           <label className="block text-sm font-medium text-gray-700">
             Select Body Style
           </label>
           <Select
-            options={[{ label: "Select All Type " , value: "" }, ...BodyType]}
+            options={[{ label: "Select All Type ", value: "" }, ...BodyType]}
             value={
               BodyType.find(
                 (option) => option.value === filterData.vehicleType
@@ -464,7 +486,6 @@ const FilterPriceCars = () => {
               )}
             </div>
           </div>
-        
         </div>
 
         <div className="flex items-center justify-center">
@@ -497,70 +518,71 @@ const FilterPriceCars = () => {
         </div>
 
         <div className="overflow-y-auto max-h-screen">
-          {allFilterCars.map((car) => (
-            <div
-              key={car.id}
-              onClick={() => navigate(`/detailbid/${car.id}`)}
-              className={`relative rounded-lg shadow p-4 mb-4 flex flex-col md:flex-row hover:shadow-lg transition-shadow hover:cursor-pointer ${
-                car.certifyStatus === "Certified"
-                  ? "bg-gradient-to-r from-green-50 to-green-100 border border-green-400"
-                  : "bg-white"
-              }`}
-            >
-              {car.certifyStatus === "Certified" && (
-                <div className="absolute top-2 left-2 bg-green-600 text-white text-xs font-bold px-3 py-1 rounded-full shadow-md">
-                  ✅ Certified
+          {allFilterCars &&
+            allFilterCars?.map((car) => (
+              <div
+                key={car.id}
+                onClick={() => navigate(`/detailbid/${car.id}`)}
+                className={`relative rounded-lg shadow p-4 mb-4 flex flex-col md:flex-row hover:shadow-lg transition-shadow hover:cursor-pointer ${
+                  car.certifyStatus === "Certified"
+                    ? "bg-gradient-to-r from-green-50 to-green-100 border border-green-400"
+                    : "bg-white"
+                }`}
+              >
+                {car.certifyStatus === "Certified" && (
+                  <div className="absolute top-2 left-2 bg-green-600 text-white text-xs font-bold px-3 py-1 rounded-full shadow-md">
+                    ✅ Certified
+                  </div>
+                )}
+                <div className="w-full md:w-40 h-48 md:h-28 overflow-hidden rounded-md mb-4 md:mb-0 md:mr-4">
+                  <img
+                    src={car.images[0]}
+                    alt={car.make}
+                    className="w-full h-full object-cover"
+                  />
                 </div>
-              )}
-              <div className="w-full md:w-40 h-48 md:h-28 overflow-hidden rounded-md mb-4 md:mb-0 md:mr-4">
-                <img
-                  src={car.images[0]}
-                  alt={car.make}
-                  className="w-full h-full object-cover"
-                />
+                <div className="flex-grow">
+                  <div className="flex flex-col sm:flex-row justify-between sm:items-center">
+                    <h3
+                      className={`font-semibold text-sm sm:text-base ${
+                        car.certifyStatus === "Certified"
+                          ? "text-green-700"
+                          : "text-blue-700"
+                      }`}
+                    >
+                      {car.make} {car.model} {car.series} {car.engine} for sale
+                    </h3>
+                    <span className="text-lg font-bold text-gray-800 mt-2 sm:mt-0">
+                      PKR {car.buyNowPrice}
+                    </span>
+                  </div>
+                  <p className="text-sm text-gray-600 mt-1">{car.cityName}</p>
+                  <div className="flex flex-wrap gap-2 mt-2">
+                    <span className="px-3 py-1 bg-gray-100 text-xs font-medium rounded-full shadow-sm">
+                      {car.year}
+                    </span>
+                    <span className="px-3 py-1 bg-gray-100 text-xs font-medium rounded-full shadow-sm">
+                      {car.mileage} km
+                    </span>
+                    <span className="px-3 py-1 bg-gray-100 text-xs font-medium rounded-full shadow-sm">
+                      {car.fuelType}
+                    </span>
+                    <span className="px-3 py-1 bg-gray-100 text-xs font-medium rounded-full shadow-sm">
+                      {car.bodyStyle}
+                    </span>
+                    <span className="px-3 py-1 bg-gray-100 text-xs font-medium rounded-full shadow-sm">
+                      {car.color}
+                    </span>
+                    <span className="px-3 py-1 bg-gray-100 text-xs font-medium rounded-full shadow-sm">
+                      {car.transmission}
+                    </span>
+                    <span className="px-3 py-1 bg-gray-100 text-xs font-medium rounded-full shadow-sm">
+                      {car.cityName}
+                    </span>
+                  </div>
+                </div>
               </div>
-              <div className="flex-grow">
-                <div className="flex flex-col sm:flex-row justify-between sm:items-center">
-                  <h3
-                    className={`font-semibold text-sm sm:text-base ${
-                      car.certifyStatus === "Certified"
-                        ? "text-green-700"
-                        : "text-blue-700"
-                    }`}
-                  >
-                    {car.make} {car.model} {car.series} {car.engine} for sale
-                  </h3>
-                  <span className="text-lg font-bold text-gray-800 mt-2 sm:mt-0">
-                    PKR {car.buyNowPrice}
-                  </span>
-                </div>
-                <p className="text-sm text-gray-600 mt-1">{car.cityName}</p>
-                <div className="flex flex-wrap gap-2 mt-2">
-                  <span className="px-3 py-1 bg-gray-100 text-xs font-medium rounded-full shadow-sm">
-                    {car.year}
-                  </span>
-                  <span className="px-3 py-1 bg-gray-100 text-xs font-medium rounded-full shadow-sm">
-                    {car.mileage} km
-                  </span>
-                  <span className="px-3 py-1 bg-gray-100 text-xs font-medium rounded-full shadow-sm">
-                    {car.fuelType}
-                  </span>
-                  <span className="px-3 py-1 bg-gray-100 text-xs font-medium rounded-full shadow-sm">
-                    {car.bodyStyle}
-                  </span>
-                  <span className="px-3 py-1 bg-gray-100 text-xs font-medium rounded-full shadow-sm">
-                    {car.color}
-                  </span>
-                  <span className="px-3 py-1 bg-gray-100 text-xs font-medium rounded-full shadow-sm">
-                    {car.transmission}
-                  </span>
-                  <span className="px-3 py-1 bg-gray-100 text-xs font-medium rounded-full shadow-sm">
-                    {car.cityName}
-                  </span>
-                </div>
-              </div>
-            </div>
-          ))}
+            ))}
           {allFilterCars.length === 0 && (
             <div className="text-center text-gray-600 mt-10">No cars found</div>
           )}

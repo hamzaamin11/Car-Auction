@@ -53,7 +53,10 @@ const SearchableOption = ({ datas, placeholder, name, value, onChange }) => {
   // Close dropdown when clicking outside
   useEffect(() => {
     const handleClickOutside = (event) => {
-      if (containerRef.current && !containerRef.current.contains(event.target)) {
+      if (
+        containerRef.current &&
+        !containerRef.current.contains(event.target)
+      ) {
         setShowOptions(false);
         setSearch(""); // Clear search on outside click
         setActiveIndex(-1);
@@ -115,11 +118,17 @@ const initialState = {
 };
 
 const TabsSection = () => {
-  const [filterData, setFilterData] = useState(initialState);
+  const [filterData, setFilterData] = useState({
+    city: "",
+    make: "",
+    bodyStyle: "",
+    budget: { min: 0, max: 0 },
+  });
   const [allCities, setAllCities] = useState([]);
   const [allMake, setAllMake] = useState([]);
   const navigate = useNavigate();
 
+  // ✅ Fetch all cities
   const handleGetAllCities = async () => {
     try {
       const res = await axios.get(`${BASE_URL}/getCitites`);
@@ -130,6 +139,7 @@ const TabsSection = () => {
     }
   };
 
+  // ✅ Fetch all makes (brands)
   const handleGetAllMakes = async () => {
     try {
       const res = await axios.get(`${BASE_URL}/admin/getBrands`);
@@ -145,19 +155,40 @@ const TabsSection = () => {
     handleGetAllMakes();
   }, []);
 
+  // ✅ Map city data
+  const cityData = allCities.map((city) => ({
+    label: city.cityName,
+    value: city.id,
+  }));
+
+  // ✅ Map make data (show count but keep plain brand name for routing)
+  const makeData = allMake
+    .filter((make) => make.vehicleCount > 0)
+    .map((make) => ({
+      label: `${make.brandName} (${make.vehicleCount})`, // visible text in dropdown
+      value: make.id, // dropdown value (used to identify selection)
+      brandName: make.brandName, // actual brand name for URL
+      vehicleCount: make.vehicleCount,
+    }));
+
+  // ✅ Handle change for dropdowns
   const handleChange = (e) => {
     const { name, value } = e.target;
     let urlValue = value;
+
     if (name === "city") {
       const selectedCity = cityData.find((city) => city.value === value);
       urlValue = selectedCity ? encodeURIComponent(selectedCity.label) : "";
     } else if (name === "make") {
       const selectedMake = makeData.find((make) => make.value === value);
-      urlValue = selectedMake ? encodeURIComponent(selectedMake.label) : "";
+      // 👉 use brandName only (without vehicle count)
+      urlValue = selectedMake ? encodeURIComponent(selectedMake.brandName) : "";
     } else if (name === "bodyStyle") {
       urlValue = encodeURIComponent(value);
     }
+
     setFilterData({ ...filterData, [name]: value });
+
     if (urlValue) {
       navigate(`/filterprice/${name}/${urlValue}`);
     } else {
@@ -165,6 +196,7 @@ const TabsSection = () => {
     }
   };
 
+  // ✅ Handle Budget range selection
   const handleFilterPrice = (e) => {
     const { name, value } = e.target;
     const [min, max] = value.split("-").map(Number);
@@ -175,16 +207,7 @@ const TabsSection = () => {
     navigate(`/filterprice/${name}/${value}`);
   };
 
-  const cityData = allCities.map((city) => ({
-    label: city.cityName,
-    value: city.id,
-  }));
-
-  const makeData = allMake.map((make) => ({
-    label: make.brandName,
-    value: make.id,
-  }));
-
+  // ✅ Body styles
   const bodyData = [
     { label: "Mini Vehicles", value: "Mini Vehicles" },
     { label: "Van", value: "Van" },
@@ -199,6 +222,7 @@ const TabsSection = () => {
     { label: "Compact sedan", value: "Compact sedan" },
   ];
 
+  // ✅ Budget range list
   const budgetData = [
     { label: "5–10 Lac", min: 500000, max: 1000000 },
     { label: "10–20 Lac", min: 1000000, max: 2000000 },
@@ -220,16 +244,20 @@ const TabsSection = () => {
         </h1>
       </div>
 
+      {/* ✅ Dropdown Filters */}
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 mx-6">
+        {/* City */}
         <div className="max-w-xs">
-         <SearchableOption
-  datas={cityData}
-  placeholder="Search City"
-  name="city"
-  value={filterData.city || ""}
-  onChange={handleChange}
-/>
+          <SearchableOption
+            datas={cityData}
+            placeholder="Search City"
+            name="city"
+            value={filterData.city || ""}
+            onChange={handleChange}
+          />
         </div>
+
+        {/* Make (Brand + Vehicle Count) */}
         <div className="max-w-xs">
           <SearchableOption
             datas={makeData}
@@ -239,6 +267,8 @@ const TabsSection = () => {
             onChange={handleChange}
           />
         </div>
+
+        {/* Body Style */}
         <div className="max-w-xs">
           <SearchableOption
             datas={bodyData}
@@ -248,21 +278,23 @@ const TabsSection = () => {
             onChange={handleChange}
           />
         </div>
+
+        {/* Budget */}
         <div className="max-w-xs">
           <SearchableOption
-  datas={budgetData.map((b) => ({
-    label: b.label,
-    value: `${b.min}-${b.max}`,
-  }))}
-  placeholder="Search Budget"
-  name="budget"
-  value={
-    filterData.budget.min
-      ? `${filterData.budget.min}-${filterData.budget.max}`
-      : ""
-  }
-  onChange={handleFilterPrice}
-/>
+            datas={budgetData.map((b) => ({
+              label: b.label,
+              value: `${b.min}-${b.max}`,
+            }))}
+            placeholder="Search Budget"
+            name="budget"
+            value={
+              filterData.budget.min
+                ? `${filterData.budget.min}-${filterData.budget.max}`
+                : ""
+            }
+            onChange={handleFilterPrice}
+          />
         </div>
       </div>
     </div>
