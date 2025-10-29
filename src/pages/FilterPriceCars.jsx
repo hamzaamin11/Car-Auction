@@ -492,7 +492,7 @@ const FilterPriceCars = () => {
           <button
             disabled={loading}
             onClick={handleGetFilterByVehicle}
-            className="bg-green-500 p-2 px-10 text-white rounded hover:cursor-pointer"
+            className="bg-red-600 w-full p-2 px-10 text-white rounded hover:cursor-pointer"
           >
             {loading ? "Loading..." : "Search Vehicle"}
           </button>

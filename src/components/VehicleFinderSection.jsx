@@ -201,7 +201,7 @@ const VehicleFinderSection = () => {
         {/* SEARCH BUTTON */}
         <button
           onClick={handleGetCars}
-          className="bg-[#b73439] text-white rounded px-5 py-2 font-semibold hover:bg-[#518ecb] transition w-full md:mt-5 mt-0"
+          className="bg-red-600 text-white rounded px-5 py-2 font-semibold  transition w-full md:mt-5 mt-0"
         >
           Search
         </button>
@@ -266,7 +266,7 @@ const VehicleFinderSection = () => {
                     Model Year: <span>{car.year}</span>
                   </p>
                 </div>
-                <button className="bg-[#b73439] text-white text-sm px-3 py-1 rounded mt-3 hover:bg-red-700">
+                <button className="bg-red-600 py-2 text-white text-sm px-3  rounded mt-3 ">
                   View Details
                 </button>
               </div>
