@@ -518,12 +518,14 @@ const Navbar = () => {
 
           <li>
             {currentUser?.role === "customer" ? null : (
-              <button
-                onClick={() => navigate("/sellerIntro")}
-                className="bg-red-600 text-white font-bold px-2 py-1.5 rounded hover:cursor-pointer"
+            
+                <Link
+                to="/sellerIntro"
+                className="flex items-center gap-1 hover:text-red-600 font-semibold"
               >
-                Post an Ad
-              </button>
+                 Post an Ad
+              </Link>
+              
             )}
           </li>
         </ul>
@@ -606,18 +608,25 @@ const Navbar = () => {
             </div>
           ) : (
             <>
-              <Link
+              {/* <Link
                 to="/register"
                 className="flex items-center gap-1 hover:text-red-600 font-semibold"
               >
                  Register
-              </Link>
-              <Link
-                to="/login"
-                className="flex items-center gap-1 hover:text-red-600 font-semibold"
+              </Link> */}
+                     <button
+                onClick={() => navigate("/register")}
+                className="bg-red-600 text-white font-bold px-2 py-1.5 rounded hover:cursor-pointer"
+              >
+                Register
+              </button>
+           
+                   <button
+                onClick={() => navigate("/login")}
+                className="bg-red-600 text-white font-bold px-2 py-1.5 rounded hover:cursor-pointer"
               >
                 Sign In
-              </Link>
+              </button>
             </>
           )}
         </div>
@@ -828,7 +837,7 @@ const Navbar = () => {
               <div className="flex justify-end gap-2">
                 <button
                   onClick={() => setPasswordModalOpen(false)}
-                  className="px-4 py-2 text-white bg-red-900 hover:opacity-95 rounded-md"
+                  className="px-4 py-2 text-white bg-red-600 hover:opacity-95 rounded-md"
                 >
                   Cancel
                 </button>
@@ -1096,7 +1105,7 @@ const Navbar = () => {
                 <button
                   type="button"
                   onClick={() => setProfileModalOpen(false)}
-                  className="px-6 py-2.5 text-white hover:opacity-95 rounded-md border border-gray-300 bg-red-900 hover:cursor-pointer"
+                  className="px-6 py-2.5 text-white hover:opacity-95 rounded-md border border-gray-300 bg-red-600 hover:cursor-pointer"
                 >
                   Cancel
                 </button>

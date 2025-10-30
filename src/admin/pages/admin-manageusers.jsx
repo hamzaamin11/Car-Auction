@@ -14,6 +14,7 @@ import axios from "axios";
 import { BASE_URL } from "../../components/Contant/URL";
 import { User } from "lucide-react";
 import CustomAdd from "../../CustomAdd";
+import CustomSearch from "../../CustomSearch";
 export default function ManageUsers() {
   const { getUserbyId, delUser } = useContext(UserContext);
   const [isModalOpen, setIsModalOpen] = useState(false);
@@ -153,12 +154,14 @@ export default function ManageUsers() {
               />
             </svg>
           </span>
-          <input
-            type="text"
-            placeholder="Search by Role..."
-            onChange={(e) => debouncedSearch(e.target.value)}
-            className="w-full pl-10 pr-4 py-2 rounded-md border border-gray-300 shadow-sm placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500"
-          />
+             <CustomSearch
+  placeholder="Search by Role..."
+  value={search}
+  onChange={(e) => {
+    setSearch(e.target.value);
+    debouncedSearch(e.target.value);
+  }}
+/>
         </div>
       </div>
 

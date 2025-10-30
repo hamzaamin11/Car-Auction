@@ -2,7 +2,7 @@ import React, { useEffect, useState, useRef } from "react";
 import { useNavigate } from "react-router-dom";
 import axios from "axios";
 import { BASE_URL } from "./Contant/URL";
-
+import CustomDropdown from "../CustomDropdown";
 const SearchableOption = ({ datas, placeholder, name, value, onChange }) => {
   const [search, setSearch] = useState("");
   const [filteredData, setFilteredData] = useState(datas || []);
@@ -248,18 +248,19 @@ const TabsSection = () => {
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 mx-6">
         {/* City */}
         <div className="max-w-xs">
-          <SearchableOption
-            datas={cityData}
-            placeholder="Search City"
-            name="city"
-            value={filterData.city || ""}
-            onChange={handleChange}
-          />
+       <CustomDropdown
+  datas={cityData}
+  placeholder="Search City"
+  name="city"
+  value={filterData.city || ""}
+  onChange={handleChange}
+/>
+
         </div>
 
         {/* Make (Brand + Vehicle Count) */}
         <div className="max-w-xs">
-          <SearchableOption
+          <CustomDropdown
             datas={makeData}
             placeholder="Search Make"
             name="make"
@@ -270,7 +271,7 @@ const TabsSection = () => {
 
         {/* Body Style */}
         <div className="max-w-xs">
-          <SearchableOption
+          <CustomDropdown
             datas={bodyData}
             placeholder="Search BodyStyle"
             name="bodyStyle"
@@ -281,7 +282,7 @@ const TabsSection = () => {
 
         {/* Budget */}
         <div className="max-w-xs">
-          <SearchableOption
+          <CustomDropdown
             datas={budgetData.map((b) => ({
               label: b.label,
               value: `${b.min}-${b.max}`,

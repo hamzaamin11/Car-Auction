@@ -6,6 +6,7 @@ import { RotateLoader } from "../components/Loader/RotateLoader";
 import { AddModel } from "../components/ModelModal/AddModel";
 import { EditModal } from "../components/ModelModal/EditModal";
 import CustomAdd from "../CustomAdd";
+import CustomSearch from "../CustomSearch";
 export const ModelList = () => {
   const [isOpen, setIsOpen] = useState("");
   const [loading, setLoading] = useState(false);
@@ -97,13 +98,11 @@ export const ModelList = () => {
               />
             </svg>
           </span>
-          <input
-            type="text"
-            placeholder="Search By Car Make or Model..."
-            onChange={handleSearchChange}
-            value={search}
-            className="w-full pl-10 pr-4 py-2 rounded-md border border-gray-300 shadow-sm placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500"
-          />
+                <CustomSearch
+          placeholder="Search By Car Make or Model..."
+          value={search}
+          onChange={handleSearchChange}
+        />
         </div>
      <CustomAdd text="Add Model" onClick={() => handleToggleModal("Add")} />
       </div>

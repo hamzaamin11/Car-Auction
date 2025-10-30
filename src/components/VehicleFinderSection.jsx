@@ -5,7 +5,7 @@ import Select from "react-select";
 import { BASE_URL } from "./Contant/URL";
 import { useDispatch, useSelector } from "react-redux";
 import { addMake, addModel } from "./Redux/SelectorCarSlice";
-
+import CustomDropdown from "../CustomDropdown";
 const initialState = {
   year: "",
   price: "",
@@ -22,6 +22,17 @@ const VehicleFinderSection = () => {
   const cardsPerPage = 4;
   const navigate = useNavigate();
   const dispatch = useDispatch();
+const handleNext = () => {
+  if (startIndex + cardsPerPage < allCars.length) {
+    setStartIndex(startIndex + cardsPerPage);
+  }
+};
+
+const handlePrev = () => {
+  if (startIndex - cardsPerPage >= 0) {
+    setStartIndex(startIndex - cardsPerPage);
+  }
+};
 
   // 🧩 Get selected make and model from Redux
   const vehicleData = useSelector((state) => state.carSelector);
@@ -134,69 +145,66 @@ const VehicleFinderSection = () => {
     <div className="max-w-7xl mx-auto p-6 font-sans">
       {/* Filters */}
       <div className="flex lg:flex-row flex-col items-center justify-between gap-4 mb-4">
-        {/* MAKE */}
-        <div className="w-full">
-          <label className="block text-sm font-medium text-gray-700 mb-1">
-            Select Make
-          </label>
-          <Select
-            options={[{ label: "Select Make", value: "" }, ...totalMakes]}
-            value={
-              totalMakes.find(
-                (option) => option.value === vehicleData.make
-              ) || {
-                label: "Select Make",
-                value: "",
-              }
-            }
-            onChange={(selected) => {
-              dispatch(addMake(selected.value));
-              dispatch(addModel(""));
-            }}
-            placeholder="Select Make"
-            isSearchable
-          />
-        </div>
+     {/* MAKE */}
+<div className="w-full">
+  <label className="block text-sm font-medium text-gray-700 mb-1">
+    Select Make
+  </label>
+  <CustomDropdown
+    options={[{ label: "Select Make", value: "" }, ...totalMakes]}
+    value={
+      totalMakes.find((option) => option.value === vehicleData.make) || {
+        label: "Select Make",
+        value: "",
+      }
+    }
+    onChange={(selected) => {
+      dispatch(addMake(selected.value));
+      dispatch(addModel(""));
+    }}
+    placeholder="Select Make"
+    isSearchable
+  />
+</div>
 
-        {/* MODEL */}
-        <div className="w-full">
-          <label className="block text-sm font-medium text-gray-700 mb-1">
-            Select Model
-          </label>
-          <Select
-            options={[{ label: "Select Model", value: "" }, ...totalModels]}
-            value={
-              totalModels.find(
-                (option) => option.value === vehicleData.model
-              ) || {
-                label: "Select Model",
-                value: "",
-              }
-            }
-            onChange={(selected) => dispatch(addModel(selected.value))}
-            placeholder="Select Model"
-            isSearchable
-          />
-        </div>
+{/* MODEL */}
+<div className="w-full">
+  <label className="block text-sm font-medium text-gray-700 mb-1">
+    Select Model
+  </label>
+  <CustomDropdown
+    options={[{ label: "Select Model", value: "" }, ...totalModels]}
+    value={
+      totalModels.find((option) => option.value === vehicleData.model) || {
+        label: "Select Model",
+        value: "",
+      }
+    }
+    onChange={(selected) => dispatch(addModel(selected.value))}
+    placeholder="Select Model"
+    isSearchable
+  />
+</div>
 
-        {/* YEAR */}
-        <div className="w-full">
-          <label className="block text-sm font-medium text-gray-700 mb-1">
-            Select Year
-          </label>
-          <Select
-            options={[{ label: "Select Year", value: "" }, ...years]}
-            value={
-              years.find((option) => option.value === filters.year) || {
-                label: "Select Year",
-                value: "",
-              }
-            }
-            onChange={(selected) => handleChange("year", selected.value)}
-            placeholder="Select Year"
-            isSearchable
-          />
-        </div>
+{/* YEAR */}
+<div className="w-full">
+  <label className="block text-sm font-medium text-gray-700 mb-1">
+    Select Year
+  </label>
+  <CustomDropdown
+    options={[{ label: "Select Year", value: "" }, ...years]}
+    value={
+      years.find((option) => option.value === filters.year) || {
+        label: "Select Year",
+        value: "",
+      }
+    }
+    onChange={(selected) => handleChange("year", selected.value)}
+    placeholder="Select Year"
+    isSearchable
+  />
+</div>
+
 
         {/* SEARCH BUTTON */}
         <button
@@ -215,8 +223,8 @@ const VehicleFinderSection = () => {
             onClick={() => handleTabClick(tab)}
             className={`px-5 py-2 font-semibold uppercase tracking-wide ${
               filters.condition === tab
-                ? "bg-[#233d7b] text-white"
-                : "bg-gray-200 text-gray-700 hover:bg-[#233d7b] hover:text-white transition"
+                ? "bg-blue-950 text-white"
+                : "bg-gray-200 text-gray-700 hover:bg-blue-950 hover:text-white transition"
             }`}
           >
             {tab.charAt(0).toUpperCase() + tab.slice(1)}
@@ -225,55 +233,91 @@ const VehicleFinderSection = () => {
       </div>
 
       {/* Car Cards */}
-      {allCars.length === 0 ? (
-        <div className="text-center text-lg font-semibold text-gray-500">
-          No cars found
-        </div>
-      ) : (
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
-          {allCars.slice(startIndex, startIndex + cardsPerPage).map((car) => (
-            <div
-              key={car.id}
-              onClick={() => navigate(`/detailbid/${car.id}`)}
-              className="bg-white rounded-lg shadow-md hover:shadow-xl transition flex flex-col cursor-pointer"
-            >
-              <img
-                src={car?.images?.[0]}
-                alt="car"
-                className="w-full h-64 object-cover rounded-t-lg"
-              />
-              <div className="p-4 flex flex-col justify-between flex-grow">
-                <div>
-                  <h3 className="text-lg font-semibold mb-1">
-                    {car.make} {car.model}
-                  </h3>
-                  <p className="text-gray-700 font-semibold mb-1">
-                    Price: PKR {car.buyNowPrice}
-                  </p>
-                  <p className="text-sm font-semibold text-gray-600">
-                    Condition:{" "}
-                    <span
-                      className={
-                        car.vehicleCondition === "new"
-                          ? "text-green-600"
-                          : "text-red-600"
-                      }
-                    >
-                      {car.vehicleCondition?.toUpperCase()}
-                    </span>
-                  </p>
-                  <p className="text-sm text-gray-600">
-                    Model Year: <span>{car.year}</span>
-                  </p>
-                </div>
-                <button className="bg-red-600 py-2 text-white text-sm px-3  rounded mt-3 ">
-                  View Details
-                </button>
-              </div>
+    {allCars.length === 0 ? (
+  <div className="text-center text-lg font-semibold text-gray-500">
+    No cars found
+  </div>
+) : (
+  <div className="relative px-7"> {/*  Added padding left/right */}
+    {/*  Previous Button */}
+    <button
+      onClick={handlePrev}
+      className="absolute left-2 top-1/2 -translate-y-1/2 bg-white shadow-md rounded-full p-2 hover:bg-gray-100 transition"
+    >
+      <svg
+        xmlns="http://www.w3.org/2000/svg"
+        className="h-6 w-6 text-gray-700"
+        fill="none"
+        viewBox="0 0 24 24"
+        stroke="currentColor"
+      >
+        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />
+      </svg>
+    </button>
+
+    {/* 🔹 Cards Grid */}
+    <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
+      {allCars.slice(startIndex, startIndex + cardsPerPage).map((car) => (
+        <div
+          key={car.id}
+          onClick={() => navigate(`/detailbid/${car.id}`)}
+          className="bg-white rounded-lg shadow-md hover:shadow-xl transition flex flex-col cursor-pointer"
+        >
+          <img
+            src={car?.images?.[0]}
+            alt="car"
+            className="w-full h-45 object-cover rounded-t-lg"
+          />
+          <div className="p-4 flex flex-col justify-between flex-grow">
+            <div>
+              <h3 className="text-lg font-semibold mb-1">
+                {car.make} {car.model}
+              </h3>
+              <p className="text-gray-700 font-semibold mb-1">
+                Price: PKR {car.buyNowPrice}
+              </p>
+              <p className="text-sm font-semibold text-gray-600">
+                Condition:{" "}
+                <span
+                  className={
+                    car.vehicleCondition === "new"
+                      ? "text-green-600"
+                      : "text-red-600"
+                  }
+                >
+                  {car.vehicleCondition?.toUpperCase()}
+                </span>
+              </p>
+              <p className="text-sm text-gray-600">
+                Model Year: <span>{car.year}</span>
+              </p>
             </div>
-          ))}
+            <button className="bg-red-600 py-2 text-white text-sm px-3 rounded mt-3">
+              View Details
+            </button>
+          </div>
         </div>
-      )}
+      ))}
+    </div>
+
+    {/* 🔹 Next Button */}
+    <button
+      onClick={handleNext}
+      className="absolute right-2 top-1/2 -translate-y-1/2 bg-white shadow-md rounded-full p-2 hover:bg-gray-100 transition"
+    >
+      <svg
+        xmlns="http://www.w3.org/2000/svg"
+        className="h-6 w-6 text-gray-700"
+        fill="none"
+        viewBox="0 0 24 24"
+        stroke="currentColor"
+      >
+        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
+      </svg>
+    </button>
+  </div>
+)}
+
     </div>
   );
 };

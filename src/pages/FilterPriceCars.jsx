@@ -4,7 +4,7 @@ import { useNavigate, useParams } from "react-router-dom";
 import Select from "react-select";
 import { BASE_URL } from "../components/Contant/URL";
 import numberToWords from "number-to-words";
-
+import CustomDropdown from "../CustomDropdown";
 const BodyType = [
   { label: "Mini Vehicles", value: "Mini Vehicles" },
   { label: "Van", value: "Van" },
@@ -293,7 +293,7 @@ const FilterPriceCars = () => {
               onClick={() => setActiveTab(tab.toLowerCase())}
               className={`flex-1 py-2 rounded-lg text-sm font-semibold ${
                 activeTab === tab.toLowerCase()
-                  ? "bg-[#c90107] text-white"
+                  ? "bg-red-600 text-white"
                   : "bg-gray-200 text-gray-700"
               }`}
             >
@@ -307,7 +307,7 @@ const FilterPriceCars = () => {
           <label className="block text-sm font-medium text-gray-700">
             Select Body Style
           </label>
-          <Select
+          <CustomDropdown
             options={[{ label: "Select All Type ", value: "" }, ...BodyType]}
             value={
               BodyType.find(
@@ -331,7 +331,7 @@ const FilterPriceCars = () => {
           <label className="block text-sm font-medium text-gray-700">
             Select Year
           </label>
-          <Select
+          <CustomDropdown
             options={[
               { label: "Select Model Year", value: "" },
               ...currentYear,
@@ -358,7 +358,7 @@ const FilterPriceCars = () => {
           <label className="block text-sm font-medium text-gray-700">
             Select Make
           </label>
-          <Select
+          <CustomDropdown
             options={[{ label: "Select Vehicle Make", value: "" }, ...allMakes]}
             value={
               allMakes.find(
@@ -385,7 +385,7 @@ const FilterPriceCars = () => {
           <label className="block text-sm font-medium text-gray-700">
             Select Model
           </label>
-          <Select
+          <CustomDropdown
             options={[
               { label: "Select Vehicle Model", value: "" },
               ...allModels,
@@ -415,7 +415,7 @@ const FilterPriceCars = () => {
           <label className="block text-sm font-medium text-gray-700">
             Select Location
           </label>
-          <Select
+          <CustomDropdown
             options={[
               { label: "Select Vehicle Location", value: "" },
               ...cityOptions,

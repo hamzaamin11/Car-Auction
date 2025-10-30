@@ -3,6 +3,7 @@ import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { BASE_URL } from "./Contant/URL";
 import { Search } from "lucide-react";
+import CustomDropdown from "../CustomDropdown";
 export default function AuctionsTable() {
   const navigate = useNavigate();
   const [searchTerm, setSearchTerm] = useState("");

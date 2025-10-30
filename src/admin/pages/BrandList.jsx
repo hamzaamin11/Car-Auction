@@ -5,6 +5,7 @@ import { BASE_URL } from "../../components/Contant/URL";
 import { EditBrandModal } from "../../components/BrandModal/EditBrandModal";
 import { toast, ToastContainer } from "react-toastify";
 import CustomAdd from "../../CustomAdd";
+import CustomSearch from "../../CustomSearch";
 export const BrandList = () => {
   const [isOpen, setIsOpen] = useState("");
 
@@ -98,13 +99,11 @@ export const BrandList = () => {
               />
             </svg>
           </span>
-          <input
-            type="text"
-            placeholder="Search By Car Brand..."
-            onChange={handleSearchChange}
-            value={search}
-            className="w-full pl-10 pr-4 py-2 rounded-md border border-gray-300 shadow-sm placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500"
-          />
+                <CustomSearch
+          placeholder="Search By Car Brand..."
+          value={search}
+          onChange={handleSearchChange}
+        />
         </div>
        <CustomAdd
   text="Add Brand"

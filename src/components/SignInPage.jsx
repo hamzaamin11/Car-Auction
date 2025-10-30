@@ -113,7 +113,7 @@ const SignInPage = () => {
             />
           </div>
 
-       <CustomButton text="SignIn" /> 
+       <CustomButton text="Sign In" /> 
         </form>
 
         {/* Divider */}

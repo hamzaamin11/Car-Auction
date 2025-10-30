@@ -6,6 +6,7 @@ import EditAdminVehicle from "./EditAdminVehicle";
 import { BASE_URL } from "../../components/Contant/URL";
 import { ViewAdminCar } from "../../components/ViewAdminCar";
 import { useDispatch, useSelector } from "react-redux";
+import CustomSearch from "../../CustomSearch";
 import {
   navigationStart,
   navigationSuccess,
@@ -417,13 +418,12 @@ function AddAdminVehicle({ open, setOpen, onVehicleUpdated }) {
               />
             </svg>
           </span>
-          <input
-            type="text"
-            placeholder="Search By Car Name..."
-            value={search}
-            onChange={handleSearchChange}
-            className="w-full pl-10 pr-4 py-2 placeholder:text-xs sm:placeholder:text-sm rounded-lg border border-gray-300 shadow-sm placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500"
-          />
+        <CustomSearch
+  placeholder="Search By Car Name..."
+  value={search}
+  onChange={handleSearchChange}
+/>
+
         </div>
       <CustomAdd
   text="Add Vehicle"

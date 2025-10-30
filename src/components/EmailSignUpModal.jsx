@@ -92,7 +92,7 @@ export const EmailSignUpModal = ({ handleModal }) => {
                 value="seller"
                 checked={formData.role === "seller"}
                 onChange={handleChange}
-                className="h-4 w-4 text-blue-600 focus:ring-blue-500"
+                className="h-4 w-4 accent-blue-950"
               />
               <span>Seller</span>
             </label>
@@ -103,7 +103,7 @@ export const EmailSignUpModal = ({ handleModal }) => {
                 value="customer"
                 checked={formData.role === "customer"}
                 onChange={handleChange}
-                className="h-4 w-4 text-blue-600 focus:ring-blue-500"
+                className="h-4 w-4 accent-blue-950"
               />
               <span>Customer</span>
             </label>
@@ -157,7 +157,7 @@ export const EmailSignUpModal = ({ handleModal }) => {
           {/* Sign Up Button */}
           <button
             disabled={loading}
-            className="w-full bg-blue-700 text-white font-semibold py-3 rounded-lg hover:bg-blue-800 transition"
+            className="w-full bg-blue-950 text-white font-semibold py-3 rounded-lg "
           >
             {loading ? "Loading..." : "Sign Up"}
           </button>

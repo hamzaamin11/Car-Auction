@@ -15,7 +15,7 @@ import { ViewBrandModal } from "../../components/BrandModal/ViewBrandModal";
 import moment from "moment/moment";
 import axios from "axios";
 import { BASE_URL } from "../../components/Contant/URL";
-
+import CustomSearch from "../../CustomSearch";
 export default function LiveAuctions() {
   const { getLiveAuctions, AllLiveAuctions, AuctionById } =
     useContext(AuctionsContext);
@@ -120,12 +120,15 @@ export default function LiveAuctions() {
                 />
               </svg>
             </span>
-            <input
-              type="text"
-              placeholder="Search by Make, Model, or Condition..."
-              onChange={(e) => debouncedSearch(e.target.value)}
-              className="w-full pl-10 pr-4 py-2 rounded-md border border-gray-300 shadow-sm placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500"
-            />
+         <CustomSearch
+  placeholder="Search by Make, Model, or Condition..."
+  value={search}
+  onChange={(e) => {
+    setSearch(e.target.value);
+    debouncedSearch(e.target.value);
+  }}
+/>
+
           </div>
         </div>
 

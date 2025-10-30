@@ -19,7 +19,7 @@ import moment from "moment";
 import { AdminAddBid } from "../../components/AdminAddBidComponent/AdminAddBid";
 import { AdminUpdatebid } from "../AdminUpdatebid";
 import { X, ChevronLeft, ChevronRight } from "lucide-react";
-
+import CustomSearch from "../../CustomSearch";
 export default function UpcomingAuctions() {
   const { currentUser } = useSelector((state) => state?.auth);
 
@@ -173,12 +173,15 @@ export default function UpcomingAuctions() {
                 />
               </svg>
             </span>
-            <input
-              type="text"
-              placeholder="Search by Make, Model, or Condition..."
-              onChange={(e) => debouncedSearch(e.target.value)}
-              className="w-full pl-10 pr-4 py-2 rounded-md border border-gray-300 shadow-sm placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500"
-            />
+          <CustomSearch
+  placeholder="Search by Make, Model, or Condition..."
+  value={search}
+  onChange={(e) => {
+    setSearch(e.target.value);
+    debouncedSearch(e.target.value);
+  }}
+/>
+
           </div>
         </div>
 
@@ -228,8 +231,8 @@ export default function UpcomingAuctions() {
                     <tr
                       key={user.id}
                       className={`${
-                        idx % 2 === 0 ? "bg-gray-50" : ""
-                      } cursor-pointer hover:bg-gray-100`}
+                        idx % 2 === 0 ? "bg-white" : ""
+                      } cursor-pointer `}
                       onClick={() => handleViewDetails(user)}
                     >
                       <td
