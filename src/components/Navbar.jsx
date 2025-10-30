@@ -577,7 +577,7 @@ const Navbar = () => {
                   }}
                   className="flex items-center gap-2 px-4 py-3 text-gray-600 hover:bg-gray-100 cursor-pointer transition-colors duration-200"
                 >
-                  <span className="text-sm font-semibold">Change Password</span>
+                  <span className="text-sm font-semibold ">Change Password</span>
                 </div>
                 <div
                   onClick={() => {
@@ -724,7 +724,7 @@ const Navbar = () => {
           {currentUser ? (
             <div className="pt-4 border-t border-white text-sm">
               <div className="flex items-center gap-2 mb-4">
-                {/* ✅ FIXED: Show profile image in mobile menu */}
+                {/*  FIXED: Show profile image in mobile menu */}
                 {currentUser?.image ||
                 currentUser?.imageUrl ||
                 currentUser?.profileImage ? (
@@ -747,7 +747,7 @@ const Navbar = () => {
                   setPasswordModalOpen(true);
                   setMenuOpen(false);
                 }}
-                className="block w-full text-left py-1 text-white hover:underline"
+                className="block w-full text-left py-0 text-white hover:underline"
               >
                 Change Password
               </button>
@@ -885,7 +885,7 @@ const Navbar = () => {
                 />
                 <label
                   htmlFor="profileImageInput"
-                  className="absolute bottom-0 right-0 bg-blue-600 text-white p-2 rounded-full cursor-pointer hover:bg-blue-700 transition-colors"
+                  className="absolute bottom-0 right-0 bg-blue-950 text-white p-2 rounded-full cursor-pointer hover:bg-blue-950 transition-colors"
                   title="Change profile picture"
                 >
                   <svg

@@ -396,12 +396,12 @@ export default function Topbar() {
             <img
               src={currentUser?.image || currentUser?.imageUrl}
               alt="Profile"
-              className="w-10 h-10 rounded-full object-cover border-2 border-gray-300 group-hover:border-blue-600 transition-colors duration-300"
+              className="w-10 h-10 rounded-full object-cover border-2 border-gray-300 group-hover:border-blue-950 transition-colors duration-300"
             />
           ) : (
             <FaUserCircle
               size={40}
-              className="text-gray-700 group-hover:text-blue-600 transition-colors duration-300"
+              className="text-gray-700 group-hover:text-red-600 transition-colors duration-300"
             />
           )}
         </button>
