@@ -1,7 +1,7 @@
 import { FaArrowLeft, FaArrowRight } from "react-icons/fa";
 import { useEffect, useState } from "react";
 import axios from "axios";
-import { useParams } from "react-router-dom";
+import { Link, useParams } from "react-router-dom";
 import { BASE_URL } from "../../components/Contant/URL";
 import { useSelector } from "react-redux";
 import { toast, ToastContainer } from "react-toastify";
@@ -10,6 +10,7 @@ import moment from "moment";
 import { io } from "socket.io-client";
 import { current } from "@reduxjs/toolkit";
 import Swal from "sweetalert2";
+import { IoMdArrowBack } from "react-icons/io";
 
 export const Customerbid = () => {
   const { currentUser } = useSelector((state) => state.auth);
@@ -222,10 +223,19 @@ export const Customerbid = () => {
   }, []);
 
   return (
-    <div className="max-w-screen-xl mx-auto p-6 bg-gray-100 min-h-screen">
+    <div className="max-w-screen-2xl mx-auto p-6 bg-gray-100 min-h-screen">
       {/* Header */}
-      <div className="mb-8">
-        <h1 className="text-4xl font-extrabold text-[#233D7B] mb-2">
+
+      <div className="mb-8 flex">
+        <Link
+          to={-1}
+          className="flex items-center text-[#233D7B] font-medium hover:underline mx-4"
+        >
+          <IoMdArrowBack className="mr-2 text-xl" />
+          Back
+        </Link>
+
+        <h1 className="lg:text-3xl text-xl font-bold text-[#233D7B]">
           {selectedPrice?.make} {selectedPrice?.model} {selectedPrice?.series}{" "}
           {selectedPrice?.year}
         </h1>
@@ -233,7 +243,7 @@ export const Customerbid = () => {
 
       <div className="grid lg:grid-cols-3 gap-8">
         {/* LEFT: IMAGE SLIDER */}
-        <div className="col-span-2 bg-white rounded-xl shadow-md p-4 relative">
+        <div className="bg-white rounded-xl shadow-md p-4 relative">
           {/* Image container */}
           <div className="relative w-full h-[350px] sm:h-[400px] md:h-[450px] lg:h-[500px] rounded-lg overflow-hidden">
             <img
@@ -279,9 +289,9 @@ export const Customerbid = () => {
             ))}
           </div>
         </div>
-        <div className="col-span-1 space-y-6 hidden lg:block">
+        <div className=" space-y-6 hidden lg:block">
           {/* Vehicle Details Card */}
-          <div className="bg-white rounded-xl shadow-md p-6">
+          <div className="bg-white rounded-xl shadow-md p-6 h-full">
             <h2 className="text-xl font-bold text-[#233D7B] mb-3 border-b pb-2">
               Vehicle Details
             </h2>
@@ -325,97 +335,142 @@ export const Customerbid = () => {
               </li>
             </ul>
           </div>
+        </div>
+        <div className="bg-white rounded-xl shadow-md p-6   hidden lg:block">
+          <h2 className="text-xl font-bold text-[#233D7B] mb-3 border-b pb-2">
+            Bid Details
+          </h2>
+          <p className="text-sm mb-2">
+            <strong className="mr-1">Bid Status:</strong>
+            <span className="text-gray-700">
+              {selectedPrice?.bidStatus || "N/A"}
+            </span>
+          </p>
 
-          {/* Bid Section */}
-          <div className="bg-white rounded-xl shadow-md p-6 border-t-4 border-[#233D7B]">
-            <h2 className="text-xl font-bold text-[#233D7B] mb-3 border-b pb-2">
-              Bid Details
-            </h2>
+          <p className="text-sm mb-2">
+            <strong className="mr-1">Eligility Status:</strong>
+            <span className="text-gray-700">
+              {" "}
+              {selectedPrice?.eligibilityStatus || "N/A"}
+            </span>
+          </p>
+          <p className="text-sm mb-2">
+            <strong>Sale Status:</strong>
+            <span className="text-gray-700">
+              {" "}
+              {selectedPrice?.saleStatus || "N/A"}
+            </span>
+          </p>
+          <p className="text-sm mb-2">
+            <strong>Time Left:</strong>{" "}
+          </p>
+          <p className="text-sm mb-2">
+            <strong>Current Bid:</strong>{" "}
+          </p>
+          <p className="text-sm mb-2">
+            <strong>Your Bid:</strong>{" "}
+          </p>
+          <p className="text-sm mb-2">
+            <strong>Your Bid:</strong>{" "}
+          </p>
+          <p className="text-sm mb-2">
+            <strong>Bid Date:</strong>{" "}
+            {selectedPrice?.startTime
+              ? selectedPrice.startTime.slice(0, 10)
+              : "Coming Soon"}
+          </p>
+          <p className="text-sm mb-2">
+            <strong>Start Time:</strong>{" "}
+            {(selectedPrice?.startTime &&
+              moment(selectedPrice?.startTime).local().format("hh:mm A")) ||
+              "N/A"}
+          </p>
+          <p className="text-sm mb-4">
+            <strong>End Time:</strong>{" "}
+            {(selectedPrice?.endTime &&
+              moment(selectedPrice?.endTime).local().format("hh:mm A")) ||
+              "N/A"}
+          </p>
 
-            <p className="text-sm mb-2">
-              <strong>Bid Date:</strong>{" "}
-              {selectedPrice?.startTime
-                ? selectedPrice.startTime.slice(0, 10)
-                : "Coming Soon"}
-            </p>
-            <p className="text-sm mb-2">
-              <strong>Start Time:</strong>{" "}
-              {(selectedPrice?.startTime &&
-                moment(selectedPrice?.startTime).local().format("hh:mm A")) ||
-                "N/A"}
-            </p>
-            <p className="text-sm mb-4">
-              <strong>End Time:</strong>{" "}
-              {(selectedPrice?.endTime &&
-                moment(selectedPrice?.endTime).local().format("hh:mm A")) ||
-                "N/A"}
-            </p>
+          <p className="text-xl font-bold mb-4">
+            Demand Price:{" "}
+            <span className="text-green-700">
+              PKR {selectedPrice?.buyNowPrice?.toLocaleString()}
+            </span>
+          </p>
 
-            <p className="text-xl font-bold mb-4">
-              Demand Price:{" "}
-              <span className="text-green-700">
-                PKR {selectedPrice?.buyNowPrice?.toLocaleString()}
-              </span>
-            </p>
-
-            {selectedPrice?.auctionStatus !== "end" && currentUser && (
-              <button
-                disabled={!hasStarted} // 🔹 disable jab tak auction start nahi hua
-                onClick={() => {
-                  if (!currentUser.cnic) {
-                    Swal.fire({
-                      icon: "warning",
-                      title: "CNIC Required",
-                      text: "Please add your CNIC first before bidding.",
-                      confirmButtonColor: "#233D7B",
-                    });
-                  } else {
-                    setIsOpen(true);
-                  }
-                }}
-                className={`w-full py-3 rounded-lg font-semibold transition-all text-white ${
-                  hasStarted
-                    ? "bg-[#233D7B] hover:bg-[#1a2f63]"
-                    : "bg-red-900 cursor-not-allowed"
-                }`}
-              >
-                {selectedPrice?.startTime ? (
-                  hasStarted ? (
-                    "Start Bidding"
-                  ) : (
-                    <div className="text-center">
-                      {(() => {
-                        const hours = Math.floor(remainingTime / 3600);
-                        const minutes = Math.floor((remainingTime % 3600) / 60);
-                        const seconds = remainingTime % 60;
-                        const formatted = `${hours
-                          .toString()
-                          .padStart(2, "0")}:${minutes
-                          .toString()
-                          .padStart(2, "0")}:${seconds
-                          .toString()
-                          .padStart(2, "0")}`;
-                        return (
-                          <>
-                            <div className="text-xl font-bold">{formatted}</div>
-                            <div className="text-xs text-blue-100 mt-1">
-                              {phase === "before"
-                                ? "Starts In"
-                                : phase === "running"
-                                ? "Time Left"
-                                : "Ended"}
-                            </div>
-                          </>
-                        );
-                      })()}
-                    </div>
-                  )
+          {selectedPrice?.auctionStatus !== "end" && currentUser && (
+            <button
+              disabled={!hasStarted} // 🔹 disable jab tak auction start nahi hua
+              onClick={() => {
+                if (!currentUser.cnic) {
+                  Swal.fire({
+                    icon: "warning",
+                    title: "CNIC Required",
+                    text: "Please add your CNIC first before bidding.",
+                    confirmButtonColor: "#233D7B",
+                  });
+                } else {
+                  setIsOpen(true);
+                }
+              }}
+              className={`w-full py-3 rounded-lg font-semibold transition-all text-white ${
+                hasStarted
+                  ? "bg-[#233D7B] hover:bg-[#1a2f63]"
+                  : "bg-red-900 cursor-not-allowed"
+              }`}
+            >
+              {selectedPrice?.startTime ? (
+                hasStarted ? (
+                  "Join Auction"
                 ) : (
-                  "Start Bidding"
-                )}
-              </button>
-            )}
-          </div>
+                  <div className="text-center">
+                    {(() => {
+                      const hours = Math.floor(remainingTime / 3600);
+                      const minutes = Math.floor((remainingTime % 3600) / 60);
+                      const seconds = remainingTime % 60;
+                      const formatted = `${hours
+                        .toString()
+                        .padStart(2, "0")}:${minutes
+                        .toString()
+                        .padStart(2, "0")}:${seconds
+                        .toString()
+                        .padStart(2, "0")}`;
+                      return (
+                        <>
+                          <div className="text-xl font-bold">{formatted}</div>
+                          <div className="text-xs text-blue-100 mt-1">
+                            {phase === "before"
+                              ? "Starts In"
+                              : phase === "running"
+                              ? "Time Left"
+                              : "Ended"}
+                          </div>
+                        </>
+                      );
+                    })()}
+                  </div>
+                )
+              ) : (
+                "Join Auction"
+              )}
+            </button>
+          )}
+          {!currentUser && (
+            <button
+              onClick={() => {
+                Swal.fire({
+                  icon: "warning",
+                  title: "Login Required",
+                  text: "Please login first, then join the auction.",
+                  confirmButtonColor: "#233D7B",
+                });
+              }}
+              className="w-full py-3 rounded-lg font-semibold transition-all text-white bg-[#233D7B] hover:bg-[#1a2f63] hover:cursor-pointer"
+            >
+              Join Auction
+            </button>
+          )}
         </div>
 
         {/* RIGHT: VEHICLE + BID DETAILS */}

@@ -75,7 +75,7 @@ import SellerVehicleSpects from "./components/SellerVehicleSpects";
 import SellerProtectedRoute from "./SellerProtectedRoute";
 import CustomerList from "./admin/pages/CustomerList";
 import FilterPriceCars from "./pages/FilterPriceCars";
-import { useSelector } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import { BrandList } from "./admin/pages/BrandList";
 import { Customerbid } from "./admin/pages/Customerbid";
 import { SellerIntro } from "./pages/SellerIntro";
@@ -91,10 +91,17 @@ import { ContactList } from "./admin/pages/ContactList";
 import { BecomePartnerList } from "./admin/pages/BecomePartnerList";
 import { CitiesList } from "./pages/CitiesList";
 import { VehicleApproval } from "./admin/pages/VehicleApproval";
+import { addMake, addModel } from "./components/Redux/SelectorCarSlice";
 
 function Layout() {
   const location = useLocation();
   const { currentUser } = useSelector((state) => state.auth);
+
+  console.log("location =>", location.pathname);
+
+  const { make, model } = useSelector((state) => state?.carSelector);
+
+  const dispatch = useDispatch();
 
   const role = currentUser?.role;
 
@@ -102,6 +109,22 @@ function Layout() {
   const isAdminLogin = location.pathname === "/admin-login";
 
   const hideNavbarFooter = isAdminRoute || isAdminLogin;
+
+  if (
+    location.pathname === "/" ||
+    location.pathname === "/about" ||
+    location.pathname === "/saleslist" ||
+    location.pathname === "/certified" ||
+    location.pathname === "/today" ||
+    location.pathname === "/calendar" ||
+    location.pathname === "/join" ||
+    location.pathname === "/partner" ||
+    location.pathname === "/suggestion" ||
+    location.pathname === "/contact"
+  ) {
+    dispatch(addMake(""));
+    dispatch(addModel(""));
+  }
 
   return (
     <>
@@ -117,7 +140,7 @@ function Layout() {
       <Routes>
         {/* Main Routes */}
         <Route path="/" element={<Home />} />
-<Route path="/soldVehicles" element={<SoldVehicles />} />
+        <Route path="/soldVehicles" element={<SoldVehicles />} />
         <Route path="/about" element={<About />} />
 
         <Route path="/contact" element={<ContactUs />} />
