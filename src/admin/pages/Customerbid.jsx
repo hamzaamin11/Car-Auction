@@ -289,188 +289,278 @@ export const Customerbid = () => {
             ))}
           </div>
         </div>
-        <div className=" space-y-6 hidden lg:block">
+        <div className="hidden lg:block space-y-6">
           {/* Vehicle Details Card */}
           <div className="bg-white rounded-xl shadow-md p-6 h-full">
-            <h2 className="text-xl font-bold text-[#233D7B] mb-3 border-b pb-2">
+            <h2 className="text-xl font-bold text-[#233D7B] mb-4 border-b pb-2">
               Vehicle Details
             </h2>
-            <ul className="space-y-2 text-sm text-gray-700">
-              <li>
-                <strong>Year:</strong> {selectedPrice?.year}
-              </li>
-              <li>
-                <strong>Make:</strong> {selectedPrice?.make}
-              </li>
-              <li>
-                <strong>Model:</strong> {selectedPrice?.model}
-              </li>
-              <li>
-                <strong>City:</strong> {selectedPrice?.locationId}
-              </li>
-              <li>
-                <strong>Body Style:</strong> {selectedPrice?.bodyStyle}
-              </li>
-              <li>
-                <strong>Certification Status:</strong>{" "}
-                {selectedPrice?.certifyStatus}
-              </li>
-              <li>
-                <strong>Transmission:</strong> {selectedPrice?.transmission}
-              </li>
-              <li>
-                <strong>Meter Reading:</strong> {selectedPrice?.mileage}
-              </li>
-              <li>
-                <strong>Drive:</strong> {selectedPrice?.driveType}
-              </li>
-              <li>
-                <strong>Fuel:</strong> {selectedPrice?.fuelType}
-              </li>
-              <li>
-                <strong>Color:</strong> {selectedPrice?.color}
-              </li>
-              <li>
-                <strong>Condition:</strong> {selectedPrice?.vehicleCondition}
-              </li>
-            </ul>
+
+            <div className="overflow-x-auto">
+              <table className="w-full text-sm text-gray-700 border-collapse">
+                <tbody>
+                  <tr className="border-b">
+                    <td className="font-semibold py-2 w-1/3">Year</td>
+                    <td className="py-2">{selectedPrice?.year || "N/A"}</td>
+                  </tr>
+                  <tr className="border-b">
+                    <td className="font-semibold py-2">Make</td>
+                    <td className="py-2">{selectedPrice?.make || "N/A"}</td>
+                  </tr>
+                  <tr className="border-b">
+                    <td className="font-semibold py-2">Model</td>
+                    <td className="py-2">{selectedPrice?.model || "N/A"}</td>
+                  </tr>
+                  <tr className="border-b">
+                    <td className="font-semibold py-2">City</td>
+                    <td className="py-2">
+                      {selectedPrice?.locationId || "N/A"}
+                    </td>
+                  </tr>
+                  <tr className="border-b">
+                    <td className="font-semibold py-2">Body Style</td>
+                    <td className="py-2">
+                      {selectedPrice?.bodyStyle || "N/A"}
+                    </td>
+                  </tr>
+                  <tr className="border-b">
+                    <td className="font-semibold py-2">Certification Status</td>
+                    <td className="py-2">
+                      {selectedPrice?.certifyStatus || "N/A"}
+                    </td>
+                  </tr>
+                  <tr className="border-b">
+                    <td className="font-semibold py-2">Transmission</td>
+                    <td className="py-2">
+                      {selectedPrice?.transmission || "N/A"}
+                    </td>
+                  </tr>
+                  <tr className="border-b">
+                    <td className="font-semibold py-2">Meter Reading</td>
+                    <td className="py-2">{selectedPrice?.mileage || "N/A"}</td>
+                  </tr>
+                  <tr className="border-b">
+                    <td className="font-semibold py-2">Drive</td>
+                    <td className="py-2">
+                      {selectedPrice?.driveType || "N/A"}
+                    </td>
+                  </tr>
+                  <tr className="border-b">
+                    <td className="font-semibold py-2">Fuel</td>
+                    <td className="py-2">{selectedPrice?.fuelType || "N/A"}</td>
+                  </tr>
+                  <tr className="border-b">
+                    <td className="font-semibold py-2">Color</td>
+                    <td className="py-2">{selectedPrice?.color || "N/A"}</td>
+                  </tr>
+                  <tr>
+                    <td className="font-semibold py-2">Condition</td>
+                    <td className="py-2">
+                      {selectedPrice?.vehicleCondition || "N/A"}
+                    </td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
           </div>
         </div>
-        <div className="bg-white rounded-xl shadow-md p-6   hidden lg:block">
+
+        <div className="bg-white rounded-xl shadow-md p-6 hidden lg:block">
           <h2 className="text-xl font-bold text-[#233D7B] mb-3 border-b pb-2">
             Bid Details
           </h2>
-          <p className="text-sm mb-2">
-            <strong className="mr-1">Bid Status:</strong>
-            <span className="text-gray-700">
-              {selectedPrice?.bidStatus || "N/A"}
-            </span>
-          </p>
 
-          <p className="text-sm mb-2">
-            <strong className="mr-1">Eligility Status:</strong>
-            <span className="text-gray-700">
-              {" "}
-              {selectedPrice?.eligibilityStatus || "N/A"}
-            </span>
-          </p>
-          <p className="text-sm mb-2">
-            <strong>Sale Status:</strong>
-            <span className="text-gray-700">
-              {" "}
-              {selectedPrice?.saleStatus || "N/A"}
-            </span>
-          </p>
-          <p className="text-sm mb-2">
-            <strong>Time Left:</strong>{" "}
-          </p>
-          <p className="text-sm mb-2">
-            <strong>Current Bid:</strong>{" "}
-          </p>
-          <p className="text-sm mb-2">
-            <strong>Your Bid:</strong>{" "}
-          </p>
-          <p className="text-sm mb-2">
-            <strong>Your Bid:</strong>{" "}
-          </p>
-          <p className="text-sm mb-2">
-            <strong>Bid Date:</strong>{" "}
-            {selectedPrice?.startTime
-              ? selectedPrice.startTime.slice(0, 10)
-              : "Coming Soon"}
-          </p>
-          <p className="text-sm mb-2">
-            <strong>Start Time:</strong>{" "}
-            {(selectedPrice?.startTime &&
-              moment(selectedPrice?.startTime).local().format("hh:mm A")) ||
-              "N/A"}
-          </p>
-          <p className="text-sm mb-4">
-            <strong>End Time:</strong>{" "}
-            {(selectedPrice?.endTime &&
-              moment(selectedPrice?.endTime).local().format("hh:mm A")) ||
-              "N/A"}
-          </p>
+          <table className="w-full text-sm border border-gray-200 rounded-lg overflow-hidden">
+            <tbody>
+              <tr className="border-b">
+                <th className="text-left p-2 font-semibold text-gray-800 w-1/2">
+                  Bid Status:
+                </th>
+                <td className="p-2 text-gray-700">
+                  {selectedPrice?.bidStatus || "N/A"}
+                </td>
+              </tr>
 
-          <p className="text-xl font-bold mb-4">
-            Demand Price:{" "}
-            <span className="text-green-700">
-              PKR {selectedPrice?.buyNowPrice?.toLocaleString()}
-            </span>
-          </p>
+              <tr className="border-b">
+                <th className="text-left p-2 font-semibold text-gray-800">
+                  Eligibility Status:
+                </th>
+                <td className="p-2 text-gray-700">
+                  {selectedPrice?.eligibilityStatus || "N/A"}
+                </td>
+              </tr>
 
-          {selectedPrice?.auctionStatus !== "end" && currentUser && (
-            <button
-              disabled={!hasStarted} // 🔹 disable jab tak auction start nahi hua
-              onClick={() => {
-                if (!currentUser.cnic) {
+              <tr className="border-b">
+                <th className="text-left p-2 font-semibold text-gray-800">
+                  Sale Status:
+                </th>
+                <td className="p-2 text-gray-700">
+                  {selectedPrice?.saleStatus || "N/A"}
+                </td>
+              </tr>
+
+              <tr className="border-b">
+                <th className="text-left p-2 font-semibold text-gray-800">
+                  Time Left:
+                </th>
+                <td className="p-2 text-gray-700">
+                  {(selectedPrice?.endTime &&
+                    moment(selectedPrice?.endTime).local().format("hh:mm A")) ||
+                    "N/A"}
+                </td>
+              </tr>
+
+              <tr className="border-b">
+                <th className="text-left p-2 font-semibold text-gray-800">
+                  Current Bid:
+                </th>
+                <td className="p-2 text-gray-700">
+                  {selectedPrice?.currentBid || "--"}
+                </td>
+              </tr>
+
+              <tr className="border-b">
+                <th className="text-left p-2 font-semibold text-gray-800">
+                  Your Bid:
+                </th>
+                <td className="p-2 text-gray-700">
+                  {selectedPrice?.currentBid || "--"}
+                </td>
+              </tr>
+
+              <tr className="border-b">
+                <th className="text-left p-2 font-semibold text-gray-800">
+                  Bid Button:
+                </th>
+                <td className="p-2">
+                  <button className="bg-[#233D7B] text-white px-3 py-1 rounded hover:bg-[#1a2f63]">
+                    Place Bid
+                  </button>
+                </td>
+              </tr>
+
+              <tr className="border-b">
+                <th className="text-left p-2 font-semibold text-gray-800">
+                  Bid Date:
+                </th>
+                <td className="p-2 text-gray-700">
+                  {selectedPrice?.startTime
+                    ? selectedPrice.startTime.slice(0, 10)
+                    : "Coming Soon"}
+                </td>
+              </tr>
+
+              <tr className="border-b">
+                <th className="text-left p-2 font-semibold text-gray-800">
+                  Start Time:
+                </th>
+                <td className="p-2 text-gray-700">
+                  {(selectedPrice?.startTime &&
+                    moment(selectedPrice?.startTime)
+                      .local()
+                      .format("hh:mm A")) ||
+                    "N/A"}
+                </td>
+              </tr>
+
+              <tr className="border-b">
+                <th className="text-left p-2 font-semibold text-gray-800">
+                  End Time:
+                </th>
+                <td className="p-2 text-gray-700">
+                  {(selectedPrice?.endTime &&
+                    moment(selectedPrice?.endTime).local().format("hh:mm A")) ||
+                    "N/A"}
+                </td>
+              </tr>
+
+              <tr>
+                <th className="text-left p-2 text-lg font-bold text-gray-800">
+                  Demand Price:
+                </th>
+                <td className="p-2 text-green-700 font-semibold text-lg">
+                  PKR {selectedPrice?.buyNowPrice?.toLocaleString()}
+                </td>
+              </tr>
+            </tbody>
+          </table>
+
+          {/* Buttons Section */}
+          <div className="mt-4">
+            {selectedPrice?.auctionStatus !== "end" && currentUser && (
+              <button
+                disabled={!hasStarted}
+                onClick={() => {
+                  if (!currentUser.cnic) {
+                    Swal.fire({
+                      icon: "warning",
+                      title: "CNIC Required",
+                      text: "Please add your CNIC first before bidding.",
+                      confirmButtonColor: "#233D7B",
+                    });
+                  } else {
+                    setIsOpen(true);
+                  }
+                }}
+                className={`w-full py-3 rounded-lg font-semibold transition-all text-white ${
+                  hasStarted
+                    ? "bg-[#233D7B] hover:bg-[#1a2f63]"
+                    : "bg-red-900 cursor-not-allowed"
+                }`}
+              >
+                {selectedPrice?.startTime ? (
+                  hasStarted ? (
+                    "Join Auction"
+                  ) : (
+                    <div className="text-center">
+                      {(() => {
+                        const hours = Math.floor(remainingTime / 3600);
+                        const minutes = Math.floor((remainingTime % 3600) / 60);
+                        const seconds = remainingTime % 60;
+                        const formatted = `${hours
+                          .toString()
+                          .padStart(2, "0")}:${minutes
+                          .toString()
+                          .padStart(2, "0")}:${seconds
+                          .toString()
+                          .padStart(2, "0")}`;
+                        return (
+                          <>
+                            <div className="text-xl font-bold">{formatted}</div>
+                            <div className="text-xs text-blue-100 mt-1">
+                              {phase === "before"
+                                ? "Starts In"
+                                : phase === "running"
+                                ? "Time Left"
+                                : "Ended"}
+                            </div>
+                          </>
+                        );
+                      })()}
+                    </div>
+                  )
+                ) : (
+                  "Join Auction"
+                )}
+              </button>
+            )}
+
+            {!currentUser && (
+              <button
+                onClick={() => {
                   Swal.fire({
                     icon: "warning",
-                    title: "CNIC Required",
-                    text: "Please add your CNIC first before bidding.",
+                    title: "Login Required",
+                    text: "Please login first, then join the auction.",
                     confirmButtonColor: "#233D7B",
                   });
-                } else {
-                  setIsOpen(true);
-                }
-              }}
-              className={`w-full py-3 rounded-lg font-semibold transition-all text-white ${
-                hasStarted
-                  ? "bg-[#233D7B] hover:bg-[#1a2f63]"
-                  : "bg-red-900 cursor-not-allowed"
-              }`}
-            >
-              {selectedPrice?.startTime ? (
-                hasStarted ? (
-                  "Join Auction"
-                ) : (
-                  <div className="text-center">
-                    {(() => {
-                      const hours = Math.floor(remainingTime / 3600);
-                      const minutes = Math.floor((remainingTime % 3600) / 60);
-                      const seconds = remainingTime % 60;
-                      const formatted = `${hours
-                        .toString()
-                        .padStart(2, "0")}:${minutes
-                        .toString()
-                        .padStart(2, "0")}:${seconds
-                        .toString()
-                        .padStart(2, "0")}`;
-                      return (
-                        <>
-                          <div className="text-xl font-bold">{formatted}</div>
-                          <div className="text-xs text-blue-100 mt-1">
-                            {phase === "before"
-                              ? "Starts In"
-                              : phase === "running"
-                              ? "Time Left"
-                              : "Ended"}
-                          </div>
-                        </>
-                      );
-                    })()}
-                  </div>
-                )
-              ) : (
-                "Join Auction"
-              )}
-            </button>
-          )}
-          {!currentUser && (
-            <button
-              onClick={() => {
-                Swal.fire({
-                  icon: "warning",
-                  title: "Login Required",
-                  text: "Please login first, then join the auction.",
-                  confirmButtonColor: "#233D7B",
-                });
-              }}
-              className="w-full py-3 rounded-lg font-semibold transition-all text-white bg-[#233D7B] hover:bg-[#1a2f63] hover:cursor-pointer"
-            >
-              Join Auction
-            </button>
-          )}
+                }}
+                className="w-full py-3 rounded-lg font-semibold transition-all text-white bg-[#233D7B] hover:bg-[#1a2f63] hover:cursor-pointer"
+              >
+                Join Auction
+              </button>
+            )}
+          </div>
         </div>
 
         {/* RIGHT: VEHICLE + BID DETAILS */}
