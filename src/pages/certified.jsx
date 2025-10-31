@@ -61,8 +61,8 @@ const CertifiedCarsPage = () => {
           aria-label="View certified cars"
           className={`px-6 py-2 font-semibold text-lg rounded-l-full transition-colors duration-200 ${
             activeTab === "certified"
-              ? "bg-blue-600 text-white shadow-md"
-              : "bg-white text-blue-600 border border-blue-600 hover:bg-blue-50"
+              ? "bg-blue-950 text-white shadow-md"
+              : "bg-white text-blue-950 border border-blue-950 hover:bg-blue-50"
           }`}
         >
           Certified
@@ -72,8 +72,8 @@ const CertifiedCarsPage = () => {
           aria-label="View non-certified cars"
           className={`px-6 py-2 font-semibold text-lg rounded-r-full transition-colors duration-200 ${
             activeTab === "nonCertified"
-              ? "bg-blue-600 text-white shadow-md"
-              : "bg-white text-blue-600 border border-blue-600 hover:bg-blue-50"
+              ? "bg-blue-950 text-white shadow-md"
+              : "bg-white text-blue-950 border border-blue-950 hover:bg-blue-50"
           }`}
         >
           Non-Certified

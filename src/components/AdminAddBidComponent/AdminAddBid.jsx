@@ -221,7 +221,7 @@ const handleBidSubmit = async (e) => {
       // ✅ All good → proceed
       handleBidSubmit(e);
     }}
-    className="mt-2 w-full bg-blue-600 text-white py-2 rounded text-sm hover:bg-blue-700"
+    className="mt-2 w-full bg-blue-950 text-white py-2 rounded text-sm "
   >
     {loading ? "Loading..." : "Add Bid"}
   </button>

@@ -195,13 +195,17 @@ export default function LiveAuctions() {
                       {user?.sellerOffer}
                     </td>
                     <td className="px-4 py-3 text-gray-700">
-                      {user.endTime
-                        ? moment(user.endTime).local().format("hh:mm:ss A")
+                     {user.endTime
+                        ? moment(user.endTime).local().format("hh:mm A")
                         : "--"}
                     </td>
-                    <td className="px-4 py-3 text-gray-700">
-                      {user?.endTime?.slice(0, 10)}
-                    </td>
+<td className="px-4 py-3 text-gray-700">
+  {user?.endTime
+    ? new Date(user.endTime).toLocaleDateString("en-GB")
+    : "N/A"}
+</td>
+
+
                   </tr>
                 ))}
               </tbody>
@@ -251,7 +255,10 @@ export default function LiveAuctions() {
                   <p className="flex justify-between">
                     <span className="text-gray-900 font-bold">Date</span>
                     <span className="text-gray-500">
-                      {user?.endTime?.slice(0, 10)}
+                     <td className="px-0 py-0 text-gray-700">
+  {user?.endTime ? moment(user.endTime).format("MM/DD/YYYY") : "N/A"}
+</td>
+
                     </span>
                   </p>
                 </div>

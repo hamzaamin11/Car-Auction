@@ -12,7 +12,7 @@ export default function CalendarAuctionTable({ showTime, allAuctions }) {
   return (
     <div className="overflow-x-auto lg:mt-6 mt-2  ">
       <table className="min-w-full border-collapse rounded-xl overflow-hidden shadow-md ">
-        <thead className="bg-red-600 text-white text-left text-sm sm:text-base">
+        <thead className="bg-blue-950 text-white text-left text-sm sm:text-base">
           <tr>
             <th className="px-4 py-3">Date</th>
             <th className="px-4 py-3">Day</th>
@@ -22,9 +22,10 @@ export default function CalendarAuctionTable({ showTime, allAuctions }) {
         <tbody className="bg-white text-gray-700 divide-y max-h-full overflow-y-auto">
           {allAuctions?.map((loca, index) => (
             <tr key={loca.index} className="hover:bg-gray-50 transition">
-              <td className="px-4 py-3 font-medium">
-                {loca?.date?.slice(0, 10)}
-              </td>
+             <td className="px-4 py-3 font-medium">
+  {loca?.date ? new Date(loca.date).toLocaleDateString("en-GB") : "N/A"}
+</td>
+
               <td className="px-4 py-3">{loca.day}</td>
               <Link to={"/join"} className="px-4 py-3">
                 <ul className="list-disc list-inside space-y-1">

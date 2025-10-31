@@ -7,6 +7,7 @@ import {
   FaSignInAlt,
   FaUserCircle,
 } from "react-icons/fa";
+import { UserPlus , LogIn } from "lucide-react";
 import { RiArrowDropDownLine } from "react-icons/ri";
 import { useAuth } from "../context/AuthContext";
 import { AiOutlineLogout } from "react-icons/ai";
@@ -519,12 +520,18 @@ const Navbar = () => {
           <li>
             {currentUser?.role === "customer" ? null : (
             
-                <Link
-                to="/sellerIntro"
-                className="flex items-center gap-1 hover:text-red-600 font-semibold"
+              //   <Link
+              //   to="/sellerIntro"
+              //   className="flex items-center gap-1 hover:text-red-600 font-semibold"
+              // >
+              //    Post an Ad
+              // </Link>
+                   <button
+                onClick={() => navigate("/sellerIntro")}
+                className="bg-red-600 text-white font-bold px-2 py-1.5 rounded hover:cursor-pointer"
               >
-                 Post an Ad
-              </Link>
+                Post an Ad
+              </button>
               
             )}
           </li>
@@ -565,7 +572,7 @@ const Navbar = () => {
                 }`}
               >
                 <div className="px-4 py-3 border-b border-gray-200">
-                  <p className="text-sm text-gray-600">Signed in as</p>
+                  <p className="text-sm text-gray-600 ">Signed in as</p>
                   <p className="text-sm font-medium text-gray-800 truncate">
                     {currentUser?.name || "--"}
                   </p>
@@ -575,7 +582,7 @@ const Navbar = () => {
                     setPasswordModalOpen(true);
                     setDropdownOpen(false);
                   }}
-                  className="flex items-center gap-2 px-4 py-3 text-gray-600 hover:bg-gray-100 cursor-pointer transition-colors duration-200"
+                  className="flex items-center gap-2 px-4 py-1 text-gray-600 hover:bg-gray-100 cursor-pointer transition-colors duration-200"
                 >
                   <span className="text-sm font-semibold ">Change Password</span>
                 </div>
@@ -584,7 +591,7 @@ const Navbar = () => {
                     setProfileModalOpen(true);
                     setDropdownOpen(false);
                   }}
-                  className="flex items-center gap-2 px-4 py-3 text-gray-600 hover:bg-gray-100 cursor-pointer transition-colors duration-200"
+                  className="flex items-center gap-2 px-4 py-1 text-gray-600 hover:bg-gray-100 cursor-pointer transition-colors duration-200"
                 >
                   <span className="text-sm font-semibold">Manage Profile</span>
                 </div>
@@ -593,13 +600,13 @@ const Navbar = () => {
                     navigate("/soldVehicles");
                     setDropdownOpen(false);
                   }}
-                  className="flex items-center gap-2 px-4 py-3 text-gray-600 hover:bg-gray-100 cursor-pointer transition-colors duration-200"
+                  className="flex items-center gap-2 px-4 py-1 text-gray-600 hover:bg-gray-100 cursor-pointer transition-colors duration-200"
                 >
                   <span className="text-sm font-semibold">Sold Vehicles</span>
                 </div>
                 <div
                   onClick={handleLogout}
-                  className="flex items-center gap-2 px-4 py-3 text-red-600 hover:bg-gray-100 cursor-pointer transition-colors duration-200"
+                  className="flex items-center gap-2 px-4 py-1 text-red-600 hover:bg-gray-100 cursor-pointer transition-colors duration-200"
                 >
                   <AiOutlineLogout size={20} />
                   <span className="text-sm font-semibold">Logout</span>
@@ -608,25 +615,33 @@ const Navbar = () => {
             </div>
           ) : (
             <>
-              {/* <Link
+              <Link
                 to="/register"
-                className="flex items-center gap-1 hover:text-red-600 font-semibold"
+                className="flex items-center gap-1 hover:text-red-600 font-bold"
               >
+                <UserPlus size={15} />
                  Register
-              </Link> */}
-                     <button
+              </Link>
+                     {/* <button
                 onClick={() => navigate("/register")}
                 className="bg-red-600 text-white font-bold px-2 py-1.5 rounded hover:cursor-pointer"
               >
                 Register
-              </button>
+              </button> */}
            
-                   <button
+                   {/* <button
                 onClick={() => navigate("/login")}
                 className="bg-red-600 text-white font-bold px-2 py-1.5 rounded hover:cursor-pointer"
               >
                 Sign In
-              </button>
+              </button> */}
+                 <Link
+                to="/login"
+                className="flex items-center gap-1 hover:text-red-600 font-bold"
+              >
+                 <LogIn size={15}/>
+                 Sign In
+              </Link>
             </>
           )}
         </div>
@@ -722,7 +737,7 @@ const Navbar = () => {
           ))}
 
           {currentUser ? (
-            <div className="pt-4 border-t border-white text-sm">
+            <div className="pt-2 border-t border-white text-sm">
               <div className="flex items-center gap-2 mb-4">
                 {/*  FIXED: Show profile image in mobile menu */}
                 {currentUser?.image ||
@@ -782,12 +797,13 @@ const Navbar = () => {
               </button>
             </div>
           ) : (
-            <div className="flex flex-col space-y-2 pt-4 border-t border-white font-semibold">
+            <div className="flex flex-col  pt-4 border-t border-white font-semibold">
               <Link
                 to="/register"
                 onClick={() => setMenuOpen(false)}
                 className="flex items-center"
               >
+                 <UserPlus size={15} />
                 Register
               </Link>
               <Link
@@ -795,6 +811,7 @@ const Navbar = () => {
                 onClick={() => setMenuOpen(false)}
                 className="flex items-center"
               >
+                 <LogIn size={15}/>
                  Signin
               </Link>
             </div>

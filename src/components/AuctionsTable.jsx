@@ -4,6 +4,7 @@ import { useNavigate } from "react-router-dom";
 import { BASE_URL } from "./Contant/URL";
 import { Search } from "lucide-react";
 import CustomDropdown from "../CustomDropdown";
+
 export default function AuctionsTable() {
   const navigate = useNavigate();
   const [searchTerm, setSearchTerm] = useState("");
@@ -62,77 +63,86 @@ export default function AuctionsTable() {
 
       {/* 🧾 Auctions Table */}
       <div className="overflow-x-auto">
-        <table className="min-w-full table-auto border border-gray-300 mb-2">
+        <table className="min-w-full  rounded  mb-2 ">
           <thead>
-            <tr className="bg-gray-200 text-left text-xs sm:text-sm">
-              <th className="px-2 sm:px-4 py-2 border-b">SR#</th>
-              <th className="px-2 sm:px-4 py-2 border-b">
+            <tr className="bg-blue-950  text-left text-xs sm:text-sm">
+              <th className="px-2 sm:px-4 py-3 text-white">SR#</th>
+              <th className="px-2 sm:px-4 py-3  text-white">
                 Image
               </th>
-              <th className="px-2 sm:px-4 py-2 border-b">Model</th>
-              <th className="px-2 sm:px-4 py-2 border-b hidden md:table-cell">
+              <th className="px-2 sm:px-4 py-3  text-white">Model</th>
+              <th className="px-2 sm:px-4 py-3  hidden md:table-cell text-white">
                 Location
               </th>
-              <th className="px-2 sm:px-4 py-2 border-b">Auction Date</th>
-              <th className="px-2 sm:px-4 py-2 border-b">Status</th>
+              <th className="px-2 sm:px-4 py-3  text-white">Auction Date</th>
+              <th className="px-2 sm:px-4 py-3 text-white">Status</th>
             </tr>
           </thead>
-          <tbody>
-            {getAuctions.length > 0 ? (
-              getAuctions.map((sale, index) => (
-                <tr
-                  key={sale.vehicleId || index}
-                  className="border-b hover:bg-gray-50 cursor-pointer text-xs sm:text-sm"
-                  onClick={() => navigate(`/detailbid/${sale.vehicleId}`)}
-                >
-                  <td className="px-2 sm:px-4 py-2">{index + 1}</td>
+       <tbody>
+  {getAuctions.length > 0 ? (
+    getAuctions.map((sale, index) => {
+      //  You can log anything here
+      console.log("Auction:", index + 1, "Start Time:", sale.startTime);
 
-                  {/* 🖼️ Image */}
-                  <td className="px-2 sm:px-4 py-2 ">
-                    <img
-                      src={sale.images?.[0] || "/no-image.png"}
-                      alt={`${sale.make} ${sale.model}`}
-                      className="w-16 sm:w-20 h-12 sm:h-16 object-cover rounded "
-                    />
-                  </td>
+      return (
+        <tr
+          key={sale.vehicleId || index}
+          className="border-b hover:bg-gray-50 cursor-pointer text-xs sm:text-sm"
+          onClick={() => navigate(`/detailbid/${sale.vehicleId}`)}
+        >
+          <td className="px-2 sm:px-4 py-2">{index + 1}</td>
 
-                  <td className="px-2 sm:px-6 py-2 font-semibold text-gray-800">
-                    {sale.make} {sale.model}
-                  </td>
+          {/* 🖼️ Image */}
+          <td className="px-2 sm:px-4 py-2 ">
+            <img
+              src={sale.images?.[0] || "/no-image.png"}
+              alt={`${sale.make} ${sale.model}`}
+              className="w-16 sm:w-20 h-12 sm:h-16 object-cover rounded"
+            />
+          </td>
 
-                  {/* 📍 Location */}
-                  <td className="px-2 sm:px-4 py-2 hidden md:table-cell font-semibold">
-                    {sale.locationId}
-                  </td>
+          <td className="px-2 sm:px-6 py-2 font-semibold text-gray-800">
+            {sale.make} {sale.model}
+          </td>
 
-                  {/* 📅 Date */}
-                  <td className="px-2 sm:px-4 py-2">
-                    {sale.startTime?.slice(0, 10) || "N/A"}
-                  </td>
+          {/* 📍 Location */}
+          <td className="px-2 sm:px-4 py-2 hidden md:table-cell font-semibold">
+            {sale.locationId}
+          </td>
 
-                  {/* 🟢 Status */}
-                  <td
-                    className={`px-2 sm:px-4 py-2 font-bold ${
-                      sale.auctionStatus === "live"
-                        ? "text-green-500"
-                        : "text-red-500"
-                    }`}
-                  >
-                    {sale.auctionStatus || "N/A"}
-                  </td>
-                </tr>
-              ))
-            ) : (
-              <tr>
-                <td
-                  colSpan={6}
-                  className="text-center py-4 font-semibold text-gray-500 text-sm sm:text-base"
-                >
-                  No auctions found!
-                </td>
-              </tr>
-            )}
-          </tbody>
+          {/* 📅 Date */}
+          <td className="px-2 sm:px-4 py-2">
+  {sale.startTime
+    ? new Date(sale.startTime).toLocaleDateString("en-GB") // 🇬🇧 gives dd/mm/yyyy
+    : "N/A"}
+</td>
+
+
+          {/* 🟢 Status */}
+          <td
+            className={`px-2 sm:px-4 py-2 font-bold ${
+              sale.auctionStatus === "live"
+                ? "text-green-500"
+                : "text-red-500"
+            }`}
+          >
+            {sale.auctionStatus || "N/A"}
+          </td>
+        </tr>
+      );
+    })
+  ) : (
+    <tr>
+      <td
+        colSpan={6}
+        className="text-center py-4 font-semibold text-gray-500 text-sm sm:text-base"
+      >
+        No auctions found!
+      </td>
+    </tr>
+  )}
+</tbody>
+
         </table>
       </div>
     </div>

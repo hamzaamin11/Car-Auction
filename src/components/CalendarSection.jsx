@@ -19,6 +19,7 @@ export default function CalendarSection() {
     try {
       const res = await axios.post(`${BASE_URL}/seller/addCalenderEvent`);
       console.log("calender =>>>>>>>>>>>", res.data);
+      console.log("date =>>>>>>>>>>>", res.date);
     } catch (error) {
       console.log(error);
     }
