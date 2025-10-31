@@ -202,9 +202,10 @@ const AdminBidHistory = () => {
                         <td className="px-6 py-4 whitespace-nowrap text-sm font-normal text-[#191970]">
                           PKR {MonsterBid || maxBid || "0000"}
                         </td>
-                        <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-                          {date.slice(0, 10)}
-                        </td>
+                    <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+  {date ? new Date(date).toLocaleDateString("en-GB") : "N/A"}
+</td>
+
                         <td className="px-6 py-4 whitespace-nowrap text-center">
                           <span
                             className={`inline-flex items-center justify-center px-3 py-1 text-xs rounded-full font-semibold ${
@@ -343,7 +344,7 @@ const AdminBidHistory = () => {
                       <p className="flex justify-between">
                         <span className="text-gray-900 font-bold">Date</span>
                         <span className="text-gray-500">
-                          {date.slice(0, 10)}
+                          {date ? new Date(date).toLocaleDateString("en-GB") : "N/A"}
                         </span>
                       </p>
                     </div>

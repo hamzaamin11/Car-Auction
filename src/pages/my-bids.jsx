@@ -77,7 +77,10 @@ const MyBids = () => {
                         PKR {bid?.bidDetails?.yourOffer || "0"}
                       </td>
                       <td className="px-6 py-4 text-gray-500">
-                        {bid?.bidDetails?.bidCreatedAt?.slice(0, 10)}
+               {bid?.bidDetails?.bidCreatedAt
+  ? new Date(bid.bidDetails.bidCreatedAt).toLocaleDateString("en-GB")
+  : "N/A"}
+
                       </td>
                       <td className="px-6 py-4 text-center">
                         <span className="inline-flex items-center px-3 py-1 text-xs font-semibold text-green-700 bg-green-100 rounded-full">
@@ -138,7 +141,10 @@ const MyBids = () => {
                     <p className="flex justify-between">
                       <span className="text-gray-900 font-bold">Date</span>
                       <span className="text-gray-500">
-                        {bid?.bidDetails?.bidCreatedAt?.slice(0, 10)}
+                       {bid?.bidDetails?.bidCreatedAt
+  ? new Date(bid.bidDetails.bidCreatedAt).toLocaleDateString("en-GB")
+  : "N/A"}
+
                       </span>
                     </p>
                   </div>

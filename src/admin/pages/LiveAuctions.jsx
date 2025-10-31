@@ -256,7 +256,9 @@ export default function LiveAuctions() {
                     <span className="text-gray-900 font-bold">Date</span>
                     <span className="text-gray-500">
                      <td className="px-0 py-0 text-gray-700">
-  {user?.endTime ? moment(user.endTime).format("MM/DD/YYYY") : "N/A"}
+ {user?.endTime
+    ? new Date(user.endTime).toLocaleDateString("en-GB")
+    : "N/A"}
 </td>
 
                     </span>

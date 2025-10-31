@@ -263,8 +263,11 @@ export default function UpcomingAuctions() {
                           : "--"}
                       </td>
                       <td className="px-4 py-3 text-gray-700">
-                        {user.startTime?.slice(0, 10)}
-                      </td>
+  {user?.startTime
+    ? new Date(user.startTime).toLocaleDateString("en-GB")
+    : "N/A"}
+</td>
+
                      {currentUser?.role === "seller" ? null : (
   <td
     className="px-4 py-3"
@@ -332,7 +335,9 @@ export default function UpcomingAuctions() {
                     <p className="flex justify-between">
                       <span className="text-gray-900 font-bold">Date</span>
                       <span className="text-gray-500">
-                        {user?.startTime?.slice(0, 10)}
+                        {user?.startTime
+    ? new Date(user.startTime).toLocaleDateString("en-GB")
+    : "N/A"}
                       </span>
                     </p>
                   </div>
