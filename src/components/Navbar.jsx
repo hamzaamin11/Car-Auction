@@ -6,8 +6,9 @@ import {
   FaUser,
   FaSignInAlt,
   FaUserCircle,
+  FaCarSide,
 } from "react-icons/fa";
-import { UserPlus , LogIn } from "lucide-react";
+import { UserPlus, LogIn } from "lucide-react";
 import { RiArrowDropDownLine } from "react-icons/ri";
 import { useAuth } from "../context/AuthContext";
 import { AiOutlineLogout } from "react-icons/ai";
@@ -44,6 +45,7 @@ const Navbar = () => {
   const [showCountryDropdown, setShowCountryDropdown] = useState(false);
   const [showCityDropdown, setShowCityDropdown] = useState(false);
   const [showGenderDropdown, setShowGenderDropdown] = useState(false);
+  const [showLive, setShowLive] = useState([]);
 
   // ✅ FIXED: Separate states for image file and preview
   const [imageFile, setImageFile] = useState(null);
@@ -178,6 +180,16 @@ const Navbar = () => {
     setProfileForm((prev) => ({ ...prev, city: city.cityName }));
     setCitySearch(city.cityName);
     setShowCityDropdown(false);
+  };
+
+  const handleLiveVehicle = async () => {
+    try {
+      const res = await axios.get(`${BASE_URL}/todayAuction`);
+      console.log(res.data);
+      setShowLive(res.data);
+    } catch (error) {
+      console.log(error);
+    }
   };
 
   // Handle gender selection
@@ -341,6 +353,10 @@ const Navbar = () => {
       setImageFile(null);
     }
   }, [profileModalOpen, currentUser]);
+
+  useEffect(() => {
+    handleLiveVehicle();
+  }, []);
 
   useEffect(() => {
     handleGetAllCity();
@@ -519,20 +535,34 @@ const Navbar = () => {
 
           <li>
             {currentUser?.role === "customer" ? null : (
-            
               //   <Link
               //   to="/sellerIntro"
               //   className="flex items-center gap-1 hover:text-red-600 font-semibold"
               // >
               //    Post an Ad
               // </Link>
-                   <button
+              <button
                 onClick={() => navigate("/sellerIntro")}
                 className="bg-red-600 text-white font-bold px-2 py-1.5 rounded hover:cursor-pointer"
               >
                 Post an Ad
               </button>
-              
+            )}
+          </li>
+          <li>
+            {showLive.some((item) => item.auctionStatus === "live") && (
+              <Link
+                to="/today"
+                className="relative flex items-center gap-2 bg-red-600 text-white font-bold px-4 py-1.5 
+             rounded-full hover:bg-red-700 transition-all overflow-hidden"
+              >
+                {/* Pulsing background */}
+                <span className="absolute inset-0 rounded-full bg-red-500/50 animate-ping"></span>
+
+                {/* Icon and Text */}
+                <FaCarSide className="relative text-white text-lg animate-bounce" />
+                <span className="relative z-10">LIVE</span>
+              </Link>
             )}
           </li>
         </ul>
@@ -584,7 +614,9 @@ const Navbar = () => {
                   }}
                   className="flex items-center gap-2 px-4 py-1 text-gray-600 hover:bg-gray-100 cursor-pointer transition-colors duration-200"
                 >
-                  <span className="text-sm font-semibold ">Change Password</span>
+                  <span className="text-sm font-semibold ">
+                    Change Password
+                  </span>
                 </div>
                 <div
                   onClick={() => {
@@ -620,27 +652,27 @@ const Navbar = () => {
                 className="flex items-center gap-1 hover:text-red-600 font-bold"
               >
                 <UserPlus size={15} />
-                 Register
+                Register
               </Link>
-                     {/* <button
+              {/* <button
                 onClick={() => navigate("/register")}
                 className="bg-red-600 text-white font-bold px-2 py-1.5 rounded hover:cursor-pointer"
               >
                 Register
               </button> */}
-           
-                   {/* <button
+
+              {/* <button
                 onClick={() => navigate("/login")}
                 className="bg-red-600 text-white font-bold px-2 py-1.5 rounded hover:cursor-pointer"
               >
                 Sign In
               </button> */}
-                 <Link
+              <Link
                 to="/login"
                 className="flex items-center gap-1 hover:text-red-600 font-bold"
               >
-                 <LogIn size={15}/>
-                 Sign In
+                <LogIn size={15} />
+                Sign In
               </Link>
             </>
           )}
@@ -695,6 +727,35 @@ const Navbar = () => {
             Become A Partner
           </Link>
 
+          {currentUser?.role === "customer" ? null : (
+            //   <Link
+            //   to="/sellerIntro"
+            //   className="flex items-center gap-1 hover:text-red-600 font-semibold"
+            // >
+            //    Post an Ad
+            // </Link>
+            <button
+              onClick={() => navigate("/sellerIntro")}
+              className="bg-white text-red-500 font-bold px-2 py-1.5 rounded hover:cursor-pointer"
+            >
+              Post an Ad
+            </button>
+          )}
+
+           {showLive.some((item) => item.auctionStatus === "live") && (
+              <Link
+                to="/today"
+                className="relative flex items-center gap-2 bg-white text-red-500 font-bold px-4 py-1.5 w-24
+             rounded transition-all overflow-hidden"
+              >
+                {/* Pulsing background */}
+                <span className="absolute inset-0 rounded-full  animate-ping"></span>
+
+                {/* Icon and Text */}
+                <FaCarSide className="relative text-red-500 text-lg animate-bounce" />
+                <span className="relative z-10">LIVE</span>
+              </Link>
+            )}
           {user?.role === "seller" && (
             <Link
               to="/add-vehicles"
@@ -803,7 +864,7 @@ const Navbar = () => {
                 onClick={() => setMenuOpen(false)}
                 className="flex items-center"
               >
-                 <UserPlus size={15} />
+                <UserPlus size={15} />
                 Register
               </Link>
               <Link
@@ -811,8 +872,8 @@ const Navbar = () => {
                 onClick={() => setMenuOpen(false)}
                 className="flex items-center"
               >
-                 <LogIn size={15}/>
-                 Signin
+                <LogIn size={15} />
+                Signin
               </Link>
             </div>
           )}
