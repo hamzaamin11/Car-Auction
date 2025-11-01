@@ -1,13 +1,8 @@
-import React, { useContext, useEffect, useState } from "react";
-import { SidebarClose, MoreVertical } from "lucide-react";
-import VehicleContext from "../../context/VehicleContext";
-import { useAuth } from "../../context/AuthContext";
-import EditAdminVehicle from "./EditAdminVehicle";
-import { BASE_URL } from "../../components/Contant/URL";
-import { ViewAdminCar } from "../../components/ViewAdminCar";
+import React, { useEffect, useState } from "react";
+import { MoreVertical } from "lucide-react";
 import { useDispatch, useSelector } from "react-redux";
 import CustomSearch from "../../CustomSearch";
-import CustomDropdown from "../../CustomDropdown";
+import Dropdown from "../../Dropdown";
 import {
   navigationStart,
   navigationSuccess,
@@ -18,7 +13,6 @@ import axios from "axios";
 import { toast, ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import Swal from "sweetalert2";
-import Select from "react-select";
 import CarSelector from "../../components/CarSelector";
 import CustomAdd from "../../CustomAdd";
 import {
@@ -27,6 +21,9 @@ import {
   addSeries,
   addYear,
 } from "../../components/Redux/SelectorCarSlice";
+import EditAdminVehicle from "./EditAdminVehicle";
+import { ViewAdminCar } from "../../components/ViewAdminCar";
+import { BASE_URL } from "../../components/Contant/URL";
 
 const bodyStyles = [
   "Convertible",
@@ -68,9 +65,9 @@ function AddAdminVehicle({ open, setOpen, onVehicleUpdated }) {
     model: "",
     series: "",
     bodyStyle: "",
-    transmission: "Automatic",
+    transmission: "",
     driveType: "fwd",
-    fuelType: "petrol",
+    fuelType: "",
     color: "",
     mileage: "",
     vehicleCondition: "new",
@@ -99,7 +96,8 @@ function AddAdminVehicle({ open, setOpen, onVehicleUpdated }) {
   const [actionMenuOpen, setActionMenuOpen] = useState(null);
   const [pageNo, setPageNo] = useState(1);
   const [selectedCount, setSelectedCount] = useState(0);
-  const [price, setPrice] = useState();
+  const [price, setPrice] = useState("");
+  const [showModal, setShowModal] = useState(false);
 
   const dispatch = useDispatch();
 
@@ -171,23 +169,15 @@ function AddAdminVehicle({ open, setOpen, onVehicleUpdated }) {
 
   const handleFileChange = (e) => {
     const files = Array.from(e.target.files);
-    
-    // Check if adding new files would exceed the limit of 5
     if (vehicle.image.length + files.length > 5) {
       toast.error("You can add a maximum of 5 images");
       return;
     }
-
-    // Update the vehicle state with new images
     setVehicle((prev) => ({
       ...prev,
       image: [...prev.image, ...files],
     }));
-    
-    // Update selected count to reflect total images
     setSelectedCount(vehicle.image.length + files.length);
-
-    // Reset the file input to prevent accumulation
     e.target.value = null;
   };
 
@@ -198,7 +188,7 @@ function AddAdminVehicle({ open, setOpen, onVehicleUpdated }) {
 
   const handleSearchChange = (e) => {
     setSearch(e.target.value);
-    setPageNo(1); // Reset to page 1 on search
+    setPageNo(1);
   };
 
   const handleSearchable = (selectedOption) => {
@@ -232,12 +222,54 @@ function AddAdminVehicle({ open, setOpen, onVehicleUpdated }) {
     }
   };
 
-  const cityData = [
-    { label: "Select City", value: "" },
-    ...(allCities?.map((city) => ({
+ const cityOptions = allCities?.map((city) => ({
       label: city.cityName,
       value: city.id,
-    })) || []),
+})) || [];
+
+  const driveTypeOptions = [
+    { label: "FWD (Front-Wheel Drive)", value: "fwd" },
+    { label: "RWD (Rear-Wheel Drive)", value: "rwd" },
+    { label: "AWD (All-Wheel Drive)", value: "awd" },
+    { label: "4WD (Four-Wheel Drive)", value: "4wd" },
+  ];
+
+  const bodyStyleOptions = [
+   
+    ...bodyStyles.map((style) => ({ label: style, value: style })),
+  ];
+
+  const transmissionOptions = [
+ 
+    { label: "Automatic", value: "Automatic" },
+    { label: "Manual", value: "Manual" },
+  ];
+
+  const colorOptions = [
+   
+    ...carColors.map((color) => ({ label: color, value: color })),
+  ];
+
+  const fuelTypeOptions = [
+    
+    { label: "Petrol", value: "petrol" },
+    { label: "Diesel", value: "diesel" },
+    { label: "CNG (Compressed Natural Gas)", value: "cng" },
+    { label: "LPG (Liquefied Petroleum Gas)", value: "lpg" },
+    { label: "Electric", value: "electric" },
+    { label: "Hybrid", value: "hybrid" },
+  ];
+
+  const conditionOptions = [
+    
+    { label: "New", value: "new" },
+    { label: "Used", value: "used" },
+  ];
+
+  const certifyOptions = [
+   
+    { label: "Certified", value: "Certified" },
+    { label: "Non-Certified", value: "Non-Certified" },
   ];
 
   const handleIsOpenToggle = (active) => {
@@ -358,7 +390,23 @@ function AddAdminVehicle({ open, setOpen, onVehicleUpdated }) {
 
   const handleViewBidClose = () => setViewBider(false);
 
-  const [showModal, setShowModal] = useState(false);
+  const toggleActionMenu = (vehicleId) => {
+    setActionMenuOpen((prev) => (prev === vehicleId ? null : vehicleId));
+  };
+
+  const handleNextPage = () => {
+    setPageNo(pageNo + 1);
+  };
+
+  const handlePrevPage = () => {
+    setPageNo(pageNo > 1 ? pageNo - 1 : 1);
+  };
+
+  const handleOutsideClick = (e, vehicleId) => {
+    if (actionMenuOpen === vehicleId && !e.target.closest(".action-menu")) {
+      setActionMenuOpen(null);
+    }
+  };
 
   useEffect(() => {
     setVehicle((prev) => ({
@@ -377,24 +425,6 @@ function AddAdminVehicle({ open, setOpen, onVehicleUpdated }) {
   useEffect(() => {
     handleGetVehicles();
   }, [pageNo, search]);
-
-  const toggleActionMenu = (vehicleId) => {
-    setActionMenuOpen((prev) => (prev === vehicleId ? null : vehicleId));
-  };
-
-  const handleNextPage = () => {
-    setPageNo(pageNo + 1);
-  };
-
-  const handlePrevPage = () => {
-    setPageNo(pageNo > 1 ? pageNo - 1 : 0);
-  };
-
-  const handleOutsideClick = (e, vehicleId) => {
-    if (actionMenuOpen === vehicleId && !e.target.closest(".action-menu")) {
-      setActionMenuOpen(null);
-    }
-  };
 
   return (
     <div className="min-h-screen bg-gray-100 p-4 sm:p-6">
@@ -424,7 +454,6 @@ function AddAdminVehicle({ open, setOpen, onVehicleUpdated }) {
   value={search}
   onChange={handleSearchChange}
 />
-
         </div>
       <CustomAdd
   text="Add Vehicle"
@@ -452,7 +481,7 @@ function AddAdminVehicle({ open, setOpen, onVehicleUpdated }) {
                 onClick={() => setShowModal(false)}
                 className="text-red-700 text-3xl"
               >
-                &times;
+                ×
               </button>
             </div>
             <form onSubmit={handleSubmit} className="space-y-4">
@@ -460,107 +489,75 @@ function AddAdminVehicle({ open, setOpen, onVehicleUpdated }) {
                 <label className="block text-sm font-medium text-gray-700 mb-1">
                   City <span className="text-red-500">*</span>
                 </label>
-                <Select onChange={handleSearchable} options={cityData} />
+            <Dropdown
+  options={cityOptions}
+  value={cityOptions.find(c => c.value === vehicle.locationId) || null}
+  onChange={(option) => setVehicle(prev => ({ ...prev, locationId: option?.value || "" }))}
+  placeholder="Select City"
+  isSearchable
+/>
                 <div className="mt-4">
                   <label className="block text-sm font-medium text-gray-700 mb-1">
                     Car Info <span className="text-red-500">*</span>
                   </label>
                   <input
                     onClick={handleUpdateCarInfo}
-                    value={`${selected?.year || ""} ${selected?.make || ""} ${
-                      selected?.model || ""
-                    } ${selected?.series || ""}`}
+                    value={`${selected?.year || ""} ${selected?.make || ""} ${selected?.model || ""} ${selected?.series || ""}`}
                     placeholder="Year/Make/Model/Version"
                     readOnly
                     className={`border border-gray-300 px-4 py-2 rounded focus:outline-none focus:ring-2 focus:ring-indigo-500 w-full ${
-                      (selected.year && selected.make && selected.model) ||
-                      selected.series
+                      (selected.year && selected.make && selected.model) || selected.series
                         ? "bg-green-200 text-green-700"
                         : "bg-red-200"
                     }`}
                   />
                 </div>
               </div>
-              <div className="gap-4">
+
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                 <div>
                   <label className="text-sm font-medium text-gray-700 mb-1">
                     Vehicle Drive Type <span className="text-red-500">*</span>
                   </label>
-                  <select
-                    name="driveType"
-                    value={vehicle.driveType}
-                    onChange={handleChange}
-                    className={`border border-gray-300 px-4 py-2 rounded focus:outline-none focus:ring-2 focus:ring-indigo-500 w-full ${
-                      vehicle.driveType ? "text-gray-900" : "text-gray-400 "
-                    }`}
-                  >
-                    <option value="">Select Drive Type</option>
-                    <option value="fwd" className="text-gray-900">
-                      FWD (Front-Wheel Drive)
-                    </option>
-                    <option value="rwd" className="text-gray-900">
-                      RWD (Rear-Wheel Drive)
-                    </option>
-                    <option value="awd" className="text-gray-900">
-                      AWD (All-Wheel Drive)
-                    </option>
-                    <option value="4wd" className="text-gray-900">
-                      4WD (Four-Wheel Drive)
-                    </option>
-                  </select>
+              <Dropdown
+  options={driveTypeOptions}
+  value={driveTypeOptions.find(d => d.value === vehicle.driveType) || null}
+  onChange={(opt) => setVehicle(prev => ({ ...prev, driveType: opt?.value || "" }))}
+  placeholder="Select Drive Type"  // Now this shows in gray
+/>
                 </div>
+
                 <div>
                   <label className="block text-sm font-medium text-gray-700 mb-1">
                     Vehicle Body Style <span className="text-red-500">*</span>
                   </label>
-                  <select
-                    name="bodyStyle"
-                    value={vehicle.bodyStyle}
-                    onChange={handleChange}
-                    className={`border border-gray-300 px-4 py-2 rounded focus:outline-none focus:ring-2 focus:ring-indigo-500 w-full ${
-                      vehicle.bodyStyle ? "text-gray-900" : "text-gray-400"
-                    }`}
-                  >
-                    <option className="" value={""}>
-                      Please Select BodyStyle
-                    </option>
-                    {bodyStyles?.map((body) => (
-                      <option key={body} value={body} className="text-gray-900">
-                        {body}
-                      </option>
-                    ))}
-                  </select>
+                  <Dropdown
+                    options={bodyStyleOptions}
+                    value={bodyStyleOptions.find((b) => b.value === vehicle.bodyStyle) || null}
+                    onChange={(option) => setVehicle((prev) => ({ ...prev, bodyStyle: option?.value || "" }))}
+                    placeholder="Select Body Style"
+                  />
                 </div>
+
                 <div>
                   <label className="block text-sm font-medium text-gray-700 mb-1">
-                    Vehicle Transmission Type{" "}
-                    <span className="text-red-500">*</span>
+                    Vehicle Transmission Type <span className="text-red-500">*</span>
                   </label>
-                  <select
-                    name="transmission"
-                    value={vehicle?.transmission || ""}
-                    onChange={handleChange}
-                    className={`border border-gray-300 px-4 py-2 rounded focus:outline-none focus:ring-2 focus:ring-indigo-500 w-full ${
-                      vehicle?.transmission ? "text-gray-900" : "text-gray-400"
-                    }`}
-                  >
-                    <option value={""}>Please Select Transmission Type</option>
-                    <option value={"Automatic"} className="text-gray-900">
-                      Automatic
-                    </option>
-                    <option value={"Manual"} className="text-gray-900">
-                      Manual
-                    </option>
-                  </select>
+                  <Dropdown
+                    options={transmissionOptions}
+                    value={transmissionOptions.find((t) => t.value === vehicle.transmission) || null}
+                    onChange={(option) => setVehicle((prev) => ({ ...prev, transmission: option?.value || "" }))}
+                   placeholder="Select Vehicle Transmission"
+                  />
                 </div>
+
                 <div>
                   <label className="block text-sm font-medium text-gray-700 mb-1">
-                    Vehicle Meter Reading{" "}
-                    <span className="text-red-500">*</span>
+                    Vehicle Meter Reading <span className="text-red-500">*</span>
                   </label>
                   <input
                     name="mileage"
-                    value={vehicle?.mileage || ""}
+                    value={vehicle.mileage || ""}
                     onChange={(e) => {
                       const value = e.target.value;
                       if (value === "" || /^[1-9][0-9]{0,6}$/.test(value)) {
@@ -572,86 +569,43 @@ function AddAdminVehicle({ open, setOpen, onVehicleUpdated }) {
                     className="border border-gray-300 px-4 py-2 rounded focus:outline-none focus:ring-2 focus:ring-indigo-500 w-full"
                   />
                 </div>
+
                 <div>
                   <label className="block text-sm font-medium text-gray-700 mb-1">
                     Vehicle Color <span className="text-red-500">*</span>
                   </label>
-                  <select
-                    name="color"
-                    value={vehicle.color || ""}
-                    onChange={handleChange}
-                    className={`border border-gray-300 px-4 py-2 rounded focus:outline-none focus:ring-2 focus:ring-indigo-500 w-full ${
-                      vehicle.color ? "text-gray-900" : "text-gray-400"
-                    }`}
-                  >
-                    <option value={""}>Please Select Color</option>
-                    {carColors?.map((color) => (
-                      <option
-                        key={color}
-                        value={color}
-                        className="text-gray-900"
-                      >
-                        {color}
-                      </option>
-                    ))}
-                  </select>
+                  <Dropdown
+                    options={colorOptions}
+                    value={colorOptions.find((c) => c.value === vehicle.color) || null}
+                    onChange={(option) => setVehicle((prev) => ({ ...prev, color: option?.value || "" }))}
+                    placeholder="Select Vehicle Color"
+                  />
                 </div>
+
                 <div>
                   <label className="block text-sm font-medium text-gray-700 mb-1">
                     Vehicle Fuel Type <span className="text-red-500">*</span>
                   </label>
-                  <select
-                    name="fuelType"
-                    value={vehicle.fuelType}
-                    onChange={handleChange}
-                    className={`border border-gray-300 px-4 py-2 rounded focus:outline-none focus:ring-2 focus:ring-indigo-500 w-full ${
-                      vehicle.fuelType ? "text-gray-900" : "text-gray-400"
-                    }`}
-                  >
-                    <option value="">Select Fuel Type</option>
-                    <option value="petrol" className="text-gray-900">
-                      Petrol
-                    </option>
-                    <option value="diesel" className="text-gray-900">
-                      Diesel
-                    </option>
-                    <option value="cng" className="text-gray-900">
-                      CNG (Compressed Natural Gas)
-                    </option>
-                    <option value="lpg" className="text-gray-900">
-                      LPG (Liquefied Petroleum Gas)
-                    </option>
-                    <option value="electric" className="text-gray-900">
-                      Electric
-                    </option>
-                    <option value="hybrid" className="text-gray-900">
-                      Hybrid
-                    </option>
-                  </select>
+                  <Dropdown
+                    options={fuelTypeOptions}
+                    value={fuelTypeOptions.find((f) => f.value === vehicle.fuelType) || null}
+                    onChange={(option) => setVehicle((prev) => ({ ...prev, fuelType: option?.value || "" }))}
+                    placeholder="Select Fuel type"
+                  />
                 </div>
+
                 <div>
                   <label className="block text-sm font-medium text-gray-700 mb-1">
                     Vehicle Condition <span className="text-red-500">*</span>
                   </label>
-                  <select
-                    name="vehicleCondition"
-                    value={vehicle.vehicleCondition}
-                    onChange={handleChange}
-                    className={`border border-gray-300 px-4 py-2 rounded focus:outline-none focus:ring-2 focus:ring-indigo-500 w-full ${
-                      vehicle.vehicleCondition
-                        ? "text-gray-900"
-                        : "text-gray-400"
-                    }`}
-                  >
-                    <option value="">Select Vehicle Condition</option>
-                    <option value="new" className="text-gray-900">
-                      New
-                    </option>
-                    <option value="used" className="text-gray-900">
-                      Used
-                    </option>
-                  </select>
+                  <Dropdown
+                    options={conditionOptions}
+                    value={conditionOptions.find((c) => c.value === vehicle.vehicleCondition) || null}
+                    onChange={(option) => setVehicle((prev) => ({ ...prev, vehicleCondition: option?.value || "" }))}
+                    placeholder="Select Vehicle Condition"
+                  />
                 </div>
+
                 <div>
                   <label className="block text-sm font-medium text-gray-700 mb-1">
                     Add Vehicle Price <span className="text-red-500">*</span>
@@ -696,27 +650,19 @@ function AddAdminVehicle({ open, setOpen, onVehicleUpdated }) {
                   )}
                 </div>
               </div>
+
               <div>
                 <label className="block text-sm font-medium text-gray-700 mb-1">
                   Certification Status <span className="text-red-500">*</span>
                 </label>
-                <select
-                  name="certifyStatus"
-                  value={vehicle.certifyStatus}
-                  onChange={handleChange}
-                  className={`border border-gray-300 px-4 py-2 rounded focus:outline-none focus:ring-2 focus:ring-indigo-500 w-full ${
-                    vehicle.certifyStatus ? "text-gray-900" : "text-gray-400"
-                  }`}
-                >
-                  <option value="">Please Select Certification Status</option>
-                  <option value="Certified" className="text-gray-900">
-                    Certified
-                  </option>
-                  <option value="Non-Certified" className="text-gray-900">
-                    Non-Certified
-                  </option>
-                </select>
+                <Dropdown
+                  options={certifyOptions}
+                  value={certifyOptions.find((c) => c.value === vehicle.certifyStatus) || null}
+                  onChange={(option) => setVehicle((prev) => ({ ...prev, certifyStatus: option?.value || "" }))}
+                  placeholder="Select Certification Status"
+                />
               </div>
+
               <div className="col-span-1 sm:col-span-2 mt-4">
                 <div className="mb-6">
                   <label className="block text-sm font-medium text-gray-700 mb-2">
@@ -742,21 +688,15 @@ function AddAdminVehicle({ open, setOpen, onVehicleUpdated }) {
                           />
                         </svg>
                         <p className="text-sm text-gray-600">
-                          <span className="font-medium text-indigo-600">
-                            Click to upload
-                          </span>
+                          <span className="font-medium text-indigo-600">Click to upload</span>
                         </p>
-                        <p className="text-xs text-gray-400">
-                          PNG, JPG (Max 5MB each)
-                        </p>
+                        <p className="text-xs text-gray-400">PNG, JPG (Max 5MB each)</p>
                         <p className="text-xs text-gray-400 px-2">
-                          You can add maximum 5 images and first image will be
-                          used as front on the card
+                          You can add maximum 5 images and first image will be used as front on the card
                         </p>
                         {selectedCount > 0 && (
                           <p className="text-sm text-green-600 font-medium mt-2">
-                            {selectedCount} image{selectedCount > 1 ? "s" : ""}{" "}
-                            selected
+                            {selectedCount} image{selectedCount > 1 ? "s" : ""} selected
                           </p>
                         )}
                       </div>
@@ -770,7 +710,6 @@ function AddAdminVehicle({ open, setOpen, onVehicleUpdated }) {
                       />
                     </label>
                   </div>
-
                 </div>
                 <div className="flex justify-center">
                   <button
@@ -783,12 +722,11 @@ function AddAdminVehicle({ open, setOpen, onVehicleUpdated }) {
                 </div>
               </div>
             </form>
+
             {isOpen === "selector" && (
               <div className="fixed inset-0 bg-opacity-40 flex items-center justify-center z-50">
                 <div className="w-full max-w-5xl bg-white p-4 sm:p-6 rounded-lg shadow-lg relative">
-                  <CarSelector
-                    handleIsOpenToggle={() => handleIsOpenToggle("")}
-                  />
+                  <CarSelector handleIsOpenToggle={() => handleIsOpenToggle("")} />
                 </div>
               </div>
             )}
@@ -796,6 +734,7 @@ function AddAdminVehicle({ open, setOpen, onVehicleUpdated }) {
         </div>
       )}
 
+      {/* Vehicle List */}
       <div className="max-w-7xl mx-auto space-y-4 px-2 sm:px-4">
         {filteredVehicles?.length > 0 ? (
           filteredVehicles.map((vehicle, index) => (
@@ -804,6 +743,7 @@ function AddAdminVehicle({ open, setOpen, onVehicleUpdated }) {
               onClick={(e) => handleOutsideClick(e, vehicle.id)}
               className="relative"
             >
+              {/* Desktop View */}
               <div className="hidden lg:flex flex-col lg:flex-row items-start lg:items-center justify-between border rounded-lg hover:shadow-md transition-all duration-200 p-4 gap-4">
                 <div
                   className="relative w-full lg:w-40 h-40 lg:h-24 flex-shrink-0 rounded-md overflow-hidden"
@@ -821,34 +761,20 @@ function AddAdminVehicle({ open, setOpen, onVehicleUpdated }) {
                     </div>
                   )}
                 </div>
-                <div
-                  className="flex-1 px-0 lg:px-4"
-                  onClick={() => handleViewClick(vehicle)}
-                >
+                <div className="flex-1 px-0 lg:px-4" onClick={() => handleViewClick(vehicle)}>
                   <h2 className="text-base font-bold text-gray-800">
-                    {vehicle.make.charAt(0).toUpperCase() +
-                      vehicle.make.slice(1)}{" "}
-                    {vehicle.model.charAt(0).toUpperCase() +
-                      vehicle.model.slice(1)}{" "}
-                    {vehicle.series.charAt(0).toUpperCase() +
-                      vehicle.series.slice(1)}
+                    {vehicle.make.charAt(0).toUpperCase() + vehicle.make.slice(1)}{" "}
+                    {vehicle.model.charAt(0).toUpperCase() + vehicle.model.slice(1)}{" "}
+                    {vehicle.series.charAt(0).toUpperCase() + vehicle.series.slice(1)}
                   </h2>
-                  <p className="text-lg font-bold text-gray-800">
-                    PKR {vehicle.buyNowPrice}
-                  </p>
+                  <p className="text-lg font-bold text-gray-800">PKR {vehicle.buyNowPrice}</p>
                   <p className="text-sm text-gray-500">
                     {vehicle.year} |{" "}
-                    {vehicle.fuelType.charAt(0).toUpperCase() +
-                      vehicle.fuelType.slice(1)}{" "}
-                    |{" "}
-                    {vehicle.transmission.charAt(0).toUpperCase() +
-                      vehicle.transmission.slice(1)}{" "}
-                    | {vehicle.mileage || "--"} KM |{" "}
-                    {vehicle.color.charAt(0).toUpperCase() +
-                      vehicle.color.slice(1)}{" "}
-                    |{" "}
-                    {vehicle.cityName?.charAt(0)?.toUpperCase() +
-                      vehicle.cityName?.slice(1) || "--"}
+                    {vehicle.fuelType.charAt(0).toUpperCase() + vehicle.fuelType.slice(1)}{" "} |{" "}
+                    {vehicle.transmission.charAt(0).toUpperCase() + vehicle.transmission.slice(1)}{" "} |{" "}
+                    {vehicle.mileage || "--"} KM |{" "}
+                    {vehicle.color.charAt(0).toUpperCase() + vehicle.color.slice(1)}{" "} |{" "}
+                    {vehicle.cityName?.charAt(0)?.toUpperCase() + vehicle.cityName?.slice(1) || "--"}
                   </p>
                 </div>
                 <div className="w-full lg:w-auto text-left lg:text-right relative action-menu">
@@ -870,8 +796,7 @@ function AddAdminVehicle({ open, setOpen, onVehicleUpdated }) {
                       >
                         Edit
                       </button>
-                      {vehicle.saleStatus === "upcoming" ||
-                      vehicle.saleStatus === "sold" ? (
+                      {vehicle.saleStatus === "upcoming" || vehicle.saleStatus === "sold" ? (
                         <button className="w-full px-4 py-2 text-sm text-green-600 hover:bg-green-100 text-left opacity-50 cursor-not-allowed">
                           Bid Added
                         </button>
@@ -906,6 +831,8 @@ function AddAdminVehicle({ open, setOpen, onVehicleUpdated }) {
                   )}
                 </div>
               </div>
+
+              {/* Mobile View */}
               <div className="lg:hidden border-b py-4">
                 <div className="flex items-center gap-3">
                   <div
@@ -924,34 +851,20 @@ function AddAdminVehicle({ open, setOpen, onVehicleUpdated }) {
                       </div>
                     )}
                   </div>
-                  <div
-                    className="flex-1"
-                    onClick={() => handleViewClick(vehicle)}
-                  >
+                  <div className="flex-1" onClick={() => handleViewClick(vehicle)}>
                     <h2 className="text-sm font-bold text-gray-800">
-                      {vehicle.make.charAt(0).toUpperCase() +
-                        vehicle.make.slice(1)}{" "}
-                      {vehicle.model.charAt(0).toUpperCase() +
-                        vehicle.model.slice(1)}{" "}
-                      {vehicle.series.charAt(0).toUpperCase() +
-                        vehicle.series.slice(1)}
+                      {vehicle.make.charAt(0).toUpperCase() + vehicle.make.slice(1)}{" "}
+                      {vehicle.model.charAt(0).toUpperCase() + vehicle.model.slice(1)}{" "}
+                      {vehicle.series.charAt(0).toUpperCase() + vehicle.series.slice(1)}
                     </h2>
-                    <p className="text-xs text-gray-700 font-semibold">
-                      PKR {vehicle.buyNowPrice}
-                    </p>
+                    <p className="text-xs text-gray-700 font-semibold">PKR {vehicle.buyNowPrice}</p>
                     <p className="text-xs text-gray-500">
                       {vehicle.year} |{" "}
-                      {vehicle.fuelType.charAt(0).toUpperCase() +
-                        vehicle.fuelType.slice(1)}{" "}
-                      |{" "}
-                      {vehicle.transmission.charAt(0).toUpperCase() +
-                        vehicle.transmission.slice(1)}{" "}
-                      | {vehicle.mileage || "--"} KM |{" "}
-                      {vehicle.color.charAt(0).toUpperCase() +
-                        vehicle.color.slice(1)}{" "}
-                      |{" "}
-                      {vehicle.cityName?.charAt(0)?.toUpperCase() +
-                        vehicle.cityName?.slice(1) || "--"}
+                      {vehicle.fuelType.charAt(0).toUpperCase() + vehicle.fuelType.slice(1)}{" "} |{" "}
+                      {vehicle.transmission.charAt(0).toUpperCase() + vehicle.transmission.slice(1)}{" "} |{" "}
+                      {vehicle.mileage || "--"} KM |{" "}
+                      {vehicle.color.charAt(0).toUpperCase() + vehicle.color.slice(1)}{" "} |{" "}
+                      {vehicle.cityName?.charAt(0)?.toUpperCase() + vehicle.cityName?.slice(1) || "--"}
                     </p>
                   </div>
                   <div className="relative action-menu">
@@ -973,8 +886,7 @@ function AddAdminVehicle({ open, setOpen, onVehicleUpdated }) {
                         >
                           Edit
                         </button>
-                        {vehicle.saleStatus === "upcoming" ||
-                        vehicle.saleStatus === "sold" ? (
+                        {vehicle.saleStatus === "upcoming" || vehicle.saleStatus === "sold" ? (
                           <button className="w-full px-4 py-2 text-sm text-green-600 hover:bg-green-100 text-left opacity-50 cursor-not-allowed">
                             Bid Added
                           </button>
@@ -1021,21 +933,17 @@ function AddAdminVehicle({ open, setOpen, onVehicleUpdated }) {
 
       <div className="flex justify-between mt-6 px-2 sm:px-4">
         <button
-          className={`bg-[#191970] text-white px-5 py-2 rounded ${
-            pageNo > 1 ? "block" : "hidden"
-          }`}
+          className={`bg-[#191970] text-white px-5 py-2 rounded ${pageNo > 1 ? "block" : "hidden"}`}
           onClick={handlePrevPage}
         >
-          ‹ Prev
+          Prev
         </button>
         <div></div>
         <button
-          className={`bg-[#191970] text-white px-5 py-2 rounded ${
-            allVehicles.length === 10 ? "block" : "hidden"
-          }`}
+          className={`bg-[#191970] text-white px-5 py-2 rounded ${allVehicles.length === 10 ? "block" : "hidden"}`}
           onClick={handleNextPage}
         >
-          Next ›
+          Next
         </button>
       </div>
 
@@ -1046,10 +954,7 @@ function AddAdminVehicle({ open, setOpen, onVehicleUpdated }) {
         onVehicleUpdated={handleGetVehicles}
       />
       {viewModal && (
-        <ViewAdminCar
-          handleClick={handleToggle}
-          selectedVehicle={selectedVehicle}
-        />
+        <ViewAdminCar handleClick={handleToggle} selectedVehicle={selectedVehicle} />
       )}
       {isOpenBid && (
         <AdminAddBid

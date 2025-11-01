@@ -2,7 +2,7 @@ import React, { useState } from "react";
 import Select from "react-select";
 import { ChevronDown } from "lucide-react";
 
-// 🎨 Consistent Blue-950 Focus + Black Border + Black Text Theme
+//  Consistent Blue-950 Focus + Black Border + Black Text Theme
 const customSelectStyles = {
   control: (provided: any, state: any) => ({
     ...provided,

@@ -177,7 +177,7 @@ const AdminBidHistory = () => {
                               email,
                             })
                           }
-                          className="px-6 py-4 whitespace-nowrap text-sm text-gray-700 cursor-pointer hover:text-blue-950"
+                          className="px-6 py-4 whitespace-nowrap text-sm text-gray-700 cursor-pointer hover:text-blue-500"
                         >
                           {name}
                         </td>

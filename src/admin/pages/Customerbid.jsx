@@ -241,7 +241,7 @@ export const Customerbid = () => {
 
         {/* Header with Back Button */}
         <div className="flex items-center">
-          <h1 className="lg:text-3xl text-xl font-bold text-[#233D7B] ml-4">
+          <h1 className="lg:text-3xl text-xl font-bold text-black ml-4">
             {selectedPrice?.make} {selectedPrice?.model} {selectedPrice?.series}{" "}
             {selectedPrice?.year}
           </h1>
@@ -299,7 +299,7 @@ export const Customerbid = () => {
         <div className="hidden lg:block space-y-6">
           {/* Vehicle Details Card */}
           <div className="bg-white rounded-xl shadow-md p-6 h-full">
-            <h2 className="text-xl font-bold text-[#233D7B] mb-4 border-b pb-2">
+            <h2 className="text-xl font-bold text-black mb-4 border-b pb-2">
               Vehicle Details
             </h2>
 
@@ -373,7 +373,7 @@ export const Customerbid = () => {
         </div>
 
         <div className="bg-white rounded-xl shadow-md p-6 hidden lg:block">
-          <h2 className="text-xl font-bold text-[#233D7B] mb-3 border-b pb-2">
+          <h2 className="text-xl font-bold text-black mb-3 border-b pb-2">
             Bid Details
           </h2>
 
@@ -439,11 +439,12 @@ export const Customerbid = () => {
                 <th className="text-left p-2 font-semibold text-gray-800">
                   Bid Date:
                 </th>
-                <td className="p-2 text-gray-700">
-                  {selectedPrice?.startTime
-                    ? selectedPrice.startTime.slice(0, 10)
-                    : "Coming Soon"}
-                </td>
+              <td className="p-2 text-gray-700">
+  {selectedPrice?.startTime
+    ? new Date(selectedPrice.startTime).toLocaleDateString("en-GB")
+    : "Coming Soon"}
+</td>
+
               </tr>
 
               <tr className="border-b">
@@ -556,7 +557,7 @@ export const Customerbid = () => {
                     confirmButtonColor: "#233D7B",
                   });
                 }}
-                className="w-full py-3 rounded-lg font-semibold transition-all text-white bg-[#233D7B] hover:bg-[#1a2f63] hover:cursor-pointer"
+                className="w-full py-3 rounded-lg font-semibold transition-all text-white bg-blue-950 hover:cursor-pointer"
               >
                 Join Auction
               </button>
@@ -569,7 +570,7 @@ export const Customerbid = () => {
       <div className="col-span-1 space-y-6 lg:hidden block">
         {/* Vehicle Details Card */}
         <div className="bg-white rounded-xl shadow-md p-6 mt-4">
-          <h2 className="text-xl font-bold text-[#233D7B] mb-3 border-b pb-2">
+          <h2 className="text-xl font-bold text-black mb-3 border-b pb-2">
             Vehicle Details
           </h2>
           <div className="overflow-x-auto">
@@ -636,7 +637,7 @@ export const Customerbid = () => {
 
         {/* Bid Section */}
         <div className="bg-white rounded-xl shadow-md p-6">
-          <h2 className="text-xl font-bold text-[#233D7B] mb-3 border-b pb-2">
+          <h2 className="text-xl font-bold text-black mb-3 border-b pb-2">
             Bid Details
           </h2>
 
@@ -704,8 +705,8 @@ export const Customerbid = () => {
                 </th>
                 <td className="p-2 text-gray-700">
                   {selectedPrice?.startTime
-                    ? selectedPrice.startTime.slice(0, 10)
-                    : "Coming Soon"}
+    ? new Date(selectedPrice.startTime).toLocaleDateString("en-GB")
+    : "Coming Soon"}
                 </td>
               </tr>
 
@@ -819,7 +820,7 @@ export const Customerbid = () => {
                     confirmButtonColor: "#233D7B",
                   });
                 }}
-                className="w-full py-3 rounded-lg font-semibold transition-all text-white bg-[#233D7B] hover:bg-[#1a2f63] hover:cursor-pointer"
+                className="w-full py-3 rounded-lg font-semibold transition-all text-white bg-blue-950 hover:cursor-pointer"
               >
                 Join Auction
               </button>

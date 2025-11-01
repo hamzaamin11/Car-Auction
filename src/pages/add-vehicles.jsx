@@ -18,6 +18,7 @@ import {
   addYear,
 } from "../components/Redux/SelectorCarSlice";
 import Select from "react-select";
+import Dropdown from "../Dropdown"; // <-- Your custom dropdown
 
 const bodyStyles = [
   "Convertible",
@@ -52,6 +53,53 @@ const carColors = [
   "Turquoise",
 ];
 
+/* ---------- Dropdown Option Arrays ---------- */
+const driveTypeOptions = [
+  
+  { label: "FWD (Front-Wheel Drive)", value: "fwd" },
+  { label: "RWD (Rear-Wheel Drive)", value: "rwd" },
+  { label: "AWD (All-Wheel Drive)", value: "awd" },
+  { label: "4WD (Four-Wheel Drive)", value: "4wd" },
+];
+
+const bodyStyleOptions = [
+  
+  ...bodyStyles.map((b) => ({ label: b, value: b })),
+];
+
+const transmissionOptions = [
+ 
+  { label: "Automatic", value: "Automatic" },
+  { label: "Manual", value: "Manual" },
+];
+
+const colorOptions = [
+ 
+  ...carColors.map((c) => ({ label: c, value: c })),
+];
+
+const fuelTypeOptions = [
+  
+  { label: "Petrol", value: "petrol" },
+  { label: "Diesel", value: "diesel" },
+  { label: "CNG (Compressed Natural Gas)", value: "cng" },
+  { label: "LPG (Liquefied Petroleum Gas)", value: "lpg" },
+  { label: "Electric", value: "electric" },
+  { label: "Hybrid", value: "hybrid" },
+];
+
+const conditionOptions = [
+ 
+  { label: "New", value: "new" },
+  { label: "Used", value: "used" },
+];
+
+const certifyOptions = [
+ 
+  { label: "Certified", value: "Certified" },
+  { label: "Non-Certified", value: "Non-Certified" },
+];
+
 const AddVehicles = () => {
   const { user } = useAuth();
   const isCustomer = user?.role === "customer";
@@ -73,12 +121,12 @@ const AddVehicles = () => {
     model: "",
     series: "",
     bodyStyle: "",
-    transmission: "Automatic",
-    driveType: "fwd",
-    fuelType: "petrol",
+    transmission: "",
+    driveType: "",
+    fuelType: "",
     color: "",
     mileage: "",
-    vehicleCondition: "new",
+    vehicleCondition: "",
     locationId: "",
     buyNowPrice: "",
     certifyStatus: "",
@@ -539,7 +587,7 @@ const AddVehicles = () => {
   };
 
   const cityData = [
-    { label: "Select City", value: "" },
+  
     ...(allCities?.map((city) => ({
       label: city.cityName,
       value: city.id,
@@ -617,40 +665,38 @@ const AddVehicles = () => {
                 />
               </svg>
             </span>
-         <CustomSearch
-  placeholder="Search by Car Name..."
-  value={search}
-  onChange={(e) => {
-    setSearch(e.target.value);
-    debouncedSearch(e.target.value);
-  }}
-/>
-
+            <CustomSearch
+              placeholder="Search by Car Name..."
+              value={search}
+              onChange={(e) => {
+                setSearch(e.target.value);
+                // debouncedSearch(e.target.value); // You can re-enable if needed
+              }}
+            />
           </div>
           {!isCustomer && (
-         <CustomAdd
-  text="Add Vehicle"
-  variant="add"
-  onClick={() => {
-    setFormOpen(!formOpen);
-    setVehicleData({
-      ...initialFields,
-      userId: currentUser?.id || "",
-    });
-    setImage(null);
-    setImagePreview(null);
-    setEditId(null);
-    setSelectedCount(0);
-    setPrice("");
-    setErrorMsg("");
-    setSuccessMsg("");
-    dispatch(addYear(""));
-    dispatch(addMake(""));
-    dispatch(addModel(""));
-    dispatch(addSeries(""));
-  }}
-  
-/>
+            <CustomAdd
+              text="Add Vehicle"
+              variant="add"
+              onClick={() => {
+                setFormOpen(!formOpen);
+                setVehicleData({
+                  ...initialFields,
+                  userId: currentUser?.id || "",
+                });
+                setImage(null);
+                setImagePreview(null);
+                setEditId(null);
+                setSelectedCount(0);
+                setPrice("");
+                setErrorMsg("");
+                setSuccessMsg("");
+                dispatch(addYear(""));
+                dispatch(addMake(""));
+                dispatch(addModel(""));
+                dispatch(addSeries(""));
+              }}
+            />
           )}
         </header>
 
@@ -685,18 +731,15 @@ const AddVehicles = () => {
                   <label className="block text-sm font-medium text-gray-700 mb-1">
                     City <span className="text-red-500">*</span>
                   </label>
-                  <Select
-                    onChange={handleSearchable}
-                    options={cityData}
-                    value={
-                      cityData.find(
-                        (option) =>
-                          String(option.value) ===
-                          String(vehicleData?.locationId)
-                      ) || null
-                    }
-                    isClearable
-                  />
+                <Dropdown
+  options={cityData}
+  value={cityData.find(
+    (option) => String(option.value) === String(vehicleData?.locationId)
+  ) || null}
+  onChange={(option) => handleSearchable(option)}
+  placeholder="Select City...."
+  className="w-full"
+/>
                   <div>
                     <label className="block text-sm font-medium text-gray-700 my-1">
                       Car Info <span className="text-red-500">*</span>
@@ -730,80 +773,38 @@ const AddVehicles = () => {
                     <label className="block text-sm font-medium text-gray-700 mb-1">
                       Vehicle Drive Type <span className="text-red-500">*</span>
                     </label>
-                    <select
-                      name="driveType"
-                      value={vehicleData.driveType}
-                      onChange={handleChange}
-                      className={`border border-gray-300 px-4 py-2 rounded focus:outline-none focus:ring-2 focus:ring-indigo-500 w-full ${
-                        vehicleData.driveType
-                          ? "text-gray-900"
-                          : "text-gray-400"
-                      }`}
-                    >
-                      <option value="">Select Drive Type</option>
-                      <option value="fwd" className="text-gray-900">
-                        FWD (Front-Wheel Drive)
-                      </option>
-                      <option value="rwd" className="text-gray-900">
-                        RWD (Rear-Wheel Drive)
-                      </option>
-                      <option value="awd" className="text-gray-900">
-                        AWD (All-Wheel Drive)
-                      </option>
-                      <option value="4wd" className="text-gray-900">
-                        4WD (Four-Wheel Drive)
-                      </option>
-                    </select>
+                    <Dropdown
+                      options={driveTypeOptions}
+                      value={driveTypeOptions.find(o => o.value === vehicleData.driveType) || null}
+                      onChange={(opt) => setVehicleData(p => ({ ...p, driveType: opt?.value || "" }))}
+                      placeholder="Select Drive Type"
+                      className={vehicleData.driveType ? "text-gray-900" : "text-gray-400"}
+                    />
                   </div>
                   <div>
                     <label className="block text-sm font-medium text-gray-700 mb-1">
                       Vehicle Body Style <span className="text-red-500">*</span>
                     </label>
-                    <select
-                      name="bodyStyle"
-                      value={vehicleData.bodyStyle}
-                      onChange={handleChange}
-                      className={`border border-gray-300 px-4 py-2 rounded focus:outline-none focus:ring-2 focus:ring-indigo-500 w-full ${
-                        vehicleData.bodyStyle
-                          ? "text-gray-900"
-                          : "text-gray-400"
-                      }`}
-                    >
-                      <option value="">Please Select BodyStyle</option>
-                      {bodyStyles?.map((body) => (
-                        <option
-                          key={body}
-                          value={body}
-                          className="text-gray-900"
-                        >
-                          {body}
-                        </option>
-                      ))}
-                    </select>
+                    <Dropdown
+                      options={bodyStyleOptions}
+                      value={bodyStyleOptions.find(o => o.value === vehicleData.bodyStyle) || null}
+                      onChange={(opt) => setVehicleData(p => ({ ...p, bodyStyle: opt?.value || "" }))}
+                      placeholder="Please Select BodyStyle"
+                      className={vehicleData.bodyStyle ? "text-gray-900" : "text-gray-400"}
+                    />
                   </div>
                   <div>
                     <label className="block text-sm font-medium text-gray-700 mb-1">
                       Vehicle Transmission Type{" "}
                       <span className="text-red-500">*</span>
                     </label>
-                    <select
-                      name="transmission"
-                      value={vehicleData?.transmission || ""}
-                      onChange={handleChange}
-                      className={`border border-gray-300 px-4 py-2 rounded focus:outline-none focus:ring-2 focus:ring-indigo-500 w-full ${
-                        vehicleData.transmission
-                          ? "text-gray-900"
-                          : "text-gray-400"
-                      }`}
-                    >
-                      <option value="">Please Select Transmission Type</option>
-                      <option value="Automatic" className="text-gray-900">
-                        Automatic
-                      </option>
-                      <option value="Manual" className="text-gray-900">
-                        Manual
-                      </option>
-                    </select>
+                    <Dropdown
+                      options={transmissionOptions}
+                      value={transmissionOptions.find(o => o.value === vehicleData.transmission) || null}
+                      onChange={(opt) => setVehicleData(p => ({ ...p, transmission: opt?.value || "" }))}
+                      placeholder="Please Select Transmission Type"
+                      className={vehicleData.transmission ? "text-gray-900" : "text-gray-400"}
+                    />
                   </div>
                   <div>
                     <label className="block text-sm font-medium text-gray-700 mb-1">
@@ -827,81 +828,37 @@ const AddVehicles = () => {
                     <label className="block text-sm font-medium text-gray-700 mb-1">
                       Vehicle Color <span className="text-red-500">*</span>
                     </label>
-                    <select
-                      name="color"
-                      value={vehicleData.color || ""}
-                      onChange={handleChange}
-                      className={`border border-gray-300 px-4 py-2 rounded focus:outline-none focus:ring-2 focus:ring-indigo-500 w-full ${
-                        vehicleData.color ? "text-gray-900" : "text-gray-400"
-                      }`}
-                    >
-                      <option value="">Please Select Color</option>
-                      {carColors?.map((color) => (
-                        <option
-                          key={color}
-                          value={color}
-                          className="text-gray-900"
-                        >
-                          {color}
-                        </option>
-                      ))}
-                    </select>
+                    <Dropdown
+                      options={colorOptions}
+                      value={colorOptions.find(o => o.value === vehicleData.color) || null}
+                      onChange={(opt) => setVehicleData(p => ({ ...p, color: opt?.value || "" }))}
+                      placeholder="Please Select Color"
+                      className={vehicleData.color ? "text-gray-900" : "text-gray-400"}
+                    />
                   </div>
                   <div>
                     <label className="block text-sm font-medium text-gray-700 mb-1">
                       Vehicle Fuel Type <span className="text-red-500">*</span>
                     </label>
-                    <select
-                      name="fuelType"
-                      value={vehicleData.fuelType}
-                      onChange={handleChange}
-                      className={`border border-gray-300 px-4 py-2 rounded focus:outline-none focus:ring-2 focus:ring-indigo-500 w-full ${
-                        vehicleData.fuelType ? "text-gray-900" : "text-gray-400"
-                      }`}
-                    >
-                      <option value="">Select Fuel Type</option>
-                      <option value="petrol" className="text-gray-900">
-                        Petrol
-                      </option>
-                      <option value="diesel" className="text-gray-900">
-                        Diesel
-                      </option>
-                      <option value="cng" className="text-gray-900">
-                        CNG (Compressed Natural Gas)
-                      </option>
-                      <option value="lpg" className="text-gray-900">
-                        LPG (Liquefied Petroleum Gas)
-                      </option>
-                      <option value="electric" className="text-gray-900">
-                        Electric
-                      </option>
-                      <option value="hybrid" className="text-gray-900">
-                        Hybrid
-                      </option>
-                    </select>
+                    <Dropdown
+                      options={fuelTypeOptions}
+                      value={fuelTypeOptions.find(o => o.value === vehicleData.fuelType) || null}
+                      onChange={(opt) => setVehicleData(p => ({ ...p, fuelType: opt?.value || "" }))}
+                      placeholder="Select Fuel Type"
+                      className={vehicleData.fuelType ? "text-gray-900" : "text-gray-400"}
+                    />
                   </div>
                   <div>
                     <label className="block text-sm font-medium text-gray-700 mb-1">
                       Vehicle Condition
                     </label>
-                    <select
-                      name="vehicleCondition"
-                      value={vehicleData.vehicleCondition}
-                      onChange={handleChange}
-                      className={`border border-gray-300 px-4 py-2 rounded focus:outline-none focus:ring-2 focus:ring-indigo-500 w-full ${
-                        vehicleData.vehicleCondition
-                          ? "text-gray-900"
-                          : "text-gray-400"
-                      }`}
-                    >
-                      <option value="">Select Vehicle Condition</option>
-                      <option value="new" className="text-gray-900">
-                        New
-                      </option>
-                      <option value="used" className="text-gray-900">
-                        Used
-                      </option>
-                    </select>
+                    <Dropdown
+                      options={conditionOptions}
+                      value={conditionOptions.find(o => o.value === vehicleData.vehicleCondition) || null}
+                      onChange={(opt) => setVehicleData(p => ({ ...p, vehicleCondition: opt?.value || "" }))}
+                      placeholder="Select Vehicle Condition"
+                      className={vehicleData.vehicleCondition ? "text-gray-900" : "text-gray-400"}
+                    />
                   </div>
                   <div>
                     <label className="block text-sm font-medium text-gray-700 mb-1">
@@ -926,24 +883,13 @@ const AddVehicles = () => {
                   <label className="block text-sm font-medium text-gray-700 mb-1">
                     Certification Status <span className="text-red-500">*</span>
                   </label>
-                  <select
-                    name="certifyStatus"
-                    value={vehicleData.certifyStatus}
-                    onChange={handleChange}
-                    className={`border border-gray-300 px-4 py-2 rounded focus:outline-none focus:ring-2 focus:ring-indigo-500 w-full ${
-                      vehicleData.certifyStatus
-                        ? "text-gray-900"
-                        : "text-gray-400"
-                    }`}
-                  >
-                    <option value="">Please Select Certification Status</option>
-                    <option value="Certified" className="text-gray-900">
-                      Certified
-                    </option>
-                    <option value="Non-Certified" className="text-gray-900">
-                      Non-Certified
-                    </option>
-                  </select>
+                  <Dropdown
+                    options={certifyOptions}
+                    value={certifyOptions.find(o => o.value === vehicleData.certifyStatus) || null}
+                    onChange={(opt) => setVehicleData(p => ({ ...p, certifyStatus: opt?.value || "" }))}
+                    placeholder="Please Select Certification Status"
+                    className={vehicleData.certifyStatus ? "text-gray-900" : "text-gray-400"}
+                  />
                 </div>
                 <div className="col-span-1 sm:col-span-2 mt-4">
                   <div className="mb-6">
@@ -1293,7 +1239,7 @@ const AddVehicles = () => {
               }`}
               onClick={handlePrevPage}
             >
-              ‹ Prev
+              Prev
             </button>
             <div></div>
             <button
@@ -1302,7 +1248,7 @@ const AddVehicles = () => {
               }`}
               onClick={handleNextPage}
             >
-              Next ›
+              Next
             </button>
           </div>
         </section>

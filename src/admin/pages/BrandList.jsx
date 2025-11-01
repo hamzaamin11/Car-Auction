@@ -134,13 +134,13 @@ export const BrandList = () => {
               <td className="py-2 px-4">
                 {brand.brandName.charAt(0) + brand.brandName.slice(1)}
               </td>
-              <td className="py-2 px-4 flex gap-2 justify-center">
-                <CustomAdd
-  text="Edit"
-  variant="edit"
-  onClick={() => handleEditBtn(brand)}
-/>
-              </td>
+       <td className="pt-4 px-4 flex gap-2 justify-center items-center">
+  <CustomAdd
+    text="Edit"
+    variant="edit"
+    onClick={() => handleEditBtn(brand)}
+  />
+</td>
             </tr>
           ))}
         </tbody>
