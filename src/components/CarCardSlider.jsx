@@ -3,10 +3,19 @@ import { ChevronLeft, ChevronRight, X } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import axios from "axios";
 import { BASE_URL } from "./Contant/URL";
+import { FaHeart } from "react-icons/fa";
+import { useDispatch } from "react-redux";
+import { addInList } from "./Redux/WishlistSlice";
 
 // ---------------- CarCard -------------------
 const CarCard = ({ car }) => {
   const navigate = useNavigate();
+  const [isWishlisted, setIsWishlisted] = useState(false);
+  const dispatch = useDispatch();
+
+  const handleWishlist = () => {
+    dispatch(addInList(car));
+  };
 
   return (
     <div className="relative bg-white rounded-xl shadow-lg hover:shadow-2xl transition-all duration-300 overflow-hidden w-full h-full flex flex-col">
@@ -19,19 +28,36 @@ const CarCard = ({ car }) => {
         />
       </div>
 
-      <div className="p-4 space-y-2 text-gray-800 flex-grow flex flex-col">
-        <h3 className="text-md font-bold gap-1.5">
-          {car?.make}-{car?.model}
+      <div className="relative group p-4 space-y-2  text-gray-800 flex-grow flex flex-col bg-white rounded-xl shadow-md hover:shadow-xl transition-all duration-300 border border-gray-100">
+        <div className="flex justify-end ">
+          <button
+            onClick={handleWishlist}
+            className={`  gap-1.5 text-xs p-2 font-semibold transition-all duration-300 ${"text-white bg-red-600  rounded "}`}
+          >
+            <span className="">{"Add to Wishlist"}</span>
+          </button>
+        </div>
+        {/* Car Info */}
+        <h3 className="text-lg font-bold text-gray-800  transition">
+          {car?.make} {car?.model}
         </h3>
-        <p className="text-lg font-semibold text-gray-900">
-          <span className="font-bold">Demand Price:</span> {car?.buyNowPrice}
+
+        <p className="text-base text-gray-700">
+          <span className="font-semibold text-gray-900">Demand Price:</span>{" "}
+          <span className="text-green-700 font-bold">
+            PKR {car?.buyNowPrice?.toLocaleString()}
+          </span>
         </p>
-        <p className="text-sm">
-          <span className="font-bold">Location:</span> {car.cityName}
+
+        <p className="text-sm text-gray-600">
+          <span className="font-semibold text-gray-900">Location:</span>{" "}
+          {car.cityName}
         </p>
+
+        {/* View Details Button */}
         <span
           onClick={() => navigate(`/detailbid/${car.id}`)}
-          className="block bg-red-600  text-center text-sm font-semibold text-white py-2 rounded transition hover:cursor-pointer mt-auto"
+          className="mt-auto block bg-red-600 text-center text-sm font-semibold text-white py-2 rounded transition-all duration-300 cursor-pointer"
         >
           View Details
         </span>

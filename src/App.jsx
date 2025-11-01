@@ -92,6 +92,7 @@ import { BecomePartnerList } from "./admin/pages/BecomePartnerList";
 import { CitiesList } from "./pages/CitiesList";
 import { VehicleApproval } from "./admin/pages/VehicleApproval";
 import { addMake, addModel } from "./components/Redux/SelectorCarSlice";
+import { WishList } from "./pages/WishList";
 
 function Layout() {
   const location = useLocation();
@@ -141,6 +142,7 @@ function Layout() {
         {/* Main Routes */}
         <Route path="/" element={<Home />} />
         <Route path="/soldVehicles" element={<SoldVehicles />} />
+
         <Route path="/about" element={<About />} />
 
         <Route path="/contact" element={<ContactUs />} />
@@ -148,6 +150,8 @@ function Layout() {
         <Route path="/partner" element={<BecomePartner />} />
 
         <Route path="/suggestion" element={<Suggestion />} />
+
+        <Route path="/wishlist" element={<WishList />} />
 
         <Route path="/register" element={<Register />} />
 
@@ -212,6 +216,7 @@ function Layout() {
 
         <Route path="/Salvagevehicles" element={<SalvageVehicles />} />
         <Route path="/add-vehicles" element={<AddVehicles />} />
+
         <Route path="/my-bids" element={<MyBids />} />
         <Route path="/make-bidding" element={<MakeBidding />} />
         <Route path="/lots-won" element={<LotsWon />} />

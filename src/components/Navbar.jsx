@@ -7,6 +7,7 @@ import {
   FaSignInAlt,
   FaUserCircle,
   FaCarSide,
+  FaHeart,
 } from "react-icons/fa";
 import { UserPlus, LogIn } from "lucide-react";
 import { RiArrowDropDownLine } from "react-icons/ri";
@@ -440,6 +441,42 @@ const Navbar = () => {
 
   return (
     <nav className="bg-white shadow-md z-50 relative">
+      <div className="flex items-center justify-between text-white p-2 px-6 border-b bg-blue-950 border-gray-300">
+        <span className="text-white font-semibold ">
+          WheelBidz First Online Cars Auction Platform in Pakistan
+        </span>
+        {currentUser ? null : (
+          <div className="flex items-center gap-4 ">
+            <Link
+              to="/register"
+              className="flex items-center gap-1 hover:text-red-600 font-bold"
+            >
+              <UserPlus size={15} />
+              Register
+            </Link>
+            {/* <button
+                onClick={() => navigate("/register")}
+                className="bg-red-600 text-white font-bold px-2 py-1.5 rounded hover:cursor-pointer"
+              >
+                Register
+              </button> */}
+
+            {/* <button
+                onClick={() => navigate("/login")}
+                className="bg-red-600 text-white font-bold px-2 py-1.5 rounded hover:cursor-pointer"
+              >
+                Sign In
+              </button> */}
+            <Link
+              to="/login"
+              className="flex items-center gap-1 hover:text-red-600 font-bold"
+            >
+              <LogIn size={15} />
+              Sign In
+            </Link>
+          </div>
+        )}
+      </div>
       <div className="flex justify-between items-center px-6 py-4">
         <Link
           to="/"
@@ -515,6 +552,15 @@ const Navbar = () => {
             </Link>
 
             <Link
+              to="/work"
+              className={`hover:text-red-600 ${
+                isActive("/work") ? "text-red-600 font-semibold" : ""
+              }`}
+            >
+              How its work
+            </Link>
+
+            <Link
               to="/suggestion"
               className={`hover:text-red-600 ${
                 isActive("/suggestion") ? "text-red-600 font-semibold" : ""
@@ -535,12 +581,6 @@ const Navbar = () => {
 
           <li>
             {currentUser?.role === "customer" ? null : (
-              //   <Link
-              //   to="/sellerIntro"
-              //   className="flex items-center gap-1 hover:text-red-600 font-semibold"
-              // >
-              //    Post an Ad
-              // </Link>
               <button
                 onClick={() => navigate("/sellerIntro")}
                 className="bg-red-600 text-white font-bold px-2 py-1.5 rounded hover:cursor-pointer"
@@ -549,6 +589,7 @@ const Navbar = () => {
               </button>
             )}
           </li>
+
           <li>
             {showLive.some((item) => item.auctionStatus === "live") && (
               <Link
@@ -564,6 +605,24 @@ const Navbar = () => {
                 <span className="relative z-10">LIVE</span>
               </Link>
             )}
+          </li>
+
+          <li className="relative">
+            <Link
+              to="/wishlist"
+              className="relative flex items-center gap-2 bg-red-600 text-white font-semibold px-4 py-1.5 rounded  transition-all"
+              title="View Wishlist"
+            >
+              {/* Pulsing effect behind icon */}
+
+              {/* Heart Icon */}
+              <FaHeart className="relative text-white text-lg animate-bounce" />
+
+              {/* Text */}
+              <span className="relative z-10">Wishlist</span>
+
+              {/* Optional count badge */}
+            </Link>
           </li>
         </ul>
         {/* Profile Dropdown */}
@@ -649,35 +708,7 @@ const Navbar = () => {
               </div>
             </div>
           ) : (
-            <>
-              <Link
-                to="/register"
-                className="flex items-center gap-1 hover:text-red-600 font-bold"
-              >
-                <UserPlus size={15} />
-                Register
-              </Link>
-              {/* <button
-                onClick={() => navigate("/register")}
-                className="bg-red-600 text-white font-bold px-2 py-1.5 rounded hover:cursor-pointer"
-              >
-                Register
-              </button> */}
-
-              {/* <button
-                onClick={() => navigate("/login")}
-                className="bg-red-600 text-white font-bold px-2 py-1.5 rounded hover:cursor-pointer"
-              >
-                Sign In
-              </button> */}
-              <Link
-                to="/login"
-                className="flex items-center gap-1 hover:text-red-600 font-bold"
-              >
-                <LogIn size={15} />
-                Sign In
-              </Link>
-            </>
+            <></>
           )}
         </div>
 
@@ -819,7 +850,10 @@ const Navbar = () => {
                 ) : (
                   <FaUserCircle size={32} className="text-white" />
                 )}
-                <span>Signed in as {currentUser?.name || "--"} ({currentUser?.role || "--"})</span>
+                <span>
+                  Signed in as {currentUser?.name || "--"} (
+                  {currentUser?.role || "--"})
+                </span>
               </div>
               <button
                 onClick={() => {

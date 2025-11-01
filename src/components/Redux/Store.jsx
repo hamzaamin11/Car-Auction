@@ -7,6 +7,7 @@ import userSliceReducer from "../../components/Redux/UserSlice";
 import NavigationSliceReducer from "../../components/Redux/NavigationSlice";
 import carSelectorReduce from "../../components/Redux/SelectorCarSlice";
 import emailSliceReucer from "../../components/Redux/EmailSlice";
+import WishlistSlice from "../../components/Redux/WishlistSlice";
 
 // saare reducers combine kar do
 const rootReducer = combineReducers({
@@ -14,6 +15,7 @@ const rootReducer = combineReducers({
   navigateState: NavigationSliceReducer,
   carSelector: carSelectorReduce,
   emailValidation: emailSliceReucer,
+  wishList: WishlistSlice,
 });
 
 // persist config
