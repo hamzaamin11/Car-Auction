@@ -269,7 +269,9 @@ export default function Topbar() {
 
       await Swal.fire({
         title: "Error!",
-        text: error.response?.data?.error || "Failed to update profile. Please try again.",
+        text:
+          error.response?.data?.error ||
+          "Failed to update profile. Please try again.",
         icon: "error",
         confirmButtonColor: "#9333ea",
       });
@@ -416,7 +418,10 @@ export default function Topbar() {
           <div className="px-4 py-3 border-b border-gray-200">
             <p className="text-sm text-gray-600">Signed in as</p>
             <p className="text-sm font-medium text-gray-800 truncate">
-              {currentUser?.name || "--"}
+              {currentUser?.name || "--"}{" "}
+              <span className="text-gray-500">
+                ({currentUser?.role || "--"})
+              </span>
             </p>
           </div>
           <div

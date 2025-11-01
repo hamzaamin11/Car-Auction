@@ -554,13 +554,13 @@ const Navbar = () => {
               <Link
                 to="/today"
                 className="relative flex items-center gap-2 bg-red-600 text-white font-bold px-4 py-1.5 
-             rounded-full hover:bg-red-700 transition-all overflow-hidden"
+             rounded hover:bg-red-700 transition-all overflow-hidden"
               >
                 {/* Pulsing background */}
                 <span className="absolute inset-0 rounded-full bg-red-500/50 animate-ping"></span>
 
                 {/* Icon and Text */}
-                <FaCarSide className="relative text-white text-lg animate-bounce" />
+                <FaCarSide className="relative text-white text-lg animate-ping" />
                 <span className="relative z-10">LIVE</span>
               </Link>
             )}
@@ -602,9 +602,12 @@ const Navbar = () => {
                 }`}
               >
                 <div className="px-4 py-3 border-b border-gray-200">
-                  <p className="text-sm text-gray-600 ">Signed in as</p>
+                  <p className="text-sm text-gray-600">Signed in as</p>
                   <p className="text-sm font-medium text-gray-800 truncate">
-                    {currentUser?.name || "--"}
+                    {currentUser?.name || "--"}{" "}
+                    <span className="text-gray-500">
+                      ({currentUser?.role || "--"})
+                    </span>
                   </p>
                 </div>
                 <div
@@ -742,20 +745,20 @@ const Navbar = () => {
             </button>
           )}
 
-           {showLive.some((item) => item.auctionStatus === "live") && (
-              <Link
-                to="/today"
-                className="relative flex items-center gap-2 bg-white text-red-500 font-bold px-4 py-1.5 w-24
+          {showLive.some((item) => item.auctionStatus === "live") && (
+            <Link
+              to="/today"
+              className="relative flex items-center gap-2 bg-white text-red-500 font-bold px-4 py-1.5 w-24
              rounded transition-all overflow-hidden"
-              >
-                {/* Pulsing background */}
-                <span className="absolute inset-0 rounded-full  animate-ping"></span>
+            >
+              {/* Pulsing background */}
+              <span className="absolute inset-0 rounded-full  animate-ping"></span>
 
-                {/* Icon and Text */}
-                <FaCarSide className="relative text-red-500 text-lg animate-bounce" />
-                <span className="relative z-10">LIVE</span>
-              </Link>
-            )}
+              {/* Icon and Text */}
+              <FaCarSide className="relative text-red-500 text-lg animate-bounce" />
+              <span className="relative z-10">LIVE</span>
+            </Link>
+          )}
           {user?.role === "seller" && (
             <Link
               to="/add-vehicles"
@@ -816,7 +819,7 @@ const Navbar = () => {
                 ) : (
                   <FaUserCircle size={32} className="text-white" />
                 )}
-                <span>Signed in as {currentUser?.name || "--"}</span>
+                <span>Signed in as {currentUser?.name || "--"} ({currentUser?.role || "--"})</span>
               </div>
               <button
                 onClick={() => {
