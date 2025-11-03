@@ -28,7 +28,7 @@ const CarSelector = ({ handleIsOpenToggle }) => {
   // Models list
   const carModels = carModel.map((car) => ({
     label: car.modelName,
-    value: car.id, // 👈 store modelId
+    value: car.modelId, // 👈 store modelId
   }));
 
   // Series list
@@ -194,9 +194,7 @@ const CarSelector = ({ handleIsOpenToggle }) => {
         {/* Series */}
         {(activeStep === 3 || window.innerWidth >= 768) && (
           <div className="border-b md:border-0 border-gray-200">
-            <h3 className="bg-gray-100 p-3 font-bold">
-              Version (Optional)
-            </h3>
+            <h3 className="bg-gray-100 p-3 font-bold">Version (Optional)</h3>
             <div className="overflow-y-auto md:h-[60vh] h-auto">
               {selected?.model &&
                 seriesList?.map((series) => (

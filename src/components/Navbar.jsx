@@ -441,55 +441,73 @@ const Navbar = () => {
 
   return (
     <nav className="bg-white shadow-md z-50 relative">
-      <div className="flex items-center justify-between text-white p-2 px-6 border-b bg-blue-950 border-gray-300">
-        <span className="text-white font-semibold ">
+      <div className="flex items-center justify-between text-white p-2 px-6 border-b bg-blue-950 border-gray-300 text-xs lg:text-base">
+        <span className="text-white  ">
           WheelBidz First Online Cars Auction Platform in Pakistan
         </span>
-        {currentUser ? null : (
-          <div className="flex items-center gap-4 ">
-            <Link
-              to="/register"
-              className="flex items-center gap-1 hover:text-red-600 font-bold"
-            >
-              <UserPlus size={15} />
-              Register
-            </Link>
-            {/* <button
+
+        <div className="flex items-center justify-center gap-4">
+          <Link
+            to="/wishlist"
+            className="relative md:flex items-center gap-2 text-white hidden   transition-all"
+            title="View Wishlist"
+          >
+            {/* Pulsing effect behind icon */}
+
+            {/* Heart Icon */}
+            <FaHeart className="relative text-white text-lg animate-bounce" />
+
+            {/* Text */}
+            <span className="relative z-10">Wishlist</span>
+
+            {/* Optional count badge */}
+          </Link>
+          {currentUser ? null : (
+            <div className="lg:flex items-center gap-4 hidden ">
+              <Link
+                to="/register"
+                className="flex items-center gap-1 hover:text-red-600 font-semiboldbold"
+              >
+                <UserPlus size={15} />
+                Register
+              </Link>
+              {/* <button
                 onClick={() => navigate("/register")}
                 className="bg-red-600 text-white font-bold px-2 py-1.5 rounded hover:cursor-pointer"
               >
                 Register
               </button> */}
 
-            {/* <button
+              {/* <button
                 onClick={() => navigate("/login")}
                 className="bg-red-600 text-white font-bold px-2 py-1.5 rounded hover:cursor-pointer"
               >
                 Sign In
               </button> */}
-            <Link
-              to="/login"
-              className="flex items-center gap-1 hover:text-red-600 font-bold"
-            >
-              <LogIn size={15} />
-              Sign In
-            </Link>
-          </div>
-        )}
+              <Link
+                to="/login"
+                className="flex items-center gap-1 hover:text-red-600"
+              >
+                <LogIn size={15} />
+                Sign In
+              </Link>
+            </div>
+          )}
+        </div>
       </div>
       <div className="flex justify-between items-center px-6 py-4">
         <Link
           to="/"
-          className="text-xl font-bold text-red-600 flex items-center gap-2"
+          className="text-xl font-bold text-red-600 flex items-center gap-2 "
         >
-          <img src={logoImage} alt="Logo" className="h-12 pt-4 lg:pt-0" />
+          <img src={logoImage} alt="Logo" className="h-12 pt-4 lg:pt-0 " />
         </Link>
-        <ul className="hidden md:flex items-center space-x-4 font-semibold relative">
+        <ul className="hidden md:flex items-center  font-semibold relative">
           <li>
             <Link
               to="/"
               className={`hover:text-red-600 ${
-                isActive("/") ? "text-red-600 font-semibold" : ""
+                isActive("/") ? "text-red-600 font-semibold px-1" : ""
               }`}
             >
               Home
@@ -499,8 +517,8 @@ const Navbar = () => {
           <li>
             <Link
               to="/about"
-              className={`hover:text-red-600 ${
-                isActive("/about") ? "text-red-600 font-semibold" : ""
+              className={`hover:text-red-600 px-3 ${
+                isActive("/about") ? "text-red-600 font-semibold " : ""
               }`}
             >
               About
@@ -541,7 +559,7 @@ const Navbar = () => {
             </li>
           ))}
 
-          <li className="space-x-6">
+          <li className="space-x-3">
             <Link
               to="/partner"
               className={`hover:text-red-600 ${
@@ -583,9 +601,9 @@ const Navbar = () => {
             {currentUser?.role === "customer" ? null : (
               <button
                 onClick={() => navigate("/sellerIntro")}
-                className="bg-red-600 text-white font-bold px-2 py-1.5 rounded hover:cursor-pointer"
+                className="bg-red-600 text-white font-bold px-2 py-1.5 mx-2 rounded hover:cursor-pointer"
               >
-                Post an Ad
+                Sell Now
               </button>
             )}
           </li>
@@ -594,7 +612,7 @@ const Navbar = () => {
             {showLive.some((item) => item.auctionStatus === "live") && (
               <Link
                 to="/today"
-                className="relative flex items-center gap-2 bg-red-600 text-white font-bold px-4 py-1.5 
+                className="relative flex items-center gap-2 bg-red-600 ml-2 text-white font-bold px-4 py-1.5 
              rounded hover:bg-red-700 transition-all overflow-hidden"
               >
                 {/* Pulsing background */}
@@ -606,111 +624,95 @@ const Navbar = () => {
               </Link>
             )}
           </li>
+          <div className="hidden md:flex pl-2  relative" ref={dropdownRef}>
+            {currentUser ? (
+              <div className="relative">
+                <button
+                  onClick={toggleDropdown}
+                  className="flex items-center gap-2 focus:outline-none group"
+                >
+                  {currentUser?.image ||
+                  currentUser?.imageUrl ||
+                  currentUser?.profileImage ? (
+                    <img
+                      src={
+                        currentUser?.image ||
+                        currentUser?.imageUrl ||
+                        currentUser?.profileImage
+                      }
+                      alt="Profile"
+                      className="w-10 h-10 rounded-full object-cover border-2 border-gray-300 group-hover:border-red-600 transition-colors duration-300"
+                    />
+                  ) : (
+                    <FaUserCircle
+                      size={40}
+                      className="text-gray-700 group-hover:text-red-600 transition-colors duration-300"
+                    />
+                  )}
+                </button>
 
-          <li className="relative">
-            <Link
-              to="/wishlist"
-              className="relative flex items-center gap-2 bg-red-600 text-white font-semibold px-4 py-1.5 rounded  transition-all"
-              title="View Wishlist"
-            >
-              {/* Pulsing effect behind icon */}
-
-              {/* Heart Icon */}
-              <FaHeart className="relative text-white text-lg animate-bounce" />
-
-              {/* Text */}
-              <span className="relative z-10">Wishlist</span>
-
-              {/* Optional count badge */}
-            </Link>
-          </li>
-        </ul>
-        {/* Profile Dropdown */}
-        <div className="hidden md:flex gap-4 relative" ref={dropdownRef}>
-          {currentUser ? (
-            <div className="relative">
-              <button
-                onClick={toggleDropdown}
-                className="flex items-center gap-2 focus:outline-none group"
-              >
-                {currentUser?.image ||
-                currentUser?.imageUrl ||
-                currentUser?.profileImage ? (
-                  <img
-                    src={
-                      currentUser?.image ||
-                      currentUser?.imageUrl ||
-                      currentUser?.profileImage
-                    }
-                    alt="Profile"
-                    className="w-10 h-10 rounded-full object-cover border-2 border-gray-300 group-hover:border-red-600 transition-colors duration-300"
-                  />
-                ) : (
-                  <FaUserCircle
-                    size={40}
-                    className="text-gray-700 group-hover:text-red-600 transition-colors duration-300"
-                  />
-                )}
-              </button>
-
-              <div
-                className={`absolute right-0 mt-2 w-44 bg-white rounded-md shadow-lg overflow-hidden transition-all duration-300 ease-in-out ${
-                  dropdownOpen
-                    ? "max-h-96 opacity-100 scale-100"
-                    : "max-h-0 opacity-0 scale-95 pointer-events-none"
-                }`}
-              >
-                <div className="px-4 py-3 border-b border-gray-200">
-                  <p className="text-sm text-gray-600">Signed in as</p>
-                  <p className="text-sm font-medium text-gray-800 truncate">
-                    {currentUser?.name || "--"}{" "}
-                    <span className="text-gray-500">
-                      ({currentUser?.role || "--"})
+                <div
+                  className={`absolute right-0 mt-2 w-44 bg-white rounded-md shadow-lg overflow-hidden transition-all duration-300 ease-in-out ${
+                    dropdownOpen
+                      ? "max-h-96 opacity-100 scale-100"
+                      : "max-h-0 opacity-0 scale-95 pointer-events-none"
+                  }`}
+                >
+                  <div className="px-4 py-3 border-b border-gray-200">
+                    <p className="text-sm text-gray-600">Signed in as</p>
+                    <p className="text-sm font-medium text-gray-800 truncate">
+                      {currentUser?.name || "--"}{" "}
+                      <span className="text-gray-500">
+                        ({currentUser?.role || "--"})
+                      </span>
+                    </p>
+                  </div>
+                  <div
+                    onClick={() => {
+                      setPasswordModalOpen(true);
+                      setDropdownOpen(false);
+                    }}
+                    className="flex items-center gap-2 px-4 py-1 text-gray-600 hover:bg-gray-100 cursor-pointer transition-colors duration-200"
+                  >
+                    <span className="text-sm font-semibold ">
+                      Change Password
                     </span>
-                  </p>
-                </div>
-                <div
-                  onClick={() => {
-                    setPasswordModalOpen(true);
-                    setDropdownOpen(false);
-                  }}
-                  className="flex items-center gap-2 px-4 py-1 text-gray-600 hover:bg-gray-100 cursor-pointer transition-colors duration-200"
-                >
-                  <span className="text-sm font-semibold ">
-                    Change Password
-                  </span>
-                </div>
-                <div
-                  onClick={() => {
-                    setProfileModalOpen(true);
-                    setDropdownOpen(false);
-                  }}
-                  className="flex items-center gap-2 px-4 py-1 text-gray-600 hover:bg-gray-100 cursor-pointer transition-colors duration-200"
-                >
-                  <span className="text-sm font-semibold">Manage Profile</span>
-                </div>
-                <div
-                  onClick={() => {
-                    navigate("/soldVehicles");
-                    setDropdownOpen(false);
-                  }}
-                  className="flex items-center gap-2 px-4 py-1 text-gray-600 hover:bg-gray-100 cursor-pointer transition-colors duration-200"
-                >
-                  <span className="text-sm font-semibold">Sold Vehicles</span>
-                </div>
-                <div
-                  onClick={handleLogout}
-                  className="flex items-center gap-2 px-4 py-1 text-red-600 hover:bg-gray-100 cursor-pointer transition-colors duration-200"
-                >
-                  <AiOutlineLogout size={20} />
-                  <span className="text-sm font-semibold">Logout</span>
+                  </div>
+                  <div
+                    onClick={() => {
+                      setProfileModalOpen(true);
+                      setDropdownOpen(false);
+                    }}
+                    className="flex items-center gap-2 px-4 py-1 text-gray-600 hover:bg-gray-100 cursor-pointer transition-colors duration-200"
+                  >
+                    <span className="text-sm font-semibold">
+                      Manage Profile
+                    </span>
+                  </div>
+                  <div
+                    onClick={() => {
+                      navigate("/soldVehicles");
+                      setDropdownOpen(false);
+                    }}
+                    className="flex items-center gap-2 px-4 py-1 text-gray-600 hover:bg-gray-100 cursor-pointer transition-colors duration-200"
+                  >
+                    <span className="text-sm font-semibold">Sold Vehicles</span>
+                  </div>
+                  <div
+                    onClick={handleLogout}
+                    className="flex items-center gap-2 px-4 py-1 pb-2 text-red-600 hover:bg-gray-100 cursor-pointer transition-colors duration-200"
+                  >
+                    <AiOutlineLogout size={20} />
+                    <span className="text-sm font-semibold">Logout</span>
+                  </div>
                 </div>
               </div>
-            </div>
-          ) : (
-            <></>
-          )}
-        </div>
+            ) : (
+              <></>
+            )}
+          </div>
+        </ul>
+        {/* Profile Dropdown */}
 
         {/* Mobile Toggle */}
         <div className="md:hidden">
@@ -761,32 +763,34 @@ const Navbar = () => {
             Become A Partner
           </Link>
 
+          <Link
+            to="/wishlist"
+            onClick={() => setMenuOpen(false)}
+            className="block font-medium"
+          >
+            WishList
+          </Link>
+
           {currentUser?.role === "customer" ? null : (
-            //   <Link
-            //   to="/sellerIntro"
-            //   className="flex items-center gap-1 hover:text-red-600 font-semibold"
-            // >
-            //    Post an Ad
-            // </Link>
             <button
               onClick={() => navigate("/sellerIntro")}
-              className="bg-white text-red-500 font-bold px-2 py-1.5 rounded hover:cursor-pointer"
+              className=" text-white  hover:cursor-pointer"
             >
-              Post an Ad
+              Sell Now
             </button>
           )}
 
           {showLive.some((item) => item.auctionStatus === "live") && (
             <Link
               to="/today"
-              className="relative flex items-center gap-2 bg-white text-red-500 font-bold px-4 py-1.5 w-24
+              className="relative flex items-center gap-2  text-white
              rounded transition-all overflow-hidden"
             >
               {/* Pulsing background */}
               <span className="absolute inset-0 rounded-full  animate-ping"></span>
 
               {/* Icon and Text */}
-              <FaCarSide className="relative text-red-500 text-lg animate-bounce" />
+              <FaCarSide className="relative text-white text-lg animate-bounce" />
               <span className="relative z-10">LIVE</span>
             </Link>
           )}

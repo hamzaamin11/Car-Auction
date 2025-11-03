@@ -8,13 +8,13 @@ const AboutSection = () => {
   return (
   <section
   id="about"
-  className="w-full py-16 px-4 bg-gray-100 overflow-hidden hidden md:block "
+  className="w-full py-2 px-4 bg-gray-100 overflow-hidden hidden md:block "
 >
 
       <div className="max-w-[90rem] mx-auto text-left  ">
         {/* Heading */}
         <motion.h2
-          className="lg:text-4xl text-xl font-extrabold text-gray-900 "
+          className="lg:text-3xl text-xl font-extrabold text-gray-900 "
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
           transition={transition}
