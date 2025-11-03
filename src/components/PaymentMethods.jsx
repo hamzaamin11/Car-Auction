@@ -30,7 +30,7 @@ const PaymentMethods = () => {
 
           <Link
             to="/"
-            className="text-[#ffbf00] flex items-center gap-1 hover:underline"
+            className="text-red-600 flex items-center gap-1 hover:underline"
           >
             Payment Methods
             <IoIosArrowForward className="w-4 h-4" />

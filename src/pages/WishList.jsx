@@ -1,5 +1,5 @@
 /* eslint-disable no-unused-vars */
-import React from "react";
+import React, { useMemo } from "react";
 import { useNavigate } from "react-router-dom";
 import { FaTrashAlt, FaCarSide } from "react-icons/fa";
 import { useDispatch, useSelector } from "react-redux";
@@ -8,13 +8,19 @@ import Swal from "sweetalert2";
 
 export const WishList = () => {
   const navigate = useNavigate();
-
-  const { wishVehicle } = useSelector((state) => state?.wishList);
-
   const dispatch = useDispatch();
 
-  // Example static wishlist data (replace this with Redux or Context data)
-  const handleRemove = (id) => {
+  // Get current user and wishlist data
+  const currentUser = useSelector((state) => state?.auth?.currentUser);
+  const wishlistByUser = useSelector((state) => state?.wishList?.wishlistByUser);
+
+  // Get current user's wishlist only
+  const wishVehicle = useMemo(() => {
+    if (!currentUser?.id) return [];
+    return wishlistByUser?.[currentUser.id] || [];
+  }, [currentUser, wishlistByUser]);
+
+  const handleRemove = (vehicleId) => {
     Swal.fire({
       title: "Are you sure?",
       text: "This vehicle will be removed from your wishlist.",
@@ -25,11 +31,33 @@ export const WishList = () => {
       confirmButtonText: "Yes, remove it!",
     }).then((result) => {
       if (result.isConfirmed) {
-        dispatch(removeInList(id));
+        dispatch(removeInList({ 
+          userId: currentUser.id, 
+          vehicleId: vehicleId 
+        }));
         Swal.fire("Removed!", "Vehicle has been removed.", "success");
       }
     });
   };
+
+  // Show message if user is not logged in
+  if (!currentUser) {
+    return (
+      <div className="min-h-screen bg-gray-50 px-4 py-8">
+        <div className="max-w-6xl mx-auto text-center py-20">
+          <FaCarSide className="text-gray-400 text-6xl mx-auto mb-4" />
+          <h2 className="text-2xl font-bold text-gray-700 mb-2">Please Log In</h2>
+          <p className="text-gray-500">You need to be logged in to view your wishlist.</p>
+          <button
+            onClick={() => navigate("/login")}
+            className="mt-4 bg-red-600 text-white px-6 py-2 rounded hover:bg-red-700 transition"
+          >
+            Go to Login
+          </button>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className="min-h-screen bg-gray-50 px-4 py-8">
@@ -39,6 +67,9 @@ export const WishList = () => {
           <FaCarSide className="text-red-600" />
           My Wishlist
         </h1>
+        <p className="text-sm text-gray-600">
+          {wishVehicle.length} {wishVehicle.length === 1 ? 'vehicle' : 'vehicles'}
+        </p>
       </div>
 
       {/* Wishlist Grid */}
@@ -72,7 +103,7 @@ export const WishList = () => {
                 <div className="mt-auto flex justify-between items-center">
                   <button
                     onClick={() => navigate(`/detailbid/${car.id}`)}
-                    className="bg-red-600 text-white text-sm font-semibold px-4 py-2 rounded  transition"
+                    className="bg-red-600 text-white text-sm font-semibold px-4 py-2 rounded transition"
                   >
                     View Details
                   </button>
@@ -90,7 +121,9 @@ export const WishList = () => {
           ))
         ) : (
           <div className="col-span-full text-center py-10 text-gray-500">
-            No vehicles in your wishlist yet.
+            <FaCarSide className="text-gray-300 text-5xl mx-auto mb-3" />
+            <p className="text-lg font-medium">No vehicles in your wishlist yet.</p>
+            <p className="text-sm mt-1">Start adding vehicles to keep track of your favorites!</p>
           </div>
         )}
       </div>

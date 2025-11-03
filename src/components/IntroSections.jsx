@@ -12,7 +12,7 @@ const IntroSection = () => {
     <section className="w-full bg-[#f9fbff] py-16 overflow-hidden">
       <div className="max-w-7xl mx-auto px-4 md:px-8 flex flex-col md:flex-row items-center justify-between gap-12">
         <div className="md:w-1/2" data-aos="fade-right">
-          <h1 className="text-4xl sm:text-5xl font-bold text-blue-900 mb-8 leading-tight">
+          <h1 className="text-4xl sm:text-5xl font-bold text-black mb-8 leading-tight">
             How it Works
           </h1>
 
@@ -50,7 +50,7 @@ const IntroSection = () => {
             <div className="pt-4">
               <Link
                 to="/"
-                className="inline-block bg-blue-700 text-white font-semibold py-2.5 px-6 rounded-lg hover:bg-blue-800 transition duration-300 shadow"
+                className="inline-block bg-blue-950 text-white font-semibold py-2.5 px-6 rounded-lg hover:bg-blue-800 transition duration-300 shadow"
               >
                 Search Stock
               </Link>

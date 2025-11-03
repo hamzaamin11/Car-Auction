@@ -48,7 +48,7 @@ const FAQSection = () => {
           <div key={index} className="border-b">
             <div
               onClick={() => toggleAccordion(index)}
-              className="flex justify-between items-center cursor-pointer py-4 px-4 md:px-8 hover:bg-gray-100 transition-all"
+              className="flex justify-between items-center cursor-pointer py-4 px-4 md:px-8  transition-all"
             >
               <h3 className="text-xl font-semibold text-gray-700">
                 {item.question}
@@ -60,7 +60,7 @@ const FAQSection = () => {
               >
                 <svg
                   xmlns="http://www.w3.org/2000/svg"
-                  className="w-6 h-6 text-[#ffbf00]"
+                  className="w-6 h-6 text-red-600"
                   fill="none"
                   viewBox="0 0 24 24"
                   stroke="currentColor"

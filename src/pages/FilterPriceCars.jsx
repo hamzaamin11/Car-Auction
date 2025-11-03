@@ -502,9 +502,17 @@ const FilterPriceCars = () => {
       {/* Car List */}
       <div className="w-full lg:w-3/4">
         <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center mb-4 gap-2">
-          <h1 className="text-sm text-gray-700">
-            1 - 25 of {allFilterCars.length} Results
-          </h1>
+      
+<h1 className="text-black font-bold text-lg sm:text-xl">
+  {allFilterCars.length}{" "}
+  {filterData.allMakes
+    ? allMakes.find((m) => m.value === filterData.allMakes)?.brandName
+    : "Cars"}{" "}
+   Vehicles For Sale
+</h1>
+
+
+
           <select
             className="border p-2 text-sm rounded w-full sm:w-auto"
             onChange={(e) => setSorting(e.target.value)}

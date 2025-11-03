@@ -20,7 +20,7 @@ const RegistrationSteps = () => {
 
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-12">
           <div className="step text-center" data-aos="fade-up">
-            <FiUpload className="icon w-20 h-20 mx-auto mb-4 text-blue-500" /> 
+            <FiUpload className="icon w-20 h-20 mx-auto mb-4 text-blue-950" /> 
             <h2 className="text-xl font-semibold text-gray-700 mb-2">Upload Documents</h2>
             <p className="text-gray-700 mb-4">
               Upload photographic ID and any applicable business documents.
@@ -29,7 +29,7 @@ const RegistrationSteps = () => {
           </div>
 
           <div className="step text-center" data-aos="fade-up" data-aos-delay="200">
-            <FiSearch className="icon w-20 h-20 mx-auto mb-4 text-blue-500" /> 
+            <FiSearch className="icon w-20 h-20 mx-auto mb-4 text-blue-950" /> 
             <h2 className="text-xl font-semibold text-gray-700 mb-2">Search and Save</h2>
             <p className="text-gray-700 mb-4">
               Browse nearly 14,000 vehicles every day. Sign up for alerts to get notified when a new vehicle is up for grabs.
@@ -38,7 +38,7 @@ const RegistrationSteps = () => {
           </div>
 
           <div className="step text-center" data-aos="fade-up" data-aos-delay="400">
-            <FiCalendar className="icon w-20 h-20 mx-auto mb-4 text-blue-500" /> 
+            <FiCalendar className="icon w-20 h-20 mx-auto mb-4 text-blue-950" /> 
             <h2 className="text-xl font-semibold text-gray-700 mb-2">Join Auctions</h2>
             <p className="text-gray-700 mb-4">
               Join the fun and use Copart’s patented virtual bidding technology. Need it sooner? Browse our “Buy it Now” inventory.
@@ -47,7 +47,7 @@ const RegistrationSteps = () => {
           </div>
 
           <div className="step text-center" data-aos="fade-up" data-aos-delay="600">
-            <FiTruck className="icon w-20 h-20 mx-auto mb-4 text-blue-500" /> 
+            <FiTruck className="icon w-20 h-20 mx-auto mb-4 text-blue-950" /> 
             <h2 className="text-xl font-semibold text-gray-700 mb-2">Get it Delivered</h2>
             <p className="text-gray-700 mb-4">
               Order delivery, or collect using your own preferred transporter, or pick it up yourself via our Transportation App.

@@ -4,19 +4,58 @@ import { useNavigate } from "react-router-dom";
 import axios from "axios";
 import { BASE_URL } from "./Contant/URL";
 import { FaHeart } from "react-icons/fa";
-import { useDispatch } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import { addInList } from "./Redux/WishlistSlice";
+import Swal from "sweetalert2";
 
 // ---------------- CarCard -------------------
 const CarCard = ({ car }) => {
   const navigate = useNavigate();
-  const [isWishlisted, setIsWishlisted] = useState(false);
   const dispatch = useDispatch();
+  
+  // Get current user from Redux
+  const currentUser = useSelector((state) => state?.auth?.currentUser);
+  const wishlistByUser = useSelector((state) => state?.wishList?.wishlistByUser);
+    console.log("🔍 CarCard Debug:", {
+    currentUser,
+    wishlistByUser,
+    car
+  });
+  // Check if this car is in current user's wishlist
+  const isInWishlist = currentUser?.id && wishlistByUser?.[currentUser.id]?.some(v => v.id === car.id);
 
-  const handleWishlist = () => {
-    dispatch(addInList(car));
-  };
-
+ const handleWishlist = () => {
+  console.log("🔍 Button clicked!");
+  console.log("👤 Current User:", currentUser);
+  console.log("🚗 Car Data:", car);
+  
+  // Check if user is logged in
+  if (!currentUser) {
+    console.log("❌ No user logged in");
+    Swal.fire({
+      title: "Login Required",
+      text: "Please login to add vehicles to your wishlist.",
+      icon: "warning",
+      confirmButtonColor: "#9333ea",
+      showCancelButton: true,
+      confirmButtonText: "Go to Login",
+      cancelButtonText: "Cancel"
+    }).then((result) => {
+      if (result.isConfirmed) {
+        navigate("/login");
+      }
+    });
+    return;
+  }
+  
+  console.log("✅ Dispatching addInList with:", { userId: currentUser.id, vehicle: car });
+  
+  // Dispatch with userId and vehicle
+  dispatch(addInList({ 
+    userId: currentUser.id, 
+    vehicle: car 
+  }));
+};
   return (
     <div className="relative bg-white rounded-xl shadow-lg hover:shadow-2xl transition-all duration-300 overflow-hidden w-full h-full flex flex-col">
       <div className="relative w-full">
@@ -28,17 +67,23 @@ const CarCard = ({ car }) => {
         />
       </div>
 
-      <div className="relative group p-4 space-y-2  text-gray-800 flex-grow flex flex-col bg-white rounded-xl shadow-md hover:shadow-xl transition-all duration-300 border border-gray-100">
-        <div className="flex justify-end ">
+      <div className="relative group p-4 space-y-2 text-gray-800 flex-grow flex flex-col bg-white rounded-xl shadow-md hover:shadow-xl transition-all duration-300 border border-gray-100">
+        <div className="flex justify-end">
           <button
             onClick={handleWishlist}
-            className={`  gap-1.5 text-xs p-2 font-semibold transition-all duration-300 ${"text-white bg-red-600  rounded "}`}
+            disabled={isInWishlist}
+            className={`gap-1.5 text-xs p-2 font-semibold transition-all duration-300 ${
+              isInWishlist 
+                ? "text-white bg-gray-400 rounded cursor-not-allowed" 
+                : "text-white bg-red-600 rounded hover:bg-red-700"
+            }`}
           >
-            <span className="">{"Add to Wishlist"}</span>
+            <span>{isInWishlist ? "Already Added" : "Add to Wishlist"}</span>
           </button>
         </div>
+        
         {/* Car Info */}
-        <h3 className="text-lg font-bold text-gray-800  transition">
+        <h3 className="text-lg font-bold text-gray-800 transition">
           {car?.make} {car?.model}
         </h3>
 
@@ -57,7 +102,7 @@ const CarCard = ({ car }) => {
         {/* View Details Button */}
         <span
           onClick={() => navigate(`/detailbid/${car.id}`)}
-          className="mt-auto block bg-red-600 text-center text-sm font-semibold text-white py-2 rounded transition-all duration-300 cursor-pointer"
+          className="mt-auto block bg-red-600 text-center text-sm font-semibold text-white py-2 rounded transition-all duration-300 cursor-pointer hover:bg-red-700"
         >
           View Details
         </span>
@@ -114,7 +159,7 @@ const LiveAuctionCard = ({ liveAuction, onView }) => {
         />
       </div>
 
-      <div className="p-4 space-y-2 text-gray-800 flex-grow flex flex-col">
+      <div className="p-4 space-y-2 text-gray-800 flex-grow flex-col">
         <h3 className="text-md font-bold gap-1.5">
           {liveAuction?.make}-{liveAuction?.model}
         </h3>
@@ -171,12 +216,9 @@ const CarCardSlider = () => {
     }
   };
 
-  // Placeholder for fetching live auctions (API to be added later)
+  // Placeholder for fetching live auctions
   const handleGetLiveAuctions = async () => {
     try {
-      // Placeholder: Replace with actual API endpoint when provided
-      // const res = await axios.get(`${BASE_URL}/liveAuctions?entry=8&page=1`);
-      // setAllLiveAuctions(res.data);
       console.log(
         "Live Auction API will be added later. Waiting for response."
       );
