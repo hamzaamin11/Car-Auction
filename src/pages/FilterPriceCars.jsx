@@ -5,6 +5,7 @@ import Select from "react-select";
 import { BASE_URL } from "../components/Contant/URL";
 import numberToWords from "number-to-words";
 import CustomDropdown from "../CustomDropdown";
+
 const BodyType = [
   { label: "Mini Vehicles", value: "Mini Vehicles" },
   { label: "Van", value: "Van" },
@@ -56,6 +57,10 @@ const FilterPriceCars = () => {
   const [activeTab, setActiveTab] = useState("all");
   const [sorting, setSorting] = useState("");
   const [loading, setLoading] = useState(false);
+  
+  // Pagination states
+  const [currentPage, setCurrentPage] = useState(1);
+  const carsPerPage = 10;
 
   // Generate years
   const currentYear = useMemo(() => {
@@ -81,9 +86,9 @@ const FilterPriceCars = () => {
   const allMakes = useMemo(
     () =>
       allMake.map((make) => ({
-        label: `${make.brandName} (${make.vehicleCount})`, // visible text in dropdown
-        value: make.id, // dropdown value (used to identify selection)
-        brandName: make.brandName, // actual brand name for URL
+        label: `${make.brandName} (${make.vehicleCount})`,
+        value: make.id,
+        brandName: make.brandName,
         vehicleCount: make.vehicleCount,
       })),
     [allMake]
@@ -93,13 +98,19 @@ const FilterPriceCars = () => {
   const allModels = useMemo(
     () =>
       filterModel.map((m) => ({
-        label: `${m.modelName} (${m.vehicleCount})`, // visible text in dropdown
-        value: m.modelName, // dropdown value (used to identify selection)
-        brandName: m.modelName, // actual brand name for URL
+        label: `${m.modelName} (${m.vehicleCount})`,
+        value: m.modelName,
+        brandName: m.modelName,
         vehicleCount: m.vehicleCount,
       })),
     [filterModel]
   );
+
+  // Pagination calculations
+  const indexOfLastCar = currentPage * carsPerPage;
+  const indexOfFirstCar = indexOfLastCar - carsPerPage;
+  const currentCars = allFilterCars.slice(indexOfFirstCar, indexOfLastCar);
+  const totalPages = Math.ceil(allFilterCars.length / carsPerPage);
 
   // Map URL value to option value (ID) for city and make
   useEffect(() => {
@@ -182,6 +193,7 @@ const FilterPriceCars = () => {
         },
       });
       setAllFilterCars(res.data);
+      setCurrentPage(1); // Reset to first page on new search
       setLoading(false);
     } catch (error) {
       console.log("Error fetching cars:", error);
@@ -231,10 +243,25 @@ const FilterPriceCars = () => {
   const handleChange = (name, value) => {
     const updatedFilterData = { ...filterData, [name]: value };
     if (name === "allMakes") {
-      updatedFilterData.allModels = ""; // Reset model when make changes
+      updatedFilterData.allModels = "";
     }
     setFilterData(updatedFilterData);
     navigate(buildFilterUrl(updatedFilterData));
+  };
+
+  // Pagination handlers
+  const handlePrevPage = () => {
+    if (currentPage > 1) {
+      setCurrentPage(currentPage - 1);
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    }
+  };
+
+  const handleNextPage = () => {
+    if (currentPage < totalPages) {
+      setCurrentPage(currentPage + 1);
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    }
   };
 
   useEffect(() => {
@@ -502,16 +529,13 @@ const FilterPriceCars = () => {
       {/* Car List */}
       <div className="w-full lg:w-3/4">
         <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center mb-4 gap-2">
-      
-<h1 className="text-black font-bold text-lg sm:text-xl">
-  {allFilterCars.length}{" "}
-  {filterData.allMakes
-    ? allMakes.find((m) => m.value === filterData.allMakes)?.brandName
-    : "Cars"}{" "}
-   Vehicles For Sale
-</h1>
-
-
+          <h1 className="text-black font-bold text-lg sm:text-xl">
+            {allFilterCars.length}{" "}
+            {filterData.allMakes
+              ? allMakes.find((m) => m.value === filterData.allMakes)?.brandName
+              : "Cars"}{" "}
+            Vehicles For Sale
+          </h1>
 
           <select
             className="border p-2 text-sm rounded w-full sm:w-auto"
@@ -526,8 +550,8 @@ const FilterPriceCars = () => {
         </div>
 
         <div className="overflow-y-auto max-h-screen">
-          {allFilterCars &&
-            allFilterCars?.map((car) => (
+          {currentCars &&
+            currentCars?.map((car) => (
               <div
                 key={car.id}
                 onClick={() => navigate(`/detailbid/${car.id}`)}
@@ -594,6 +618,62 @@ const FilterPriceCars = () => {
           {allFilterCars.length === 0 && (
             <div className="text-center text-gray-600 mt-10">No cars found</div>
           )}
+
+          {/* Pagination Controls */}
+        {allFilterCars.length > 0 && (
+  <div className="flex justify-between items-center mt-6 mb-6 px-6">
+    {/* Prev Button */}
+    <button
+      onClick={handlePrevPage}
+      disabled={currentPage === 1}
+      className={`flex items-center px-6 py-2 rounded-lg font-semibold transition-all ${
+        currentPage === 1
+          ? "bg-gray-300 text-gray-500 cursor-not-allowed"
+          : "bg-blue-950 text-white"
+      }`}
+    >
+      <svg
+        xmlns="http://www.w3.org/2000/svg"
+        className="h-5 w-5 mr-1"
+        viewBox="0 0 20 20"
+        fill="currentColor"
+      >
+        <path
+          fillRule="evenodd"
+          d="M12.707 5.293a1 1 0 010 1.414L9.414 10l3.293 3.293a1 1 0 01-1.414 1.414l-4-4a1 1 0 010-1.414l4-4a1 1 0 011.414 0z"
+          clipRule="evenodd"
+        />
+      </svg>
+      Prev
+    </button>
+
+    {/* Next Button */}
+    <button
+      onClick={handleNextPage}
+      disabled={currentPage === totalPages}
+      className={`flex items-center gap-2 px-6 py-2 rounded-lg font-semibold transition-all ${
+        currentPage === totalPages
+          ? "bg-gray-300 text-gray-500 cursor-not-allowed"
+          : "bg-blue-950 text-white"
+      }`}
+    >
+      Next
+      <svg
+        xmlns="http://www.w3.org/2000/svg"
+        className="h-5 w-5 ml-1"
+        viewBox="0 0 20 20"
+        fill="currentColor"
+      >
+        <path
+          fillRule="evenodd"
+          d="M7.293 14.707a1 1 0 010-1.414L10.586 10 7.293 6.707a1 1 0 011.414-1.414l4 4a1 1 0 010 1.414l-4 4a1 1 0 01-1.414 0z"
+          clipRule="evenodd"
+        />
+      </svg>
+    </button>
+  </div>
+)}
+
         </div>
       </div>
     </div>

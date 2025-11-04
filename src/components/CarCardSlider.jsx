@@ -75,7 +75,7 @@ const CarCard = ({ car }) => {
             className={`gap-1.5 text-xs p-2 font-semibold transition-all duration-300 ${
               isInWishlist 
                 ? "text-white bg-gray-400 rounded cursor-not-allowed" 
-                : "text-white bg-red-600 rounded hover:bg-red-700"
+                : "text-white bg-red-600 rounded "
             }`}
           >
             <span>{isInWishlist ? "Already Added" : "Add to Wishlist"}</span>
@@ -102,7 +102,7 @@ const CarCard = ({ car }) => {
         {/* View Details Button */}
         <span
           onClick={() => navigate(`/detailbid/${car.id}`)}
-          className="mt-auto block bg-red-600 text-center text-sm font-semibold text-white py-2 rounded transition-all duration-300 cursor-pointer hover:bg-red-700"
+          className="mt-auto block bg-red-600 text-center text-sm font-semibold text-white py-2 rounded transition-all duration-300 cursor-pointer"
         >
           View Details
         </span>
@@ -137,7 +137,7 @@ const AuctionCard = ({ auction, onView }) => {
         </p>
         <span
           onClick={() => onView(auction)}
-          className="block bg-[#ed3237] hover:bg-red-700 text-center text-sm font-semibold text-white py-2 rounded transition hover:cursor-pointer mt-auto"
+          className="block bg-red-600 text-center text-sm font-semibold text-white py-2 rounded transition hover:cursor-pointer mt-auto"
         >
           View Details
         </span>
@@ -172,7 +172,7 @@ const LiveAuctionCard = ({ liveAuction, onView }) => {
         </p>
         <span
           onClick={() => onView(liveAuction)}
-          className="block bg-[#ed3237] hover:bg-red-700 text-center text-sm font-semibold text-white py-2 rounded transition hover:cursor-pointer mt-auto"
+          className="block bg-red-600 text-center text-sm font-semibold text-white py-2 rounded transition hover:cursor-pointer mt-auto"
         >
           View Details
         </span>
