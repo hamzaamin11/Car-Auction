@@ -100,7 +100,7 @@ export const EditSeries = ({
       <div className="bg-white rounded-lg shadow-lg w-full max-w-md p-6">
         <div className="flex items-center justify-between">
           <h2 className="text-xl font-semibold mb-4 text-center">
-            Add Vehicle Series
+            Update Vehicle Series
           </h2>
           <span
             onClick={handleClose}
@@ -153,14 +153,15 @@ export const EditSeries = ({
                 { label: "Select your model", value: "" },
                 ...allModels.map((model) => ({
                   label: model.modelName,
-                  value: model.id,
+                  value: model.modelId,
                 })),
               ]}
               value={
                 formData.modelId
                   ? {
-                      label: allModels.find((m) => m.id === formData.modelId)
-                        ?.modelName,
+                      label: allModels.find(
+                        (m) => m.modelId === formData.modelId
+                      )?.modelName,
                       value: formData.modelId,
                     }
                   : null

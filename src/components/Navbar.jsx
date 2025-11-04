@@ -659,12 +659,13 @@ const Navbar = () => {
                   }`}
                 >
                   <div className="px-4 py-3 border-b border-gray-200">
-                    <p className="text-sm text-gray-600">Signed in as</p>
+                    <p className="text-sm text-gray-800">Signed in as</p>
                     <p className="text-sm font-medium text-gray-800 truncate">
                       {currentUser?.name || "--"}{" "}
-                      <span className="text-gray-500">
-                        ({currentUser?.role || "--"})
-                      </span>
+                      <div className="text-gray-700 ">
+                        <strong>Role:</strong>
+                        {currentUser?.role || "--"}
+                      </div>
                     </p>
                   </div>
                   <div
@@ -855,8 +856,10 @@ const Navbar = () => {
                   <FaUserCircle size={32} className="text-white" />
                 )}
                 <span>
-                  Signed in as {currentUser?.name || "--"} (
-                  {currentUser?.role || "--"})
+                  Signed in as {currentUser?.name || "--"}
+                  <div className="text-white">
+                    Role:{currentUser?.role || "--"}
+                  </div>
                 </span>
               </div>
               <button

@@ -17,7 +17,7 @@ export const AddSeries = ({ handleClose, handleGetAllSeries }) => {
   const [formData, setFormData] = useState(initialState);
   const [loading, setLoading] = useState(false);
 
-  console.log("formData =>", formData);
+  console.log("allModels =>", allModels);
 
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -144,14 +144,15 @@ export const AddSeries = ({ handleClose, handleGetAllSeries }) => {
                 { label: "Select your model", value: "" },
                 ...allModels.map((model) => ({
                   label: model.modelName,
-                  value: model.id,
+                  value: model.modelId,
                 })),
               ]}
               value={
                 formData.modelId
                   ? {
-                      label: allModels.find((m) => m.id === formData.modelId)
-                        ?.modelName,
+                      label: allModels.find(
+                        (m) => m.modelId === formData.modelId
+                      )?.modelName,
                       value: formData.modelId,
                     }
                   : null

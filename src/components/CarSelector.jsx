@@ -23,12 +23,14 @@ const CarSelector = ({ handleIsOpenToggle }) => {
   const carMakes = carMake.map((car) => ({
     label: car.brandName,
     value: car.id,
+    counter: car?.vehicleCount,
   }));
 
   // Models list
   const carModels = carModel.map((car) => ({
     label: car.modelName,
     value: car.modelId, // 👈 store modelId
+    counter: car.vehicleCount,
   }));
 
   // Series list
@@ -148,7 +150,10 @@ const CarSelector = ({ handleIsOpenToggle }) => {
                     }}
                   >
                     <div className="flex items-center justify-between">
-                      <span>{make.label}</span>
+                      <span>
+                        <strong>({make.counter})</strong> {""}
+                        {make.label}
+                      </span>
                       <MdOutlineKeyboardArrowRight />
                     </div>
                   </div>
@@ -182,7 +187,10 @@ const CarSelector = ({ handleIsOpenToggle }) => {
                     }}
                   >
                     <div className="flex items-center justify-between">
-                      <span>{model.label}</span>
+                      <span>
+                        <strong>({model?.counter})</strong> {""}
+                        {model.label}
+                      </span>
                       <MdOutlineKeyboardArrowRight />
                     </div>
                   </div>

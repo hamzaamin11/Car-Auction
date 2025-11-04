@@ -419,9 +419,10 @@ export default function Topbar() {
             <p className="text-sm text-gray-600">Signed in as</p>
             <p className="text-sm font-medium text-gray-800 truncate">
               {currentUser?.name || "--"}{" "}
-              <span className="text-gray-500">
-                ({currentUser?.role || "--"})
-              </span>
+              <div className="text-gray-700 ">
+                <strong>Role:</strong>
+                {currentUser?.role || "--"}
+              </div>
             </p>
           </div>
           <div
