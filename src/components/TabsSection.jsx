@@ -226,14 +226,16 @@ const TabsSection = () => {
   const budgetData = [
     { label: "5–10 Lac", min: 500000, max: 1000000 },
     { label: "10–20 Lac", min: 1000000, max: 2000000 },
-    { label: "20–30 Lac", min: 2000000, max: 3000000 },
-    { label: "30–40 Lac", min: 3000000, max: 4000000 },
-    { label: "40–50 Lac", min: 4000000, max: 5000000 },
-    { label: "50–60 Lac", min: 5000000, max: 6000000 },
+    { label: "20–40 Lac", min: 2000000, max: 4000000 },
+    { label: "40–60 Lac", min: 4000000, max: 6000000 },
     { label: "60–80 Lac", min: 6000000, max: 8000000 },
     { label: "80 Lac – 1 Crore", min: 8000000, max: 10000000 },
-    { label: "1 Crore – 1.5 Crore", min: 10000000, max: 15000000 },
-    { label: "1.5 Crore – 2 Crore", min: 15000000, max: 20000000 },
+    { label: "1 – 2 Crore", min: 10000000, max: 20000000 },
+    { label: "2 – 5 Crore", min: 20000000, max: 50000000 },
+    { label: "5 – 10 Crore", min: 50000000, max: 100000000 },
+    { label: "10 – 20 Crore", min: 100000000, max: 200000000 },
+    { label: "20 – 50 Crore", min: 200000000, max: 500000000 },
+    { label: "50 – 99 Crore", min: 500000000, max: 990000000 },
   ];
 
   return (
@@ -248,14 +250,13 @@ const TabsSection = () => {
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 mx-6">
         {/* City */}
         <div className="max-w-xs">
-       <CustomDropdown
-  datas={cityData}
-  placeholder="Search City"
-  name="city"
-  value={filterData.city || ""}
-  onChange={handleChange}
-/>
-
+          <CustomDropdown
+            datas={cityData}
+            placeholder="Search City"
+            name="city"
+            value={filterData.city || ""}
+            onChange={handleChange}
+          />
         </div>
 
         {/* Make (Brand + Vehicle Count) */}

@@ -441,7 +441,7 @@ const Navbar = () => {
 
   return (
     <nav className="bg-white shadow-md z-50 relative">
-      <div className="flex items-center justify-between text-white p-2 px-6 border-b bg-blue-950 border-gray-300 text-xs lg:text-base">
+      <div className="flex items-center justify-between text-white px-3 p-2 border-b bg-blue-950 border-gray-300 text-xs lg:text-base">
         <span className="text-white  ">
           WheelBidz First Online Cars Auction Platform in Pakistan
         </span>
@@ -478,7 +478,8 @@ const Navbar = () => {
                 Register
               </button> */}
 
-              {/* <button
+              {/*
+               <button
                 onClick={() => navigate("/login")}
                 className="bg-red-600 text-white font-bold px-2 py-1.5 rounded hover:cursor-pointer"
               >
@@ -486,7 +487,7 @@ const Navbar = () => {
               </button> */}
               <Link
                 to="/login"
-                className="flex items-center gap-1 hover:text-red-600"
+                className="flex items-center gap-1 hover:text-red-600 mr-2"
               >
                 <LogIn size={15} />
                 Sign In
@@ -495,7 +496,7 @@ const Navbar = () => {
           )}
         </div>
       </div>
-      <div className="flex justify-between items-center px-6 py-4">
+      <div className="flex justify-between items-center px-2 py-4">
         <Link
           to="/"
           className="text-xl font-bold text-red-600 flex items-center gap-2 "
@@ -601,7 +602,7 @@ const Navbar = () => {
             {currentUser?.role === "customer" ? null : (
               <button
                 onClick={() => navigate("/sellerIntro")}
-                className="bg-red-600 text-white font-bold px-2 py-1.5 mx-2 rounded hover:cursor-pointer"
+                className="bg-red-600 text-white font-bold px-2 py-1.5 ml-2 rounded hover:cursor-pointer"
               >
                 Sell Now
               </button>

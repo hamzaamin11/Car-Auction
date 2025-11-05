@@ -50,7 +50,7 @@ export const WishList = () => {
           <p className="text-gray-500">You need to be logged in to view your wishlist.</p>
           <button
             onClick={() => navigate("/login")}
-            className="mt-4 bg-red-600 text-white px-6 py-2 rounded hover:bg-red-700 transition"
+            className="mt-4 bg-red-600 text-white px-6 py-2 rounded transition"
           >
             Go to Login
           </button>

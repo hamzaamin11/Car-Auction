@@ -11,7 +11,7 @@ import thirdImage from "../../src/assets/copart3.jpg";
 const slides = [
   {
     id: 1,
-    linkText: "Start Bidding",
+    linkText: "Today's Auction",
     linkTo: "/today",
     heading: "Bid with Confidence, Drive with Trust",
     subheading:
