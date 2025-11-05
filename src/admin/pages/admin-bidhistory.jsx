@@ -82,7 +82,7 @@ const AdminBidHistory = () => {
       <div className="min-h-screen bg-gray-50 p-1 md:p-6">
         <div className="flex flex-col sm:flex-row justify-between items-center gap-4 mb-6 px-3">
           <h1 className="lg:text-3xl text-xl font-bold text-gray-800">
-            Sold Vehicles
+            Auction History
           </h1>
           <div className="relative w-full max-w-md">
             <span className="absolute inset-y-0 left-0 flex items-center pl-3 text-gray-400">
@@ -162,7 +162,7 @@ const AdminBidHistory = () => {
                     ) => (
                       <tr
                         key={index}
-                        className="hover:bg-gray-50 transition cursor-default"
+                        className=" transition cursor-default"
                       >
                         <td className="text-center">
                           {indexOfFirstItem + index + 1}

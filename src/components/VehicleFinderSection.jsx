@@ -102,7 +102,7 @@ const handlePrev = () => {
     setStartIndex(0);
   };
 
-  // ✅ Convert makes and models for dropdowns
+  //  Convert makes and models for dropdowns
   const totalMakes = allMakes.map((make) => ({
     label: `${make.brandName} (${make.vehicleCount})`,
     value: make.id,
@@ -234,7 +234,7 @@ const handlePrev = () => {
 
       {/* Car Cards */}
     {allCars.length === 0 ? (
-  <div className="text-center text-lg font-semibold text-gray-500">
+  <div className="text-center text-lg font-semibold text-gray-500 ">
     No cars found
   </div>
 ) : (
@@ -256,7 +256,7 @@ const handlePrev = () => {
     </button>
 
     {/* 🔹 Cards Grid */}
-    <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
+  <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 max-w-6xl mx-auto">
       {allCars.slice(startIndex, startIndex + cardsPerPage).map((car) => (
         <div
           key={car.id}
@@ -268,7 +268,7 @@ const handlePrev = () => {
             alt="car"
             className="w-full h-45 object-cover rounded-t-lg"
           />
-          <div className="p-4 flex flex-col justify-between flex-grow">
+          <div className="p-4 flex flex-col justify-between flex-grow ">
             <div>
               <h3 className="text-lg font-semibold mb-1">
                 {car.make} {car.model}

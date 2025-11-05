@@ -220,7 +220,7 @@ const Dashboard = () => {
           />
 
           <Card
-            title={"Bid History"}
+            title={"Auction History"}
             totalData={bidHistory.length}
             color={"bg-blue-200"}
             icon={<FaHistory size={28} />}

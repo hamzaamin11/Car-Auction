@@ -143,7 +143,7 @@ const Footer = () => {
         <div>
           <h3 className="text-lg font-semibold mb-3">Newsletter</h3>
           <p className="text-sm text-gray-300 mb-3">
-            WheelBidz is first time introduce in pakistan!
+            WheelBidz First Online Cars Auction Platform in Pakistan
           </p>
         </div>
       </div>

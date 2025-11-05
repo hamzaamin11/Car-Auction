@@ -118,7 +118,7 @@ export const CitiesList = () => {
             {allCities?.map((city, index) => (
               <tr
                 key={city.id}
-                className="border-b hover:bg-gray-50 transition-colors duration-200"
+                className="border-b  transition-colors duration-200"
               >
                 <td className="py-3 px-6 text-gray-700">
                   {(pageNo - 1) * 10 + index + 1}

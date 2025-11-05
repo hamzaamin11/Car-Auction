@@ -183,7 +183,7 @@ export const SeriesList = () => {
           </thead>
           <tbody>
             {allSeries?.map((series, index) => (
-              <tr key={series._id} className="border-b hover:bg-gray-50">
+              <tr key={series._id} className="border-b ">
                 <td className="py-2 px-4">{(pageNo - 1) * 10 + index + 1}</td>
                 <td className="py-2 px-4">{series.brandName}</td>
                 <td className="py-2 px-4">{series.modelName}</td>

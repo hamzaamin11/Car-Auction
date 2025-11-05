@@ -11,6 +11,7 @@ import { FiHelpCircle } from "react-icons/fi";
 
 const Sidebar = () => {
   const menuItems = [
+    
     {
       name: "Dashboard",
       path: "/admin",
@@ -37,13 +38,10 @@ const Sidebar = () => {
       children: [
         { name: "Live Auctions", path: "/admin/live-auctions" },
         { name: "Upcoming Auctions", path: "/admin/upcoming-auctions" },
+        { name: "Auction History", path: "/admin/bid-history" }
       ],
     },
-    {
-      name: "Bids",
-      icon: <FaHistory />,
-      children: [{ name: "Bid History", path: "/admin/bid-history" }],
-    },
+  
     {
       name: "Users",
       path: "/admin/manage-users",
@@ -66,6 +64,7 @@ const Sidebar = () => {
       <h2 className="text-2xl font-bold mb-6 text-gray-800 mt-8">
         Admin Panel
       </h2>
+
       <nav className="space-y-1">
         {menuItems.map((item) => (
           <div key={item.name}>
@@ -83,11 +82,12 @@ const Sidebar = () => {
                       className={({ isActive }) =>
                         `block px-3 py-2 text-sm rounded-md ${
                           isActive
-                            ? "bg-blue-50 text-blue-600"
+                            ? "bg-blue-950 text-white"
                             : "text-gray-600 hover:bg-gray-100"
                         }`
                       }
                     >
+                      
                       {child.name}
                     </NavLink>
                   ))}

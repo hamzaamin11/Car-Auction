@@ -8,54 +8,37 @@ import { useDispatch, useSelector } from "react-redux";
 import { addInList } from "./Redux/WishlistSlice";
 import Swal from "sweetalert2";
 
-// ---------------- CarCard -------------------
+// ---------------- CarCard  -------------------
 const CarCard = ({ car }) => {
   const navigate = useNavigate();
   const dispatch = useDispatch();
   
-  // Get current user from Redux
   const currentUser = useSelector((state) => state?.auth?.currentUser);
   const wishlistByUser = useSelector((state) => state?.wishList?.wishlistByUser);
-    console.log("🔍 CarCard Debug:", {
-    currentUser,
-    wishlistByUser,
-    car
-  });
-  // Check if this car is in current user's wishlist
+
   const isInWishlist = currentUser?.id && wishlistByUser?.[currentUser.id]?.some(v => v.id === car.id);
 
- const handleWishlist = () => {
-  console.log("🔍 Button clicked!");
-  console.log("👤 Current User:", currentUser);
-  console.log("🚗 Car Data:", car);
-  
-  // Check if user is logged in
-  if (!currentUser) {
-    console.log("❌ No user logged in");
-    Swal.fire({
-      title: "Login Required",
-      text: "Please login to add vehicles to your wishlist.",
-      icon: "warning",
-      confirmButtonColor: "#9333ea",
-      showCancelButton: true,
-      confirmButtonText: "Go to Login",
-      cancelButtonText: "Cancel"
-    }).then((result) => {
-      if (result.isConfirmed) {
-        navigate("/login");
-      }
-    });
-    return;
-  }
-  
-  console.log("✅ Dispatching addInList with:", { userId: currentUser.id, vehicle: car });
-  
-  // Dispatch with userId and vehicle
-  dispatch(addInList({ 
-    userId: currentUser.id, 
-    vehicle: car 
-  }));
-};
+  const handleWishlist = () => {
+    if (!currentUser) {
+      Swal.fire({
+        title: "Login Required",
+        text: "Please login to add vehicles to your wishlist.",
+        icon: "warning",
+        confirmButtonColor: "#9333ea",
+        showCancelButton: true,
+        confirmButtonText: "Go to Login",
+        cancelButtonText: "Cancel"
+      }).then((result) => {
+        if (result.isConfirmed) {
+          navigate("/login");
+        }
+      });
+      return;
+    }
+    
+    dispatch(addInList({ userId: currentUser.id, vehicle: car }));
+  };
+
   return (
     <div className="relative bg-white rounded-xl shadow-lg hover:shadow-2xl transition-all duration-300 overflow-hidden w-full h-full flex flex-col">
       <div className="relative w-full">
@@ -82,7 +65,6 @@ const CarCard = ({ car }) => {
           </button>
         </div>
         
-        {/* Car Info */}
         <h3 className="text-lg font-bold text-gray-800 transition">
           {car?.make} {car?.model}
         </h3>
@@ -99,7 +81,6 @@ const CarCard = ({ car }) => {
           {car.cityName}
         </p>
 
-        {/* View Details Button */}
         <span
           onClick={() => navigate(`/detailbid/${car.id}`)}
           className="mt-auto block bg-red-600 text-center text-sm font-semibold text-white py-2 rounded transition-all duration-300 cursor-pointer"
@@ -111,90 +92,13 @@ const CarCard = ({ car }) => {
   );
 };
 
-// ---------------- AuctionCard -------------------
-const AuctionCard = ({ auction, onView }) => {
-  return (
-    <div className="relative bg-white rounded-xl shadow-lg hover:shadow-2xl transition-all duration-300 overflow-hidden w-full h-full flex flex-col">
-      <div className="relative w-full">
-        <img
-          src={auction?.images?.[0]}
-          alt={auction?.make}
-          className="w-full h-48 object-cover rounded-t-xl hover:cursor-pointer"
-          onClick={() => onView(auction)}
-        />
-      </div>
-
-      <div className="p-4 space-y-2 text-gray-800 flex-grow flex flex-col">
-        <h3 className="text-md font-bold gap-1.5">
-          {auction?.make}-{auction?.model}
-        </h3>
-        <p className="text-lg font-semibold text-gray-900">
-          <span className="font-bold">Seller Offer:</span>{" "}
-          {auction?.sellerOffer}
-        </p>
-        <p className="text-sm">
-          <span className="font-bold">Location:</span> {auction?.cityName}
-        </p>
-        <span
-          onClick={() => onView(auction)}
-          className="block bg-red-600 text-center text-sm font-semibold text-white py-2 rounded transition hover:cursor-pointer mt-auto"
-        >
-          View Details
-        </span>
-      </div>
-    </div>
-  );
-};
-
-// ---------------- LiveAuctionCard -------------------
-const LiveAuctionCard = ({ liveAuction, onView }) => {
-  return (
-    <div className="relative bg-white rounded-xl shadow-lg hover:shadow-2xl transition-all duration-300 overflow-hidden w-full h-full flex flex-col">
-      <div className="relative w-full">
-        <img
-          src={liveAuction?.images?.[0]}
-          alt={liveAuction?.make}
-          className="w-full h-48 object-cover rounded-t-xl hover:cursor-pointer"
-          onClick={() => onView(liveAuction)}
-        />
-      </div>
-
-      <div className="p-4 space-y-2 text-gray-800 flex-grow flex-col">
-        <h3 className="text-md font-bold gap-1.5">
-          {liveAuction?.make}-{liveAuction?.model}
-        </h3>
-        <p className="text-lg font-semibold text-gray-900">
-          <span className="font-bold">Current Bid:</span>{" "}
-          {liveAuction?.currentBid}
-        </p>
-        <p className="text-sm">
-          <span className="font-bold">Location:</span> {liveAuction?.cityName}
-        </p>
-        <span
-          onClick={() => onView(liveAuction)}
-          className="block bg-red-600 text-center text-sm font-semibold text-white py-2 rounded transition hover:cursor-pointer mt-auto"
-        >
-          View Details
-        </span>
-      </div>
-    </div>
-  );
-};
-
-// ---------------- CarCardSlider -------------------
+// ---------------- CarCardSlider  -------------------
 const CarCardSlider = () => {
   const [currentIndex, setCurrentIndex] = useState(0);
-  const [auctionIndex, setAuctionIndex] = useState(0);
-  const [liveAuctionIndex, setLiveAuctionIndex] = useState(0);
   const [visibleCards, setVisibleCards] = useState(4);
   const [allCars, setAllCars] = useState([]);
-  const [allUpcoming, setAllUpcoming] = useState([]);
-  const [allLiveAuctions, setAllLiveAuctions] = useState([]);
-  const [selectedAuction, setSelectedAuction] = useState(null);
-  const [selectedLiveAuction, setSelectedLiveAuction] = useState(null);
-  const [isAutoPlaying, setIsAutoPlaying] = useState(true);
 
-  // Fetch normal cars
+  // Fetch
   const handleGetVehicles = async () => {
     try {
       const res = await axios.get(`${BASE_URL}/getApprovedVehicles`);
@@ -204,203 +108,53 @@ const CarCardSlider = () => {
     }
   };
 
-  // Fetch upcoming auctions
-  const handleGetUpcoming = async () => {
-    try {
-      const res = await axios.get(
-        `${BASE_URL}/admin/upcomingAuctionsForAdmin?entry=8&page=1`
-      );
-      setAllUpcoming(res.data);
-    } catch (error) {
-      console.log(error);
-    }
-  };
-
-  // Placeholder for fetching live auctions
-  const handleGetLiveAuctions = async () => {
-    try {
-      console.log(
-        "Live Auction API will be added later. Waiting for response."
-      );
-    } catch (error) {
-      console.log(error);
-    }
-  };
-
   useEffect(() => {
     handleGetVehicles();
-    handleGetUpcoming();
-    handleGetLiveAuctions();
   }, []);
 
+  // Responsive
   useEffect(() => {
-    const updateVisibleCards = () => {
-      if (window.innerWidth < 640) {
-        setVisibleCards(1);
-      } else if (window.innerWidth < 768) {
-        setVisibleCards(2);
-      } else if (window.innerWidth < 1024) {
-        setVisibleCards(3);
-      } else {
-        setVisibleCards(4);
-      }
+    const update = () => {
+      if (window.innerWidth < 640) setVisibleCards(1);
+      else if (window.innerWidth < 768) setVisibleCards(2);
+      else if (window.innerWidth < 1024) setVisibleCards(3);
+      else setVisibleCards(4);
     };
-
-    updateVisibleCards();
-    window.addEventListener("resize", updateVisibleCards);
-
-    return () => window.removeEventListener("resize", updateVisibleCards);
+    update();
+    window.addEventListener("resize", update);
+    return () => window.removeEventListener("resize", update);
   }, []);
 
-  // Auto-play for cars
-  useEffect(() => {
-    if (!isAutoPlaying || allCars.length <= visibleCards) return;
-
-    const interval = setInterval(() => {
-      setCurrentIndex((prev) => {
-        if (prev + visibleCards >= allCars.length) {
-          return 0;
-        }
-        return prev + 1;
-      });
-    }, 3000);
-
-    return () => clearInterval(interval);
-  }, [isAutoPlaying, allCars.length, visibleCards]);
-
-  // Auto-play for upcoming auctions
-  useEffect(() => {
-    if (!isAutoPlaying || allUpcoming.length <= visibleCards) return;
-
-    const interval = setInterval(() => {
-      setAuctionIndex((prev) => {
-        if (prev + visibleCards >= allUpcoming.length) {
-          return 0;
-        }
-        return prev + 1;
-      });
-    }, 3000);
-
-    return () => clearInterval(interval);
-  }, [isAutoPlaying, allUpcoming.length, visibleCards]);
-
-  // Auto-play for live auctions
-  useEffect(() => {
-    if (!isAutoPlaying || allLiveAuctions.length <= visibleCards) return;
-
-    const interval = setInterval(() => {
-      setLiveAuctionIndex((prev) => {
-        if (prev + visibleCards >= allLiveAuctions.length) {
-          return 0;
-        }
-        return prev + 1;
-      });
-    }, 3000);
-
-    return () => clearInterval(interval);
-  }, [isAutoPlaying, allLiveAuctions.length, visibleCards]);
-
-  const getVisibleCars = () => {
-    return allCars.slice(currentIndex, currentIndex + visibleCards);
-  };
-
-  const getVisibleAuctions = () => {
-    return allUpcoming.slice(auctionIndex, auctionIndex + visibleCards);
-  };
-
-  const getVisibleLiveAuctions = () => {
-    return allLiveAuctions.slice(
-      liveAuctionIndex,
-      liveAuctionIndex + visibleCards
-    );
+  // ← ← ← ← ← ← ← ← ← ← ← ← ← ← ← ← ← ← ← ← ←
+  // ONLY THESE TWO FUNCTIONS CHANGED
+  const prevCards = () => {
+    setCurrentIndex(prev => Math.max(0, prev - visibleCards));
   };
 
   const nextCards = () => {
-    setIsAutoPlaying(false);
-    if (currentIndex + visibleCards < allCars.length) {
-      setCurrentIndex((prev) => prev + 1);
-    }
-    setTimeout(() => setIsAutoPlaying(true), 5000);
+    setCurrentIndex(prev => 
+      Math.min(allCars.length - visibleCards, prev + visibleCards)
+    );
   };
+  // ← ← ← ← ← ← ← ← ← ← ← ← ← ← ← ← ← ← ← ← ←
 
-  const prevCards = () => {
-    setIsAutoPlaying(false);
-    if (currentIndex > 0) {
-      setCurrentIndex((prev) => prev - 1);
-    }
-    setTimeout(() => setIsAutoPlaying(true), 5000);
-  };
-
-  const nextAuctions = () => {
-    setIsAutoPlaying(false);
-    if (auctionIndex + visibleCards < allUpcoming.length) {
-      setAuctionIndex((prev) => prev + 1);
-    }
-    setTimeout(() => setIsAutoPlaying(true), 5000);
-  };
-
-  const prevAuctions = () => {
-    setIsAutoPlaying(false);
-    if (auctionIndex > 0) {
-      setAuctionIndex((prev) => prev - 1);
-    }
-    setTimeout(() => setIsAutoPlaying(true), 5000);
-  };
-
-  const nextLiveAuctions = () => {
-    setIsAutoPlaying(false);
-    if (liveAuctionIndex + visibleCards < allLiveAuctions.length) {
-      setLiveAuctionIndex((prev) => prev + 1);
-    }
-    setTimeout(() => setIsAutoPlaying(true), 5000);
-  };
-
-  const prevLiveAuctions = () => {
-    setIsAutoPlaying(false);
-    if (liveAuctionIndex > 0) {
-      setLiveAuctionIndex((prev) => prev - 1);
-    }
-    setTimeout(() => setIsAutoPlaying(true), 5000);
-  };
+  const getVisibleCars = () => 
+    allCars.slice(currentIndex, currentIndex + visibleCards);
 
   return (
     <div className="py-12 px-4 md:px-20 bg-gray-100">
       <style jsx>{`
         @keyframes fade-in {
-          from {
-            opacity: 0;
-            transform: translateY(-10px);
-          }
-          to {
-            opacity: 1;
-            transform: translateY(0);
-          }
+          from { opacity: 0; transform: translateY(-10px); }
+          to { opacity: 1; transform: translateY(0); }
         }
-
-        @keyframes slide-up {
-          from {
-            opacity: 0;
-            transform: translateY(30px);
-          }
-          to {
-            opacity: 1;
-            transform: translateY(0);
-          }
-        }
-
-        .animate-fade-in {
-          animation: fade-in 0.6s ease-out;
-        }
-
-        .animate-slide-up {
-          animation: slide-up 0.4s ease-out;
-        }
+        .animate-fade-in { animation: fade-in 0.6s ease-out; }
       `}</style>
 
-      {/* Available Cars */}
       <h2 className="text-3xl md:text-4xl font-bold text-center mb-10 text-gray-800 animate-fade-in">
         Popular Vehicles
       </h2>
+
       <div className="relative flex items-center justify-center">
         {allCars.length > visibleCards && (
           <button

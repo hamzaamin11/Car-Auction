@@ -130,7 +130,7 @@ export const ContactList = () => {
                 currentItems.map((contact, index) => (
                   <tr
                     key={contact.id}
-                    className="border-b hover:bg-gray-50 transition-colors"
+                    className="border-b "
                   >
                     <td className="py-2 px-4 whitespace-nowrap">
                       {indexOfFirstItem + index + 1}

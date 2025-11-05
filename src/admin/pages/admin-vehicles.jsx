@@ -427,7 +427,7 @@ function AddAdminVehicle({ open, setOpen, onVehicleUpdated }) {
   }, [pageNo, search]);
 
   return (
-    <div className="min-h-screen bg-gray-100 p-4 sm:p-6">
+    <div className="min-h-screen bg-white p-4 sm:p-6">
       <div className="flex flex-col sm:flex-row justify-between lg:items-start items-center w-full gap-4 mb-6">
         <h2 className="lg:text-3xl text-xl font-bold text-gray-800 ">
           Vehicle List

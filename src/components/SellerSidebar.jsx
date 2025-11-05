@@ -30,18 +30,19 @@ const SellerSidebar = () => {
       icon: <FaGavel />,
       children: [
         { name: "Live Auctions", path: "/seller/live-auctions" }, // Matches <SellerLiveAuctions />
-        { name: "Upcoming Auctions", path: "/seller/upcoming-auctions" }, // Matches <UpcomingAuctions />
+        { name: "Upcoming Auctions", path: "/seller/upcoming-auctions" }, 
+          { name: "Auction History", path: "/seller/my-bids" },// Matches <UpcomingAuctions />
       ],
     },
-    {
-      name: "My Bids",
-      icon: <FaHistory />,
-      children: [
-        { name: "Bid Hsitory", path: "/seller/my-bids" }, // Matches <MyBids />
-        //   { name: "Lots Lost", path: "/seller/lots-lost" },  // Matches <LotsLost />
-        //   { name: "Lots Won", path: "/seller/lots-won" },  // Matches <LotsWon />
-      ],
-    },
+    // {
+    //   name: "My Bids",
+    //   icon: <FaHistory />,
+    //   children: [
+    //     { name: "Bid Hsitory", path: "/seller/my-bids" }, // Matches <MyBids />
+    //     //   { name: "Lots Lost", path: "/seller/lots-lost" },  // Matches <LotsLost />
+    //     //   { name: "Lots Won", path: "/seller/lots-won" },  // Matches <LotsWon />
+    //   ],
+    // },
     // Add more groups as needed
   ];
 

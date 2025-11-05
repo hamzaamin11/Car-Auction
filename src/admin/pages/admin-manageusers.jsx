@@ -182,7 +182,7 @@ export default function ManageUsers() {
               {filteredUsers.map((user) => (
                 <tr
                   key={user.id}
-                  className="hover:bg-indigo-50 transition-colors"
+                  className=""
                 >
                   <td className="px-6 ">
                     <div className="flex items-center gap-3">

@@ -186,13 +186,14 @@ export const VehicleApproval = () => {
                   <h2 className="text-lg font-bold text-gray-800">
                     {vehicle.make} {vehicle.model} {vehicle.series}
                   </h2>
-                  <p className="text-sm text-gray-600">
-                    {vehicle.year} | {vehicle.fuelType} | {vehicle.transmission} |{" "}
-                    {vehicle.mileage} KM | {vehicle.color} | {vehicle.cityName}
-                  </p>
-                  <p className="text-md font-semibold text-blue-700 mt-1">
+                  <p className="text-md font-bold  text-black mt-1">
                     PKR {vehicle.buyNowPrice}
                   </p>
+                  <p className="text-sm text-gray-600">
+                    {vehicle.year} | {vehicle.fuelType} | {vehicle.transmission} |{" "}
+                    {vehicle.mileage} KM | {vehicle.color} | {vehicle?.cityName ?? "--"}
+                  </p>
+                  
                 </div>
 
                 <div className="relative">

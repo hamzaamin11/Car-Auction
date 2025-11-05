@@ -27,7 +27,7 @@ const MyBids = () => {
     <div className="min-h-screen bg-gray-100 p-4 md:p-6">
       <div className="max-w-7xl mx-auto">
         <h1 className="lg:text-3xl text-xl font-bold mb-2 text-gray-800 lg:text-start text-center">
-          Bid History
+          Auction History
         </h1>
 
         {/* Scrollable area: sets explicit max-height relative to viewport */}
@@ -63,7 +63,7 @@ const MyBids = () => {
                   allBiders.map((bid, index) => (
                     <tr
                       key={index}
-                      className="hover:bg-gray-50 transition duration-200"
+                      className=" transition duration-200"
                     >
                       <td className="px-6 py-4">{index + 1}</td>
                       <td className="px-6 py-4 text-gray-700">

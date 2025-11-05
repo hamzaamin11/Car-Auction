@@ -12,7 +12,7 @@ const FinderBanner = () => {
 
       <div className="relative z-10 px-4">
         <h1 className="text-3xl md:text-5xl font-bold text-white animate-fade-in">
-          Vehicle Finders
+          Vehicle Finder
         </h1>
       </div>
     </section>
