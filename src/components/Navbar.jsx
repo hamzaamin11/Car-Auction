@@ -21,7 +21,7 @@ import { BASE_URL } from "./Contant/URL";
 import Swal from "sweetalert2";
 
 const Navbar = () => {
-  const { user, isAuthenticated, logout } = useAuth();
+  const { isAuthenticated, logout } = useAuth();
   const { currentUser } = useSelector((state) => state.auth);
 
   const [menuOpen, setMenuOpen] = useState(false);
@@ -436,7 +436,7 @@ const Navbar = () => {
 
   const dropdowns = [
     ...commonDropdowns,
-    ...(user?.role === "seller" ? [] : []),
+    ...(currentUser?.role === "seller" ? [] : []),
   ];
 
   return (
@@ -449,19 +449,16 @@ const Navbar = () => {
         <div className="flex items-center justify-center gap-4">
           <Link
             to="/wishlist"
-            className="relative md:flex items-center gap-2 text-white hidden   transition-all"
+            className="relative flex items-center gap-2 text-white hover:text-red-600 transition-all duration-300"
             title="View Wishlist"
           >
-            {/* Pulsing effect behind icon */}
-
             {/* Heart Icon */}
-            <FaHeart className="relative text-white text-lg animate-bounce" />
+            <FaHeart className="text-lg animate-bounce" />
 
             {/* Text */}
-            <span className="relative z-10">Wishlist</span>
-
-            {/* Optional count badge */}
+            <span>Wishlist</span>
           </Link>
+
           {currentUser ? null : (
             <div className="lg:flex items-center gap-4 hidden ">
               <Link
@@ -534,7 +531,7 @@ const Navbar = () => {
               onMouseLeave={() => setActiveDropdown(null)}
             >
               <button
-                className={`flex items-center gap-1 font-medium hover:text-red-600 ${
+                className={`flex items-center  font-medium hover:text-red-600 ${
                   activeDropdown === dropdown.id ? "text-red-600" : ""
                 }`}
               >
@@ -576,7 +573,7 @@ const Navbar = () => {
                 isActive("/work") ? "text-red-600 font-semibold" : ""
               }`}
             >
-              How its work
+              How it works
             </Link>
 
             <Link

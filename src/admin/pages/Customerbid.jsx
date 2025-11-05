@@ -304,46 +304,48 @@ export const Customerbid = () => {
             </h2>
 
             <div className="overflow-x-auto">
-              <table className="w-full text-sm text-gray-700 border-collapse">
+              <table className="w-full text-sm text-gray-800   border-collapse">
                 <tbody>
-                  <tr className="border-b">
-                    <td className="font-semibold py-2 w-1/3">Year</td>
+                  <tr className="border-b  ">
+                    <td className="font-semibold py-2 w-1/2">Year:</td>
                     <td className="py-2">{selectedPrice?.year || "N/A"}</td>
                   </tr>
                   <tr className="border-b">
-                    <td className="font-semibold py-2">Make</td>
+                    <td className="font-semibold py-2">Make:</td>
                     <td className="py-2">{selectedPrice?.make || "N/A"}</td>
                   </tr>
                   <tr className="border-b">
-                    <td className="font-semibold py-2">Model</td>
+                    <td className="font-semibold py-2">Model:</td>
                     <td className="py-2">{selectedPrice?.model || "N/A"}</td>
                   </tr>
                   <tr className="border-b">
-                    <td className="font-semibold py-2">City</td>
+                    <td className="font-semibold py-2">City:</td>
                     <td className="py-2">
                       {selectedPrice?.locationId || "N/A"}
                     </td>
                   </tr>
                   <tr className="border-b">
-                    <td className="font-semibold py-2">Body Style</td>
+                    <td className="font-semibold py-2">Body Style:</td>
                     <td className="py-2">
                       {selectedPrice?.bodyStyle || "N/A"}
                     </td>
                   </tr>
                   <tr className="border-b">
-                    <td className="font-semibold py-2">Certification Status</td>
+                    <td className="font-semibold py-2">
+                      Certification Status:
+                    </td>
                     <td className="py-2">
                       {selectedPrice?.certifyStatus || "N/A"}
                     </td>
                   </tr>
                   <tr className="border-b">
-                    <td className="font-semibold py-2">Transmission</td>
+                    <td className="font-semibold py-2">Transmission:</td>
                     <td className="py-2">
                       {selectedPrice?.transmission || "N/A"}
                     </td>
                   </tr>
                   <tr className="border-b">
-                    <td className="font-semibold py-2">Meter Reading</td>
+                    <td className="font-semibold py-2">Meter Reading:</td>
                     <td className="py-2">{selectedPrice?.mileage || "N/A"}</td>
                   </tr>
                   <tr className="border-b">
@@ -353,15 +355,15 @@ export const Customerbid = () => {
                     </td>
                   </tr>
                   <tr className="border-b">
-                    <td className="font-semibold py-2">Fuel</td>
+                    <td className="font-semibold py-2">Fuel:</td>
                     <td className="py-2">{selectedPrice?.fuelType || "N/A"}</td>
                   </tr>
                   <tr className="border-b">
-                    <td className="font-semibold py-2">Color</td>
+                    <td className="font-semibold py-2">Color:</td>
                     <td className="py-2">{selectedPrice?.color || "N/A"}</td>
                   </tr>
                   <tr>
-                    <td className="font-semibold py-2">Condition</td>
+                    <td className="font-semibold py-2">Condition:</td>
                     <td className="py-2">
                       {selectedPrice?.vehicleCondition || "N/A"}
                     </td>
@@ -439,12 +441,13 @@ export const Customerbid = () => {
                 <th className="text-left p-2 font-semibold text-gray-800">
                   Bid Date:
                 </th>
-              <td className="p-2 text-gray-700">
-  {selectedPrice?.startTime
-    ? new Date(selectedPrice.startTime).toLocaleDateString("en-GB")
-    : "Coming Soon"}
-</td>
-
+                <td className="p-2 text-gray-700">
+                  {selectedPrice?.startTime
+                    ? new Date(selectedPrice.startTime).toLocaleDateString(
+                        "en-GB"
+                      )
+                    : "Coming Soon"}
+                </td>
               </tr>
 
               <tr className="border-b">
@@ -705,8 +708,10 @@ export const Customerbid = () => {
                 </th>
                 <td className="p-2 text-gray-700">
                   {selectedPrice?.startTime
-    ? new Date(selectedPrice.startTime).toLocaleDateString("en-GB")
-    : "Coming Soon"}
+                    ? new Date(selectedPrice.startTime).toLocaleDateString(
+                        "en-GB"
+                      )
+                    : "Coming Soon"}
                 </td>
               </tr>
 

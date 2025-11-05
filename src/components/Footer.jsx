@@ -28,7 +28,6 @@ const Footer = () => {
             with top-quality cars at competitive prices.
           </p>
         </div>
-        
 
         {/* Quick Links */}
         <div>
@@ -71,7 +70,7 @@ const Footer = () => {
                 Support Center
               </Link>
             </li>
-            
+
             <li>
               <Link to="/delivery" className="hover:text-[#b73439]">
                 Vehicle Delivery
@@ -84,7 +83,7 @@ const Footer = () => {
                     Register
                   </Link>
                 </li>
-                
+
                 <li>
                   <Link to="/login" className="hover:text-[#b73439] ">
                     Sign In
@@ -140,11 +139,33 @@ const Footer = () => {
         </div>
 
         {/* Newsletter */}
+        {/* Newsletter */}
         <div>
           <h3 className="text-lg font-semibold mb-3">Newsletter</h3>
-          <p className="text-sm text-gray-300 mb-3">
-            WheelBidz First Online Cars Auction Platform in Pakistan
+          <p className="text-sm text-gray-300 mb-4 leading-relaxed">
+            Subscribe to our newsletter for the latest updates on car auctions,
+            exclusive deals, and industry insights.
           </p>
+
+          <form
+            onSubmit={(e) => e.preventDefault()}
+            className="flex lg:flex-col flex-row items-center sm:items-stretch lg:space-y-3 space-y-0 space-x-2"
+          >
+            <input
+              type="email"
+              placeholder="Enter your email"
+              className="w-full sm:flex-1 px-3 py-2 text-white placeholder-white border border-white rounded-md focus:outline-none "
+              required
+            />
+            <button
+              type="submit"
+              className="px-5 py-2 bg-red-600 transition rounded-md text-white font-medium shadow-md"
+            >
+              Subscribe
+            </button>
+          </form>
+
+        
         </div>
       </div>
 

@@ -30,8 +30,8 @@ const SellerSidebar = () => {
       icon: <FaGavel />,
       children: [
         { name: "Live Auctions", path: "/seller/live-auctions" }, // Matches <SellerLiveAuctions />
-        { name: "Upcoming Auctions", path: "/seller/upcoming-auctions" }, 
-          { name: "Auction History", path: "/seller/my-bids" },// Matches <UpcomingAuctions />
+        { name: "Upcoming Auctions", path: "/seller/upcoming-auctions" },
+        { name: "Auction History", path: "/seller/my-bids" }, // Matches <UpcomingAuctions />
       ],
     },
     // {
@@ -68,8 +68,8 @@ const SellerSidebar = () => {
                       className={({ isActive }) =>
                         `block px-3 py-2 text-sm rounded-md ${
                           isActive
-                            ? "bg-blue-50 text-blue-600"
-                            : "text-gray-600 hover:bg-gray-100"
+                            ? "bg-blue-950 text-white"
+                            : "text-gray-600 hover:underline"
                         }`
                       }
                     >
@@ -85,8 +85,8 @@ const SellerSidebar = () => {
                 className={({ isActive }) =>
                   `flex items-center px-4 py-3 rounded-md ${
                     isActive
-                      ? "bg-blue-50 text-blue-600"
-                      : "text-gray-600 hover:bg-gray-100"
+                      ? "bg-blue-950 text-white"
+                      : "text-gray-600 hover:underline"
                   }`
                 }
               >

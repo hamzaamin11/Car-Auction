@@ -1,4 +1,4 @@
-import { NavLink } from "react-router-dom";
+import { NavLink, useLocation } from "react-router-dom";
 import {
   FaTachometerAlt,
   FaCar,
@@ -10,8 +10,15 @@ import { FaMessage } from "react-icons/fa6";
 import { FiHelpCircle } from "react-icons/fi";
 
 const Sidebar = () => {
+  const { pathName } = useLocation();
+
+  {
+    location.pathname === "/admin"
+      ? "bg-blue-950 text-white"
+      : "text-gray-600 hover:bg-gray-100";
+  }
+
   const menuItems = [
-    
     {
       name: "Dashboard",
       path: "/admin",
@@ -24,7 +31,7 @@ const Sidebar = () => {
       children: [
         { name: "Vehicle List", path: "/admin/vehicles" },
         { name: "For Approval Vehicles", path: "/admin/approval" },
-        { name: "Vehicle Brand List", path: "/admin/addbrand" },
+        { name: "Vehicle Makes List", path: "/admin/addbrand" },
         { name: "Vehicle Model List", path: "/admin/addmodel" },
         { name: "Vehicle Series List", path: "/admin/addseries" },
         { name: "City List", path: "/admin/city" },
@@ -38,10 +45,10 @@ const Sidebar = () => {
       children: [
         { name: "Live Auctions", path: "/admin/live-auctions" },
         { name: "Upcoming Auctions", path: "/admin/upcoming-auctions" },
-        { name: "Auction History", path: "/admin/bid-history" }
+        { name: "Auction History", path: "/admin/bid-history" },
       ],
     },
-  
+
     {
       name: "Users",
       path: "/admin/manage-users",
@@ -83,11 +90,10 @@ const Sidebar = () => {
                         `block px-3 py-2 text-sm rounded-md ${
                           isActive
                             ? "bg-blue-950 text-white"
-                            : "text-gray-600 hover:bg-gray-100"
+                            : "text-gray-600 hover:underline"
                         }`
                       }
                     >
-                      
                       {child.name}
                     </NavLink>
                   ))}
@@ -100,8 +106,8 @@ const Sidebar = () => {
                 className={({ isActive }) =>
                   `flex items-center px-4 py-3 rounded-md ${
                     isActive
-                      ? "bg-blue-50 text-blue-600"
-                      : "text-gray-600 hover:bg-gray-100"
+                      ? "bg-blue-950 text-white"
+                      : "text-gray-600 hover:underline"
                   }`
                 }
               >

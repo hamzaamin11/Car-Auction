@@ -222,10 +222,11 @@ function AddAdminVehicle({ open, setOpen, onVehicleUpdated }) {
     }
   };
 
- const cityOptions = allCities?.map((city) => ({
+  const cityOptions =
+    allCities?.map((city) => ({
       label: city.cityName,
       value: city.id,
-})) || [];
+    })) || [];
 
   const driveTypeOptions = [
     { label: "FWD (Front-Wheel Drive)", value: "fwd" },
@@ -235,23 +236,19 @@ function AddAdminVehicle({ open, setOpen, onVehicleUpdated }) {
   ];
 
   const bodyStyleOptions = [
-   
     ...bodyStyles.map((style) => ({ label: style, value: style })),
   ];
 
   const transmissionOptions = [
- 
     { label: "Automatic", value: "Automatic" },
     { label: "Manual", value: "Manual" },
   ];
 
   const colorOptions = [
-   
     ...carColors.map((color) => ({ label: color, value: color })),
   ];
 
   const fuelTypeOptions = [
-    
     { label: "Petrol", value: "petrol" },
     { label: "Diesel", value: "diesel" },
     { label: "CNG (Compressed Natural Gas)", value: "cng" },
@@ -261,13 +258,11 @@ function AddAdminVehicle({ open, setOpen, onVehicleUpdated }) {
   ];
 
   const conditionOptions = [
-    
     { label: "New", value: "new" },
     { label: "Used", value: "used" },
   ];
 
   const certifyOptions = [
-   
     { label: "Certified", value: "Certified" },
     { label: "Non-Certified", value: "Non-Certified" },
   ];
@@ -449,25 +444,25 @@ function AddAdminVehicle({ open, setOpen, onVehicleUpdated }) {
               />
             </svg>
           </span>
-        <CustomSearch
-  placeholder="Search By Car Name..."
-  value={search}
-  onChange={handleSearchChange}
-/>
+          <CustomSearch
+            placeholder="Search By Car Name..."
+            value={search}
+            onChange={handleSearchChange}
+          />
         </div>
-      <CustomAdd
-  text="Add Vehicle"
-  onClick={() => {
-    setShowModal(true);
-    dispatch(addYear(""));
-    dispatch(addMake(""));
-    dispatch(addModel(""));
-    dispatch(addSeries(""));
-    setVehicle(initialVehicleState);
-    setPrice("");
-    setSelectedCount(0);
-  }}
-/>
+        <CustomAdd
+          text="Add Vehicle"
+          onClick={() => {
+            setShowModal(true);
+            dispatch(addYear(""));
+            dispatch(addMake(""));
+            dispatch(addModel(""));
+            dispatch(addSeries(""));
+            setVehicle(initialVehicleState);
+            setPrice("");
+            setSelectedCount(0);
+          }}
+        />
       </div>
 
       {showModal && (
@@ -489,24 +484,35 @@ function AddAdminVehicle({ open, setOpen, onVehicleUpdated }) {
                 <label className="block text-sm font-medium text-gray-700 mb-1">
                   City <span className="text-red-500">*</span>
                 </label>
-            <Dropdown
-  options={cityOptions}
-  value={cityOptions.find(c => c.value === vehicle.locationId) || null}
-  onChange={(option) => setVehicle(prev => ({ ...prev, locationId: option?.value || "" }))}
-  placeholder="Select City"
-  isSearchable
-/>
+                <Dropdown
+                  options={cityOptions}
+                  value={
+                    cityOptions.find((c) => c.value === vehicle.locationId) ||
+                    null
+                  }
+                  onChange={(option) =>
+                    setVehicle((prev) => ({
+                      ...prev,
+                      locationId: option?.value || "",
+                    }))
+                  }
+                  placeholder="Select City"
+                  isSearchable
+                />
                 <div className="mt-4">
                   <label className="block text-sm font-medium text-gray-700 mb-1">
                     Car Info <span className="text-red-500">*</span>
                   </label>
                   <input
                     onClick={handleUpdateCarInfo}
-                    value={`${selected?.year || ""} ${selected?.make || ""} ${selected?.model || ""} ${selected?.series || ""}`}
+                    value={`${selected?.year || ""} ${selected?.make || ""} ${
+                      selected?.model || ""
+                    } ${selected?.series || ""}`}
                     placeholder="Year/Make/Model/Version"
                     readOnly
                     className={`border border-gray-300 px-4 py-2 rounded focus:outline-none focus:ring-2 focus:ring-indigo-500 w-full ${
-                      (selected.year && selected.make && selected.model) || selected.series
+                      (selected.year && selected.make && selected.model) ||
+                      selected.series
                         ? "bg-green-200 text-green-700"
                         : "bg-red-200"
                     }`}
@@ -519,12 +525,21 @@ function AddAdminVehicle({ open, setOpen, onVehicleUpdated }) {
                   <label className="text-sm font-medium text-gray-700 mb-1">
                     Vehicle Drive Type <span className="text-red-500">*</span>
                   </label>
-              <Dropdown
-  options={driveTypeOptions}
-  value={driveTypeOptions.find(d => d.value === vehicle.driveType) || null}
-  onChange={(opt) => setVehicle(prev => ({ ...prev, driveType: opt?.value || "" }))}
-  placeholder="Select Drive Type"  // Now this shows in gray
-/>
+                  <Dropdown
+                    options={driveTypeOptions}
+                    value={
+                      driveTypeOptions.find(
+                        (d) => d.value === vehicle.driveType
+                      ) || null
+                    }
+                    onChange={(opt) =>
+                      setVehicle((prev) => ({
+                        ...prev,
+                        driveType: opt?.value || "",
+                      }))
+                    }
+                    placeholder="Select Drive Type" // Now this shows in gray
+                  />
                 </div>
 
                 <div>
@@ -533,27 +548,47 @@ function AddAdminVehicle({ open, setOpen, onVehicleUpdated }) {
                   </label>
                   <Dropdown
                     options={bodyStyleOptions}
-                    value={bodyStyleOptions.find((b) => b.value === vehicle.bodyStyle) || null}
-                    onChange={(option) => setVehicle((prev) => ({ ...prev, bodyStyle: option?.value || "" }))}
+                    value={
+                      bodyStyleOptions.find(
+                        (b) => b.value === vehicle.bodyStyle
+                      ) || null
+                    }
+                    onChange={(option) =>
+                      setVehicle((prev) => ({
+                        ...prev,
+                        bodyStyle: option?.value || "",
+                      }))
+                    }
                     placeholder="Select Body Style"
                   />
                 </div>
 
                 <div>
                   <label className="block text-sm font-medium text-gray-700 mb-1">
-                    Vehicle Transmission Type <span className="text-red-500">*</span>
+                    Vehicle Transmission Type{" "}
+                    <span className="text-red-500">*</span>
                   </label>
                   <Dropdown
                     options={transmissionOptions}
-                    value={transmissionOptions.find((t) => t.value === vehicle.transmission) || null}
-                    onChange={(option) => setVehicle((prev) => ({ ...prev, transmission: option?.value || "" }))}
-                   placeholder="Select Vehicle Transmission"
+                    value={
+                      transmissionOptions.find(
+                        (t) => t.value === vehicle.transmission
+                      ) || null
+                    }
+                    onChange={(option) =>
+                      setVehicle((prev) => ({
+                        ...prev,
+                        transmission: option?.value || "",
+                      }))
+                    }
+                    placeholder="Select Vehicle Transmission"
                   />
                 </div>
 
                 <div>
                   <label className="block text-sm font-medium text-gray-700 mb-1">
-                    Vehicle Meter Reading <span className="text-red-500">*</span>
+                    Vehicle Meter Reading{" "}
+                    <span className="text-red-500">*</span>
                   </label>
                   <input
                     name="mileage"
@@ -576,8 +611,16 @@ function AddAdminVehicle({ open, setOpen, onVehicleUpdated }) {
                   </label>
                   <Dropdown
                     options={colorOptions}
-                    value={colorOptions.find((c) => c.value === vehicle.color) || null}
-                    onChange={(option) => setVehicle((prev) => ({ ...prev, color: option?.value || "" }))}
+                    value={
+                      colorOptions.find((c) => c.value === vehicle.color) ||
+                      null
+                    }
+                    onChange={(option) =>
+                      setVehicle((prev) => ({
+                        ...prev,
+                        color: option?.value || "",
+                      }))
+                    }
                     placeholder="Select Vehicle Color"
                   />
                 </div>
@@ -588,8 +631,17 @@ function AddAdminVehicle({ open, setOpen, onVehicleUpdated }) {
                   </label>
                   <Dropdown
                     options={fuelTypeOptions}
-                    value={fuelTypeOptions.find((f) => f.value === vehicle.fuelType) || null}
-                    onChange={(option) => setVehicle((prev) => ({ ...prev, fuelType: option?.value || "" }))}
+                    value={
+                      fuelTypeOptions.find(
+                        (f) => f.value === vehicle.fuelType
+                      ) || null
+                    }
+                    onChange={(option) =>
+                      setVehicle((prev) => ({
+                        ...prev,
+                        fuelType: option?.value || "",
+                      }))
+                    }
                     placeholder="Select Fuel type"
                   />
                 </div>
@@ -600,8 +652,17 @@ function AddAdminVehicle({ open, setOpen, onVehicleUpdated }) {
                   </label>
                   <Dropdown
                     options={conditionOptions}
-                    value={conditionOptions.find((c) => c.value === vehicle.vehicleCondition) || null}
-                    onChange={(option) => setVehicle((prev) => ({ ...prev, vehicleCondition: option?.value || "" }))}
+                    value={
+                      conditionOptions.find(
+                        (c) => c.value === vehicle.vehicleCondition
+                      ) || null
+                    }
+                    onChange={(option) =>
+                      setVehicle((prev) => ({
+                        ...prev,
+                        vehicleCondition: option?.value || "",
+                      }))
+                    }
                     placeholder="Select Vehicle Condition"
                   />
                 </div>
@@ -657,8 +718,17 @@ function AddAdminVehicle({ open, setOpen, onVehicleUpdated }) {
                 </label>
                 <Dropdown
                   options={certifyOptions}
-                  value={certifyOptions.find((c) => c.value === vehicle.certifyStatus) || null}
-                  onChange={(option) => setVehicle((prev) => ({ ...prev, certifyStatus: option?.value || "" }))}
+                  value={
+                    certifyOptions.find(
+                      (c) => c.value === vehicle.certifyStatus
+                    ) || null
+                  }
+                  onChange={(option) =>
+                    setVehicle((prev) => ({
+                      ...prev,
+                      certifyStatus: option?.value || "",
+                    }))
+                  }
                   placeholder="Select Certification Status"
                 />
               </div>
@@ -688,15 +758,21 @@ function AddAdminVehicle({ open, setOpen, onVehicleUpdated }) {
                           />
                         </svg>
                         <p className="text-sm text-gray-600">
-                          <span className="font-medium text-indigo-600">Click to upload</span>
+                          <span className="font-medium text-indigo-600">
+                            Click to upload
+                          </span>
                         </p>
-                        <p className="text-xs text-gray-400">PNG, JPG (Max 5MB each)</p>
+                        <p className="text-xs text-gray-400">
+                          PNG, JPG (Max 5MB each)
+                        </p>
                         <p className="text-xs text-gray-400 px-2">
-                          You can add maximum 5 images and first image will be used as front on the card
+                          You can add maximum 5 images and first image will be
+                          used as front on the card
                         </p>
                         {selectedCount > 0 && (
                           <p className="text-sm text-green-600 font-medium mt-2">
-                            {selectedCount} image{selectedCount > 1 ? "s" : ""} selected
+                            {selectedCount} image{selectedCount > 1 ? "s" : ""}{" "}
+                            selected
                           </p>
                         )}
                       </div>
@@ -726,7 +802,9 @@ function AddAdminVehicle({ open, setOpen, onVehicleUpdated }) {
             {isOpen === "selector" && (
               <div className="fixed inset-0 bg-opacity-40 flex items-center justify-center z-50">
                 <div className="w-full max-w-5xl bg-white p-4 sm:p-6 rounded-lg shadow-lg relative">
-                  <CarSelector handleIsOpenToggle={() => handleIsOpenToggle("")} />
+                  <CarSelector
+                    handleIsOpenToggle={() => handleIsOpenToggle("")}
+                  />
                 </div>
               </div>
             )}
@@ -761,20 +839,34 @@ function AddAdminVehicle({ open, setOpen, onVehicleUpdated }) {
                     </div>
                   )}
                 </div>
-                <div className="flex-1 px-0 lg:px-4" onClick={() => handleViewClick(vehicle)}>
+                <div
+                  className="flex-1 px-0 lg:px-4"
+                  onClick={() => handleViewClick(vehicle)}
+                >
                   <h2 className="text-base font-bold text-gray-800">
-                    {vehicle.make.charAt(0).toUpperCase() + vehicle.make.slice(1)}{" "}
-                    {vehicle.model.charAt(0).toUpperCase() + vehicle.model.slice(1)}{" "}
-                    {vehicle.series.charAt(0).toUpperCase() + vehicle.series.slice(1)}
+                    {vehicle.make.charAt(0).toUpperCase() +
+                      vehicle.make.slice(1)}{" "}
+                    {vehicle.model.charAt(0).toUpperCase() +
+                      vehicle.model.slice(1)}{" "}
+                    {vehicle.series.charAt(0).toUpperCase() +
+                      vehicle.series.slice(1)}
                   </h2>
-                  <p className="text-lg font-bold text-gray-800">PKR {vehicle.buyNowPrice}</p>
+                  <p className="text-lg font-bold text-gray-800">
+                    PKR {vehicle.buyNowPrice}
+                  </p>
                   <p className="text-sm text-gray-500">
                     {vehicle.year} |{" "}
-                    {vehicle.fuelType.charAt(0).toUpperCase() + vehicle.fuelType.slice(1)}{" "} |{" "}
-                    {vehicle.transmission.charAt(0).toUpperCase() + vehicle.transmission.slice(1)}{" "} |{" "}
-                    {vehicle.mileage || "--"} KM |{" "}
-                    {vehicle.color.charAt(0).toUpperCase() + vehicle.color.slice(1)}{" "} |{" "}
-                    {vehicle.cityName?.charAt(0)?.toUpperCase() + vehicle.cityName?.slice(1) || "--"}
+                    {vehicle.fuelType.charAt(0).toUpperCase() +
+                      vehicle.fuelType.slice(1)}{" "}
+                    |{" "}
+                    {vehicle.transmission.charAt(0).toUpperCase() +
+                      vehicle.transmission.slice(1)}{" "}
+                    | {vehicle.mileage || "--"} KM |{" "}
+                    {vehicle.color.charAt(0).toUpperCase() +
+                      vehicle.color.slice(1)}{" "}
+                    |{" "}
+                    {vehicle.cityName?.charAt(0)?.toUpperCase() +
+                      vehicle.cityName?.slice(1) || "--"}
                   </p>
                 </div>
                 <div className="w-full lg:w-auto text-left lg:text-right relative action-menu">
@@ -796,7 +888,8 @@ function AddAdminVehicle({ open, setOpen, onVehicleUpdated }) {
                       >
                         Edit
                       </button>
-                      {vehicle.saleStatus === "upcoming" || vehicle.saleStatus === "sold" ? (
+                      {vehicle.saleStatus === "upcoming" ||
+                      vehicle.saleStatus === "sold" ? (
                         <button className="w-full px-4 py-2 text-sm text-green-600 hover:bg-green-100 text-left opacity-50 cursor-not-allowed">
                           Bid Added
                         </button>
@@ -851,20 +944,34 @@ function AddAdminVehicle({ open, setOpen, onVehicleUpdated }) {
                       </div>
                     )}
                   </div>
-                  <div className="flex-1" onClick={() => handleViewClick(vehicle)}>
+                  <div
+                    className="flex-1"
+                    onClick={() => handleViewClick(vehicle)}
+                  >
                     <h2 className="text-sm font-bold text-gray-800">
-                      {vehicle.make.charAt(0).toUpperCase() + vehicle.make.slice(1)}{" "}
-                      {vehicle.model.charAt(0).toUpperCase() + vehicle.model.slice(1)}{" "}
-                      {vehicle.series.charAt(0).toUpperCase() + vehicle.series.slice(1)}
+                      {vehicle.make.charAt(0).toUpperCase() +
+                        vehicle.make.slice(1)}{" "}
+                      {vehicle.model.charAt(0).toUpperCase() +
+                        vehicle.model.slice(1)}{" "}
+                      {vehicle.series.charAt(0).toUpperCase() +
+                        vehicle.series.slice(1)}
                     </h2>
-                    <p className="text-xs text-gray-700 font-semibold">PKR {vehicle.buyNowPrice}</p>
+                    <p className="text-xs text-gray-700 font-semibold">
+                      PKR {vehicle.buyNowPrice}
+                    </p>
                     <p className="text-xs text-gray-500">
                       {vehicle.year} |{" "}
-                      {vehicle.fuelType.charAt(0).toUpperCase() + vehicle.fuelType.slice(1)}{" "} |{" "}
-                      {vehicle.transmission.charAt(0).toUpperCase() + vehicle.transmission.slice(1)}{" "} |{" "}
-                      {vehicle.mileage || "--"} KM |{" "}
-                      {vehicle.color.charAt(0).toUpperCase() + vehicle.color.slice(1)}{" "} |{" "}
-                      {vehicle.cityName?.charAt(0)?.toUpperCase() + vehicle.cityName?.slice(1) || "--"}
+                      {vehicle.fuelType.charAt(0).toUpperCase() +
+                        vehicle.fuelType.slice(1)}{" "}
+                      |{" "}
+                      {vehicle.transmission.charAt(0).toUpperCase() +
+                        vehicle.transmission.slice(1)}{" "}
+                      | {vehicle.mileage || "--"} KM |{" "}
+                      {vehicle.color.charAt(0).toUpperCase() +
+                        vehicle.color.slice(1)}{" "}
+                      |{" "}
+                      {vehicle.cityName?.charAt(0)?.toUpperCase() +
+                        vehicle.cityName?.slice(1) || "--"}
                     </p>
                   </div>
                   <div className="relative action-menu">
@@ -886,7 +993,8 @@ function AddAdminVehicle({ open, setOpen, onVehicleUpdated }) {
                         >
                           Edit
                         </button>
-                        {vehicle.saleStatus === "upcoming" || vehicle.saleStatus === "sold" ? (
+                        {vehicle.saleStatus === "upcoming" ||
+                        vehicle.saleStatus === "sold" ? (
                           <button className="w-full px-4 py-2 text-sm text-green-600 hover:bg-green-100 text-left opacity-50 cursor-not-allowed">
                             Bid Added
                           </button>
@@ -933,14 +1041,18 @@ function AddAdminVehicle({ open, setOpen, onVehicleUpdated }) {
 
       <div className="flex justify-between mt-6 px-2 sm:px-4">
         <button
-          className={`bg-[#191970] text-white px-5 py-2 rounded ${pageNo > 1 ? "block" : "hidden"}`}
+          className={`bg-blue-950 text-white px-5 py-2 rounded ${
+            pageNo > 1 ? "block" : "hidden"
+          }`}
           onClick={handlePrevPage}
         >
           Prev
         </button>
         <div></div>
         <button
-          className={`bg-[#191970] text-white px-5 py-2 rounded ${allVehicles.length === 10 ? "block" : "hidden"}`}
+          className={`bg-blue-950 text-white px-5 py-2 rounded ${
+            allVehicles.length === 10 ? "block" : "hidden"
+          }`}
           onClick={handleNextPage}
         >
           Next
@@ -954,7 +1066,10 @@ function AddAdminVehicle({ open, setOpen, onVehicleUpdated }) {
         onVehicleUpdated={handleGetVehicles}
       />
       {viewModal && (
-        <ViewAdminCar handleClick={handleToggle} selectedVehicle={selectedVehicle} />
+        <ViewAdminCar
+          handleClick={handleToggle}
+          selectedVehicle={selectedVehicle}
+        />
       )}
       {isOpenBid && (
         <AdminAddBid
