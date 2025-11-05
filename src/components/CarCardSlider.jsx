@@ -55,13 +55,16 @@ const CarCard = ({ car }) => {
           <button
             onClick={handleWishlist}
             disabled={isInWishlist}
-            className={`gap-1.5 text-xs p-2 font-semibold transition-all duration-300 ${
+            className={`p-2 rounded-full transition-all duration-300 ${
               isInWishlist 
-                ? "text-white bg-gray-400 rounded cursor-not-allowed" 
-                : "text-white bg-red-600 rounded "
+                ? "text-red-600 cursor-default" 
+                : "text-gray-400 border:2px-solid   hover:text-red-600 hover:bg-red-50"
             }`}
           >
-            <span>{isInWishlist ? "Already Added" : "Add to Wishlist"}</span>
+            <FaHeart 
+              size={20} 
+              className={isInWishlist ? "fill-current" : ""} 
+            />
           </button>
         </div>
         
@@ -160,7 +163,7 @@ const CarCardSlider = () => {
           <button
             onClick={prevCards}
             disabled={currentIndex === 0}
-            className="absolute left-0 md:-left-10 bg-white p-2 rounded-full shadow text-gray-700 z-10 hover:bg-gray-100 disabled:opacity-50 transition-transform hover:scale-110"
+            className="absolute left-0 md:-left-10 bg-white p-2 rounded-full shadow text-gray-700 z-10 hover:bg-red-600 hover:text-white disabled:opacity-50 transition-transform hover:scale-110"
             style={{ top: "50%", transform: "translateY(-50%)" }}
           >
             <ChevronLeft size={24} className="md:w-7 md:h-7" />
@@ -177,7 +180,7 @@ const CarCardSlider = () => {
           <button
             onClick={nextCards}
             disabled={currentIndex + visibleCards >= allCars.length}
-            className="absolute right-0 md:-right-10 bg-white p-2 rounded-full shadow text-gray-700 z-10 hover:bg-gray-100 disabled:opacity-50 transition-transform hover:scale-110"
+            className="absolute right-0 md:-right-10 bg-white p-2 rounded-full shadow text-gray-700 z-10 hover:bg-red-600 hover:text-white disabled:opacity-50 transition-transform hover:scale-110"
             style={{ top: "50%", transform: "translateY(-50%)" }}
           >
             <ChevronRight size={24} className="md:w-7 md:h-7" />

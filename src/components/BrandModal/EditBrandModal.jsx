@@ -58,7 +58,7 @@ export const EditBrandModal = ({
       <div className="bg-white rounded-lg shadow-lg w-full max-w-md p-6">
         <div className="flex items-center justify-between">
           <h2 className="text-xl font-semibold mb-4 text-center">
-            Update Brand
+            Update Makes
           </h2>
 
           <span
@@ -72,7 +72,7 @@ export const EditBrandModal = ({
         <form onSubmit={handleSubmit} className="space-y-4">
           <div>
             <label className="block text-sm font-medium text-gray-700 mb-1">
-              Brand Name
+              Makes Name
             </label>
             <input
               type="text"
@@ -88,7 +88,7 @@ export const EditBrandModal = ({
 
           <div>
             <label className="block text-sm font-medium text-gray-700 mb-1">
-              Brand Image
+              Makes Image
             </label>
             <input
               type="file"
@@ -107,7 +107,7 @@ export const EditBrandModal = ({
               type="submit"
               className="bg-blue-950 text-white px-4 py-2 rounded hover:cursor-pointer"
             >
-              Update Brand
+              Update Makes
             </button>
           </div>
         </form>

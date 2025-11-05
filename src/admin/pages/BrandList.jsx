@@ -81,7 +81,7 @@ export const BrandList = () => {
   return (
     <div className="min-h-screen bg-gray-100 lg:p-6 p-2">
       <div className="flex flex-col sm:flex-row justify-between items-center gap-4 mb-3">
-        <h2 className="lg:text-3xl text-xl font-bold text-gray-800">Vehicle Brand List</h2>
+        <h2 className="lg:text-3xl text-xl font-bold text-gray-800">Vehicle Makes List</h2>
         <div className="relative w-full max-w-md">
           <span className="absolute inset-y-0 left-0 flex items-center pl-3 text-gray-400">
             <svg
@@ -100,13 +100,13 @@ export const BrandList = () => {
             </svg>
           </span>
                 <CustomSearch
-          placeholder="Search By Car Brand..."
+          placeholder="Search By Car Makes..."
           value={search}
           onChange={handleSearchChange}
         />
         </div>
        <CustomAdd
-  text="Add Brand"
+  text="Add Makes"
   onClick={() => handleToggleModal("Add")}
 />
       </div>
@@ -115,8 +115,8 @@ export const BrandList = () => {
         <thead className="bg-blue-950 text-white">
           <tr>
             <th className="py-3 px-4 text-left">SR#</th>
-            <th className="py-3 px-4 text-left">Brand Image</th>
-            <th className="py-3 px-4 text-left">Brand Name</th>
+            <th className="py-3 px-4 text-left">Makes Image</th>
+            <th className="py-3 px-4 text-left">Makes</th>
             <th className="px-4 py-3 text-center">Actions</th>
           </tr>
         </thead>

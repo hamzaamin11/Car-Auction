@@ -24,7 +24,7 @@ const WishlistSlice = createSlice({
         state.wishlistByUser[userId].push(vehicle);
         Swal.fire({
           title: "Success!",
-          text: "Vehicle has been added successfully!",
+          text: "Vehicle has been added successfully in wishlist!",
           icon: "success",
           confirmButtonColor: "#9333ea",
         });

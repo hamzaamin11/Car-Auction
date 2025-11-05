@@ -48,7 +48,7 @@ export const AddBrandModal = ({ handleClose, handleGetAllBrands }) => {
       <div className="bg-white rounded-lg shadow-lg w-full max-w-md p-6">
         <div className="flex items-center justify-between">
           <h2 className="text-xl font-semibold mb-4 text-center">
-            Add New Brand
+            Add New Makes
           </h2>
 
           <span
@@ -62,7 +62,7 @@ export const AddBrandModal = ({ handleClose, handleGetAllBrands }) => {
         <form onSubmit={handleSubmit} className="space-y-4">
           <div>
             <label className="block text-sm font-medium text-gray-700 mb-1">
-              Brand Name
+              Makes Name
             </label>
             <input
               type="text"
@@ -77,7 +77,7 @@ export const AddBrandModal = ({ handleClose, handleGetAllBrands }) => {
 
           <div>
             <label className="block text-sm font-medium text-gray-700 mb-1">
-              Brand Image
+              Makes Image
             </label>
             <input
               type="file"
@@ -98,7 +98,7 @@ export const AddBrandModal = ({ handleClose, handleGetAllBrands }) => {
               type="submit"
               className="bg-blue-950 text-white px-4 py-2 rounded align-items-center"
             >
-              {loading ? "loading..." : "Add Brand"}
+              {loading ? "loading..." : "Add Makes"}
             </button>
           </div>
         </form>

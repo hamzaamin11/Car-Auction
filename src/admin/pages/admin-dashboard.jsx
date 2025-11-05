@@ -227,7 +227,7 @@ const Dashboard = () => {
             path={"/admin/bid-history"}
           />
           <Card
-            title={"Add Brand"}
+            title={"Add Makes"}
             totalData={allBrands.length}
             color={"bg-blue-200"}
             icon={<MdBrandingWatermark size={28} />}

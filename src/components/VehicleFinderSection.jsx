@@ -238,84 +238,84 @@ const handlePrev = () => {
     No cars found
   </div>
 ) : (
-  <div className="relative px-7"> {/*  Added padding left/right */}
-    {/*  Previous Button */}
-    <button
-      onClick={handlePrev}
-      className="absolute left-2 top-1/2 -translate-y-1/2 bg-white shadow-md rounded-full p-2 hover:bg-gray-100 transition"
+ <div className="relative px-20"> {/* Increased padding from px-7 to px-16 */}
+  {/* Previous Button */}
+  <button
+    onClick={handlePrev}
+    className="absolute left-1 top-1/2 -translate-y-1/2 bg-white shadow-md rounded-full p-3 hover:bg-red-600 hover:text-white transition z-10"
+  >
+    <svg
+      xmlns="http://www.w3.org/2000/svg"
+      className="h-6 w-6 text-gray-700"
+      fill="none"
+      viewBox="0 0 24 24"
+      stroke="currentColor"
     >
-      <svg
-        xmlns="http://www.w3.org/2000/svg"
-        className="h-6 w-6 text-gray-700"
-        fill="none"
-        viewBox="0 0 24 24"
-        stroke="currentColor"
-      >
-        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />
-      </svg>
-    </button>
+      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />
+    </svg>
+  </button>
 
-    {/* 🔹 Cards Grid */}
+  {/* Cards Grid */}
   <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 max-w-6xl mx-auto">
-      {allCars.slice(startIndex, startIndex + cardsPerPage).map((car) => (
-        <div
-          key={car.id}
-          onClick={() => navigate(`/detailbid/${car.id}`)}
-          className="bg-white rounded-lg shadow-md hover:shadow-xl transition flex flex-col cursor-pointer"
-        >
-          <img
-            src={car?.images?.[0]}
-            alt="car"
-            className="w-full h-45 object-cover rounded-t-lg"
-          />
-          <div className="p-4 flex flex-col justify-between flex-grow ">
-            <div>
-              <h3 className="text-lg font-semibold mb-1">
-                {car.make} {car.model}
-              </h3>
-              <p className="text-gray-700 font-semibold mb-1">
-                Price: PKR {car.buyNowPrice}
-              </p>
-              <p className="text-sm font-semibold text-gray-600">
-                Condition:{" "}
-                <span
-                  className={
-                    car.vehicleCondition === "new"
-                      ? "text-green-600"
-                      : "text-red-600"
-                  }
-                >
-                  {car.vehicleCondition?.toUpperCase()}
-                </span>
-              </p>
-              <p className="text-sm text-gray-600">
-                Model Year: <span>{car.year}</span>
-              </p>
-            </div>
-            <button className="bg-red-600 py-2 text-white text-sm px-3 rounded mt-3">
-              View Details
-            </button>
-          </div>
-        </div>
-      ))}
-    </div>
-
-    {/* 🔹 Next Button */}
-    <button
-      onClick={handleNext}
-      className="absolute right-2 top-1/2 -translate-y-1/2 bg-white shadow-md rounded-full p-2 hover:bg-gray-100 transition"
-    >
-      <svg
-        xmlns="http://www.w3.org/2000/svg"
-        className="h-6 w-6 text-gray-700"
-        fill="none"
-        viewBox="0 0 24 24"
-        stroke="currentColor"
+    {allCars.slice(startIndex, startIndex + cardsPerPage).map((car) => (
+      <div
+        key={car.id}
+        onClick={() => navigate(`/detailbid/${car.id}`)}
+        className="bg-white rounded-lg shadow-md hover:shadow-xl transition flex flex-col cursor-pointer"
       >
-        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
-      </svg>
-    </button>
+        <img
+          src={car?.images?.[0]}
+          alt="car"
+          className="w-full h-45 object-cover rounded-t-lg"
+        />
+        <div className="p-4 flex flex-col justify-between flex-grow">
+          <div>
+            <h3 className="text-lg font-semibold mb-1">
+              {car.make} {car.model}
+            </h3>
+            <p className="text-gray-700 font-semibold mb-1">
+              Price: PKR {car.buyNowPrice}
+            </p>
+            <p className="text-sm font-semibold text-gray-600">
+              Condition:{" "}
+              <span
+                className={
+                  car.vehicleCondition === "new"
+                    ? "text-green-600"
+                    : "text-red-600"
+                }
+              >
+                {car.vehicleCondition?.toUpperCase()}
+              </span>
+            </p>
+            <p className="text-sm text-gray-600">
+              Model Year: <span>{car.year}</span>
+            </p>
+          </div>
+          <button className="bg-red-600 py-2 text-white text-sm px-3 rounded mt-3">
+            View Details
+          </button>
+        </div>
+      </div>
+    ))}
   </div>
+
+  {/* Next Button */}
+  <button
+    onClick={handleNext}
+    className="absolute right-1 top-1/2 -translate-y-1/2 bg-white shadow-md rounded-full p-3 hover:bg-red-600 hover:text-white transition z-10"
+  >
+    <svg
+      xmlns="http://www.w3.org/2000/svg"
+      className="h-6 w-6 text-gray-700"
+      fill="none"
+      viewBox="0 0 24 24"
+      stroke="currentColor"
+    >
+      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
+    </svg>
+  </button>
+</div>
 )}
 
     </div>
