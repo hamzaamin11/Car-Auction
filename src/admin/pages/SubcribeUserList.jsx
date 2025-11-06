@@ -116,7 +116,7 @@ export const SubcribeUserList = () => {
               <tr>
                 <th className="py-3 px-4 text-left  rounded-tl-lg">SR#</th>
 
-                <th className="py-3 px-4 text-left">Email</th>
+                <th className="py-3 px-85 text-left">Email</th>
               </tr>
             </thead>
 
@@ -129,7 +129,7 @@ export const SubcribeUserList = () => {
                       {indexOfFirstItem + index + 1}
                     </td>
 
-                    <td className="py-2 px-4">{contact?.email}</td>
+                    <td className="py-2 px-75">{contact?.email}</td>
                   </tr>
                 ))
               ) : (
