@@ -90,7 +90,7 @@ export const SuggestionForm = () => {
     >
       <form
         onSubmit={handleSubmit}
-        className="lg:w-1/3 w-full bg-white bg-opacity-95 p-6 rounded-lg shadow-lg space-y-5"
+        className="lg:w-1/3 w-full bg-white bg-opacity-95 p-6 rounded-lg shadow-lg space-y-2"
       >
         <h2 className="text-3xl font-bold text-gray-800 text-center">Send a Suggestion</h2>
 
@@ -113,7 +113,7 @@ export const SuggestionForm = () => {
 
         {/* Contact Number */}
         <div>
-          <label className="block mb-1 text-sm text-gray-900 font-bold">
+          <label className="block mb-1 text-sm text-gray-900 font-semibold">
             Contact Number
           </label>
           <input
@@ -130,7 +130,7 @@ export const SuggestionForm = () => {
 
         {/* Email */}
         <div>
-          <label className="block mb-1 text-sm text-gray-900 font-bold">
+          <label className="block mb-1 text-sm text-gray-900 font-semibold">
             Email
           </label>
           <input
@@ -147,7 +147,7 @@ export const SuggestionForm = () => {
 
         {/* Suggestion */}
         <div>
-          <label className="block mb-1 text-sm text-gray-900 font-bold">
+          <label className="block mb-1 text-sm text-gray-900 font-semibold">
             Suggestion
           </label>
           <textarea

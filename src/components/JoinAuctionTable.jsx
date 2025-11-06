@@ -49,13 +49,12 @@ const JoinAuctionTable = ({ allLive, upComing }) => {
           <h2 className="text-2xl font-semibold text-gray-800">
             Live Auctions
           </h2>
-          
         </div>
 
         {/* Desktop Table */}
         <div className="hidden md:block bg-white rounded-xl shadow-lg overflow-hidden border border-gray-100">
           <div className="bg-blue-950 p-3 text-white font-semibold text-sm uppercase tracking-wide">
-           Live Auctions
+            Live Auctions
           </div>
           <table className="w-full text-sm">
             <thead className="bg-gray-50 text-gray-700 border-b">
@@ -89,8 +88,8 @@ const JoinAuctionTable = ({ allLive, upComing }) => {
                   </td>
                   <td className="p-3 text-gray-600">
                     {auction.startTime
-    ? new Date(auction.startTime).toLocaleDateString("en-GB")
-    : "N/A"}
+                      ? new Date(auction.startTime).toLocaleDateString("en-GB")
+                      : "N/A"}
                   </td>
                   <td className="p-3 text-gray-600">
                     {moment(auction.startTime).format("hh:mm A")}
@@ -104,7 +103,7 @@ const JoinAuctionTable = ({ allLive, upComing }) => {
                       onClick={() =>
                         navigate(`/detailbid/${auction.vehicleId}`)
                       }
-                      className="px-4 py-1.5 bg-blue-950 text-white  text-xs font-semibold shadow-sm transition-all hover:cursor-pointer"
+                      className="px-4 py-1.5 bg-blue-950 text-white rounded text-xs font-semibold shadow-sm transition-all hover:cursor-pointer"
                     >
                       Start Bidding
                     </button>
@@ -138,9 +137,9 @@ const JoinAuctionTable = ({ allLive, upComing }) => {
                     {auction.make}/{auction.model}/{auction.series}
                   </p>
                   <p className="text-gray-500 text-xs">
-                   {auction.startTime
-    ? new Date(auction.startTime).toLocaleDateString("en-GB")
-    : "N/A"}
+                    {auction.startTime
+                      ? new Date(auction.startTime).toLocaleDateString("en-GB")
+                      : "N/A"}
                   </p>
                 </div>
               </div>
@@ -174,7 +173,6 @@ const JoinAuctionTable = ({ allLive, upComing }) => {
           <h2 className="lg:text-2xl text-lg  font-semibold text-gray-800">
             Upcoming Auctions
           </h2>
-        
         </div>
 
         <div className="hidden md:block bg-white rounded-xl shadow-lg overflow-hidden border border-gray-100">
@@ -212,8 +210,8 @@ const JoinAuctionTable = ({ allLive, upComing }) => {
                   </td>
                   <td className="p-3 text-gray-600">
                     {auction.startTime
-    ? new Date(auction.startTime).toLocaleDateString("en-GB")
-    : "N/A"}
+                      ? new Date(auction.startTime).toLocaleDateString("en-GB")
+                      : "N/A"}
                   </td>
                   <td className="p-3 text-gray-600">
                     {moment(auction.startTime).format("hh:mm A")}
@@ -252,8 +250,8 @@ const JoinAuctionTable = ({ allLive, upComing }) => {
                   </p>
                   <p className="text-gray-500 text-xs">
                     {auction.startTime
-    ? new Date(auction.startTime).toLocaleDateString("en-GB")
-    : "N/A"}
+                      ? new Date(auction.startTime).toLocaleDateString("en-GB")
+                      : "N/A"}
                   </p>
                 </div>
               </div>

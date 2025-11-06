@@ -14,29 +14,28 @@ const ContactForm = () => {
   const [formData, setFormData] = useState(initialState);
   const [loading, setLoading] = useState(false);
   const handleContactChange = (e) => {
-  let value = e.target.value.replace(/\D/g, ""); // remove all non-digits
+    let value = e.target.value.replace(/\D/g, ""); // remove all non-digits
 
-  // Ensure the number always starts with +92
-  if (value.startsWith("92")) {
-    value = "+" + value;
-  } else if (!value.startsWith("+92")) {
-    value = "+92" + value;
-  }
+    // Ensure the number always starts with +92
+    if (value.startsWith("92")) {
+      value = "+" + value;
+    } else if (!value.startsWith("+92")) {
+      value = "+92" + value;
+    }
 
-  // Format like +92-300-1234567
-  if (value.length > 3 && value.length <= 6) {
-    value = value.slice(0, 3) + "-" + value.slice(3);
-  } else if (value.length > 6 && value.length <= 10) {
-    value =
-      value.slice(0, 3) + "-" + value.slice(3, 6) + "-" + value.slice(6);
-  } else if (value.length > 10) {
-    value =
-      value.slice(0, 3) + "-" + value.slice(3, 6) + "-" + value.slice(6, 15);
-  }
+    // Format like +92-300-1234567
+    if (value.length > 3 && value.length <= 6) {
+      value = value.slice(0, 3) + "-" + value.slice(3);
+    } else if (value.length > 6 && value.length <= 10) {
+      value =
+        value.slice(0, 3) + "-" + value.slice(3, 6) + "-" + value.slice(6);
+    } else if (value.length > 10) {
+      value =
+        value.slice(0, 3) + "-" + value.slice(3, 6) + "-" + value.slice(6, 15);
+    }
 
-  setFormData({ ...formData, contactNumber: value });
-};
-
+    setFormData({ ...formData, contactNumber: value });
+  };
 
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -88,12 +87,16 @@ const ContactForm = () => {
     >
       <form
         onSubmit={handleSubmit}
-        className="lg:w-1/3 w-full bg-white p-6 rounded-lg shadow-lg space-y-5 mt-3"
+        className="lg:w-1/3 w-full bg-white p-6 rounded-lg shadow-lg space-y-2 mt-3"
       >
-        <h2 className="text-3xl font-bold text-center text-gray-800">Send a Message</h2>
+        <h2 className="text-3xl font-bold text-center text-gray-800">
+          Send a Message
+        </h2>
 
         <div>
-          <label className="block mb-1 text-sm text-gray-900 font-bold">Name</label>
+          <label className="block mb-1 text-sm text-gray-900 font-semibold">
+            Name
+          </label>
           <input
             type="text"
             name="subject"
@@ -105,24 +108,25 @@ const ContactForm = () => {
           />
         </div>
 
-       <div>
-  <label className="block mb-1 text-sm text-gray-900 font-bold">
-    Contact Number
-  </label>
-  <input
-    type="tel"
-    name="contactNumber"
-    placeholder="+92-300-1234567"
-    value={formData.contactNumber}
-    onChange={handleContactChange}
-    className="w-full border border-gray-400 px-4 py-3 rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500"
-    required
-  />
-</div>
-
+        <div>
+          <label className="block mb-1 text-sm text-gray-900 font-semibold">
+            Contact Number
+          </label>
+          <input
+            type="tel"
+            name="contactNumber"
+            placeholder="+92-300-1234567"
+            value={formData.contactNumber}
+            onChange={handleContactChange}
+            className="w-full border border-gray-400 px-4 py-3 rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500"
+            required
+          />
+        </div>
 
         <div>
-          <label className="block mb-1 text-sm text-gray-900 font-bold">Email</label>
+          <label className="block mb-1 text-sm text-gray-900 font-semibold">
+            Email
+          </label>
           <input
             type="email"
             name="email"
@@ -135,7 +139,9 @@ const ContactForm = () => {
         </div>
 
         <div>
-          <label className="block mb-1 text-sm text-gray-900 font-bold">Message</label>
+          <label className="block mb-1 text-sm text-gray-900 font-semibold">
+            Message
+          </label>
           <textarea
             rows="5"
             name="description"
@@ -147,7 +153,7 @@ const ContactForm = () => {
           />
         </div>
 
-          <CustomButton text="Send Message" /> 
+        <CustomButton text="Send Message" />
       </form>
     </div>
   );

@@ -241,13 +241,13 @@ const TabsSection = () => {
   return (
     <div className="p-10 max-w-[90rem] mx-auto">
       <div className="items-center flex-wrap pb-2">
-        <h1 className="text-xl sm:text-2xl lg:text-3xl font-bold mx-6">
+        <h1 className="text-xl sm:text-2xl lg:text-3xl font-bold lg:mx-6">
           Search Your Dream Car
         </h1>
       </div>
 
       {/* ✅ Dropdown Filters */}
-      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 mx-6">
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 lg:mx-6">
         {/* City */}
         <div className="max-w-xs">
           <CustomDropdown

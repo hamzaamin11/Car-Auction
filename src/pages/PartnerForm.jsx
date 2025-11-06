@@ -90,16 +90,16 @@ export const PartnerForm = () => {
     >
       <form
         onSubmit={handleSubmit}
-        className="lg:w-1/3 w-full bg-white bg-opacity-95 p-8 rounded-xl shadow-lg space-y-5"
+        className="lg:w-1/3 w-full bg-white bg-opacity-95 p-8 rounded-xl shadow-lg space-y-2"
       >
-        <h2 className="text-3xl font-bold text-gray-800 text-center mb-6">
+        <h2 className="text-3xl font-bold text-gray-800 text-center">
           Become a Partner
         </h2>
 
         {/* Full Name */}
-        <div className="grid grid-cols-2 gap-4">
+        <div className="grid grid-cols-2 gap-2">
           <div>
-            <label className="block mb-1 text-sm text-gray-900 font-bold">
+            <label className="block mb-1 text-sm text-gray-900 font-semibold">
               Full Name
             </label>
             <input
@@ -116,7 +116,7 @@ export const PartnerForm = () => {
 
           {/* Contact Number */}
         <div>
-  <label className="block mb-1 text-sm text-gray-900 font-bold">
+  <label className="block mb-1 text-sm text-gray-900 font-semibold">
     Contact Number
   </label>
   <input
@@ -134,7 +134,7 @@ export const PartnerForm = () => {
 
           {/* Email */}
           <div>
-            <label className="block mb-1 text-sm text-gray-900 font-bold">
+            <label className="block mb-1 text-sm text-gray-900 font-semibold">
               Email
             </label>
             <input
@@ -151,7 +151,7 @@ export const PartnerForm = () => {
 
           {/* Business Type */}
           <div>
-            <label className="block mb-1 text-sm text-gray-900 font-bold">
+            <label className="block mb-1 text-sm text-gray-900 font-semibold">
               Business Type
             </label>
             <input
@@ -168,7 +168,7 @@ export const PartnerForm = () => {
 
         {/* City */}
         <div>
-          <label className="block mb-1 text-sm text-gray-900 font-bold">
+          <label className="block mb-1 text-sm text-gray-900 font-semibold">
             City 
           </label>
           <input
@@ -184,7 +184,7 @@ export const PartnerForm = () => {
 
         {/* Message */}
         <div>
-          <label className="block mb-1 text-sm text-gray-900 font-bold">
+          <label className="block mb-1 text-sm text-gray-900 font-semibold">
             Message
           </label>
           <textarea

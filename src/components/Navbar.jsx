@@ -793,7 +793,7 @@ const Navbar = () => {
               <span className="relative z-10">LIVE</span>
             </Link>
           )}
-          {user?.role === "seller" && (
+          {currentUser?.role === "seller" && (
             <Link
               to="/add-vehicles"
               onClick={() => setMenuOpen(false)}

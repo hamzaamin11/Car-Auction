@@ -70,7 +70,7 @@ const RegistrationPage = () => {
           {/* Role Selection */}
           <div className="md:col-span-2">
             <div className="flex gap-4">
-              <label className="block text-sm font-bold text-gray-700  ">
+              <label className="block text-sm font-semibold text-gray-700  ">
                 Select Role
               </label>
               <label className="flex items-center">
@@ -99,7 +99,7 @@ const RegistrationPage = () => {
           </div>
           {/* Full Name */}
           <div>
-            <label className="block text-sm font-semibold text-gray-700 mb-1">
+            <label className="block text-sm font-semibold text-gray-800 mb-1">
               Full Name
             </label>
             <input
@@ -114,7 +114,7 @@ const RegistrationPage = () => {
 
           {/* Email */}
           <div>
-            <label className="block text-sm font-semibold text-gray-700 mb-1">
+            <label className="block text-sm font-semibold text-gray-800 mb-1">
               Email
             </label>
             <input
@@ -129,7 +129,7 @@ const RegistrationPage = () => {
 
           {/* Contact */}
           <div>
-            <label className="block text-sm font-semibold text-gray-700 mb-1">
+            <label className="block text-sm font-semibold text-gray-800 mb-1">
               Contact
             </label>
             <PhoneInput
@@ -148,7 +148,7 @@ const RegistrationPage = () => {
 
           {/* Password */}
           <div>
-            <label className="block text-sm font-semibold text-gray-700 mb-1">
+            <label className="block text-sm font-semibold text-gray-800 mb-1">
               Password
             </label>
             <input

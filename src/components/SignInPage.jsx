@@ -84,7 +84,7 @@ const SignInPage = () => {
         {/* Login Form */}
         <form onSubmit={handleSubmit} className="space-y-2">
           <div>
-            <label className="block mb-2 font-bold text-gray-700">
+            <label className="block mb-2 font-semibold text-gray-800">
               Email / Phone Number
             </label>
             <input
@@ -99,7 +99,7 @@ const SignInPage = () => {
           </div>
 
           <div>
-            <label className="block mb-2 font-bold text-gray-700">
+            <label className="block mb-2 font-semibold text-gray-800">
               Password
             </label>
             <input
@@ -113,11 +113,11 @@ const SignInPage = () => {
             />
           </div>
 
-       <CustomButton text="Sign In" /> 
+          <CustomButton text="Sign In" />
         </form>
 
         {/* Divider */}
-        <p className="text-gray-600 text-center my-2">or</p>
+        <p className="text-gray-800 text-center my-2">or</p>
 
         {/* Auth Options */}
         <div className="space-y-2">

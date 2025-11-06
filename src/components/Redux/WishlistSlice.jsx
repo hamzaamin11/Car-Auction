@@ -11,15 +11,18 @@ const WishlistSlice = createSlice({
   reducers: {
     addInList: (state, action) => {
       const { userId, vehicle } = action.payload;
-      
+      console.log({ userId, vehicle });
+
       // Initialize user's wishlist if it doesn't exist
       if (!state.wishlistByUser[userId]) {
         state.wishlistByUser[userId] = [];
       }
-      
+
       // Check if vehicle already exists in user's wishlist
-      const exists = state.wishlistByUser[userId].some(v => v.id === vehicle.id);
-      
+      const exists = state.wishlistByUser[userId].some(
+        (v) => v.id === vehicle.id
+      );
+
       if (!exists) {
         state.wishlistByUser[userId].push(vehicle);
         Swal.fire({
@@ -37,17 +40,17 @@ const WishlistSlice = createSlice({
         });
       }
     },
-    
+
     removeInList: (state, action) => {
       const { userId, vehicleId } = action.payload;
-      
+
       if (state.wishlistByUser[userId]) {
         state.wishlistByUser[userId] = state.wishlistByUser[userId].filter(
           (v) => v.id !== vehicleId
         );
       }
     },
-    
+
     clearUserWishlist: (state, action) => {
       const userId = action.payload;
       if (state.wishlistByUser[userId]) {
@@ -57,5 +60,6 @@ const WishlistSlice = createSlice({
   },
 });
 
-export const { addInList, removeInList, clearUserWishlist } = WishlistSlice.actions;
+export const { addInList, removeInList, clearUserWishlist } =
+  WishlistSlice.actions;
 export default WishlistSlice.reducer;
