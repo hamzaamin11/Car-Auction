@@ -6,7 +6,7 @@ import { debounce } from "lodash";
 import moment from "moment";
 import axios from "axios";
 import { BASE_URL } from "../components/Contant/URL";
-import Navbar from "../components/Navbar.jsx";
+
 const SoldVehicles = () => {
   const { aucHistory } = useContext(AuctionsContext);
   const [allBiders, setAllBiders] = useState([]);
@@ -80,7 +80,7 @@ const SoldVehicles = () => {
 
   return (
     <>
-      <Navbar />
+    
       <div className="min-h-screen bg-gray-50 p-1 md:p-6">
         <div className="flex flex-col sm:flex-row justify-between items-center gap-4 mb-6 px-3">
           <h1 className="text-2xl md:text-3xl font-bold text-gray-800 px-5">
@@ -107,14 +107,14 @@ const SoldVehicles = () => {
               type="text"
               placeholder="Search by Make or Model..."
               onChange={(e) => debouncedSearch(e.target.value)}
-              className="w-full pl-12  py-2 rounded-md border border-gray-300 shadow-sm placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500"
+              className="w-full pl-12  py-2 rounded-md border border-gray-300 shadow-sm placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-950"
             />
           </div>
         </div>
         <>
           <div className="hidden md:block overflow-x-auto max-w-[92rem] mx-auto bg-white rounded-lg shadow">
             <table className="min-w-full divide-y divide-gray-200">
-              <thead className="bg-[#191970] text-white">
+              <thead className="bg-blue-950 text-white">
                 <tr>
                   <th className="px-6 py-3 text-left text-sm font-semibold">
                     Serial
@@ -180,11 +180,11 @@ const SoldVehicles = () => {
                             });
                             setCurrentImageIndex(0);
                           }}
-                          className=" py-4 whitespace-nowrap text-sm text-gray-700 cursor-pointer hover:text-blue-600"
+                          className=" py-4 whitespace-nowrap text-sm text-gray-700 cursor-pointer hover:text-blue-950"
                         >
                           {make}/{model}
                         </td>
-                        <td className="px-6 py-4 whitespace-nowrap text-sm font-normal text-[#191970]">
+                        <td className="px-6 py-4 whitespace-nowrap text-sm font-normal text-black">
                           PKR {MonsterBid || maxBid || "0000"}
                         </td>
                         <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
@@ -298,7 +298,7 @@ const SoldVehicles = () => {
                         <span className="text-gray-900 font-bold">
                           Bid Amount
                         </span>
-                        <span className="text-[#191970] font-semibold">
+                        <span className="text-black font-semibold">
                           PKR {MonsterBid || maxBid || "0000"}
                         </span>
                       </p>
@@ -341,7 +341,7 @@ const SoldVehicles = () => {
           <div className="fixed inset-0 z-50 flex items-center justify-center bg-blur backdrop-blur-md p-4">
             <div className="bg-white rounded-2xl shadow-2xl w-full max-w-5xl max-h-[90vh] overflow-y-auto relative">
               <div className="sticky top-0 bg-white z-10 px-6 py-4 border-b flex justify-between items-center">
-                <h2 className="text-2xl md:text-3xl font-bold text-[#191970]">
+                <h2 className="text-2xl md:text-3xl font-bold text-black">
                   View Vehicle
                 </h2>
                 <button
@@ -541,7 +541,7 @@ const SoldVehicles = () => {
                                 onClick={() => setCurrentImageIndex(idx)}
                                 className={`w-16 h-16 rounded-lg overflow-hidden border-2 transition ${
                                   currentImageIndex === idx
-                                    ? "border-blue-600"
+                                    ? "border-blue-950"
                                     : "border-gray-300 hover:border-gray-400"
                                 }`}
                               >

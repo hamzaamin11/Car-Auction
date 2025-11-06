@@ -163,7 +163,7 @@ const CarCardSlider = () => {
           <button
             onClick={prevCards}
             disabled={currentIndex === 0}
-            className="absolute left-0 md:-left-10 bg-white p-2 rounded-full shadow text-gray-700 z-10 hover:bg-red-600 hover:text-white disabled:opacity-50 transition-transform hover:scale-110"
+            className="absolute left-0 md:-left-10 bg-white p-2 rounded-full shadow text-gray-700 z-10 hover:bg-red-600 hover:text-white transition-transform hover:scale-110"
             style={{ top: "50%", transform: "translateY(-50%)" }}
           >
             <ChevronLeft size={24} className="md:w-7 md:h-7" />

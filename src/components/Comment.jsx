@@ -99,8 +99,8 @@ const LiveCommentsModal = ({
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    if (!bidAmount.maxBid || bidAmount.maxBid.length < 5)
-      return toast.error("Please enter a bid with at least 5 digits.");
+    if (!bidAmount.maxBid || bidAmount.maxBid.length < 6)
+      return toast.error("Please enter a bid with at least 6 digits.");
     if (phase !== "running") return toast.error("Bidding is not active!");
 
     setLoading(true);
@@ -147,7 +147,7 @@ const LiveCommentsModal = ({
     <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 backdrop-blur-sm p-3 sm:p-6 overflow-y-auto">
       <div className="w-full max-w-sm sm:max-w-md bg-white rounded-2xl overflow-hidden shadow-2xl flex flex-col relative my-auto max-h-[95vh]">
         {/* Header with Timer */}
-        <div className="relative bg-gradient-to-b from-[#1e3a8a] to-[#233D7B] text-white p-6 flex flex-col items-center justify-center flex-shrink-0">
+        <div className="relative bg-blue-950 text-white p-6 flex flex-col items-center justify-center flex-shrink-0">
           <button
             onClick={() => setIsOpen(false)}
             className="absolute top-3 right-4 text-white text-2xl font-bold hover:opacity-80"
@@ -249,13 +249,13 @@ const LiveCommentsModal = ({
                 handleChange(e);
             }}
             placeholder="Enter bid amount"
-            className="flex-1 border border-gray-300 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-600"
+            className="flex-1 border border-gray-300 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-950"
             disabled={phase !== "running" || loading}
           />
           <button
             type="submit"
             disabled={phase !== "running" || loading}
-            className="bg-blue-600 hover:bg-blue-700 text-white text-sm font-semibold px-5 py-2 rounded-lg transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed flex items-center gap-2"
+            className="bg-blue-950 text-white text-sm font-semibold px-5 py-2 rounded-lg transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed flex items-center gap-2"
           >
             {loading && (
               <svg

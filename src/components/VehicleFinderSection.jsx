@@ -34,10 +34,10 @@ const handlePrev = () => {
   }
 };
 
-  // 🧩 Get selected make and model from Redux
+  //  Get selected make and model from Redux
   const vehicleData = useSelector((state) => state.carSelector);
 
-  // ✅ Fetch Cars API
+  //  Fetch Cars API
   const handleGetCars = async () => {
     try {
       // Use Redux values for make & model (instead of local filter)
@@ -55,7 +55,7 @@ const handlePrev = () => {
     }
   };
 
-  // ✅ Fetch all makes
+  //  Fetch all makes
   const handleGetMakes = async () => {
     try {
       const res = await axios.get(`${BASE_URL}/admin/getBrands`);
@@ -65,7 +65,7 @@ const handlePrev = () => {
     }
   };
 
-  // ✅ Fetch models by selected make
+  //  Fetch models by selected make
   const handleGetModels = async () => {
     if (!vehicleData.make) return;
     try {
@@ -78,7 +78,7 @@ const handlePrev = () => {
     }
   };
 
-  // ✅ Fetch selected make details
+  // Fetch selected make details
   const handleSelectMake = async () => {
     if (!vehicleData.make) return;
     try {
@@ -91,12 +91,12 @@ const handlePrev = () => {
     }
   };
 
-  // ✅ Handle change for year/price/condition only (make/model via redux)
+  //  Handle change for year/price/condition only (make/model via redux)
   const handleChange = (name, value) => {
     setFilters({ ...filters, [name]: value });
   };
 
-  // ✅ Tabs for condition
+  //  Tabs for condition
   const handleTabClick = (tab) => {
     setFilters({ ...filters, condition: tab });
     setStartIndex(0);
@@ -123,7 +123,7 @@ const handlePrev = () => {
   };
   const years = calcYearVal();
 
-  // ✅ useEffects
+  //  useEffects
   useEffect(() => {
     handleGetMakes();
   }, []);
@@ -140,7 +140,7 @@ const handlePrev = () => {
     filters.price,
   ]);
 
-  // ✅ Render
+  //  Render
   return (
     <div className="max-w-7xl mx-auto p-6 font-sans">
       {/* Filters */}
@@ -242,11 +242,11 @@ const handlePrev = () => {
   {/* Previous Button */}
   <button
     onClick={handlePrev}
-    className="absolute left-1 top-1/2 -translate-y-1/2 bg-white shadow-md rounded-full p-3 hover:bg-red-600 hover:text-white transition z-10"
+    className="absolute left-1 top-1/2 -translate-y-1/2 bg-white shadow-md rounded-full p-3 hover:bg-red-600 hover:text-white transition z-10 hover:scale-110 duration-500"
   >
     <svg
       xmlns="http://www.w3.org/2000/svg"
-      className="h-6 w-6 text-gray-700"
+      className="h-6 w-6"
       fill="none"
       viewBox="0 0 24 24"
       stroke="currentColor"
@@ -303,11 +303,11 @@ const handlePrev = () => {
   {/* Next Button */}
   <button
     onClick={handleNext}
-    className="absolute right-1 top-1/2 -translate-y-1/2 bg-white shadow-md rounded-full p-3 hover:bg-red-600 hover:text-white transition z-10"
+    className="absolute right-1 top-1/2 -translate-y-1/2 bg-white shadow-md rounded-full p-3 hover:bg-red-600 hover:text-white transition z-10 hover:scale-110 duration-500"
   >
     <svg
       xmlns="http://www.w3.org/2000/svg"
-      className="h-6 w-6 text-gray-700"
+      className="h-6 w-6"
       fill="none"
       viewBox="0 0 24 24"
       stroke="currentColor"
