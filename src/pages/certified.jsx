@@ -104,15 +104,7 @@ const CertifiedCarsPage = () => {
       </div>
 
       {/* Loading State */}
-      {isLoading ? (
-        <div className="flex justify-center py-12">
-          <RotateLoader />
-        </div>
-      ) : error ? (
-        <div className="flex justify-center py-12">
-          <p className="text-red-600 text-lg">{error}</p>
-        </div>
-      ) : (
+     
         <>
           {/* Vehicle Grid */}
           <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 max-w-7xl mx-auto">
@@ -233,7 +225,7 @@ const CertifiedCarsPage = () => {
             </div>
           )}
         </>
-      )}
+      {""}
 
       {/* Empty State */}
       {!isLoading && !error && getCertified?.length === 0 && (

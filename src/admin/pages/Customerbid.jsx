@@ -229,11 +229,11 @@ export const Customerbid = () => {
       <div className="mb-8">
         {/* Breadcrumb Section */}
         <nav className="text-sm text-gray-600 mb-2 mx-4">
-          <Link to="/" className="hover:underline text-[#233D7B]">
+          <Link to="/" className="hover:underline text-blue-950">
             Home
           </Link>{" "}
           /{" "}
-          <Link to="/finder" className="hover:underline text-[#233D7B]">
+          <Link to="/finder" className="hover:underline text-blue-950">
             Find Vehicle
           </Link>{" "}
           / <span className="text-gray-500">Vehicle Detail</span>
@@ -262,7 +262,7 @@ export const Customerbid = () => {
             {/* Left Arrow */}
             <button
               onClick={handlePreviousImage}
-              className="absolute top-1/2 left-3 sm:left-4 transform -translate-y-1/2 bg-black/50 text-white p-2 sm:p-3 rounded-full hover:bg-black transition"
+              className="absolute top-1/2 left-3 sm:left-4 transform -translate-y-1/2 bg-black/50 text-white p-2 sm:p-3 rounded-full hover:bg-blue-950 transition"
             >
               <FaArrowLeft size={16} />
             </button>
@@ -270,7 +270,7 @@ export const Customerbid = () => {
             {/* Right Arrow */}
             <button
               onClick={handleNextImage}
-              className="absolute top-1/2 right-3 sm:right-4 transform -translate-y-1/2 bg-black/50 text-white p-2 sm:p-3 rounded-full hover:bg-black transition"
+              className="absolute top-1/2 right-3 sm:right-4 transform -translate-y-1/2 bg-black/50 text-white p-2 sm:p-3 rounded-full hover:bg-blue-950 transition"
             >
               <FaArrowRight size={16} />
             </button>

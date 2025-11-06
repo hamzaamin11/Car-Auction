@@ -40,7 +40,7 @@ const CarCard = ({ car }) => {
   };
 
   return (
-    <div className="relative bg-white rounded-xl shadow-lg hover:shadow-2xl transition-all duration-300 overflow-hidden w-full h-full flex flex-col">
+    <div className="relative bg-white rounded-xl shadow-lg hover:shadow-2xl transition-all duration-300 overflow-hidden w-full h-full flex flex-col ">
       <div className="relative w-full">
         <img
           src={car.images[0]}
@@ -50,27 +50,52 @@ const CarCard = ({ car }) => {
         />
       </div>
 
-      <div className="relative group p-4 space-y-2 text-gray-800 flex-grow flex flex-col bg-white rounded-xl shadow-md hover:shadow-xl transition-all duration-300 border border-gray-100">
-        <div className="flex justify-end">
-          <button
-            onClick={handleWishlist}
-            disabled={isInWishlist}
-            className={`p-2 rounded-full transition-all duration-300 ${
-              isInWishlist 
-                ? "text-red-600 cursor-default" 
-                : "text-gray-400 border:2px-solid   hover:text-red-600 hover:bg-red-50"
-            }`}
-          >
-            <FaHeart 
-              size={20} 
-              className={isInWishlist ? "fill-current" : ""} 
-            />
-          </button>
-        </div>
-        
-        <h3 className="text-lg font-bold text-gray-800 transition">
-          {car?.make} {car?.model}
-        </h3>
+      <div className="relative group p-4 space-y-2 text-gray-800 flex-grow flex flex-col bg-white rounded-xl shadow-md hover:shadow-xl transition-all duration-300 border border-gray-100 ">
+      {/* For Desktop → Heart at top right */}
+<div className="hidden sm:flex justify-end">
+  <button
+    onClick={handleWishlist}
+    disabled={isInWishlist}
+    className={`p-2 rounded-full transition-all duration-300 ${
+      isInWishlist
+        ? "text-red-600 cursor-default"
+        : "text-gray-400 hover:text-red-600 hover:bg-red-50"
+    }`}
+  >
+    <FaHeart
+      size={20}
+      className={isInWishlist ? "fill-current" : ""}
+    />
+  </button>
+</div>
+
+{/* Title + Heart (for Mobile) */}
+<div className="flex sm:hidden justify-between items-center">
+  <h3 className="text-lg font-bold text-gray-800 transition">
+    {car?.make} {car?.model}
+  </h3>
+
+  <button
+    onClick={handleWishlist}
+    disabled={isInWishlist}
+    className={`p-2 rounded-full transition-all duration-300 ${
+      isInWishlist
+        ? "text-red-600 cursor-default"
+        : "text-gray-400 hover:text-red-600 hover:bg-red-50"
+    }`}
+  >
+    <FaHeart
+      size={20}
+      className={isInWishlist ? "fill-current" : ""}
+    />
+  </button>
+</div>
+
+{/* Keep original title for desktop only */}
+<h3 className="hidden sm:block text-lg font-bold text-gray-800 transition">
+  {car?.make} {car?.model}
+</h3>
+
 
         <p className="text-base text-gray-700">
           <span className="font-semibold text-gray-900">Demand Price:</span>{" "}

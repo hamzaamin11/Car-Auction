@@ -43,7 +43,7 @@ const ViewUserModal = ({ isOpen, closeModal }) => {
                   User Details
                   <button
                     onClick={closeModal}
-                    className="text-rose-600 hover:text-rose-800"
+                    className="text-rose-600"
                   >
                     <MdClose size={26} />
                   </button>

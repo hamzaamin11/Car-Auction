@@ -163,7 +163,7 @@ const EditUserModal = ({ Open, setOpen, selectedUser, onUserUpdated }) => {
                       className="inline-flex justify-center cursor-pointer rounded-md text-sm font-medium text-white"
                       onClick={closeModal}
                     >
-                      <MdClose size={24} className="text-rose-800" />
+                      <MdClose size={24} className="text-rose-600" />
                     </button>
                   </div>
                 </Dialog.Title>

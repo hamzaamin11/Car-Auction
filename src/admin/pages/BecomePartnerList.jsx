@@ -247,7 +247,7 @@ export const BecomePartnerList = () => {
           <div className="bg-white rounded-lg shadow-xl w-full max-w-md p-4 relative animate-fadeIn">
             <button
               onClick={() => setIsModalOpen(false)}
-              className="absolute top-3 right-3 px-2 py-1 text-sm bg-red-500 text-white rounded-md hover:bg-red-600 transition"
+              className="absolute top-3 right-3 px-2 py-1 text-sm bg-red-600 text-white rounded-md  transition"
             >
               ✕
             </button>

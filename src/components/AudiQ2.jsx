@@ -28,7 +28,7 @@ const AudiQ2Prices = () => {
 
   return (
     <div className="px-4 py-6 max-w-6xl mx-auto h-[27rem] ">
-      <h3 className="text-2xl font-bold text-[#233D7B] mb-4">
+      <h3 className="text-2xl font-bold text-black mb-4">
         Add Bid on {carType} Cars
       </h3>
 

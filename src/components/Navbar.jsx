@@ -419,7 +419,7 @@ const Navbar = () => {
       label: "Vehicles",
       items: [
         { to: "/finder", label: "Vehicle Finder" },
-        { to: "/saleslist", label: "Search By Make" },
+        { to: "/saleslist", label: "Search By Makes" },
         { to: "/certified", label: "Certified Cars" },
       ],
     },

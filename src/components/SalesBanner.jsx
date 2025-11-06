@@ -13,7 +13,7 @@ const SalesBanner = () => {
 
       <div className="relative z-10 px-4">
         <h1 className="text-3xl md:text-5xl font-bold text-white animate-fade-in">
-          All Car Companies
+          All Car Makes
         </h1>
       </div>
     </section>
