@@ -1,0 +1,198 @@
+import axios from "axios";
+import React, { useEffect, useState, useCallback } from "react";
+import { debounce } from "lodash";
+import { BASE_URL } from "../../components/Contant/URL";
+import CustomAdd from "../../CustomAdd";
+import CustomSearch from "../../CustomSearch";
+export const SubcribeUserList = () => {
+  const [allContacts, setAllContacts] = useState([]);
+  const [filteredContacts, setFilteredContacts] = useState([]);
+  const [selectedContact, setSelectedContact] = useState(null);
+  const [isModalOpen, setIsModalOpen] = useState(false);
+  const [search, setSearch] = useState("");
+  const [loading, setLoading] = useState(false);
+  const [currentPage, setCurrentPage] = useState(1);
+  const itemsPerPage = 10;
+
+  const debouncedSearch = useCallback(
+    debounce((value) => {
+      setSearch(value);
+      setCurrentPage(1); // Reset to first page on search
+    }, 300),
+    []
+  );
+
+  const handleGetSuggestions = async () => {
+    setLoading(true);
+    try {
+      const res = await axios.get(`${BASE_URL}/getSubscribeUser`);
+      console.log("API Response:", res.data);
+      setAllContacts(res.data);
+    } catch (error) {
+      console.log("Error:", error);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  useEffect(() => {
+    handleGetSuggestions();
+  }, []);
+
+  useEffect(() => {
+    const filtered = allContacts.filter((contact) =>
+      contact.subject?.toLowerCase().includes(search.toLowerCase())
+    );
+    setFilteredContacts(filtered);
+  }, [search, allContacts]);
+
+  // Pagination logic
+  const indexOfLastItem = currentPage * itemsPerPage;
+  const indexOfFirstItem = indexOfLastItem - itemsPerPage;
+  const currentItems = filteredContacts.slice(
+    indexOfFirstItem,
+    indexOfLastItem
+  );
+
+  console.log("osdkas", currentItems);
+  const totalPages = Math.ceil(filteredContacts.length / itemsPerPage);
+
+  const handleNextPage = () => {
+    if (currentPage < totalPages) {
+      setCurrentPage(currentPage + 1);
+    }
+  };
+
+  const handlePrevPage = () => {
+    if (currentPage > 1) {
+      setCurrentPage(currentPage - 1);
+    }
+  };
+
+  const handleView = (contact) => {
+    setSelectedContact(contact);
+    setIsModalOpen(true);
+  };
+
+  return (
+    <div className="min-h-screen bg-gray-100 p-4 sm:p-6">
+      <div className="flex flex-col sm:flex-row justify-between items-center gap-4 mb-3">
+        <h2 className="lg:text-3xl text-xl font-bold text-gray-800">
+          Subcribe Users List
+        </h2>
+        <div className="relative w-full max-w-md">
+          <span className="absolute inset-y-0 left-0 flex items-center pl-3 text-gray-400">
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              className="h-5 w-5"
+              fill="none"
+              viewBox="0 0 24 24"
+              stroke="currentColor"
+            >
+              <path
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                strokeWidth="2"
+                d="M21 21l-4.35-4.35m0 0A7.5 7.5 0 104.5 4.5a7.5 7.5 0 0012.15 12.15z"
+              />
+            </svg>
+          </span>
+          <CustomSearch
+            placeholder="Search by Subject..."
+            value={search}
+            onChange={(e) => {
+              setSearch(e.target.value);
+              debouncedSearch(e.target.value);
+            }}
+          />
+        </div>
+      </div>
+      <>
+        {/* Desktop Table */}
+        <div className="hidden md:block">
+          <table className="w-full bg-white shadow-md rounded-lg overflow-hidden  text-sm">
+            {/* Header */}
+            <thead className="bg-blue-950 text-white rounded-t-lg">
+              <tr>
+                <th className="py-3 px-4 text-left  rounded-tl-lg">SR#</th>
+
+                <th className="py-3 px-4 text-left">Email</th>
+              </tr>
+            </thead>
+
+            {/* Body */}
+            <tbody>
+              {allContacts.length > 0 ? (
+                allContacts.map((contact, index) => (
+                  <tr key={contact.id} className="border-b ">
+                    <td className="py-2 px-4 whitespace-nowrap">
+                      {indexOfFirstItem + index + 1}
+                    </td>
+
+                    <td className="py-2 px-4">{contact?.email}</td>
+                  </tr>
+                ))
+              ) : (
+                <tr>
+                  <td colSpan="5" className="py-8 text-center text-gray-400">
+                    No contacts found.
+                  </td>
+                </tr>
+              )}
+            </tbody>
+          </table>
+        </div>
+
+        {/* Mobile Cards */}
+        <div className="md:hidden space-y-4">
+          {allContacts.length > 0 ? (
+            allContacts.map((contact) => (
+              <div
+                key={contact.id}
+                className="bg-white rounded-xl shadow-md border border-gray-200 p-4 transition-all duration-300 hover:shadow-lg cursor-pointer"
+                onClick={() => handleView(contact)}
+              >
+                <div className="space-y-2 text-sm">
+                  <p className="flex justify-between">
+                    <span className="font-bold text-gray-900">Email</span>
+                    <span className="text-gray-700">
+                      {contact?.email.charAt(0).toUpperCase() +
+                        contact?.email.slice(1)}
+                    </span>
+                  </p>
+                </div>
+              </div>
+            ))
+          ) : (
+            <div className="text-center py-8 text-gray-400 text-sm">
+              No contacts found.
+            </div>
+          )}
+        </div>
+
+        {/* Pagination Controls */}
+        {totalPages > 1 && (
+          <div className="flex justify-between mt-6">
+            <button
+              className={`bg-blue-950 text-white px-5 py-2 rounded ${
+                currentPage === 1 ? "hidden" : "block"
+              }`}
+              onClick={handlePrevPage}
+            >
+              ‹ Prev
+            </button>
+            <div></div>
+            <button
+              className={`bg-blue-950 text-white px-5 py-2 rounded ${
+                currentPage === totalPages ? "hidden" : "block"
+              }`}
+              onClick={handleNextPage}
+            >
+              Next ›
+            </button>
+          </div>
+        )}
+      </>
+    </div>
+  );
+};

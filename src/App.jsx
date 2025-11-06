@@ -93,6 +93,7 @@ import { CitiesList } from "./pages/CitiesList";
 import { VehicleApproval } from "./admin/pages/VehicleApproval";
 import { addMake, addModel } from "./components/Redux/SelectorCarSlice";
 import { WishList } from "./pages/WishList";
+import { SubcribeUserList } from "./admin/pages/SubcribeUserList";
 
 function Layout() {
   const location = useLocation();
@@ -259,6 +260,7 @@ function Layout() {
           <Route path="bid-history" element={<AdminBidHistory />} />
           <Route path="manage-users" element={<ManageUsers />} />
           <Route path="/admin/customerlist" element={<CustomerList />} />
+          <Route path="/admin/subcribeuser" element={<SubcribeUserList />} />
         </Route>
 
         <Route

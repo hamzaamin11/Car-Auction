@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState } from "react";
 import Logo from "../../src/assets/wheellogo.png";
 import {
   FaFacebookF,
@@ -9,9 +9,31 @@ import {
 } from "react-icons/fa";
 import { Link } from "react-router-dom";
 import { useSelector } from "react-redux";
+import axios from "axios";
+import { BASE_URL } from "./Contant/URL";
+import Swal from "sweetalert2";
 
 const Footer = () => {
   const { currentUser } = useSelector((state) => state.auth);
+  const [email, setEmail] = useState("");
+
+  const handleSubscribeEmail = async (e) => {
+    e.preventDefault();
+    try {
+      const res = await axios.post(`${BASE_URL}/subscribe`, { email });
+      console.log(res.data);
+      setEmail("");
+      await Swal.fire({
+        title: "Subscribed Successfully!",
+        text: "Thank you for subscribing! You’ll now receive our latest updates and news directly.",
+        icon: "success",
+        confirmButtonColor: "#9333ea",
+      });
+    } catch (error) {
+      console.log(error);
+    }
+  };
+
   return (
     <footer className="relative text-white bg-[#1a1a1a]">
       {/* Main Content */}
@@ -148,13 +170,16 @@ const Footer = () => {
           </p>
 
           <form
-            onSubmit={(e) => e.preventDefault()}
+            onSubmit={handleSubscribeEmail} // ✅ no need for (e) => ...
             className="flex lg:flex-col flex-row items-center sm:items-stretch lg:space-y-3 space-y-0 space-x-2"
           >
             <input
               type="email"
               placeholder="Enter your email"
-              className="w-full sm:flex-1 px-3 py-2 text-white placeholder-white border border-white rounded-md focus:outline-none "
+              name="email"
+              value={email}
+              onChange={(e) => setEmail(e.target.value)}
+              className="w-full sm:flex-1 px-3 py-2 text-white placeholder-white border border-white rounded-md focus:outline-none"
               required
             />
             <button
@@ -164,8 +189,6 @@ const Footer = () => {
               Subscribe
             </button>
           </form>
-
-        
         </div>
       </div>
 

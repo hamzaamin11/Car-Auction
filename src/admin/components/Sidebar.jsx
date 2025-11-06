@@ -62,6 +62,7 @@ const Sidebar = () => {
         { name: "Suggestions", path: "/admin/suggestionlist" },
         { name: "Partnership Opportunities", path: "/admin/becomepartnerlist" },
         { name: "Get in Touch", path: "/admin/contactlist" },
+        { name: "Subcribe Users", path: "/admin/subcribeuser" },
       ],
     },
   ];
