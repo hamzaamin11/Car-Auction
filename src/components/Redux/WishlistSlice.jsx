@@ -13,12 +13,17 @@ const WishlistSlice = createSlice({
       const { userId, vehicle } = action.payload;
       console.log({ userId, vehicle });
 
-      // Initialize user's wishlist if it doesn't exist
+      // ✅ Ensure wishlistByUser exists first
+      if (!state.wishlistByUser) {
+        state.wishlistByUser = {};
+      }
+
+      // ✅ Then ensure this user's wishlist array exists
       if (!state.wishlistByUser[userId]) {
         state.wishlistByUser[userId] = [];
       }
 
-      // Check if vehicle already exists in user's wishlist
+      // ✅ Now safely check for duplicates
       const exists = state.wishlistByUser[userId].some(
         (v) => v.id === vehicle.id
       );

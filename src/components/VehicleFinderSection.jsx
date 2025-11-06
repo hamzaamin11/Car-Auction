@@ -256,7 +256,7 @@ const handlePrev = () => {
   </button>
 
   {/* Cards Grid */}
-  <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 max-w-6xl mx-auto">
+  <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 max-w-7xl mx-auto">
     {allCars.slice(startIndex, startIndex + cardsPerPage).map((car) => (
       <div
         key={car.id}
