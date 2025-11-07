@@ -1,4 +1,4 @@
-import { FaArrowLeft, FaArrowRight } from "react-icons/fa";
+import { FaArrowLeft, FaArrowRight, FaClock } from "react-icons/fa";
 import { useEffect, useState } from "react";
 import axios from "axios";
 import { Link, useParams } from "react-router-dom";
@@ -223,10 +223,10 @@ export const Customerbid = () => {
   }, []);
 
   return (
-    <div className="max-w-screen-2xl mx-auto p-6 bg-gray-100 min-h-screen">
+    <div className="max-w-screen-2xl mx-auto p-4 bg-gray-100 min-h-screen">
       {/* Header */}
 
-      <div className="mb-8">
+      <div className="mb-4">
         {/* Breadcrumb Section */}
         <nav className="text-sm text-gray-600 mb-2 mx-4">
           <Link to="/" className="hover:underline text-blue-950">
@@ -236,7 +236,10 @@ export const Customerbid = () => {
           <Link to="/finder" className="hover:underline text-blue-950">
             Find Vehicle
           </Link>{" "}
-          / <span className="text-gray-500">Vehicle Detail</span>
+          / <span className="text-blue-950">{selectedPrice?.make}</span> / {""}
+          <span className="text-blue-950">
+            {selectedPrice?.model} {selectedPrice?.series} {selectedPrice?.year}
+          </span>
         </nav>
 
         {/* Header with Back Button */}
@@ -248,7 +251,7 @@ export const Customerbid = () => {
         </div>
       </div>
 
-      <div className="grid lg:grid-cols-3 gap-8">
+      <div className="grid lg:grid-cols-3 gap-1">
         {/* LEFT: IMAGE SLIDER */}
         <div className="bg-white rounded-xl shadow-md p-4 relative">
           {/* Image container */}
@@ -299,73 +302,97 @@ export const Customerbid = () => {
         <div className="hidden lg:block space-y-6">
           {/* Vehicle Details Card */}
           <div className="bg-white rounded-xl shadow-md p-6 h-full">
-            <h2 className="text-xl font-bold text-black mb-4 border-b pb-2">
+            <h2 className="text-xl font-bold text-gray-800  border-b border-gray-100 pb-2">
               Vehicle Details
             </h2>
 
-            <div className="overflow-x-auto">
-              <table className="w-full text-sm text-gray-800   border-collapse">
-                <tbody>
-                  <tr className="border-b  ">
-                    <td className="font-semibold py-2 w-1/2">Year:</td>
-                    <td className="py-2">{selectedPrice?.year || "N/A"}</td>
+            <div className="overflow-x-auto mt-3">
+              <table className="w-full text-sm text-gray-700   border-collapse">
+                <tbody className="border  border-gray-100 ">
+                  <tr className="border-b border-gray-100   ">
+                    <td className=" py-2 px-2 w-1/2">Year:</td>
+                    <td className="py-2 font-semibold">
+                      {selectedPrice?.year || "N/A"}
+                    </td>
                   </tr>
-                  <tr className="border-b">
-                    <td className="font-semibold py-2">Make:</td>
-                    <td className="py-2">{selectedPrice?.make || "N/A"}</td>
+                  <tr className="border-b border-gray-100 ">
+                    <td className="py-2 px-2 ">Make:</td>
+                    <td className="py-2 font-semibold ">
+                      {selectedPrice?.make || "N/A"}
+                    </td>
                   </tr>
-                  <tr className="border-b">
-                    <td className="font-semibold py-2">Model:</td>
-                    <td className="py-2">{selectedPrice?.model || "N/A"}</td>
+                  <tr className="border-b border-gray-100 ">
+                    <td className="py-2 px-2 ">Model:</td>
+                    <td className="py-2 font-semibold ">
+                      {selectedPrice?.model || "N/A"}
+                    </td>
                   </tr>
-                  <tr className="border-b">
-                    <td className="font-semibold py-2">City:</td>
-                    <td className="py-2">
+                  <tr className="border-b border-gray-100 ">
+                    <td className="py-2 px-2 ">City:</td>
+                    <td className="py-2 font-semibold ">
                       {selectedPrice?.locationId || "N/A"}
                     </td>
                   </tr>
-                  <tr className="border-b">
-                    <td className="font-semibold py-2">Body Style:</td>
-                    <td className="py-2">
+                  <tr className="border-b border-gray-100 ">
+                    <td className=" py-2 px-2 ">Body Style:</td>
+                    <td className="py-2 font-semibold">
                       {selectedPrice?.bodyStyle || "N/A"}
                     </td>
                   </tr>
-                  <tr className="border-b">
-                    <td className="font-semibold py-2">
-                      Certification Status:
-                    </td>
-                    <td className="py-2">
+                  <tr className="border-b border-gray-100 ">
+                    <td className=" py-2 px-2 ">Certification Status:</td>
+                    <td className="py-2 font-semibold ">
                       {selectedPrice?.certifyStatus || "N/A"}
                     </td>
                   </tr>
-                  <tr className="border-b">
-                    <td className="font-semibold py-2">Transmission:</td>
-                    <td className="py-2">
+                  <tr className="border-b border-gray-100 ">
+                    <td className=" py-2 px-2 ">Transmission:</td>
+                    <td className="py-2 font-semibold">
                       {selectedPrice?.transmission || "N/A"}
                     </td>
                   </tr>
-                  <tr className="border-b">
-                    <td className="font-semibold py-2">Meter Reading:</td>
-                    <td className="py-2">{selectedPrice?.mileage || "N/A"}</td>
-                  </tr>
-                  <tr className="border-b">
-                    <td className="font-semibold py-2">Drive</td>
-                    <td className="py-2">
-                      {selectedPrice?.driveType || "N/A"}
+                  <tr className="border-b border-gray-100 ">
+                    <td className=" py-2 px-2 ">Meter Reading:</td>
+                    <td className="py-2 font-semibold">
+                      {selectedPrice?.mileage || "N/A"}
                     </td>
                   </tr>
-                  <tr className="border-b">
-                    <td className="font-semibold py-2">Fuel:</td>
-                    <td className="py-2">{selectedPrice?.fuelType || "N/A"}</td>
+                  <tr className="border-b border-gray-100 ">
+                    <td className=" py-2 px-2 ">Drive</td>
+                    <td className="py-2 font-semibold">
+                      {selectedPrice?.driveType
+                        ? selectedPrice.driveType.charAt(0).toUpperCase() +
+                          selectedPrice.driveType.slice(1)
+                        : "N/A"}
+                    </td>
                   </tr>
-                  <tr className="border-b">
-                    <td className="font-semibold py-2">Color:</td>
-                    <td className="py-2">{selectedPrice?.color || "N/A"}</td>
+                  <tr className="border-b border-gray-100 ">
+                    <td className=" py-2 px-2 ">Fuel:</td>
+                    <td className="py-2 font-semibold">
+                      {selectedPrice?.fuelType
+                        ? selectedPrice.fuelType.charAt(0).toUpperCase() +
+                          selectedPrice.fuelType.slice(1)
+                        : "N/A"}
+                    </td>
+                  </tr>
+                  <tr className="border-b border-gray-100 ">
+                    <td className=" py-2 px-2 ">Color:</td>
+                    <td className="py-2 font-semibold">
+                      {selectedPrice?.color
+                        ? selectedPrice.color.charAt(0).toUpperCase() +
+                          selectedPrice.color.slice(1)
+                        : "N/A"}
+                    </td>
                   </tr>
                   <tr>
-                    <td className="font-semibold py-2">Condition:</td>
-                    <td className="py-2">
-                      {selectedPrice?.vehicleCondition || "N/A"}
+                    <td className="py-2 px-2 ">Condition:</td>
+                    <td className="py-2 font-semibold">
+                      {selectedPrice?.vehicleCondition
+                        ? selectedPrice.vehicleCondition
+                            .charAt(0)
+                            .toUpperCase() +
+                          selectedPrice.vehicleCondition.slice(1)
+                        : "N/A"}
                     </td>
                   </tr>
                 </tbody>
@@ -375,73 +402,84 @@ export const Customerbid = () => {
         </div>
 
         <div className="bg-white rounded-xl shadow-md p-6 hidden lg:block">
-          <h2 className="text-xl font-bold text-black mb-3 border-b pb-2">
-            Bid Details
+          <h2 className="text-xl font-bold text-gray-800 mb-3 border-b pb-2 border-gray-100">
+            Bid Information
           </h2>
 
-          <table className="w-full text-sm border border-gray-200 rounded-lg overflow-hidden">
+          <table className="w-full text-sm border border-gray-100 text-gray-700 rounded-lg overflow-hidden">
             <tbody>
-              <tr className="border-b">
-                <th className="text-left p-2 font-semibold text-gray-800 w-1/2">
+              <tr className="border-b border-gray-100">
+                <th className="text-left p-2  font-medium w-1/2">
                   Bid Status:
                 </th>
-                <td className="p-2 text-gray-700">
+                <td className="p-2 font-semibold ">
                   {selectedPrice?.bidStatus || "N/A"}
                 </td>
               </tr>
 
-              <tr className="border-b">
-                <th className="text-left p-2 font-semibold text-gray-800">
+              <tr className="border-b border-gray-100">
+                <th className="text-left p-2 font-medium ">
                   Eligibility Status:
                 </th>
-                <td className="p-2 text-gray-700">
-                  {selectedPrice?.eligibilityStatus || "N/A"}
+                <td className="p-2 font-semibold flex items-center gap-2">
+                  <span className="w-2 h-2 bg-blue-800 rounded-full"></span>
+                  <span>
+                    {selectedPrice?.eligibilityStatus
+                      ? "Check Now"
+                      : "No" || "N/A"}
+                  </span>
                 </td>
               </tr>
 
-              <tr className="border-b">
-                <th className="text-left p-2 font-semibold text-gray-800">
-                  Sale Status:
-                </th>
-                <td className="p-2 text-gray-700">
-                  {selectedPrice?.saleStatus || "N/A"}
+              <tr className="border-b border-gray-100">
+                <th className="text-left p-2 font-medium  ">Sale Status:</th>
+                <td className="p-2 font-semibold ">
+                  {selectedPrice?.saleStatus
+                    ? selectedPrice.saleStatus.charAt(0).toUpperCase() +
+                      selectedPrice.saleStatus.slice(1)
+                    : "N/A"}
                 </td>
               </tr>
 
-              <tr className="border-b">
-                <th className="text-left p-2 font-semibold text-gray-800">
-                  Time Left:
-                </th>
-                <td className="p-2 text-gray-700">
-                  {(selectedPrice?.endTime &&
-                    moment(selectedPrice?.endTime).local().format("hh:mm A")) ||
-                    "N/A"}
+              <tr className="border-b border-gray-100">
+                <th className="text-left p-2 font-medium ">Time Left:</th>
+                <td className="p-2 font-semibold text-red-600 flex items-center gap-1">
+                  {(() => {
+                    const hours = Math.floor(remainingTime / 3600);
+                    const minutes = Math.floor((remainingTime % 3600) / 60);
+                    const seconds = remainingTime % 60;
+
+                    const formatted = `${hours
+                      .toString()
+                      .padStart(2, "0")}:${minutes
+                      .toString()
+                      .padStart(2, "0")}:${seconds
+                      .toString()
+                      .padStart(2, "0")}`;
+
+                    return formatted;
+                  })()}
+                  <FaClock className="text-red-600 text-sm" />
                 </td>
               </tr>
 
-              <tr className="border-b">
-                <th className="text-left p-2 font-semibold text-gray-800">
-                  Current Bid:
-                </th>
-                <td className="p-2 text-gray-700">
+              <tr className="border-b border-gray-100">
+                <th className="text-left p-2 font-medium ">Current Bid:</th>
+                <td className="p-2 font-semibold ">
+                  PKR {selectedPrice?.buyNowPrice?.toLocaleString()}
+                </td>
+              </tr>
+
+              <tr className="border-b border-gray-100">
+                <th className="text-left p-2 font-medium ">Your Bid:</th>
+                <td className="p-2 font-semibold  ">
                   {selectedPrice?.currentBid || "--"}
                 </td>
               </tr>
 
-              <tr className="border-b">
-                <th className="text-left p-2 font-semibold text-gray-800">
-                  Your Bid:
-                </th>
-                <td className="p-2 text-gray-700">
-                  {selectedPrice?.currentBid || "--"}
-                </td>
-              </tr>
-
-              <tr className="border-b">
-                <th className="text-left p-2 font-semibold text-gray-800">
-                  Bid Date:
-                </th>
-                <td className="p-2 text-gray-700">
+              <tr className="border-b border-gray-100">
+                <th className="text-left p-2 font-medium ">Bid Date:</th>
+                <td className="p-2 font-semibold  ">
                   {selectedPrice?.startTime
                     ? new Date(selectedPrice.startTime).toLocaleDateString(
                         "en-GB"
@@ -450,11 +488,9 @@ export const Customerbid = () => {
                 </td>
               </tr>
 
-              <tr className="border-b">
-                <th className="text-left p-2 font-semibold text-gray-800">
-                  Start Time:
-                </th>
-                <td className="p-2 text-gray-700">
+              <tr className="border-b border-gray-100">
+                <th className="text-left p-2 font-medium ">Start Time:</th>
+                <td className="p-2  font-semibold">
                   {(selectedPrice?.startTime &&
                     moment(selectedPrice?.startTime)
                       .local()
@@ -463,23 +499,12 @@ export const Customerbid = () => {
                 </td>
               </tr>
 
-              <tr className="border-b">
-                <th className="text-left p-2 font-semibold text-gray-800">
-                  End Time:
-                </th>
-                <td className="p-2 text-gray-700">
+              <tr className="border-b border-gray-100">
+                <th className="text-left p-2  font-medium ">End Time:</th>
+                <td className="p-2 font-semibold">
                   {(selectedPrice?.endTime &&
                     moment(selectedPrice?.endTime).local().format("hh:mm A")) ||
                     "N/A"}
-                </td>
-              </tr>
-
-              <tr>
-                <th className="text-left p-2 text-lg font-bold text-gray-800">
-                  Demand Price:
-                </th>
-                <td className="p-2 text-green-700 font-semibold text-lg">
-                  PKR {selectedPrice?.buyNowPrice?.toLocaleString()}
                 </td>
               </tr>
             </tbody>
@@ -573,62 +598,66 @@ export const Customerbid = () => {
       <div className="col-span-1 space-y-6 lg:hidden block">
         {/* Vehicle Details Card */}
         <div className="bg-white rounded-xl shadow-md p-6 mt-4">
-          <h2 className="text-xl font-bold text-black mb-3 border-b pb-2">
+          <h2 className="text-xl font-bold text-black mb-3 border-b border-gray-100 pb-2">
             Vehicle Details
           </h2>
           <div className="overflow-x-auto">
             <table className="w-full text-sm text-gray-700 border-collapse">
-              <tbody>
-                <tr className="border-b">
-                  <td className="font-semibold py-2 w-1/3">Year</td>
+              <tbody className="border border-gray-100">
+                <tr className="border-b border-gray-100">
+                  <td className="font-semibold py-2 px-2 w-1/3">Year</td>
                   <td className="py-2">{selectedPrice?.year || "N/A"}</td>
                 </tr>
-                <tr className="border-b">
-                  <td className="font-semibold py-2">Make</td>
+                <tr className="border-b border-gray-100">
+                  <td className="font-semibold px-2 py-2">Make</td>
                   <td className="py-2">{selectedPrice?.make || "N/A"}</td>
                 </tr>
-                <tr className="border-b">
-                  <td className="font-semibold py-2">Model</td>
+                <tr className="border-b border-gray-100">
+                  <td className="font-semibold px-2 py-2">Model</td>
                   <td className="py-2">{selectedPrice?.model || "N/A"}</td>
                 </tr>
-                <tr className="border-b">
-                  <td className="font-semibold py-2">City</td>
+                <tr className="border-b border-gray-100">
+                  <td className="font-semibold px-2 py-2">City</td>
                   <td className="py-2">{selectedPrice?.locationId || "N/A"}</td>
                 </tr>
-                <tr className="border-b">
-                  <td className="font-semibold py-2">Body Style</td>
+                <tr className="border-b border-gray-100">
+                  <td className="font-semibold px-2 py-2">Body Style</td>
                   <td className="py-2">{selectedPrice?.bodyStyle || "N/A"}</td>
                 </tr>
-                <tr className="border-b">
-                  <td className="font-semibold py-2">Certification Status</td>
+                <tr className="border-b border-gray-100">
+                  <td className="font-semibold px-2 py-2">
+                    Certification Status
+                  </td>
                   <td className="py-2">
                     {selectedPrice?.certifyStatus || "N/A"}
                   </td>
                 </tr>
-                <tr className="border-b">
-                  <td className="font-semibold py-2">Transmission</td>
+                <tr className="border-b border-gray-100">
+                  <td className="font-semibold px-2 py-2">Transmission</td>
                   <td className="py-2">
                     {selectedPrice?.transmission || "N/A"}
                   </td>
                 </tr>
-                <tr className="border-b">
-                  <td className="font-semibold py-2">Meter Reading</td>
+                <tr className="border-b border-gray-100">
+                  <td className="font-semibold px-2 py-2">Meter Reading</td>
                   <td className="py-2">{selectedPrice?.mileage || "N/A"}</td>
                 </tr>
-                <tr className="border-b">
-                  <td className="font-semibold py-2">Drive</td>
+                <tr className="border-b border-gray-100">
+                  <td className="font-semibold px-2 py-2 ">Drive</td>
                   <td className="py-2">{selectedPrice?.driveType || "N/A"}</td>
                 </tr>
-                <tr className="border-b">
-                  <td className="font-semibold py-2">Fuel</td>
+                <tr className="border-b border-gray-100">
+                  <td className="font-semibold px-2 py-2">Fuel</td>
                   <td className="py-2">{selectedPrice?.fuelType || "N/A"}</td>
                 </tr>
-                <tr className="border-b">
-                  <td className="font-semibold py-2">Color</td>
+                <tr className="border-b border-gray-100">
+                  <td className="font-semibold px-2 py-2">Color</td>
                   <td className="py-2">{selectedPrice?.color || "N/A"}</td>
                 </tr>
                 <tr>
-                  <td className="font-semibold py-2">Condition</td>
+                  <td className="font-semibold px-2 py-2 border-gray-100">
+                    Condition
+                  </td>
                   <td className="py-2">
                     {selectedPrice?.vehicleCondition || "N/A"}
                   </td>
@@ -640,73 +669,59 @@ export const Customerbid = () => {
 
         {/* Bid Section */}
         <div className="bg-white rounded-xl shadow-md p-6">
-          <h2 className="text-xl font-bold text-black mb-3 border-b pb-2">
-            Bid Details
+          <h2 className="text-xl font-bold text-black mb-3 border-b border-gray-100 pb-2">
+            Bid Information
           </h2>
 
-          <table className="w-full text-sm border border-gray-200 rounded-lg overflow-hidden">
+          <table className="w-full text-sm border border-gray-100 rounded-lg overflow-hidden">
             <tbody>
-              <tr className="border-b">
-                <th className="text-left p-2 font-semibold text-gray-800 w-1/2">
-                  Bid Status:
-                </th>
-                <td className="p-2 text-gray-700">
+              <tr className="border-b border-gray-100">
+                <th className="text-left p-2  w-1/2">Bid Status:</th>
+                <td className="p-2 font-semibold">
                   {selectedPrice?.bidStatus || "N/A"}
                 </td>
               </tr>
 
-              <tr className="border-b">
-                <th className="text-left p-2 font-semibold text-gray-800">
+              <tr className="border-b border-gray-100">
+                <th className="text-left p-2 font-semibold ">
                   Eligibility Status:
                 </th>
-                <td className="p-2 text-gray-700">
-                  {selectedPrice?.eligibilityStatus || "N/A"}
+                <td className="p-2 ">
+                  {selectedPrice?.eligibilityStatus
+                    ? "Check Now"
+                    : "No" || "N/A"}
                 </td>
               </tr>
 
-              <tr className="border-b">
-                <th className="text-left p-2 font-semibold text-gray-800">
-                  Sale Status:
-                </th>
-                <td className="p-2 text-gray-700">
-                  {selectedPrice?.saleStatus || "N/A"}
-                </td>
+              <tr className="border-b border-gray-100 ">
+                <th className="text-left p-2 font-semibold ">Sale Status:</th>
+                <td className="p-2 ">{selectedPrice?.saleStatus || "N/A"}</td>
               </tr>
 
-              <tr className="border-b">
-                <th className="text-left p-2 font-semibold text-gray-800">
-                  Time Left:
-                </th>
-                <td className="p-2 text-gray-700">
+              <tr className="border-b border-gray-100 ">
+                <th className="text-left p-2 font-semibold ">Time Left:</th>
+                <td className="p-2 ">
                   {(selectedPrice?.endTime &&
                     moment(selectedPrice?.endTime).local().format("hh:mm A")) ||
                     "N/A"}
                 </td>
               </tr>
 
-              <tr className="border-b">
-                <th className="text-left p-2 font-semibold text-gray-800">
-                  Current Bid:
-                </th>
-                <td className="p-2 text-gray-700">
-                  {selectedPrice?.currentBid || "--"}
-                </td>
+              <tr className="border-b border-gray-100">
+                <th className="text-left p-2 font-semibold ">Current Bid:</th>
+                <td className="p-2 ">{selectedPrice?.currentBid || "--"}</td>
               </tr>
 
-              <tr className="border-b">
+              <tr className="border-b border-gray-100">
                 <th className="text-left p-2 font-semibold text-gray-800">
                   Your Bid:
                 </th>
-                <td className="p-2 text-gray-700">
-                  {selectedPrice?.currentBid || "--"}
-                </td>
+                <td className="p-2 ">{selectedPrice?.currentBid || "--"}</td>
               </tr>
 
-              <tr className="border-b">
-                <th className="text-left p-2 font-semibold text-gray-800">
-                  Bid Date:
-                </th>
-                <td className="p-2 text-gray-700">
+              <tr className="border-b border-gray-100">
+                <th className="text-left p-2 font-semibold ">Bid Date:</th>
+                <td className="p-2 ">
                   {selectedPrice?.startTime
                     ? new Date(selectedPrice.startTime).toLocaleDateString(
                         "en-GB"
@@ -715,11 +730,9 @@ export const Customerbid = () => {
                 </td>
               </tr>
 
-              <tr className="border-b">
-                <th className="text-left p-2 font-semibold text-gray-800">
-                  Start Time:
-                </th>
-                <td className="p-2 text-gray-700">
+              <tr className="border-b border-gray-100">
+                <th className="text-left p-2 font-semibold ">Start Time:</th>
+                <td className="p-2 ">
                   {(selectedPrice?.startTime &&
                     moment(selectedPrice?.startTime)
                       .local()
@@ -728,11 +741,9 @@ export const Customerbid = () => {
                 </td>
               </tr>
 
-              <tr className="border-b">
-                <th className="text-left p-2 font-semibold text-gray-800">
-                  End Time:
-                </th>
-                <td className="p-2 text-gray-700">
+              <tr className="border-b border-gray-100">
+                <th className="text-left p-2 font-semibold ">End Time:</th>
+                <td className="p-2 ">
                   {(selectedPrice?.endTime &&
                     moment(selectedPrice?.endTime).local().format("hh:mm A")) ||
                     "N/A"}
@@ -740,10 +751,8 @@ export const Customerbid = () => {
               </tr>
 
               <tr>
-                <th className="text-left p-2 text-lg font-bold text-gray-800">
-                  Demand Price:
-                </th>
-                <td className="p-2 text-green-700 font-semibold text-lg">
+                <th className="text-left p-2 font-semibold ">Current bid:</th>
+                <td className="p-2  ">
                   PKR {selectedPrice?.buyNowPrice?.toLocaleString()}
                 </td>
               </tr>
