@@ -41,8 +41,10 @@ export const SubcribeUserList = () => {
 
   useEffect(() => {
     const filtered = allContacts.filter((contact) =>
-      contact.subject?.toLowerCase().includes(search.toLowerCase())
+      contact?.email?.toLowerCase().includes(search.toLowerCase())
     );
+
+    console.log("filtered =>",filtered)
     setFilteredContacts(filtered);
   }, [search, allContacts]);
 
@@ -56,6 +58,8 @@ export const SubcribeUserList = () => {
 
   console.log("osdkas", currentItems);
   const totalPages = Math.ceil(filteredContacts.length / itemsPerPage);
+
+  console.log("total page =>",totalPages )
 
   const handleNextPage = () => {
     if (currentPage < totalPages) {
@@ -98,7 +102,7 @@ export const SubcribeUserList = () => {
             </svg>
           </span>
           <CustomSearch
-            placeholder="Search by Subject..."
+            placeholder="Search by Email..."
             value={search}
             onChange={(e) => {
               setSearch(e.target.value);
@@ -121,54 +125,54 @@ export const SubcribeUserList = () => {
             </thead>
 
             {/* Body */}
-            <tbody>
-              {allContacts.length > 0 ? (
-                allContacts.map((contact, index) => (
-                  <tr key={contact.id} className="border-b ">
-                    <td className="py-2 px-4 whitespace-nowrap">
-                      {indexOfFirstItem + index + 1}
-                    </td>
+           <tbody>
+  {currentItems.length > 0 ? (
+    currentItems.map((contact, index) => (
+      <tr key={contact.id} className="border-b">
+        <td className="py-2 px-4 whitespace-nowrap">
+          {indexOfFirstItem + index + 1}
+        </td>
+        <td className="py-2 px-75">{contact?.email}</td>
+      </tr>
+    ))
+  ) : (
+    <tr>
+      <td colSpan="5" className="py-8 text-center text-gray-400">
+        No Emails found.
+      </td>
+    </tr>
+  )}
+</tbody>
 
-                    <td className="py-2 px-75">{contact?.email}</td>
-                  </tr>
-                ))
-              ) : (
-                <tr>
-                  <td colSpan="5" className="py-8 text-center text-gray-400">
-                    No contacts found.
-                  </td>
-                </tr>
-              )}
-            </tbody>
           </table>
         </div>
 
         {/* Mobile Cards */}
-        <div className="md:hidden space-y-4">
-          {allContacts.length > 0 ? (
-            allContacts.map((contact) => (
-              <div
-                key={contact.id}
-                className="bg-white rounded-xl shadow-md border border-gray-200 p-4 transition-all duration-300 hover:shadow-lg cursor-pointer"
-                onClick={() => handleView(contact)}
-              >
-                <div className="space-y-2 text-sm">
-                  <p className="flex justify-between">
-                    <span className="font-bold text-gray-900">Email</span>
-                    <span className="text-gray-700">
-                      {contact?.email.charAt(0).toUpperCase() +
-                        contact?.email.slice(1)}
-                    </span>
-                  </p>
-                </div>
-              </div>
-            ))
-          ) : (
-            <div className="text-center py-8 text-gray-400 text-sm">
-              No contacts found.
-            </div>
-          )}
+       <div className="md:hidden space-y-4">
+  {currentItems.length > 0 ? (
+    currentItems.map((contact) => (
+      <div
+        key={contact.id}
+        className="bg-white rounded-xl shadow-md border border-gray-200 p-4 transition-all duration-300 hover:shadow-lg cursor-pointer"
+        onClick={() => handleView(contact)}
+      >
+        <div className="space-y-2 text-sm">
+          <p className="flex justify-between">
+            <span className="font-bold text-gray-900">Email</span>
+            <span className="text-gray-700">
+              {contact?.email.charAt(0).toUpperCase() + contact?.email.slice(1)}
+            </span>
+          </p>
         </div>
+      </div>
+    ))
+  ) : (
+    <div className="text-center py-8 text-gray-400 text-sm">
+      No Emails found.
+    </div>
+  )}
+</div>
+
 
         {/* Pagination Controls */}
         {totalPages > 1 && (

@@ -407,19 +407,19 @@ export default function Topbar() {
             />
           )}
         </button>
-
-        <div
-          className={`absolute right-0 mt-2 w-44 bg-white rounded-md shadow-lg overflow-hidden transition-all duration-300 ease-in-out ${
-            dropdownOpen
-              ? "max-h-96 opacity-100 scale-100"
-              : "max-h-0 opacity-0 scale-95 pointer-events-none"
-          }`}
-        >
+        
+                 <div
+                  className={`absolute right-0 mt-2 w-44 bg-white rounded-md shadow-lg transition-all duration-200 ease-in-out ${
+                    dropdownOpen
+                      ? "opacity-100 scale-100 visible"
+                      : "opacity-0 scale-95 invisible"
+                  }`}
+                >
           <div className="px-4 py-3 border-b border-gray-200">
-            <p className="text-sm text-gray-600">Signed in as</p>
-            <p className="text-sm font-medium text-gray-800 truncate">
+            <p className="text-sm text-black">Signed in as</p>
+            <p className="text-sm font-normal text-black truncate">
               {currentUser?.name || "--"}{" "}
-              <div className="text-gray-700 ">
+              <div className="text-gray-900 ">
                 <strong>Role:</strong>
                 {currentUser?.role || "--"}
               </div>
@@ -429,13 +429,13 @@ export default function Topbar() {
             onClick={() => setPasswordModalOpen(true)}
             className="flex items-center gap-2 px-4 py-1 text-gray-600 hover:bg-gray-100 cursor-pointer transition-colors duration-200 "
           >
-            <span className="text-sm font-semibold">Change Password</span>
+            <span className="text-sm font-normal">Change Password</span>
           </div>
           <div
             onClick={() => setProfileModalOpen(true)}
             className="flex items-center gap-2 px-4 py-1 text-gray-600 hover:bg-gray-100 cursor-pointer transition-colors duration-200"
           >
-            <span className="text-sm font-semibold">Manage Profile</span>
+            <span className="text-sm font-normal">Manage Profile </span>
           </div>
           <div
             onClick={handleLogout}
@@ -543,7 +543,7 @@ export default function Topbar() {
                 />
                 <label
                   htmlFor="profileImageInput"
-                  className="absolute bottom-0 right-0 bg-blue-600 text-white p-2 rounded-full cursor-pointer hover:bg-blue-700 transition-colors"
+                  className="absolute bottom-0 right-0 bg-red-600 text-white p-2 rounded-full cursor-pointer  transition-colors"
                   title="Change profile picture"
                 >
                   <svg

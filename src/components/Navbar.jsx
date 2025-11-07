@@ -453,7 +453,7 @@ const Navbar = () => {
             title="View Wishlist"
           >
             {/* Heart Icon */}
-            <FaHeart className="text-lg animate-bounce" />
+            <FaHeart className="text-lg " />
 
             {/* Text */}
             <span>Wishlist</span>
@@ -500,7 +500,7 @@ const Navbar = () => {
         >
           <img src={logoImage} alt="Logo" className="h-12 pt-4 lg:pt-0 " />
         </Link>
-        <ul className="hidden md:flex items-center  font-semibold relative">
+        <ul className="hidden md:flex items-center  font-semibold relative gap-3">
           <li>
             <Link
               to="/"
@@ -513,14 +513,15 @@ const Navbar = () => {
           </li>
 
           <li>
-            <Link
+            {""}
+            {/* <Link
               to="/about"
               className={`hover:text-red-600 px-3 ${
                 isActive("/about") ? "text-red-600 font-semibold " : ""
               }`}
             >
               About
-            </Link>
+            </Link> */}
           </li>
 
           {dropdowns.map((dropdown) => (
@@ -576,14 +577,14 @@ const Navbar = () => {
               How it works
             </Link>
 
-            <Link
+            {/* <Link
               to="/suggestion"
               className={`hover:text-red-600 ${
                 isActive("/suggestion") ? "text-red-600 font-semibold" : ""
               }`}
             >
               Suggestions
-            </Link>
+            </Link> */}
 
             <Link
               to="/contact"
@@ -611,14 +612,14 @@ const Navbar = () => {
               <Link
                 to="/today"
                 className="relative flex items-center gap-2 bg-red-600 ml-2 text-white font-bold px-4 py-1.5 
-             rounded hover:bg-red-700 transition-all overflow-hidden"
+             rounded  transition-all overflow-hidden"
               >
                 {/* Pulsing background */}
-                <span className="absolute inset-0 rounded-full bg-red-500/50 animate-ping"></span>
+                <span className="absolute inset-0 rounded-full bg-red-500/50 "></span>
 
                 {/* Icon and Text */}
-                <FaCarSide className="relative text-white text-lg animate-ping" />
-                <span className="relative z-10">LIVE</span>
+                <FaCarSide className="relative text-white text-lg" />
+                <span className="relative z-10">LIVE </span>
               </Link>
             )}
           </li>
@@ -649,18 +650,18 @@ const Navbar = () => {
                   )}
                 </button>
 
-                <div
-                  className={`absolute right-0 mt-2 w-44 bg-white rounded-md shadow-lg overflow-hidden transition-all duration-300 ease-in-out ${
+              <div
+                  className={`absolute right-0 mt-2 w-44 bg-white rounded-md shadow-lg transition-all duration-200 ease-in-out ${
                     dropdownOpen
-                      ? "max-h-96 opacity-100 scale-100"
-                      : "max-h-0 opacity-0 scale-95 pointer-events-none"
+                      ? "opacity-100 scale-100 visible"
+                      : "opacity-0 scale-95 invisible"
                   }`}
                 >
                   <div className="px-4 py-3 border-b border-gray-200">
-                    <p className="text-sm text-gray-800">Signed in as</p>
-                    <p className="text-sm font-medium text-gray-800 truncate">
+                   <p className="text-sm text-black">Signed in as</p>
+                    <p className="text-sm font-normal text-black truncate">
                       {currentUser?.name || "--"}{" "}
-                      <div className="text-gray-700 ">
+                      <div className="text-gray-900 ">
                         <strong>Role:</strong>
                         {currentUser?.role || "--"}
                       </div>
@@ -673,7 +674,7 @@ const Navbar = () => {
                     }}
                     className="flex items-center gap-2 px-4 py-1 text-gray-600 hover:bg-gray-100 cursor-pointer transition-colors duration-200"
                   >
-                    <span className="text-sm font-semibold ">
+                    <span className="text-sm font-normal ">
                       Change Password
                     </span>
                   </div>
@@ -684,7 +685,7 @@ const Navbar = () => {
                     }}
                     className="flex items-center gap-2 px-4 py-1 text-gray-600 hover:bg-gray-100 cursor-pointer transition-colors duration-200"
                   >
-                    <span className="text-sm font-semibold">
+                    <span className="text-sm font-normal">
                       Manage Profile
                     </span>
                   </div>
@@ -695,7 +696,7 @@ const Navbar = () => {
                     }}
                     className="flex items-center gap-2 px-4 py-1 text-gray-600 hover:bg-gray-100 cursor-pointer transition-colors duration-200"
                   >
-                    <span className="text-sm font-semibold">Sold Vehicles</span>
+                    <span className="text-sm font-normal">Sold Vehicles</span>
                   </div>
                   <div
                     onClick={handleLogout}
@@ -731,13 +732,13 @@ const Navbar = () => {
           >
             Home
           </Link>
-          <Link
+          {/* <Link
             to="/about"
             onClick={() => setMenuOpen(false)}
             className="block font-medium"
           >
             About
-          </Link>
+          </Link> */}
           <Link
             to="/contact"
             onClick={() => setMenuOpen(false)}
@@ -746,13 +747,13 @@ const Navbar = () => {
             Contact Us
           </Link>
 
-          <Link
+          {/* <Link
             to="/suggestion"
             onClick={() => setMenuOpen(false)}
             className="block font-medium"
           >
             Suggestion
-          </Link>
+          </Link> */}
 
           <Link
             to="/partner"
@@ -786,10 +787,10 @@ const Navbar = () => {
              rounded transition-all overflow-hidden"
             >
               {/* Pulsing background */}
-              <span className="absolute inset-0 rounded-full  animate-ping"></span>
+              <span className="absolute inset-0 rounded-full "></span>
 
               {/* Icon and Text */}
-              <FaCarSide className="relative text-white text-lg animate-bounce" />
+              <FaCarSide className="relative text-white text-lg " />
               <span className="relative z-10">LIVE</span>
             </Link>
           )}
@@ -874,7 +875,7 @@ const Navbar = () => {
                   setProfileModalOpen(true);
                   setMenuOpen(false);
                 }}
-                className="block w-full text-left py-1 text-white hover:underline"
+                className="block w-full text-left py-0 text-white hover:underline"
               >
                 Manage Profile
               </button>
@@ -882,7 +883,7 @@ const Navbar = () => {
                 onClick={() => {
                   navigate("/soldVehicles");
                 }}
-                className="block w-full text-left py-1 text-white hover:underline"
+                className="block w-full text-left py-0 text-white hover:underline"
               >
                 <span className="text-sm font-semibold">Sold Vehicles</span>
               </button>
@@ -957,7 +958,7 @@ const Navbar = () => {
               <div className="flex justify-end gap-2">
                 <button
                   onClick={() => setPasswordModalOpen(false)}
-                  className="px-4 py-2 text-white bg-red-600 hover:opacity-95 rounded-md"
+                  className="px-4 py-2 text-white bg-red-600 rounded-md"
                 >
                   Cancel
                 </button>

@@ -98,7 +98,7 @@ const CarCard = ({ car }) => {
 
 
         <p className="text-base text-gray-700">
-          <span className="font-semibold text-gray-900">Demand Price:</span>{" "}
+          <span className="font-semibold text-gray-900">Current Bid:</span>{" "}
           <span className="text-green-700 font-bold">
             PKR {car?.buyNowPrice?.toLocaleString()}
           </span>

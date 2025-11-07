@@ -138,7 +138,7 @@ useEffect(() => {
                 <strong>Location:</strong> {selectedVehicle?.locationId}
               </p>
               <p>
-                <strong>Demand Price:</strong> {selectedVehicle?.buyNowPrice}
+                <strong>Current Bid:</strong> {selectedVehicle?.buyNowPrice}
               </p>
               <p>
                 <strong>Condition:</strong> {selectedVehicle?.vehicleCondition}

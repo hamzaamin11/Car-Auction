@@ -274,7 +274,7 @@ const handlePrev = () => {
               {car.make} {car.model}
             </h3>
             <p className="text-gray-700 font-semibold mb-1">
-              Price: PKR {car.buyNowPrice}
+              Current Bid: PKR {car.buyNowPrice}
             </p>
             <p className="text-sm font-semibold text-gray-600">
               Condition:{" "}

@@ -154,8 +154,8 @@ const CertifiedCarsPage = () => {
                       <span className="font-medium">Year:</span> {car.year}
                     </p>
                   </div>
-                  <p className="mt-4 text-lg font-semibold text-gray-900">
-                    PKR:{car.buyNowPrice.toLocaleString()}
+                  <p className="mt-4 text-lg font-normal text-gray-900">
+                     <b>Current Bid:</b> {""}PKR{car.buyNowPrice.toLocaleString()}
                   </p>
                 </div>
               </div>

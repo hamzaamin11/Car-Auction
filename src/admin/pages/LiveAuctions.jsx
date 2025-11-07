@@ -240,7 +240,7 @@ export default function LiveAuctions() {
                   </p>
                   <p className="flex justify-between">
                     <span className="text-gray-900 font-bold">
-                      Demand Price
+                      Current Bid
                     </span>
                     <span className="text-gray-500">{user?.sellerOffer}</span>
                   </p>

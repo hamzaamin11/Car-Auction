@@ -100,7 +100,7 @@ const CarBanner = () => {
                       text-white text-xs sm:text-sm md:text-base font-semibold px-4 py-2 mt-4
                       rounded-full transition-all shadow-md"
                     >
-                      <FaCarSide className="text-white text-lg animate-ping" />
+                      <FaCarSide className="text-white text-lg " />
                       {slide.linkText}
                     </Link>
                   </motion.div>

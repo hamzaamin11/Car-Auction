@@ -60,6 +60,11 @@ const Footer = () => {
                 Home
               </Link>
             </li>
+              <li>
+              <Link to="/about" className="hover:text-[#b73439]">
+                About
+              </Link>
+            </li>
             <li>
               <Link to="/contact" className="hover:text-[#b73439]">
                 Contact Us
@@ -80,6 +85,7 @@ const Footer = () => {
                 Join Auctions
               </Link>
             </li>
+           
           </ul>
         </div>
 
@@ -96,6 +102,11 @@ const Footer = () => {
             <li>
               <Link to="/delivery" className="hover:text-[#b73439]">
                 Vehicle Delivery
+              </Link>
+            </li>
+               <li>
+              <Link to="/suggestion" className="hover:text-[#b73439]">
+                Suggestion
               </Link>
             </li>
             {currentUser ? null : (
