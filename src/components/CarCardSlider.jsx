@@ -92,22 +92,27 @@ const CarCard = ({ car }) => {
 </div>
 
 {/* Keep original title for desktop only */}
-<h3 className="hidden sm:block text-lg font-bold text-gray-800 transition">
-  {car?.make} {car?.model}
+<h3 className="hidden sm:block text-lg font-bold  text-gray-800 transition">
+  {car?.make} {car?.model} 
 </h3>
+<p className="text-sm text-black">
+          <span className="font-base text-black">Model Year:</span>{" "}
+          {car.year}
+        </p>
 
 
-        <p className="text-base text-gray-700">
-          <span className="font-semibold text-gray-900">Current Bid:</span>{" "}
-          <span className="text-green-700 font-bold">
+        <p className="text-sm text-black">
+          <span className="font-base text-black">Current Bid:</span>{" "}
+          <span className="text-black font-bold">
             PKR {car?.buyNowPrice?.toLocaleString()}
           </span>
         </p>
 
-        <p className="text-sm text-gray-600">
-          <span className="font-semibold text-gray-900">Location:</span>{" "}
+        <p className="text-sm text-black">
+          <span className="font-base text-black">Location:</span>{" "}
           {car.cityName}
         </p>
+       
 
         <span
           onClick={() => navigate(`/detailbid/${car.id}`)}

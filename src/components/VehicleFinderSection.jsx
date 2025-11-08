@@ -271,12 +271,18 @@ const handlePrev = () => {
         <div className="p-4 flex flex-col justify-between flex-grow">
           <div>
             <h3 className="text-lg font-semibold mb-1">
-              {car.make} {car.model}
+              {car.make} {car.model} 
             </h3>
-            <p className="text-gray-700 font-semibold mb-1">
-              Current Bid: PKR {car.buyNowPrice}
+               <p className="text-sm font-base text-black">
+              Model Year: <span>{car.year}</span>
             </p>
-            <p className="text-sm font-semibold text-gray-600">
+            <p className="text-sm font-base mb-1">
+              Current Bid:  <b> PKR  {car.buyNowPrice}</b>
+            </p>
+                 <p className="text-sm font-base text-black">
+              Location: <span>{car.cityName}</span>
+            </p>
+            {/* <p className="text-sm font-semibold text-black">
               Condition:{" "}
               <span
                 className={
@@ -287,12 +293,10 @@ const handlePrev = () => {
               >
                 {car.vehicleCondition?.toUpperCase()}
               </span>
-            </p>
-            <p className="text-sm text-gray-600">
-              Model Year: <span>{car.year}</span>
-            </p>
+            </p> */}
+         
           </div>
-          <button className="bg-red-600 py-2 text-white text-sm px-3 rounded mt-3">
+          <button className="bg-red-600 py-2 text-white text-sm px-3 rounded mt-1">
             View Details
           </button>
         </div>

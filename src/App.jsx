@@ -133,11 +133,7 @@ function Layout() {
       {!hideNavbarFooter && location.pathname === "/"}
       <ScrollToTop />
 
-      {role === "admin" || role === "seller" || location.pathname === "/"
-        ? null
-        : !hideNavbarFooter && <Navbar />}
-
-      {location.pathname === "/" && <Navbar />}
+     {!hideNavbarFooter && role !== "admin" && role !== "seller" && <Navbar />}
 
       <Routes>
         {/* Main Routes */}

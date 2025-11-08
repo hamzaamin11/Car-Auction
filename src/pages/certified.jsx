@@ -138,25 +138,28 @@ const CertifiedCarsPage = () => {
 
                 {/* Content Section */}
                 <div className="p-5">
-                  <h3 className="text-lg font-semibold text-gray-800 truncate">
+                  <h3 className="text-lg font-semibold text-black truncate">
                     {car.make} {car.model} {car.series}
                   </h3>
-                  <div className="mt-3 text-sm text-gray-600 space-y-2">
+                     <p>
+                      <span className="text-sm font-base"> Model Year:</span> {car.year}
+                    </p>
+                      <p className="mt-1 text-sm font-base text-black">
+                     Current Bid: {""} <b>PKR{" "}{car.buyNowPrice.toLocaleString()}</b>
+                  </p>
+
+                  <div className="mt-1 text-sm text-black space-y-2">
                     <p>
-                      <span className="font-medium">Location:</span>{" "}
+                      <span className="font-base">Location:</span>{" "}
                       {car.locationId}
                     </p>
-                    <p>
+                    {/* <p>
                       <span className="font-medium">Mileage:</span> {car.mileage}{" "}
                       Km
-                    </p>
-                    <p>
-                      <span className="font-medium">Year:</span> {car.year}
-                    </p>
+                    </p> */}
+                 
                   </div>
-                  <p className="mt-4 text-lg font-normal text-gray-900">
-                     <b>Current Bid:</b> {""}PKR{car.buyNowPrice.toLocaleString()}
-                  </p>
+                
                 </div>
               </div>
             ))}
