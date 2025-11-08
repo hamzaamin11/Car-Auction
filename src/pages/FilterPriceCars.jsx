@@ -57,7 +57,7 @@ const FilterPriceCars = () => {
   const [activeTab, setActiveTab] = useState("all");
   const [sorting, setSorting] = useState("");
   const [loading, setLoading] = useState(false);
-  
+
   // Pagination states
   const [currentPage, setCurrentPage] = useState(1);
   const carsPerPage = 10;
@@ -253,14 +253,14 @@ const FilterPriceCars = () => {
   const handlePrevPage = () => {
     if (currentPage > 1) {
       setCurrentPage(currentPage - 1);
-      window.scrollTo({ top: 0, behavior: 'smooth' });
+      window.scrollTo({ top: 0, behavior: "smooth" });
     }
   };
 
   const handleNextPage = () => {
     if (currentPage < totalPages) {
       setCurrentPage(currentPage + 1);
-      window.scrollTo({ top: 0, behavior: 'smooth' });
+      window.scrollTo({ top: 0, behavior: "smooth" });
     }
   };
 
@@ -318,9 +318,9 @@ const FilterPriceCars = () => {
             <button
               key={index}
               onClick={() => setActiveTab(tab.toLowerCase())}
-              className={`flex-1 py-2 rounded-lg text-sm font-semibold ${
+              className={`flex-1 py-2 rounded text-sm font-semibold ${
                 activeTab === tab.toLowerCase()
-                  ? "bg-red-600 text-white"
+                  ? "bg-blue-950 text-white"
                   : "bg-gray-200 text-gray-700"
               }`}
             >
@@ -620,60 +620,59 @@ const FilterPriceCars = () => {
           )}
 
           {/* Pagination Controls */}
-        {allFilterCars.length > 0 && (
-  <div className="flex justify-between items-center mt-6 mb-6 px-6">
-    {/* Prev Button */}
-    <button
-      onClick={handlePrevPage}
-      disabled={currentPage === 1}
-      className={`flex items-center px-6 py-2 rounded-lg font-semibold transition-all ${
-        currentPage === 1
-          ? "bg-gray-300 text-gray-500 cursor-not-allowed"
-          : "bg-blue-950 text-white"
-      }`}
-    >
-      <svg
-        xmlns="http://www.w3.org/2000/svg"
-        className="h-5 w-5 mr-1"
-        viewBox="0 0 20 20"
-        fill="currentColor"
-      >
-        <path
-          fillRule="evenodd"
-          d="M12.707 5.293a1 1 0 010 1.414L9.414 10l3.293 3.293a1 1 0 01-1.414 1.414l-4-4a1 1 0 010-1.414l4-4a1 1 0 011.414 0z"
-          clipRule="evenodd"
-        />
-      </svg>
-      Prev
-    </button>
+          {allFilterCars.length > 0 && (
+            <div className="flex justify-between items-center mt-6 mb-6 px-6">
+              {/* Prev Button */}
+              <button
+                onClick={handlePrevPage}
+                disabled={currentPage === 1}
+                className={`flex items-center px-6 py-2 rounded-lg font-semibold transition-all ${
+                  currentPage === 1
+                    ? "bg-gray-300 text-gray-500 cursor-not-allowed"
+                    : "bg-blue-950 text-white"
+                }`}
+              >
+                <svg
+                  xmlns="http://www.w3.org/2000/svg"
+                  className="h-5 w-5 mr-1"
+                  viewBox="0 0 20 20"
+                  fill="currentColor"
+                >
+                  <path
+                    fillRule="evenodd"
+                    d="M12.707 5.293a1 1 0 010 1.414L9.414 10l3.293 3.293a1 1 0 01-1.414 1.414l-4-4a1 1 0 010-1.414l4-4a1 1 0 011.414 0z"
+                    clipRule="evenodd"
+                  />
+                </svg>
+                Prev
+              </button>
 
-    {/* Next Button */}
-    <button
-      onClick={handleNextPage}
-      disabled={currentPage === totalPages}
-      className={`flex items-center gap-2 px-6 py-2 rounded-lg font-semibold transition-all ${
-        currentPage === totalPages
-          ? "bg-gray-300 text-gray-500 cursor-not-allowed"
-          : "bg-blue-950 text-white"
-      }`}
-    >
-      Next
-      <svg
-        xmlns="http://www.w3.org/2000/svg"
-        className="h-5 w-5 ml-1"
-        viewBox="0 0 20 20"
-        fill="currentColor"
-      >
-        <path
-          fillRule="evenodd"
-          d="M7.293 14.707a1 1 0 010-1.414L10.586 10 7.293 6.707a1 1 0 011.414-1.414l4 4a1 1 0 010 1.414l-4 4a1 1 0 01-1.414 0z"
-          clipRule="evenodd"
-        />
-      </svg>
-    </button>
-  </div>
-)}
-
+              {/* Next Button */}
+              <button
+                onClick={handleNextPage}
+                disabled={currentPage === totalPages}
+                className={`flex items-center gap-2 px-6 py-2 rounded-lg font-semibold transition-all ${
+                  currentPage === totalPages
+                    ? "bg-gray-300 text-gray-500 cursor-not-allowed"
+                    : "bg-blue-950 text-white"
+                }`}
+              >
+                Next
+                <svg
+                  xmlns="http://www.w3.org/2000/svg"
+                  className="h-5 w-5 ml-1"
+                  viewBox="0 0 20 20"
+                  fill="currentColor"
+                >
+                  <path
+                    fillRule="evenodd"
+                    d="M7.293 14.707a1 1 0 010-1.414L10.586 10 7.293 6.707a1 1 0 011.414-1.414l4 4a1 1 0 010 1.414l-4 4a1 1 0 01-1.414 0z"
+                    clipRule="evenodd"
+                  />
+                </svg>
+              </button>
+            </div>
+          )}
         </div>
       </div>
     </div>

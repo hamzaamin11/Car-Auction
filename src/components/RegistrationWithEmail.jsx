@@ -54,7 +54,7 @@ const RegistrationWithEmail = () => {
       <ToastContainer position="top-right" autoClose={3000} />
 
       {/* Smaller Form */}
-      <div className="bg-white/90 backdrop-blur-md p-8 rounded-2xl shadow-2xl w-full max-w-md">
+      <div className="bg-white/90 backdrop-blur-md p-8 rounded-2xl shadow-2xl  w-full max-w-md">
         <h2 className="text-2xl font-extrabold text-[#222] text-center mb-6">
           Create Account
         </h2>

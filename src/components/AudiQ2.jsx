@@ -32,14 +32,18 @@ const AudiQ2Prices = () => {
         Add Bid on {carType} Cars
       </h3>
 
-      <div className="overflow-y-auto max-h-80">
-        <table className="min-w-[600px] w-full border border-gray-300 text-left text-sm sm:text-base">
-          <thead className="bg-gray-100">
+      <div className="overflow-y-auto max-h-80 rounded">
+        <table className="min-w-[600px] w-full  text-left text-sm sm:text-base">
+          <thead className="bg-blue-950">
             <tr>
-              <th className="p-3 border text-center">SR#</th>
-              <th className="p-3 border text-center">Car Version</th>
-              <th className="p-3 border text-center">Vehicle Price</th>
-              <th className="p-3 border text-center">Start Bidding</th>
+              <th className="p-3  text-center text-white ">SR#</th>
+              <th className="p-3  text-center text-white">Car Version</th>
+              <th className="p-3  text-center text-white">
+                Vehicle Price
+              </th>
+              <th className="p-3 text-center text-white">
+                Start Bidding
+              </th>
             </tr>
           </thead>
           <tbody>
@@ -49,7 +53,7 @@ const AudiQ2Prices = () => {
                 <td className="p-1 border text-center ">
                   <span
                     onClick={() => navigate(`/detailbid/${item.id}`)}
-                    className="text-[#233D7B] underline hover:cursor-pointer"
+                    className="text-gray-800 hover:cursor-pointer"
                   >
                     {item.make} {item.model} {item.series} {item.engine}
                   </span>

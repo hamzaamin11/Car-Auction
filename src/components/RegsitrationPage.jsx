@@ -8,7 +8,7 @@ import "react-toastify/dist/ReactToastify.css";
 import axios from "axios";
 import { BASE_URL } from "./Contant/URL";
 import LoginImage from "../../src/assets/copart3.jpg";
-import CustomButton from "../../src/CustomButton"
+import CustomButton from "../../src/CustomButton";
 
 const RegistrationPage = () => {
   const navigate = useNavigate();
@@ -22,9 +22,24 @@ const RegistrationPage = () => {
     role: "customer",
   });
 
+  const [error, setError] = useState("");
+
   const handleChange = (e) => {
     const { name, value } = e.target;
     setFormData((prev) => ({ ...prev, [name]: value }));
+
+    const validDomains = ["@gmail.com", "@outlook.com", "@yahoo.com"];
+
+    // ✅ Check if email contains any of the valid domains
+    const isValidDomain = validDomains.some((domain) => value.endsWith(domain));
+
+    if (value && !isValidDomain) {
+      setError(
+        "Please enter a valid email with @gmail.com, @outlook.com, or @yahoo.com"
+      );
+    } else {
+      setError("");
+    }
   };
 
   const handlePhoneChange = (value) => {
@@ -34,6 +49,24 @@ const RegistrationPage = () => {
   const handleRegister = async (e) => {
     e.preventDefault();
 
+    // ✅ Allowed domains
+    const validDomains = ["@gmail.com", "@outlook.com", "@yahoo.com"];
+
+    // ✅ Check if email has a valid domain
+    const isValidEmail = validDomains.some((domain) =>
+      formData.email.endsWith(domain)
+    );
+
+    if (!isValidEmail) {
+      toast.error(
+        "Please enter a valid email (only @gmail.com, @outlook.com, or @yahoo.com allowed)"
+      );
+      return; // 🚫 Stop the function here if invalid email
+    }
+    if (!formData.contact || formData.contact.trim() === "") {
+      toast.error("Please enter your contact number");
+      return;
+    }
     const data = new FormData();
     data.append("name", formData.name);
     data.append("email", formData.email);
@@ -61,8 +94,8 @@ const RegistrationPage = () => {
       <ToastContainer position="top-right" autoClose={3000} />
 
       {/* Smaller Form */}
-      <div className="bg-white/90 backdrop-blur-md p-8 rounded-2xl shadow-2xl w-full max-w-md">
-        <h2 className="text-2xl font-extrabold text-[#222] text-center mb-6">
+      <div className="bg-white/90 backdrop-blur-md rounded-2xl shadow-2xl  max-w-md w-full h-[35rem] my-5 p-8">
+        <h2 className="text-2xl font-bold text-gray-800 text-center mb-6">
           Create Account
         </h2>
 
@@ -70,7 +103,7 @@ const RegistrationPage = () => {
           {/* Role Selection */}
           <div className="md:col-span-2">
             <div className="flex gap-4">
-              <label className="block text-sm font-semibold text-gray-700  ">
+              <label className="block font-semibold text-gray-800  ">
                 Select Role
               </label>
               <label className="flex items-center">
@@ -91,7 +124,7 @@ const RegistrationPage = () => {
                   value="seller"
                   checked={formData.role === "seller"}
                   onChange={handleChange}
-                  className="mr-2 accent-blue-950 "
+                  className="mr-2 accent-blue-950  "
                 />
                 Seller
               </label>
@@ -99,7 +132,7 @@ const RegistrationPage = () => {
           </div>
           {/* Full Name */}
           <div>
-            <label className="block text-sm font-semibold text-gray-800 mb-1">
+            <label className="block  font-semibold text-gray-800 mb-1">
               Full Name
             </label>
             <input
@@ -107,14 +140,15 @@ const RegistrationPage = () => {
               name="name"
               value={formData.name}
               onChange={handleChange}
+              placeholder="Please Enter Your Full Name"
               required
-              className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-400 focus:outline-none text-sm"
+              className="w-full px-3 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-400 focus:outline-none text-sm "
             />
           </div>
 
           {/* Email */}
           <div>
-            <label className="block text-sm font-semibold text-gray-800 mb-1">
+            <label className="block  font-semibold text-gray-800 mb-1">
               Email
             </label>
             <input
@@ -122,14 +156,21 @@ const RegistrationPage = () => {
               name="email"
               value={formData.email}
               onChange={handleChange}
+              placeholder="PLease Enter Your Email"
               required
-              className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-400 focus:outline-none text-sm"
+              className={`w-full px-3 py-3 border rounded-lg focus:ring-2 focus:outline-none text-sm 
+          ${
+            error
+              ? "border-red-500 focus:ring-red-400"
+              : "border-gray-300 focus:ring-blue-400"
+          }`}
             />
+            {error && <p className="text-red-500 text-xs mt-1">{error}</p>}
           </div>
 
           {/* Contact */}
           <div>
-            <label className="block text-sm font-semibold text-gray-800 mb-1">
+            <label className="block font-semibold text-gray-800 mb-1">
               Contact
             </label>
             <PhoneInput
@@ -148,7 +189,7 @@ const RegistrationPage = () => {
 
           {/* Password */}
           <div>
-            <label className="block text-sm font-semibold text-gray-800 mb-1">
+            <label className="block font-semibold text-gray-800 mb-1">
               Password
             </label>
             <input
@@ -156,13 +197,14 @@ const RegistrationPage = () => {
               name="password"
               value={formData.password}
               onChange={handleChange}
+              placeholder="Please Enter Your Password"
               required
-              className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-400 focus:outline-none text-sm"
+              className="w-full px-3 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-400 focus:outline-none text-sm"
             />
           </div>
 
           {/* Submit */}
-        <CustomButton text="Register" /> 
+          <CustomButton text="Register" />
         </form>
       </div>
     </div>

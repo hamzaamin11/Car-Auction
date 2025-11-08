@@ -407,22 +407,21 @@ export default function Topbar() {
             />
           )}
         </button>
-        
-                 <div
-                  className={`absolute right-0 mt-2 w-44 bg-white rounded-md shadow-lg transition-all duration-200 ease-in-out ${
-                    dropdownOpen
-                      ? "opacity-100 scale-100 visible"
-                      : "opacity-0 scale-95 invisible"
-                  }`}
-                >
+
+        <div
+          className={`absolute right-0 mt-2 w-44 bg-white rounded-md shadow-lg transition-all duration-200 ease-in-out ${
+            dropdownOpen
+              ? "opacity-100 scale-100 visible"
+              : "opacity-0 scale-95 invisible"
+          }`}
+        >
           <div className="px-4 py-3 border-b border-gray-200">
             <p className="text-sm text-black">Signed in as</p>
-            <p className="text-sm font-normal text-black truncate">
-              {currentUser?.name || "--"}{" "}
-              <div className="text-gray-900 ">
-                <strong>Role:</strong>
+            <p className="text-sm font-normal text-gray-700 truncate">
+              <div className="text-gray-500 text-xs ">
                 {currentUser?.role || "--"}
               </div>
+              {currentUser?.name || "--"}{" "}
             </p>
           </div>
           <div

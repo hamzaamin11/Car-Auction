@@ -67,17 +67,17 @@ export const EmailSignUpModal = ({ handleModal }) => {
   }, []);
 
   return (
-    <div className="fixed inset-0 backdrop-blur-sm flex items-center justify-center z-50">
-      <div className="bg-white rounded-xl shadow-xl p-6 w-full max-w-sm relative">
+    <div className="fixed inset-0 backdrop-blur-sm  flex items-center justify-center z-50">
+      <div className="bg-white rounded-xl shadow-xl p-6 w-full max-w-[28rem] relative h-[35rem]">
         {/* Close Button */}
         <button
           onClick={() => handleModal("")}
-          className="absolute top-3 right-3 text-gray-600 hover:text-red-500"
+          className="absolute top-3 right-3 font-bold text-gray-600 hover:text-red-500"
         >
           ✕
         </button>
 
-        <h2 className="text-2xl font-bold text-gray-800 mb-6 text-center">
+        <h2 className="text-2xl font-bold text-gray-800 mb-6 text-center ">
           Register With Your Email
         </h2>
         <form onSubmit={handleSubmit}>
@@ -119,7 +119,7 @@ export const EmailSignUpModal = ({ handleModal }) => {
               name="name"
               value={formData.name}
               onChange={handleChange}
-              placeholder="Enter your username"
+              placeholder="Enter your Full Name"
               className="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 outline-none"
             />
           </div>
@@ -134,7 +134,7 @@ export const EmailSignUpModal = ({ handleModal }) => {
               name="email"
               value={formData.email}
               onChange={handleChange}
-              placeholder="Enter your email"
+              placeholder="Enter Your Email"
               className="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 outline-none"
             />
           </div>
@@ -149,7 +149,7 @@ export const EmailSignUpModal = ({ handleModal }) => {
               name="password"
               value={formData.password}
               onChange={handleChange}
-              placeholder="Enter your password"
+              placeholder="Enter Your Password"
               className="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 outline-none"
             />
           </div>

@@ -500,12 +500,12 @@ const Navbar = () => {
         >
           <img src={logoImage} alt="Logo" className="h-12 pt-4 lg:pt-0 " />
         </Link>
-        <ul className="hidden md:flex items-center  font-semibold relative gap-3">
+        <ul className="hidden md:flex items-center  font-semibold relative">
           <li>
             <Link
               to="/"
-              className={`hover:text-red-600 ${
-                isActive("/") ? "text-red-600 font-semibold px-1" : ""
+              className={`hover:text-red-600 px-3 ${
+                isActive("/") ? "text-red-600 font-semibold " : ""
               }`}
             >
               Home
@@ -548,7 +548,7 @@ const Navbar = () => {
                   <li key={idx}>
                     <Link
                       to={item.to}
-                      className="block px-4 py-2 hover:bg-red-50 hover:text-red-600 transition"
+                      className="block px-4 py-1 hover:bg-red-50 hover:text-red-600 transition"
                     >
                       {item.label}
                     </Link>
@@ -650,7 +650,7 @@ const Navbar = () => {
                   )}
                 </button>
 
-              <div
+                <div
                   className={`absolute right-0 mt-2 w-44 bg-white rounded-md shadow-lg transition-all duration-200 ease-in-out ${
                     dropdownOpen
                       ? "opacity-100 scale-100 visible"
@@ -658,13 +658,12 @@ const Navbar = () => {
                   }`}
                 >
                   <div className="px-4 py-3 border-b border-gray-200">
-                   <p className="text-sm text-black">Signed in as</p>
-                    <p className="text-sm font-normal text-black truncate">
-                      {currentUser?.name || "--"}{" "}
-                      <div className="text-gray-900 ">
-                        <strong>Role:</strong>
+                    <p className="text-sm text-gray-800">Signed in as</p>
+                    <p className="text-sm font-normal text-gray-600 truncate">
+                      <div className="text-gray-500 text-xs ">
                         {currentUser?.role || "--"}
                       </div>
+                      {currentUser?.name || "--"}{" "}
                     </p>
                   </div>
                   <div
@@ -685,9 +684,7 @@ const Navbar = () => {
                     }}
                     className="flex items-center gap-2 px-4 py-1 text-gray-600 hover:bg-gray-100 cursor-pointer transition-colors duration-200"
                   >
-                    <span className="text-sm font-normal">
-                      Manage Profile
-                    </span>
+                    <span className="text-sm font-normal">Manage Profile</span>
                   </div>
                   <div
                     onClick={() => {
@@ -818,7 +815,7 @@ const Navbar = () => {
                 <RiArrowDropDownLine size={24} />
               </button>
               {activeDropdown === dropdown.id && (
-                <ul className="pl-4 space-y-1 text-sm">
+                <ul className="pl-4 text-sm">
                   {dropdown.items.map((item, idx) => (
                     <li key={idx}>
                       <Link
@@ -855,10 +852,11 @@ const Navbar = () => {
                   <FaUserCircle size={32} className="text-white" />
                 )}
                 <span>
-                  Signed in as {currentUser?.name || "--"}
-                  <div className="text-white">
-                    Role:{currentUser?.role || "--"}
+                  Signed in as{" "}
+                  <div className="text-white text-xs">
+                    {currentUser?.role || "--"}
                   </div>
+                  {currentUser?.name || "--"}
                 </span>
               </div>
               <button
