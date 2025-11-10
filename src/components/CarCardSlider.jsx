@@ -12,11 +12,17 @@ import Swal from "sweetalert2";
 const CarCard = ({ car }) => {
   const navigate = useNavigate();
   const dispatch = useDispatch();
-  
-  const currentUser = useSelector((state) => state?.auth?.currentUser);
-  const wishlistByUser = useSelector((state) => state?.wishList?.wishlistByUser);
 
-  const isInWishlist = currentUser?.id && wishlistByUser?.[currentUser.id]?.some(v => v.id === car.id);
+  console.log("car = >",car)
+
+  const currentUser = useSelector((state) => state?.auth?.currentUser);
+  const wishlistByUser = useSelector(
+    (state) => state?.wishList?.wishlistByUser
+  );
+
+  const isInWishlist =
+    currentUser?.id &&
+    wishlistByUser?.[currentUser.id]?.some((v) => v.id === car.id);
 
   const handleWishlist = () => {
     if (!currentUser) {
@@ -27,7 +33,7 @@ const CarCard = ({ car }) => {
         confirmButtonColor: "#9333ea",
         showCancelButton: true,
         confirmButtonText: "Go to Login",
-        cancelButtonText: "Cancel"
+        cancelButtonText: "Cancel",
       }).then((result) => {
         if (result.isConfirmed) {
           navigate("/login");
@@ -35,10 +41,22 @@ const CarCard = ({ car }) => {
       });
       return;
     }
-    
+
     dispatch(addInList({ userId: currentUser.id, vehicle: car }));
   };
 
+  const handleTodayAuction = async () => {
+    try {
+      const res = await axios.get(`${BASE_URL}/todayAuction`);
+      console.log("home =>", res.data);
+    } catch (error) {
+      console.log(error);
+    }
+  };
+
+  useEffect(() => {
+    handleTodayAuction();
+  }, []);
   return (
     <div className="relative bg-white rounded-xl shadow-lg hover:shadow-2xl transition-all duration-300 overflow-hidden w-full h-full flex flex-col ">
       <div className="relative w-full">
@@ -51,55 +69,47 @@ const CarCard = ({ car }) => {
       </div>
 
       <div className="relative group p-4 space-y-2 text-gray-800 flex-grow flex flex-col bg-white rounded-xl shadow-md hover:shadow-xl transition-all duration-300 border border-gray-100 ">
-      {/* For Desktop → Heart at top right */}
-<div className="hidden sm:flex justify-end">
-  <button
-    onClick={handleWishlist}
-    disabled={isInWishlist}
-    className={`p-2 rounded-full transition-all duration-300 ${
-      isInWishlist
-        ? "text-red-600 cursor-default"
-        : "text-gray-400 hover:text-red-600 hover:bg-red-50"
-    }`}
-  >
-    <FaHeart
-      size={20}
-      className={isInWishlist ? "fill-current" : ""}
-    />
-  </button>
-</div>
+        {/* For Desktop → Heart at top right */}
+        <div className="hidden sm:flex justify-end">
+          <button
+            onClick={handleWishlist}
+            disabled={isInWishlist}
+            className={`p-2 rounded-full transition-all duration-300 ${
+              isInWishlist
+                ? "text-red-600 cursor-default"
+                : "text-gray-400 hover:text-red-600 hover:bg-red-50"
+            }`}
+          >
+            <FaHeart size={20} className={isInWishlist ? "fill-current" : ""} />
+          </button>
+        </div>
 
-{/* Title + Heart (for Mobile) */}
-<div className="flex sm:hidden justify-between items-center">
-  <h3 className="text-lg font-bold text-gray-800 transition">
-    {car?.make} {car?.model}
-  </h3>
+        {/* Title + Heart (for Mobile) */}
+        <div className="flex sm:hidden justify-between items-center">
+          <h3 className="text-lg font-bold text-gray-800 transition">
+            {car?.make} {car?.model}
+          </h3>
 
-  <button
-    onClick={handleWishlist}
-    disabled={isInWishlist}
-    className={`p-2 rounded-full transition-all duration-300 ${
-      isInWishlist
-        ? "text-red-600 cursor-default"
-        : "text-gray-400 hover:text-red-600 hover:bg-red-50"
-    }`}
-  >
-    <FaHeart
-      size={20}
-      className={isInWishlist ? "fill-current" : ""}
-    />
-  </button>
-</div>
+          <button
+            onClick={handleWishlist}
+            disabled={isInWishlist}
+            className={`p-2 rounded-full transition-all duration-300 ${
+              isInWishlist
+                ? "text-red-600 cursor-default"
+                : "text-gray-400 hover:text-red-600 hover:bg-red-50"
+            }`}
+          >
+            <FaHeart size={20} className={isInWishlist ? "fill-current" : ""} />
+          </button>
+        </div>
 
-{/* Keep original title for desktop only */}
-<h3 className="hidden sm:block text-lg font-bold  text-gray-800 transition">
-  {car?.make} {car?.model} 
-</h3>
-<p className="text-sm text-black">
-          <span className="font-base text-black">Model Year:</span>{" "}
-          {car.year}
+        {/* Keep original title for desktop only */}
+        <h3 className="hidden sm:block text-lg font-bold  text-gray-800 transition">
+          {car?.make} {car?.model}
+        </h3>
+        <p className="text-sm text-black">
+          <span className="font-base text-black">Model Year:</span> {car.year}
         </p>
-
 
         <p className="text-sm text-black">
           <span className="font-base text-black">Current Bid:</span>{" "}
@@ -109,10 +119,8 @@ const CarCard = ({ car }) => {
         </p>
 
         <p className="text-sm text-black">
-          <span className="font-base text-black">Location:</span>{" "}
-          {car.cityName}
+          <span className="font-base text-black">Location:</span> {car.cityName}
         </p>
-       
 
         <span
           onClick={() => navigate(`/detailbid/${car.id}`)}
@@ -161,27 +169,35 @@ const CarCardSlider = () => {
   // ← ← ← ← ← ← ← ← ← ← ← ← ← ← ← ← ← ← ← ← ←
   // ONLY THESE TWO FUNCTIONS CHANGED
   const prevCards = () => {
-    setCurrentIndex(prev => Math.max(0, prev - visibleCards));
+    setCurrentIndex((prev) => Math.max(0, prev - visibleCards));
   };
 
   const nextCards = () => {
-    setCurrentIndex(prev => 
+    setCurrentIndex((prev) =>
       Math.min(allCars.length - visibleCards, prev + visibleCards)
     );
   };
   // ← ← ← ← ← ← ← ← ← ← ← ← ← ← ← ← ← ← ← ← ←
 
-  const getVisibleCars = () => 
+  const getVisibleCars = () =>
     allCars.slice(currentIndex, currentIndex + visibleCards);
 
   return (
     <div className="py-12 px-4 md:px-20 bg-gray-100">
       <style jsx>{`
         @keyframes fade-in {
-          from { opacity: 0; transform: translateY(-10px); }
-          to { opacity: 1; transform: translateY(0); }
+          from {
+            opacity: 0;
+            transform: translateY(-10px);
+          }
+          to {
+            opacity: 1;
+            transform: translateY(0);
+          }
         }
-        .animate-fade-in { animation: fade-in 0.6s ease-out; }
+        .animate-fade-in {
+          animation: fade-in 0.6s ease-out;
+        }
       `}</style>
 
       <h2 className="text-3xl md:text-4xl font-bold text-center mb-10 text-gray-800 animate-fade-in">

@@ -22,17 +22,17 @@ const VehicleFinderSection = () => {
   const cardsPerPage = 4;
   const navigate = useNavigate();
   const dispatch = useDispatch();
-const handleNext = () => {
-  if (startIndex + cardsPerPage < allCars.length) {
-    setStartIndex(startIndex + cardsPerPage);
-  }
-};
+  const handleNext = () => {
+    if (startIndex + cardsPerPage < allCars.length) {
+      setStartIndex(startIndex + cardsPerPage);
+    }
+  };
 
-const handlePrev = () => {
-  if (startIndex - cardsPerPage >= 0) {
-    setStartIndex(startIndex - cardsPerPage);
-  }
-};
+  const handlePrev = () => {
+    if (startIndex - cardsPerPage >= 0) {
+      setStartIndex(startIndex - cardsPerPage);
+    }
+  };
 
   //  Get selected make and model from Redux
   const vehicleData = useSelector((state) => state.carSelector);
@@ -145,66 +145,69 @@ const handlePrev = () => {
     <div className="max-w-7xl mx-auto p-6 font-sans">
       {/* Filters */}
       <div className="flex lg:flex-row flex-col items-center justify-between gap-4 mb-4">
-     {/* MAKE */}
-<div className="w-full">
-  <label className="block text-sm font-medium text-gray-700 mb-1">
-    Select Make
-  </label>
-  <CustomDropdown
-    options={[{ label: "Select Make", value: "" }, ...totalMakes]}
-    value={
-      totalMakes.find((option) => option.value === vehicleData.make) || {
-        label: "Select Make",
-        value: "",
-      }
-    }
-    onChange={(selected) => {
-      dispatch(addMake(selected.value));
-      dispatch(addModel(""));
-    }}
-    placeholder="Select Make"
-    isSearchable
-  />
-</div>
+        {/* MAKE */}
+        <div className="w-full">
+          <label className="block text-sm font-medium text-gray-700 mb-1">
+            Select Make
+          </label>
+          <CustomDropdown
+            options={[{ label: "Select Make", value: "" }, ...totalMakes]}
+            value={
+              totalMakes.find(
+                (option) => option.value === vehicleData.make
+              ) || {
+                label: "Select Make",
+                value: "",
+              }
+            }
+            onChange={(selected) => {
+              dispatch(addMake(selected.value));
+              dispatch(addModel(""));
+            }}
+            placeholder="Select Make"
+            isSearchable
+          />
+        </div>
 
-{/* MODEL */}
-<div className="w-full">
-  <label className="block text-sm font-medium text-gray-700 mb-1">
-    Select Model
-  </label>
-  <CustomDropdown
-    options={[{ label: "Select Model", value: "" }, ...totalModels]}
-    value={
-      totalModels.find((option) => option.value === vehicleData.model) || {
-        label: "Select Model",
-        value: "",
-      }
-    }
-    onChange={(selected) => dispatch(addModel(selected.value))}
-    placeholder="Select Model"
-    isSearchable
-  />
-</div>
+        {/* MODEL */}
+        <div className="w-full">
+          <label className="block text-sm font-medium text-gray-700 mb-1">
+            Select Model
+          </label>
+          <CustomDropdown
+            options={[{ label: "Select Model", value: "" }, ...totalModels]}
+            value={
+              totalModels.find(
+                (option) => option.value === vehicleData.model
+              ) || {
+                label: "Select Model",
+                value: "",
+              }
+            }
+            onChange={(selected) => dispatch(addModel(selected.value))}
+            placeholder="Select Model"
+            isSearchable
+          />
+        </div>
 
-{/* YEAR */}
-<div className="w-full">
-  <label className="block text-sm font-medium text-gray-700 mb-1">
-    Select Year
-  </label>
-  <CustomDropdown
-    options={[{ label: "Select Year", value: "" }, ...years]}
-    value={
-      years.find((option) => option.value === filters.year) || {
-        label: "Select Year",
-        value: "",
-      }
-    }
-    onChange={(selected) => handleChange("year", selected.value)}
-    placeholder="Select Year"
-    isSearchable
-  />
-</div>
-
+        {/* YEAR */}
+        <div className="w-full">
+          <label className="block text-sm font-medium text-gray-700 mb-1">
+            Select Year
+          </label>
+          <CustomDropdown
+            options={[{ label: "Select Year", value: "" }, ...years]}
+            value={
+              years.find((option) => option.value === filters.year) || {
+                label: "Select Year",
+                value: "",
+              }
+            }
+            onChange={(selected) => handleChange("year", selected.value)}
+            placeholder="Select Year"
+            isSearchable
+          />
+        </div>
 
         {/* SEARCH BUTTON */}
         <button
@@ -233,56 +236,62 @@ const handlePrev = () => {
       </div>
 
       {/* Car Cards */}
-    {allCars.length === 0 ? (
-  <div className="text-center text-lg font-semibold text-gray-500 ">
-    No cars found
-  </div>
-) : (
- <div className="relative px-20"> {/* Increased padding from px-7 to px-16 */}
-  {/* Previous Button */}
-  <button
-    onClick={handlePrev}
-    className="absolute left-1 top-1/2 -translate-y-1/2 bg-white shadow-md rounded-full p-3 hover:bg-red-600 hover:text-white transition z-10 hover:scale-110 duration-500"
-  >
-    <svg
-      xmlns="http://www.w3.org/2000/svg"
-      className="h-6 w-6"
-      fill="none"
-      viewBox="0 0 24 24"
-      stroke="currentColor"
-    >
-      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />
-    </svg>
-  </button>
-
-  {/* Cards Grid */}
-  <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 max-w-7xl mx-auto">
-    {allCars.slice(startIndex, startIndex + cardsPerPage).map((car) => (
-      <div
-        key={car.id}
-        onClick={() => navigate(`/detailbid/${car.id}`)}
-        className="bg-white rounded-lg shadow-md hover:shadow-xl transition flex flex-col cursor-pointer"
-      >
-        <img
-          src={car?.images?.[0]}
-          alt="car"
-          className="w-full h-45 object-cover rounded-t-lg"
-        />
-        <div className="p-4 flex flex-col justify-between flex-grow">
-          <div>
-            <h3 className="text-lg font-semibold mb-1">
-              {car.make} {car.model} 
-            </h3>
-               <p className="text-sm font-base text-black">
-              Model Year: <span>{car.year}</span>
-            </p>
-            <p className="text-sm font-base mb-1">
-              Current Bid:  <b> PKR  {car.buyNowPrice}</b>
-            </p>
-                 <p className="text-sm font-base text-black">
-              Location: <span>{car.cityName}</span>
-            </p>
-            {/* <p className="text-sm font-semibold text-black">
+      {allCars.length === 0 ? (
+        <div className="text-center text-lg font-semibold text-gray-500 ">
+          No cars found
+        </div>
+      ) : (
+        <div className="relative px-20">
+          {" "}
+          {/* Increased padding from px-7 to px-16 */}
+          {/* Previous Button */}
+          <button
+            onClick={handlePrev}
+            className="absolute left-1 top-1/2 -translate-y-1/2 bg-white shadow-md rounded-full p-3 hover:bg-red-600 hover:text-white transition z-10 hover:scale-110 duration-500"
+          >
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              className="h-6 w-6"
+              fill="none"
+              viewBox="0 0 24 24"
+              stroke="currentColor"
+            >
+              <path
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                strokeWidth={2}
+                d="M15 19l-7-7 7-7"
+              />
+            </svg>
+          </button>
+          {/* Cards Grid */}
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 max-w-7xl mx-auto">
+            {allCars.slice(startIndex, startIndex + cardsPerPage).map((car) => (
+              <div
+                key={car.id}
+                onClick={() => navigate(`/detailbid/${car.id}`)}
+                className="bg-white rounded-lg shadow-md hover:shadow-xl transition flex flex-col cursor-pointer"
+              >
+                <img
+                  src={car?.images?.[0]}
+                  alt="car"
+                  className="w-full h-45 object-cover rounded-t-lg"
+                />
+                <div className="p-4 flex flex-col justify-between flex-grow">
+                  <div>
+                    <h3 className="text-lg font-semibold mb-1">
+                      {car.make} {car.model}
+                    </h3>
+                    <p className="text-sm font-base text-black">
+                      Model Year: <span>{car.year}</span>
+                    </p>
+                    <p className="text-sm font-base mb-1">
+                      Current Bid: <b> PKR {car.buyNowPrice}</b>
+                    </p>
+                    <p className="text-sm font-base text-black">
+                      Location: <span>{car.cityName}</span>
+                    </p>
+                    {/* <p className="text-sm font-semibold text-black">
               Condition:{" "}
               <span
                 className={
@@ -294,34 +303,36 @@ const handlePrev = () => {
                 {car.vehicleCondition?.toUpperCase()}
               </span>
             </p> */}
-         
+                  </div>
+                  <button className="bg-red-600 py-2 text-white text-sm px-3 rounded mt-1">
+                    View Details
+                  </button>
+                </div>
+              </div>
+            ))}
           </div>
-          <button className="bg-red-600 py-2 text-white text-sm px-3 rounded mt-1">
-            View Details
+          {/* Next Button */}
+          <button
+            onClick={handleNext}
+            className="absolute right-1 top-1/2 -translate-y-1/2 bg-white shadow-md rounded-full p-3 hover:bg-red-600 hover:text-white transition z-10 hover:scale-110 duration-500"
+          >
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              className="h-6 w-6"
+              fill="none"
+              viewBox="0 0 24 24"
+              stroke="currentColor"
+            >
+              <path
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                strokeWidth={2}
+                d="M9 5l7 7-7 7"
+              />
+            </svg>
           </button>
         </div>
-      </div>
-    ))}
-  </div>
-
-  {/* Next Button */}
-  <button
-    onClick={handleNext}
-    className="absolute right-1 top-1/2 -translate-y-1/2 bg-white shadow-md rounded-full p-3 hover:bg-red-600 hover:text-white transition z-10 hover:scale-110 duration-500"
-  >
-    <svg
-      xmlns="http://www.w3.org/2000/svg"
-      className="h-6 w-6"
-      fill="none"
-      viewBox="0 0 24 24"
-      stroke="currentColor"
-    >
-      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
-    </svg>
-  </button>
-</div>
-)}
-
+      )}
     </div>
   );
 };

@@ -9,7 +9,6 @@ import { useSelector } from "react-redux";
 function AuctionsProvider({ children }) {
   const { currentUser } = useSelector((state) => state.auth);
   const id = currentUser?.id;
-  console.log("jani nay ro ro k =>", currentUser);
   const [getLiveAuctions, setGetLiveAuctions] = useState([]);
   const [auctionById, setAuctionById] = useState(null);
   const [comingAuc, setComingAuc] = useState([]);

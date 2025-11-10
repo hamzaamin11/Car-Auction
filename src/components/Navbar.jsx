@@ -416,7 +416,7 @@ const Navbar = () => {
   const commonDropdowns = [
     {
       id: 1,
-      label: "Vehicles",
+      label: "Inventory",
       items: [
         { to: "/finder", label: "Vehicle Finder" },
         { to: "/saleslist", label: "Search By Makes" },

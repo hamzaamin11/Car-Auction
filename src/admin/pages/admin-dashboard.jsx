@@ -30,7 +30,6 @@ const Dashboard = () => {
   const [totalCustomers, setTotalCustomers] = useState({});
   const [bidHistory, setBidHistory] = useState([]);
   const [SubcribeUserList, setSubscribeUserList] = useState([]);
-  
 
   const handleGetAllVehicle = async () => {
     setLoading(true);
@@ -277,7 +276,6 @@ const Dashboard = () => {
             icon={<FaCity size={28} />}
             path={"/admin/city"}
           />
-        
         </span>
 
         {/* Charts 
