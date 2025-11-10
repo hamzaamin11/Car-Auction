@@ -5,7 +5,6 @@ import Select from "react-select";
 import { BASE_URL } from "../components/Contant/URL";
 import numberToWords from "number-to-words";
 import CustomDropdown from "../CustomDropdown";
-
 const BodyType = [
   { label: "Mini Vehicles", value: "Mini Vehicles" },
   { label: "Van", value: "Van" },
@@ -105,12 +104,32 @@ const FilterPriceCars = () => {
       })),
     [filterModel]
   );
+  // Sorted + paginated cars
+const sortedCars = useMemo(() => {
+  let cars = [...allFilterCars];
+
+  // ---- PRICE SORTING ----
+  if (sorting === "low") {
+    cars.sort((a, b) => a.buyNowPrice - b.buyNowPrice);
+  } else if (sorting === "high") {
+    cars.sort((a, b) => b.buyNowPrice - a.buyNowPrice);
+  }
+
+  // ---- YEAR SORTING (NEW) ----
+  else if (sorting === "year_desc") {
+    cars.sort((a, b) => b.year - a.year); // newest first
+  } else if (sorting === "year_asc") {
+    cars.sort((a, b) => a.year - b.year); // oldest first
+  }
+
+  return cars;
+}, [allFilterCars, sorting]);
 
   // Pagination calculations
-  const indexOfLastCar = currentPage * carsPerPage;
-  const indexOfFirstCar = indexOfLastCar - carsPerPage;
-  const currentCars = allFilterCars.slice(indexOfFirstCar, indexOfLastCar);
-  const totalPages = Math.ceil(allFilterCars.length / carsPerPage);
+const indexOfLastCar = currentPage * carsPerPage;
+const indexOfFirstCar = indexOfLastCar - carsPerPage;
+const currentCars = sortedCars.slice(indexOfFirstCar, indexOfLastCar);
+const totalPages = Math.ceil(sortedCars.length / carsPerPage);
 
   // Map URL value to option value (ID) for city and make
   useEffect(() => {
@@ -197,6 +216,7 @@ const FilterPriceCars = () => {
       setLoading(false);
     } catch (error) {
       console.log("Error fetching cars:", error);
+      
       setAllFilterCars([]);
       setLoading(false);
     }
@@ -538,14 +558,18 @@ const FilterPriceCars = () => {
           </h1>
 
           <select
-            className="border p-2 text-sm rounded w-full sm:w-auto"
+            className="border p-2 text-sm rounded w-full sm:w-auto focus:outline-none focus:ring-2 focus:ring-blue-900 
+               cursor-pointer "
             onChange={(e) => setSorting(e.target.value)}
             name="sorting"
             value={sorting}
+   
           >
-            <option value="">Updated Date: Recent First</option>
+            {/* <option value="">Updated Date: Recent First</option> */}
             <option value="low">Price: Low to High</option>
             <option value="high">Price: High to Low</option>
+            <option value="year_desc">Year: Newest to Oldest</option>
+            <option value="year_asc">Year: Oldest to Newest</option>
           </select>
         </div>
 
@@ -563,7 +587,7 @@ const FilterPriceCars = () => {
               >
                 {car.certifyStatus === "Certified" && (
                   <div className="absolute top-2 left-2 bg-green-600 text-white text-xs font-bold px-3 py-1 rounded-full shadow-md">
-                    ✅ Certified
+                     Certified
                   </div>
                 )}
                 <div className="w-full md:w-40 h-48 md:h-28 overflow-hidden rounded-md mb-4 md:mb-0 md:mr-4">
@@ -579,7 +603,7 @@ const FilterPriceCars = () => {
                       className={`font-semibold text-sm sm:text-base ${
                         car.certifyStatus === "Certified"
                           ? "text-green-700"
-                          : "text-blue-700"
+                          : "text-gray-800"
                       }`}
                     >
                       {car.make} {car.model} {car.series} {car.engine} for sale

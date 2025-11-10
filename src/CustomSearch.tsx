@@ -24,7 +24,7 @@ const CustomSearch: React.FC<CustomSearchProps> = ({
         onChange={onChange}
         className="w-full pl-10 pr-4 py-2 rounded-lg border border-gray-300 shadow-sm 
                    placeholder-gray-400 text-black placeholder:text-xs sm:placeholder:text-sm 
-                   focus:outline-none focus:ring-2 focus:ring-blue-500"
+                   focus:outline-none focus:ring-2 focus:ring-blue-900"
       />
     </div>
   );

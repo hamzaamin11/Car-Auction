@@ -4,7 +4,7 @@ import { BASE_URL } from "../Contant/URL";
 import { toast, ToastContainer } from "react-toastify";
 import Select from "react-select";
 import Swal from "sweetalert2";
-
+import CustomDropdown from "../../CustomDropdown";
 const initialState = {
   brandId: "",
   modelName: "",
@@ -88,7 +88,7 @@ export const AddModel = ({ handleClose, handleGetAllModels }) => {
             <label className="block text-sm font-semibold text-gray-700 mb-1">
               Brand Name
             </label>
-            <Select
+            <CustomDropdown 
               options={[
                 { label: "Select your brand", value: "" },
                 ...allBrands.map((brand) => ({
@@ -127,7 +127,7 @@ export const AddModel = ({ handleClose, handleGetAllModels }) => {
               onChange={handleChange}
               placeholder="Enter model name"
               required
-              className="w-full border border-gray-300 rounded px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500"
+              className="w-full border border-gray-300 rounded px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-950"
             />
           </div>
 

@@ -3,7 +3,7 @@ import { useEffect, useState } from "react";
 import { BASE_URL } from "../Contant/URL";
 import Select from "react-select";
 import Swal from "sweetalert2";
-
+import CustomDropdown from "../../CustomDropdown";
 const initialState = {
   brandId: "",
   modelName: "",
@@ -88,7 +88,7 @@ export const EditModal = ({ handleClose, seleteModel, handleGetAllModels }) => {
             <label className="block text-sm font-semibold text-gray-700 mb-1">
               Brand Name
             </label>
-            <Select
+            <CustomDropdown
               options={[
                 { label: "Select your brand", value: "" },
                 ...allBrands.map((brand) => ({
@@ -131,7 +131,7 @@ export const EditModal = ({ handleClose, seleteModel, handleGetAllModels }) => {
                 }))
               }
               placeholder="Enter model name"
-              className="w-full border border-gray-300 rounded px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500"
+              className="w-full border border-gray-300 rounded px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-950"
               required
             />
           </div>
