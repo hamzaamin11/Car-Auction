@@ -1,11 +1,14 @@
 import { useEffect, useState } from "react";
 import axios from "axios";
 import { useSelector } from "react-redux";
+import { ChevronLeft, ChevronRight } from "lucide-react";
 import { BASE_URL } from "../components/Contant/URL";
 
 const MyBids = () => {
   const { currentUser } = useSelector((state) => state?.auth);
   const [allBiders, setAllBiders] = useState([]);
+  const [currentPage, setCurrentPage] = useState(1);
+  const itemsPerPage = 10;
 
   const handleGetBidersHistory = async () => {
     try {
@@ -22,7 +25,24 @@ const MyBids = () => {
     handleGetBidersHistory();
   }, []);
 
-  // inside MyBids component return
+  // Calculate pagination
+  const indexOfLastItem = currentPage * itemsPerPage;
+  const indexOfFirstItem = indexOfLastItem - itemsPerPage;
+  const currentItems = allBiders.slice(indexOfFirstItem, indexOfLastItem);
+  const totalPages = Math.ceil(allBiders.length / itemsPerPage);
+
+  const handleNextPage = () => {
+    if (currentPage < totalPages) {
+      setCurrentPage(currentPage + 1);
+    }
+  };
+
+  const handlePrevPage = () => {
+    if (currentPage > 1) {
+      setCurrentPage(currentPage - 1);
+    }
+  };
+
   return (
     <div className="min-h-screen bg-gray-100 p-4 md:p-6">
       <div className="max-w-7xl mx-auto">
@@ -30,19 +50,11 @@ const MyBids = () => {
           Auction History
         </h1>
 
-        {/* Scrollable area: sets explicit max-height relative to viewport */}
-        <div
-          className="w-full bg-white rounded-2xl shadow-md border border-gray-200 "
-          style={{
-            maxHeight: "calc(100vh - 140px)",
-            overflowY: "auto",
-            overflowX: "auto",
-          }}
-        >
+        <div className="w-full bg-white rounded-2xl shadow-md border border-gray-200">
           {/* Desktop Table View */}
-          <div className="hidden md:block w-full">
-            <table className="min-w-full text-sm table-auto">
-              <thead className="bg-blue-950 text-white sticky top-0">
+          <div className="hidden md:block w-full pb-12">
+            <table className="min-w-full text-sm table-fixed">
+              <thead className="bg-blue-950 text-white">
                 <tr>
                   <th className="px-6 py-3 text-left font-semibold">SR#</th>
                   <th className="px-6 py-3 text-left font-semibold">
@@ -53,19 +65,19 @@ const MyBids = () => {
                     Bid Amount
                   </th>
                   <th className="px-6 py-3 text-left font-semibold">Date</th>
-                  <th className="px-6 py-3 text-center font-semibold">
+                  <th className="px-6 py-3 text-center font-semibold ">
                     Status
                   </th>
                 </tr>
               </thead>
               <tbody className="divide-y divide-gray-100">
-                {allBiders && allBiders.length > 0 ? (
-                  allBiders.map((bid, index) => (
+                {currentItems && currentItems.length > 0 ? (
+                  currentItems.map((bid, index) => (
                     <tr
                       key={index}
                       className=" transition duration-200"
                     >
-                      <td className="px-6 py-4">{index + 1}</td>
+                      <td className="px-6 py-4">{indexOfFirstItem + index + 1}</td>
                       <td className="px-6 py-4 text-gray-700">
                         {bid?.buyerDetails?.name}
                       </td>
@@ -77,10 +89,9 @@ const MyBids = () => {
                         PKR {bid?.bidDetails?.yourOffer || "0"}
                       </td>
                       <td className="px-6 py-4 text-gray-500">
-               {bid?.bidDetails?.bidCreatedAt
-  ? new Date(bid.bidDetails.bidCreatedAt).toLocaleDateString("en-GB")
-  : "N/A"}
-
+                        {bid?.bidDetails?.bidCreatedAt
+                          ? new Date(bid.bidDetails.bidCreatedAt).toLocaleDateString("en-GB")
+                          : "N/A"}
                       </td>
                       <td className="px-6 py-4 text-center">
                         <span className="inline-flex items-center px-3 py-1 text-xs font-semibold text-green-700 bg-green-100 rounded-full">
@@ -105,8 +116,8 @@ const MyBids = () => {
 
           {/* Mobile Card View */}
           <div className="md:hidden p-4 space-y-4">
-            {allBiders && allBiders.length > 0 ? (
-              allBiders.map((bid, index) => (
+            {currentItems && currentItems.length > 0 ? (
+              currentItems.map((bid, index) => (
                 <div
                   key={index}
                   className="bg-white rounded-xl shadow-md border border-gray-200 p-4"
@@ -141,10 +152,9 @@ const MyBids = () => {
                     <p className="flex justify-between">
                       <span className="text-gray-900 font-bold">Date</span>
                       <span className="text-gray-500">
-                       {bid?.bidDetails?.bidCreatedAt
-  ? new Date(bid.bidDetails.bidCreatedAt).toLocaleDateString("en-GB")
-  : "N/A"}
-
+                        {bid?.bidDetails?.bidCreatedAt
+                          ? new Date(bid.bidDetails.bidCreatedAt).toLocaleDateString("en-GB")
+                          : "N/A"}
                       </span>
                     </p>
                   </div>
@@ -154,6 +164,33 @@ const MyBids = () => {
               <div className="text-center py-8 text-gray-400">No bids yet.</div>
             )}
           </div>
+
+          {/* Pagination */}
+          {allBiders.length > 0 && (
+            <div className="flex justify-center items-center gap-4 p-4 border-t border-gray-200">
+              {currentPage > 1 && (
+                <button
+                  onClick={handlePrevPage}
+                  className="flex items-center gap-2 px-4 py-2 bg-blue-950 text-white rounded-lg hover:bg-blue-900 transition"
+                >
+                  <ChevronLeft size={20} />
+                  Previous
+                </button>
+              )}
+              
+         
+
+              {currentPage < totalPages && (
+                <button
+                  onClick={handleNextPage}
+                  className="flex items-center gap-2 px-4 py-2 bg-blue-950 text-white rounded-lg hover:bg-blue-900 transition"
+                >
+                  Next
+                  <ChevronRight size={20} />
+                </button>
+              )}
+            </div>
+          )}
         </div>
       </div>
     </div>

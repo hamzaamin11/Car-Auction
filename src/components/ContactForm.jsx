@@ -14,28 +14,32 @@ const ContactForm = () => {
   const [formData, setFormData] = useState(initialState);
   const [loading, setLoading] = useState(false);
   const handleContactChange = (e) => {
-    let value = e.target.value.replace(/\D/g, ""); // remove all non-digits
+  let value = e.target.value.replace(/\D/g, ""); // remove all non-digits
 
-    // Ensure the number always starts with +92
-    if (value.startsWith("92")) {
-      value = "+" + value;
-    } else if (!value.startsWith("+92")) {
-      value = "+92" + value;
-    }
+  // limit to 12 digits (92 + 10 digits)
+  value = value.slice(0, 12);
 
-    // Format like +92-300-1234567
-    if (value.length > 3 && value.length <= 6) {
-      value = value.slice(0, 3) + "-" + value.slice(3);
-    } else if (value.length > 6 && value.length <= 10) {
-      value =
-        value.slice(0, 3) + "-" + value.slice(3, 6) + "-" + value.slice(6);
-    } else if (value.length > 10) {
-      value =
-        value.slice(0, 3) + "-" + value.slice(3, 6) + "-" + value.slice(6, 15);
-    }
+  // Ensure number starts with +92
+  if (value.startsWith("92")) {
+    value = "+" + value;
+  } else if (!value.startsWith("+92")) {
+    value = "+92" + value;
+  }
 
-    setFormData({ ...formData, contactNumber: value });
-  };
+  // Format like +92-300-1234567
+  if (value.length > 3 && value.length <= 6) {
+    value = value.slice(0, 3) + "-" + value.slice(3);
+  } else if (value.length > 6 && value.length <= 10) {
+    value =
+      value.slice(0, 3) + "-" + value.slice(3, 6) + "-" + value.slice(6);
+  } else if (value.length > 10) {
+    value =
+      value.slice(0, 3) + "-" + value.slice(3, 6) + "-" + value.slice(6, 13);
+  }
+
+  setFormData({ ...formData, contactNumber: value });
+};
+
 
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -69,8 +73,8 @@ const ContactForm = () => {
       // Show SweetAlert error message
       Swal.fire({
         icon: "error",
-        title: "Oops...",
-        text: "Something went wrong. Please try again.",
+        title: "Error...",
+        text: "Please fill out all the fields to proceed.",
         confirmButtonColor: "#dc2626",
         confirmButtonText: "OK",
       });
@@ -103,7 +107,7 @@ const ContactForm = () => {
             placeholder="Your name"
             value={formData.subject}
             onChange={handleChange}
-            className="w-full border border-gray-500 px-4 py-3 rounded-lg focus:outline-none focus:ring-2 focus:ring-gray-500"
+            className="w-full border border-gray-500 px-4 py-3 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-900"
             maxLength={20}
           />
         </div>
@@ -118,7 +122,7 @@ const ContactForm = () => {
             placeholder="+92-300-1234567"
             value={formData.contactNumber}
             onChange={handleContactChange}
-            className="w-full border border-gray-400 px-4 py-3 rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500"
+            className="w-full border border-gray-400 px-4 py-3 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-900"
             required
           />
         </div>
@@ -133,7 +137,7 @@ const ContactForm = () => {
             placeholder="you@example.com"
             value={formData.email}
             onChange={handleChange}
-            className="w-full border border-gray-500 px-4 py-3 rounded-lg focus:outline-none focus:ring-2 focus:ring-gray-500"
+            className="w-full border border-gray-500 px-4 py-3 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-900"
             maxLength={30}
           />
         </div>
@@ -148,7 +152,7 @@ const ContactForm = () => {
             placeholder="Type your message..."
             value={formData.description}
             onChange={handleChange}
-            className="w-full border border-gray-500 px-4 py-3 rounded-lg focus:outline-none focus:ring-2 focus:ring-gray-500"
+            className="w-full border border-gray-500 px-4 py-3 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-900"
             maxLength={100}
           />
         </div>

@@ -106,7 +106,7 @@ export const SuggestionForm = () => {
             value={formData.name}
             onChange={handleChange}
             required
-            className="w-full border border-gray-500 px-4 py-3 rounded-lg focus:outline-none focus:ring-2 focus:ring-gray-500"
+            className="w-full border border-gray-500 px-4 py-3 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-900"
             maxLength={20}
           />
         </div>
@@ -122,7 +122,7 @@ export const SuggestionForm = () => {
             placeholder="+92-300-1234567"
             value={formData.contactNumber}
             onChange={handleContactChange}
-            className="w-full border border-gray-400 px-4 py-3 rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500"
+            className="w-full border border-gray-400 px-4 py-3 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-900"
             required
             maxLength={15}
           />
@@ -140,7 +140,7 @@ export const SuggestionForm = () => {
             value={formData.email}
             onChange={handleChange}
             required
-            className="w-full border border-gray-500 px-4 py-3 rounded-lg focus:outline-none focus:ring-2 focus:ring-gray-500"
+            className="w-full border border-gray-500 px-4 py-3 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-900"
             maxLength={30}
           />
         </div>
@@ -157,7 +157,7 @@ export const SuggestionForm = () => {
             value={formData.suggestion}
             onChange={handleChange}
             required
-            className="w-full border border-gray-500 px-4 py-3 rounded-lg focus:outline-none focus:ring-2 focus:ring-gray-500"
+            className="w-full border border-gray-500 px-4 py-3 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-900"
             maxLength={150}
           />
         </div>

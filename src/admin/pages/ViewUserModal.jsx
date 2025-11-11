@@ -73,7 +73,7 @@ const ViewUserModal = ({ isOpen, closeModal }) => {
                         </p>
                         <p>
                           <strong>Contact:</strong>{" "}
-                          {userbyId?.contact?.slice(0, 13) || "N/A"}
+                          {userbyId?.contact?.slice(0, 15) || "N/A"}
                         </p>
 
                         <p>

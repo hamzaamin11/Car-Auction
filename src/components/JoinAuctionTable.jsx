@@ -46,7 +46,7 @@ const JoinAuctionTable = ({ allLive, upComing }) => {
       {/* ========== LIVE AUCTIONS SECTION ========== */}
       <section className="mb-12">
         <div className="flex items-center justify-between mb-4">
-          <h2 className="text-2xl font-semibold text-gray-800">
+          <h2 className="text-3xl font-bold text-gray-800">
             Live Auctions
           </h2>
         </div>
@@ -73,7 +73,7 @@ const JoinAuctionTable = ({ allLive, upComing }) => {
               {allLive?.map((auction, idx) => (
                 <tr
                   key={idx}
-                  className="border-b hover:bg-blue-50/40 transition-all duration-200"
+                  className="border-b  transition-all duration-200"
                 >
                   <td className="p-3 text-gray-600">{idx + 1}</td>
                   <td className="p-3">
@@ -170,7 +170,7 @@ const JoinAuctionTable = ({ allLive, upComing }) => {
       {/* ========== UPCOMING AUCTIONS SECTION ========== */}
       <section>
         <div className="flex items-center justify-between mb-4">
-          <h2 className="lg:text-2xl text-lg  font-semibold text-gray-800">
+          <h2 className="lg:text-3xl text-lg  font-bold text-gray-800">
             Upcoming Auctions
           </h2>
         </div>
@@ -195,7 +195,7 @@ const JoinAuctionTable = ({ allLive, upComing }) => {
               {upComing?.map((auction, idx) => (
                 <tr
                   key={idx}
-                  className="border-b hover:bg-yellow-50/40 transition-all duration-200"
+                  className="border-b  transition-all duration-200"
                 >
                   <td className="p-3 text-gray-600">{idx + 1}</td>
                   <td className="p-3">

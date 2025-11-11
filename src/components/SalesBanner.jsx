@@ -4,7 +4,7 @@ import bannerImage from "../../src/assets/copart2.jpg";
 const SalesBanner = () => {
   return (
     <section
-      className="relative bg-cover bg-center bg-no-repeat lg:h-[350px] h-[150px] md:h-[450px] flex items-center justify-center text-start"
+      className="relative bg-cover bg-center bg-no-repeat lg:h-[410px] h-[120px] md:h-[400px] flex items-center justify-center text-start"
       style={{
         backgroundImage: `url(${bannerImage})`,
       }}

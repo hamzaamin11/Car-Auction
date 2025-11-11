@@ -14,7 +14,7 @@ const AboutSection = () => {
       <div className="max-w-[90rem] mx-auto text-left  ">
         {/* Heading */}
         <motion.h2
-          className="lg:text-3xl text-xl font-extrabold text-gray-900 "
+          className="lg:text-3xl text-xl font-extrabold text-gray-800 "
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
           transition={transition}

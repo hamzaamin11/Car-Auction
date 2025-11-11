@@ -3,7 +3,7 @@ import bannerImage from "../../src/assets/c5.jpg";
 const FinderBanner = () => {
   return (
     <section
-      className="relative bg-cover bg-center bg-no-repeat h-[150px] md:h-[450px] flex items-center justify-center text-center"
+      className="relative bg-cover bg-center bg-no-repeat h-[120px] md:h-[400px] flex items-center justify-center text-center"
       style={{
         backgroundImage: `url(${bannerImage})`,
       }}

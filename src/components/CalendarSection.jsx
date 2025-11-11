@@ -48,7 +48,7 @@ export default function CalendarSection() {
     <div className="w-full mb-6 px-6 py-6">
       <div className="w-full flex flex-col md:flex-row md:items-center md:justify-between">
         <div className="flex flex-col md:flex-row md:items-center md:space-x-8">
-          <h1 className="text-4xl font-bold mb-0 md:mb-0">Auctions calendar</h1>
+          <h1 className="text-3xl font-bold mb-0 md:mb-0">Auctions calendar</h1>
         </div>
       </div>
 

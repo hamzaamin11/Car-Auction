@@ -8,6 +8,18 @@ import logo from "../../assets/wheellogo.png";
 import axios from "axios";
 import { BASE_URL } from "../../components/Contant/URL";
 import Swal from "sweetalert2";
+const getInitialProfileForm = (user) => ({
+  name: user?.name || "",
+  gender: user?.gender || "",
+  dateOfBirth: user?.dateOfBirth || "",
+  country: user?.country || "Pakistan",
+  city: user?.city || "",
+  username: user?.name || "",
+  email: user?.email || "",
+  mobileNumber: user?.contact || "",
+  cnic: user?.cnic || "",
+  role: user?.role || "",
+});
 
 export default function Topbar() {
   const { currentUser } = useSelector((state) => state?.auth);
@@ -39,19 +51,9 @@ export default function Topbar() {
   });
 
   // Profile form state
-  const [profileForm, setProfileForm] = useState({
-    name: currentUser?.name || "",
-    gender: currentUser?.gender || "",
-    dateOfBirth: currentUser?.dateOfBirth || "",
-    country: currentUser?.country || "Pakistan",
-    city: currentUser?.city || "",
-    username: currentUser?.name || "",
-    email: currentUser?.email || "",
-    mobileNumber: currentUser?.contact || "",
-    image: currentUser?.image || "",
-    role: currentUser?.role,
-    cnic: currentUser?.cnic || "",
-  });
+     // 2. State – initialise with the helper
+    const [profileForm, setProfileForm] = useState(getInitialProfileForm(currentUser));
+ 
 
   // Separate state for image file and preview
   const [imageFile, setImageFile] = useState(null);
@@ -316,21 +318,28 @@ export default function Topbar() {
   }, [currentUser]);
 
   // Initialize search fields and image preview when modal opens
-  useEffect(() => {
-    if (profileModalOpen) {
-      setCountrySearch(profileForm.country);
-      setCitySearch(profileForm.city);
-      setGenderSearch(
-        profileForm.gender
-          ? profileForm.gender.charAt(0).toUpperCase() +
-              profileForm.gender.slice(1)
-          : ""
-      );
-      // Reset image preview to current user's image when modal opens
-      setImagePreview(currentUser?.image || currentUser?.imageUrl || "");
-      setImageFile(null);
-    }
-  }, [profileModalOpen, currentUser]);
+   // 3. Reset on modal open – always start from the real user data
+   useEffect(() => {
+     if (profileModalOpen) {
+       setProfileForm(getInitialProfileForm(currentUser));
+ 
+       setCountrySearch(currentUser?.country || "Pakistan");
+       setCitySearch(currentUser?.city || "");
+       setGenderSearch(
+         currentUser?.gender
+           ? currentUser.gender.charAt(0).toUpperCase() + currentUser.gender.slice(1)
+           : ""
+       );
+ 
+       setImagePreview(
+         currentUser?.image ||
+           currentUser?.imageUrl ||
+           currentUser?.profileImage ||
+           ""
+       );
+       setImageFile(null);
+     }
+   }, [profileModalOpen, currentUser]);
 
   // Outside click detection for all dropdowns
   useEffect(() => {
@@ -474,7 +483,7 @@ export default function Topbar() {
                   name="newPassword"
                   value={passwordForm.newPassword}
                   onChange={handlePasswordChange}
-                  className="mt-1 p-2 w-full border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                  className="mt-1 p-2 w-full border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-900"
                   required
                 />
               </div>
@@ -487,7 +496,7 @@ export default function Topbar() {
                   name="confirmPassword"
                   value={passwordForm.confirmPassword}
                   onChange={handlePasswordChange}
-                  className="mt-1 p-2 w-full border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                  className="mt-1 p-2 w-full border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-900"
                   required
                 />
               </div>
@@ -581,7 +590,7 @@ export default function Topbar() {
                     name="name"
                     value={profileForm?.name}
                     onChange={handleProfileChange}
-                    className="p-2.5 w-full border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                    className="p-2.5 w-full border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-900"
                     required
                   />
                 </div>
@@ -596,7 +605,7 @@ export default function Topbar() {
                     name="cnic"
                     value={profileForm?.cnic}
                     onChange={handleCNICChange}
-                    className="p-2.5 w-full border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                    className="p-2.5 w-full border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-900"
                     required
                     maxLength={15}
                   />
@@ -616,7 +625,7 @@ export default function Topbar() {
                     }}
                     onFocus={() => setShowGenderDropdown(true)}
                     placeholder="Search or select gender"
-                    className="p-2.5 w-full border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                    className="p-2.5 w-full border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-900"
                   />
                   {showGenderDropdown && filteredGenders.length > 0 && (
                     <div className="absolute z-10 w-full mt-1 bg-white border border-gray-300 rounded-md shadow-lg max-h-48 overflow-y-auto">
@@ -644,7 +653,7 @@ export default function Topbar() {
                     value={profileForm.dateOfBirth}
                     onChange={handleProfileChange}
                     placeholder="DD-MM-YYYY"
-                    className="p-2.5 w-full border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                    className="p-2.5 w-full border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-900"
                   />
                 </div>
 
@@ -662,7 +671,7 @@ export default function Topbar() {
                     }}
                     onFocus={() => setShowCountryDropdown(true)}
                     placeholder="Search or select country"
-                    className="p-2.5 w-full border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                    className="p-2.5 w-full border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-900"
                   />
                   {showCountryDropdown && filteredCountries.length > 0 && (
                     <div className="absolute z-10 w-full mt-1 bg-white border border-gray-300 rounded-md shadow-lg max-h-48 overflow-y-auto">
@@ -693,7 +702,7 @@ export default function Topbar() {
                     }}
                     onFocus={() => setShowCityDropdown(true)}
                     placeholder="Search or select city"
-                    className="p-2.5 w-full border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                    className="p-2.5 w-full border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-900"
                   />
                   {showCityDropdown && filteredCities.length > 0 && (
                     <div className="absolute z-10 w-full mt-1 bg-white border border-gray-300 rounded-md shadow-lg max-h-48 overflow-y-auto">
@@ -720,7 +729,7 @@ export default function Topbar() {
                     name="username"
                     value={profileForm.username}
                     onChange={handleProfileChange}
-                    className="p-2.5 w-full border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 bg-gray-100"
+                    className="p-2.5 w-full border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-900 bg-gray-100"
                     readOnly
                   />
                 </div>
@@ -736,7 +745,7 @@ export default function Topbar() {
                   name="email"
                   value={profileForm.email}
                   onChange={handleProfileChange}
-                  className="p-2.5 w-full border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                  className="p-2.5 w-full border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-900"
                 />
               </div>
 
@@ -752,7 +761,7 @@ export default function Topbar() {
                     value={profileForm.mobileNumber}
                     onChange={handleMobileChange}
                     placeholder="+92-300-1234567"
-                    className="p-2.5 flex-1 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                    className="p-2.5 flex-1 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-900"
                     maxLength={15}
                   />
                 </div>

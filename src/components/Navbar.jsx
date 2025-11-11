@@ -19,6 +19,18 @@ import logoImage from "../../src/assets/wheellogo.png";
 import axios from "axios";
 import { BASE_URL } from "./Contant/URL";
 import Swal from "sweetalert2";
+const getInitialProfileForm = (user) => ({
+  name: user?.name || "",
+  gender: user?.gender || "",
+  dateOfBirth: user?.dateOfBirth || "",
+  country: user?.country || "Pakistan",
+  city: user?.city || "",
+  username: user?.name || "",
+  email: user?.email || "",
+  mobileNumber: user?.contact || "",
+  cnic: user?.cnic || "",
+  role: user?.role || "",
+});
 
 const Navbar = () => {
   const { isAuthenticated, logout } = useAuth();
@@ -60,18 +72,8 @@ const Navbar = () => {
   });
 
   // Profile form state
-  const [profileForm, setProfileForm] = useState({
-    name: currentUser?.name || "",
-    gender: currentUser?.gender || "",
-    dateOfBirth: currentUser?.dateOfBirth || "",
-    country: currentUser?.country || "Pakistan",
-    city: currentUser?.city || "",
-    username: currentUser?.name || "",
-    email: currentUser?.email || "",
-    mobileNumber: currentUser?.contact || "",
-    cnic: currentUser?.cnic || "",
-    role: currentUser?.role || "",
-  });
+   // 2. State – initialise with the helper
+  const [profileForm, setProfileForm] = useState(getInitialProfileForm(currentUser));
 
   // Options lists
   const countries = ["Pakistan"];
@@ -334,17 +336,20 @@ const Navbar = () => {
   }, [currentUser]);
 
   // ✅ FIXED: Initialize search fields and image preview when modal opens
+    // Initialize search fields and image preview when modal opens
+  // 3. Reset on modal open – always start from the real user data
   useEffect(() => {
     if (profileModalOpen) {
-      setCountrySearch(profileForm.country);
-      setCitySearch(profileForm.city);
+      setProfileForm(getInitialProfileForm(currentUser));
+
+      setCountrySearch(currentUser?.country || "Pakistan");
+      setCitySearch(currentUser?.city || "");
       setGenderSearch(
-        profileForm.gender
-          ? profileForm.gender.charAt(0).toUpperCase() +
-              profileForm.gender.slice(1)
+        currentUser?.gender
+          ? currentUser.gender.charAt(0).toUpperCase() + currentUser.gender.slice(1)
           : ""
       );
-      // Reset image preview to current user's image when modal opens
+
       setImagePreview(
         currentUser?.image ||
           currentUser?.imageUrl ||
@@ -936,7 +941,7 @@ const Navbar = () => {
                   name="newPassword"
                   value={passwordForm.newPassword}
                   onChange={handlePasswordChange}
-                  className="mt-1 p-2 w-full border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                  className="mt-1 p-2 w-full border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-900"
                   required
                 />
               </div>
@@ -949,7 +954,7 @@ const Navbar = () => {
                   name="confirmPassword"
                   value={passwordForm.confirmPassword}
                   onChange={handlePasswordChange}
-                  className="mt-1 p-2 w-full border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                  className="mt-1 p-2 w-full border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-900"
                   required
                 />
               </div>
@@ -1042,7 +1047,7 @@ const Navbar = () => {
                     name="name"
                     value={profileForm.name}
                     onChange={handleProfileChange}
-                    className="p-2.5 w-full border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                    className="p-2.5 w-full border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-900"
                     required
                   />
                 </div>
@@ -1057,7 +1062,7 @@ const Navbar = () => {
                     name="cnic"
                     value={profileForm?.cnic}
                     onChange={handleCNICChange}
-                    className="p-2.5 w-full border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                    className="p-2.5 w-full border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-900"
                     required
                     maxLength={15}
                   />
@@ -1077,7 +1082,7 @@ const Navbar = () => {
                     }}
                     onFocus={() => setShowGenderDropdown(true)}
                     placeholder="Search or select gender"
-                    className="p-2.5 w-full border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                    className="p-2.5 w-full border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-900"
                   />
                   {showGenderDropdown && filteredGenders.length > 0 && (
                     <div className="absolute z-10 w-full mt-1 bg-white border border-gray-300 rounded-md shadow-lg max-h-48 overflow-y-auto">
@@ -1105,7 +1110,7 @@ const Navbar = () => {
                     value={profileForm.dateOfBirth}
                     onChange={handleProfileChange}
                     placeholder="DD-MM-YYYY"
-                    className="p-2.5 w-full border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                    className="p-2.5 w-full border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-900"
                   />
                 </div>
 
@@ -1123,7 +1128,7 @@ const Navbar = () => {
                     }}
                     onFocus={() => setShowCountryDropdown(true)}
                     placeholder="Search or select country"
-                    className="p-2.5 w-full border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                    className="p-2.5 w-full border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-900"
                   />
                   {showCountryDropdown && filteredCountries.length > 0 && (
                     <div className="absolute z-10 w-full mt-1 bg-white border border-gray-300 rounded-md shadow-lg max-h-48 overflow-y-auto">
@@ -1154,7 +1159,7 @@ const Navbar = () => {
                     }}
                     onFocus={() => setShowCityDropdown(true)}
                     placeholder="Search or select city"
-                    className="p-2.5 w-full border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                    className="p-2.5 w-full border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-900"
                   />
                   {showCityDropdown && filteredCities.length > 0 && (
                     <div className="absolute z-10 w-full mt-1 bg-white border border-gray-300 rounded-md shadow-lg max-h-48 overflow-y-auto">
@@ -1181,7 +1186,7 @@ const Navbar = () => {
                     name="username"
                     value={profileForm.username}
                     onChange={handleProfileChange}
-                    className="p-2.5 w-full border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 bg-gray-100"
+                    className="p-2.5 w-full border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-900 bg-gray-100"
                     readOnly
                   />
                 </div>
@@ -1197,7 +1202,7 @@ const Navbar = () => {
                   name="email"
                   value={profileForm.email}
                   onChange={handleProfileChange}
-                  className="p-2.5 w-full border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                  className="p-2.5 w-full border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-900"
                 />
               </div>
 
@@ -1213,7 +1218,7 @@ const Navbar = () => {
                     value={profileForm.mobileNumber}
                     onChange={handleMobileChange}
                     placeholder="+92-300-1234567"
-                    className="p-2.5 flex-1 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                    className="p-2.5 flex-1 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-900"
                     maxLength={15}
                   />
                 </div>

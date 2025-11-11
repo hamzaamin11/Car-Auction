@@ -80,7 +80,7 @@ const AdminBidHistory = () => {
   return (
     <>
       <div className="min-h-screen bg-gray-50 p-1 md:p-6">
-        <div className="flex flex-col sm:flex-row justify-between items-center gap-4 mb-6 px-3">
+        <div className="flex flex-col sm:flex-row justify-between items-center gap-4 mb-3 px-3">
           <h1 className="lg:text-3xl text-xl font-bold text-gray-800">
             Auction History
           </h1>

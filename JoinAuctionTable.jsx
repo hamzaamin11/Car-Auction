@@ -98,7 +98,7 @@ const JoinAuctionTable = () => {
         {!isRegistered && (
           <button
             onClick={handleRegister}
-            className="bg-blue-600 text-white px-6 py-2 rounded hover:bg-blue-700"
+            className="bg-blue-950 text-white px-6 py-2 rounded "
           >
             Register
           </button>
@@ -128,7 +128,7 @@ const JoinAuctionTable = () => {
                 <button
                   className={`px-4 py-2 rounded ${
                     isRegistered
-                      ? "bg-blue-500 hover:bg-blue-600 text-white"
+                      ? "bg-blue-950  text-white"
                       : "bg-gray-400 text-white cursor-not-allowed"
                   }`}
                   onClick={() =>

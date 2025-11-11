@@ -133,7 +133,7 @@ export default function ManageUsers() {
   return (
     <div className="max-w-7xl mx-auto px-2 sm:px-4 py-6 font-sans">
       {/* Header */}
-      <div className="flex flex-col sm:flex-row justify-between items-center gap-4 mb-6">
+      <div className="flex flex-col sm:flex-row justify-between items-center gap-4 mb-3">
         <h1 className="lg:text-3xl text-xl font-bold text-gray-900">
           Registered Users
         </h1>
@@ -169,7 +169,7 @@ export default function ManageUsers() {
       <div className="hidden md:block overflow-hidden rounded-2xl border border-gray-200 shadow-lg">
         <div className="overflow-x-auto">
           <table className="min-w-full divide-y divide-gray-200 text-sm">
-            <thead className="bg-blue-950 text-white">
+            <thead className="bg-blue-950 text-white ">
               <tr>
                 <th className="px-6 py-4 text-left font-semibold">User</th>
                 <th className="px-6 py-4 text-left font-semibold">Email</th>
@@ -198,7 +198,7 @@ export default function ManageUsers() {
                       user?.email?.slice(1)}
                   </td>
                   <td className="px-6 py-4 text-left text-gray-700">
-                    {user?.contact?.slice(0, 14)}
+                    {user?.contact?.slice(0, 15)}
                   </td>
                   <td>
                     <span
