@@ -212,7 +212,7 @@ const VehicleFinderSection = () => {
         {/* SEARCH BUTTON */}
         <button
           onClick={handleGetCars}
-          className="bg-red-600 text-white rounded px-5 py-2 font-semibold  transition w-full md:mt-5 mt-0"
+          className="bg-red-600 text-white rounded px-5 py-2 font-semibold  transition w-full md:mt-6 mt-0"
         >
           Search
         </button>
@@ -224,7 +224,7 @@ const VehicleFinderSection = () => {
           <button
             key={tab}
             onClick={() => handleTabClick(tab)}
-            className={`px-5 py-2 font-semibold uppercase tracking-wide ${
+            className={`px-5 py-2 font-semibold uppercase rounded tracking-wide ${
               filters.condition === tab
                 ? "bg-blue-950 text-white"
                 : "bg-gray-200 text-gray-700 hover:bg-blue-950 hover:text-white transition"
