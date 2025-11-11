@@ -13,7 +13,7 @@ const CarCard = ({ car }) => {
   const navigate = useNavigate();
   const dispatch = useDispatch();
 
-  console.log("car = >",car)
+  console.log("car = >", car);
 
   const currentUser = useSelector((state) => state?.auth?.currentUser);
   const wishlistByUser = useSelector(
@@ -107,6 +107,9 @@ const CarCard = ({ car }) => {
         <h3 className="hidden sm:block text-lg font-bold  text-gray-800 transition">
           {car?.make} {car?.model}
         </h3>
+        <p className="text-sm text-gray-500">
+          <span className="font-base text-gray-500">Lot#</span> {car.lot_number}
+        </p>
         <p className="text-sm text-black">
           <span className="font-base text-black">Model Year:</span> {car.year}
         </p>
