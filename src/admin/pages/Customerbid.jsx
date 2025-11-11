@@ -14,12 +14,19 @@ import { IoMdArrowBack } from "react-icons/io";
 import { ChevronRight } from "lucide-react";
 
 export const Customerbid = () => {
+
   const { currentUser } = useSelector((state) => state.auth);
+
   const userId = currentUser?.id;
+
   const [isOpen, setIsOpen] = useState(false);
+
   const [viewImage, setViewImage] = useState(null);
+
   const [indexImage, setIndexImage] = useState(0);
+
   const { id } = useParams();
+
   const vehicleId = id;
 
   const [selectedPrice, setSelectedPrice] = useState(null);
@@ -42,6 +49,8 @@ export const Customerbid = () => {
   const [key, setKey] = useState(0);
 
   const imageList = selectedPrice?.images || [];
+
+  const yourBid = 
 
   useEffect(() => {
     if (imageList.length > 0) setViewImage(imageList[0]);
@@ -321,6 +330,12 @@ export const Customerbid = () => {
               <table className="w-full text-sm text-gray-700   border-collapse">
                 <tbody className="border  border-gray-100 ">
                   <tr className="border-b border-gray-100   ">
+                    <td className=" py-2 px-2 w-1/2">Lot Number:</td>
+                    <td className="py-2 font-semibold">
+                      {selectedPrice?.lot_number || "N/A"}
+                    </td>
+                  </tr>
+                  <tr className="border-b border-gray-100   ">
                     <td className=" py-2 px-2 w-1/2">Year:</td>
                     <td className="py-2 font-semibold">
                       {selectedPrice?.year || "N/A"}
@@ -456,6 +471,14 @@ export const Customerbid = () => {
                 <th className="text-left p-2 font-medium ">Time Left:</th>
                 <td className="p-2 font-semibold text-red-600 flex items-center gap-1">
                   {(() => {
+                    if (remainingTime <= 0) {
+                      return (
+                        <span className="text-gray-700">
+                          The bidding for this vehicle has ended
+                        </span>
+                      );
+                    }
+
                     const hours = Math.floor(remainingTime / 3600);
                     const minutes = Math.floor((remainingTime % 3600) / 60);
                     const seconds = remainingTime % 60;
@@ -470,7 +493,9 @@ export const Customerbid = () => {
 
                     return formatted;
                   })()}
-                  <FaClock className="text-red-600 text-sm" />
+                  {remainingTime > 0 && (
+                    <FaClock className="text-red-600 text-sm" />
+                  )}
                 </td>
               </tr>
 
@@ -480,13 +505,14 @@ export const Customerbid = () => {
                   PKR {selectedPrice?.buyNowPrice?.toLocaleString()}
                 </td>
               </tr>
-
-              <tr className="border-b border-gray-100">
-                <th className="text-left p-2 font-medium ">Your Bid:</th>
-                <td className="p-2 font-semibold  ">
-                  {selectedPrice?.currentBid || "--"}
-                </td>
-              </tr>
+              {currentUser && (
+                <tr className="border-b border-gray-100">
+                  <th className="text-left p-2 font-medium ">Your Bid:</th>
+                  <td className="p-2 font-semibold  ">
+                    {selectedPrice?.currentBid || "--"}
+                  </td>
+                </tr>
+              )}
 
               <tr className="border-b border-gray-100">
                 <th className="text-left p-2 font-medium ">Bid Date:</th>
@@ -616,55 +642,61 @@ export const Customerbid = () => {
             <table className="w-full text-sm text-gray-700 border-collapse">
               <tbody className="border border-gray-100">
                 <tr className="border-b border-gray-100">
-                  <td className=" py-2 px-2 w-1/3">Year</td>
+                  <td className=" py-2 px-2 w-1/3">Lot Number:</td>
+                  <td className="py-2 font-semibold text-right">
+                    {selectedPrice?.lot_number || "N/A"}
+                  </td>
+                </tr>
+                <tr className="border-b border-gray-100">
+                  <td className=" py-2 px-2 w-1/3">Year:</td>
                   <td className="py-2 font-semibold text-right">
                     {selectedPrice?.year || "N/A"}
                   </td>
                 </tr>
                 <tr className="border-b border-gray-100">
-                  <td className=" px-2 py-2">Make</td>
+                  <td className=" px-2 py-2">Make:</td>
                   <td className="py-2 font-semibold text-right">
                     {selectedPrice?.make || "N/A"}
                   </td>
                 </tr>
                 <tr className="border-b border-gray-100">
-                  <td className=" px-2 py-2">Model</td>
+                  <td className=" px-2 py-2">Model:</td>
                   <td className="py-2 font-semibold text-right">
                     {selectedPrice?.model || "N/A"}
                   </td>
                 </tr>
                 <tr className="border-b border-gray-100">
-                  <td className=" px-2 py-2">City</td>
+                  <td className=" px-2 py-2">City:</td>
                   <td className="py-2 font-semibold text-right">
                     {selectedPrice?.locationId || "N/A"}
                   </td>
                 </tr>
                 <tr className="border-b border-gray-100">
-                  <td className="px-2 py-2">Body Style</td>
+                  <td className="px-2 py-2">Body Style:</td>
                   <td className="py-2 font-semibold text-right ">
                     {selectedPrice?.bodyStyle || "N/A"}
                   </td>
                 </tr>
                 <tr className="border-b border-gray-100">
-                  <td className=" px-2 py-2">Certification Status</td>
+                  <td className=" px-2 py-2">Certification Status:</td>
                   <td className="py-2 font-semibold text-right">
                     {selectedPrice?.certifyStatus || "N/A"}
                   </td>
                 </tr>
                 <tr className="border-b border-gray-100">
-                  <td className=" px-2 py-2">Transmission</td>
+                  <td className=" px-2 py-2">Transmission:</td>
                   <td className="py-2 font-semibold text-right">
                     {selectedPrice?.transmission || "N/A"}
                   </td>
                 </tr>
                 <tr className="border-b border-gray-100">
-                  <td className=" px-2 py-2">Meter Reading</td>
+                  <td className=" px-2 py-2">Meter Reading:</td>
                   <td className="py-2 font-semibold text-right">
                     {selectedPrice?.mileage || "N/A"}
                   </td>
                 </tr>
                 <tr className="border-b border-gray-100">
-                  <td className=" px-2 py-2 ">Drive</td>
+                  <td className=" px-2 py-2 ">Drive:</td>
                   <td className="py-2 font-semibold text-right">
                     {selectedPrice?.driveType || "N/A"}
                   </td>
@@ -732,6 +764,14 @@ export const Customerbid = () => {
 
                 <td className="p-2 font-semibold justify-end text-red-600 flex items-center gap-1">
                   {(() => {
+                    if (remainingTime <= 0) {
+                      return (
+                        <span className="text-gray-800">
+                          The bidding for this vehicle has ended
+                        </span>
+                      );
+                    }
+
                     const hours = Math.floor(remainingTime / 3600);
                     const minutes = Math.floor((remainingTime % 3600) / 60);
                     const seconds = remainingTime % 60;
@@ -746,7 +786,9 @@ export const Customerbid = () => {
 
                     return formatted;
                   })()}
-                  <FaClock className="text-red-600 text-sm" />
+                  {remainingTime > 0 && (
+                    <FaClock className="text-red-600 text-sm" />
+                  )}
                 </td>
               </tr>
 
@@ -756,15 +798,16 @@ export const Customerbid = () => {
                   PKR {selectedPrice?.buyNowPrice?.toLocaleString()}
                 </td>
               </tr>
-
-              <tr className="border-b border-gray-100">
-                <th className="text-left p-2 font-medium  text-gray-800">
-                  Your Bid:
-                </th>
-                <td className="p-2 font-semibold text-right ">
-                  {selectedPrice?.currentBid || "--"}
-                </td>
-              </tr>
+              {currentUser && (
+                <tr className="border-b border-gray-100">
+                  <th className="text-left p-2 font-medium  text-gray-800">
+                    Your Bid:
+                  </th>
+                  <td className="p-2 font-semibold text-right ">
+                    {selectedPrice?.currentBid || "--"}
+                  </td>
+                </tr>
+              )}
 
               <tr className="border-b border-gray-100">
                 <th className="text-left p-2 font-medium">Bid Date:</th>

@@ -32,6 +32,7 @@ const BodyType = [
 
 const FilterPriceCars = () => {
   const { name, value } = useParams();
+
   const navigate = useNavigate();
 
   const [allMake, setAllMake] = useState([]);
@@ -105,31 +106,31 @@ const FilterPriceCars = () => {
     [filterModel]
   );
   // Sorted + paginated cars
-const sortedCars = useMemo(() => {
-  let cars = [...allFilterCars];
+  const sortedCars = useMemo(() => {
+    let cars = [...allFilterCars];
 
-  // ---- PRICE SORTING ----
-  if (sorting === "low") {
-    cars.sort((a, b) => a.buyNowPrice - b.buyNowPrice);
-  } else if (sorting === "high") {
-    cars.sort((a, b) => b.buyNowPrice - a.buyNowPrice);
-  }
+    // ---- PRICE SORTING ----
+    if (sorting === "low") {
+      cars.sort((a, b) => a.buyNowPrice - b.buyNowPrice);
+    } else if (sorting === "high") {
+      cars.sort((a, b) => b.buyNowPrice - a.buyNowPrice);
+    }
 
-  // ---- YEAR SORTING (NEW) ----
-  else if (sorting === "year_desc") {
-    cars.sort((a, b) => b.year - a.year); // newest first
-  } else if (sorting === "year_asc") {
-    cars.sort((a, b) => a.year - b.year); // oldest first
-  }
+    // ---- YEAR SORTING (NEW) ----
+    else if (sorting === "year_desc") {
+      cars.sort((a, b) => b.year - a.year); // newest first
+    } else if (sorting === "year_asc") {
+      cars.sort((a, b) => a.year - b.year); // oldest first
+    }
 
-  return cars;
-}, [allFilterCars, sorting]);
+    return cars;
+  }, [allFilterCars, sorting]);
 
   // Pagination calculations
-const indexOfLastCar = currentPage * carsPerPage;
-const indexOfFirstCar = indexOfLastCar - carsPerPage;
-const currentCars = sortedCars.slice(indexOfFirstCar, indexOfLastCar);
-const totalPages = Math.ceil(sortedCars.length / carsPerPage);
+  const indexOfLastCar = currentPage * carsPerPage;
+  const indexOfFirstCar = indexOfLastCar - carsPerPage;
+  const currentCars = sortedCars.slice(indexOfFirstCar, indexOfLastCar);
+  const totalPages = Math.ceil(sortedCars.length / carsPerPage);
 
   // Map URL value to option value (ID) for city and make
   useEffect(() => {
@@ -216,7 +217,7 @@ const totalPages = Math.ceil(sortedCars.length / carsPerPage);
       setLoading(false);
     } catch (error) {
       console.log("Error fetching cars:", error);
-      
+
       setAllFilterCars([]);
       setLoading(false);
     }
@@ -563,7 +564,6 @@ const totalPages = Math.ceil(sortedCars.length / carsPerPage);
             onChange={(e) => setSorting(e.target.value)}
             name="sorting"
             value={sorting}
-   
           >
             {/* <option value="">Updated Date: Recent First</option> */}
             <option value="low">Price: Low to High</option>
@@ -587,7 +587,7 @@ const totalPages = Math.ceil(sortedCars.length / carsPerPage);
               >
                 {car.certifyStatus === "Certified" && (
                   <div className="absolute top-2 left-2 bg-green-600 text-white text-xs font-bold px-3 py-1 rounded-full shadow-md">
-                     Certified
+                    Certified
                   </div>
                 )}
                 <div className="w-full md:w-40 h-48 md:h-28 overflow-hidden rounded-md mb-4 md:mb-0 md:mr-4">
@@ -608,10 +608,12 @@ const totalPages = Math.ceil(sortedCars.length / carsPerPage);
                     >
                       {car.make} {car.model} {car.series} {car.engine} for sale
                     </h3>
+
                     <span className="text-lg font-bold text-gray-800 mt-2 sm:mt-0">
                       PKR {car.buyNowPrice}
                     </span>
                   </div>
+                  <p className="text-sm text-gray-600 mt-1">Lot # {car.lot_number}</p>
                   <p className="text-sm text-gray-600 mt-1">{car.cityName}</p>
                   <div className="flex flex-wrap gap-2 mt-2">
                     <span className="px-3 py-1 bg-gray-100 text-xs font-medium rounded-full shadow-sm">

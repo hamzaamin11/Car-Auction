@@ -68,7 +68,7 @@ const CarCard = ({ car }) => {
         />
       </div>
 
-      <div className="relative group p-4 space-y-2 text-gray-800 flex-grow flex flex-col bg-white rounded-xl shadow-md hover:shadow-xl transition-all duration-300 border border-gray-100 ">
+      <div className="relative group p-4 space-y-1 text-gray-800 flex-grow flex flex-col bg-white rounded-xl shadow-md hover:shadow-xl transition-all duration-300 border border-gray-100 ">
         {/* For Desktop → Heart at top right */}
         <div className="hidden sm:flex justify-end">
           <button
@@ -107,8 +107,8 @@ const CarCard = ({ car }) => {
         <h3 className="hidden sm:block text-lg font-bold  text-gray-800 transition">
           {car?.make} {car?.model}
         </h3>
-        <p className="text-sm text-gray-500">
-          <span className="font-base text-gray-500">Lot#</span> {car.lot_number}
+        <p className="text-sm text-gray-800">
+          <span className="font-base text-gray-800">Lot#</span> {car.lot_number}
         </p>
         <p className="text-sm text-black">
           <span className="font-base text-black">Model Year:</span> {car.year}

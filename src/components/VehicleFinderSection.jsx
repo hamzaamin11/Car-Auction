@@ -282,10 +282,14 @@ const VehicleFinderSection = () => {
                     <h3 className="text-lg font-semibold mb-1">
                       {car.make} {car.model}
                     </h3>
+
+                    <p className="text-sm font-base text-gray-800">
+                      Lot# <span>{car.lot_number}</span>
+                    </p>
                     <p className="text-sm font-base text-black">
                       Model Year: <span>{car.year}</span>
                     </p>
-                    <p className="text-sm font-base mb-1">
+                    <p className="text-sm font-base">
                       Current Bid: <b> PKR {car.buyNowPrice}</b>
                     </p>
                     <p className="text-sm font-base text-black">
