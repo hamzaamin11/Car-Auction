@@ -133,8 +133,7 @@ function Layout() {
       {!hideNavbarFooter && location.pathname === "/"}
       <ScrollToTop />
 
-     {!hideNavbarFooter && role !== "admin" && role !== "seller" && <Navbar />}
-
+{!hideNavbarFooter && (location.pathname === "/" || (role !== "admin" && role !== "seller")) && <Navbar />}
       <Routes>
         {/* Main Routes */}
         <Route path="/" element={<Home />} />

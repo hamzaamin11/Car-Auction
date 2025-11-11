@@ -791,7 +791,7 @@ function AddAdminVehicle({ open, setOpen, onVehicleUpdated }) {
                   <button
                     type="submit"
                     disabled={loading}
-                    className="bg-[#191970] text-white px-5 py-2 rounded-lg shadow-md hover:bg-indigo-700 transition"
+                    className="bg-blue-950 text-white px-5 py-2 rounded-lg shadow-md "
                   >
                     {loading ? "loading..." : "Submit Vehicle"}
                   </button>

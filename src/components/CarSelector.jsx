@@ -202,7 +202,7 @@ const CarSelector = ({ handleIsOpenToggle }) => {
         {/* Series */}
         {(activeStep === 3 || window.innerWidth >= 768) && (
           <div className="border-b md:border-0 border-gray-200">
-            <h3 className="bg-gray-100 p-3 font-bold">Version (Optional)</h3>
+            <h3 className="bg-gray-100 p-3 font-bold">Version</h3>
             <div className="overflow-y-auto md:h-[60vh] h-auto">
               {selected?.model &&
                 seriesList?.map((series) => (
@@ -242,7 +242,7 @@ const CarSelector = ({ handleIsOpenToggle }) => {
           {activeStep === 3 && (
             <button
               onClick={() => handleIsOpenToggle()}
-              className="bg-blue-800 text-white px-6 py-2 rounded-md hover:bg-blue-900 transition"
+              className="bg-blue-950 text-white px-6 py-2 rounded-md "
             >
               Done
             </button>
@@ -253,7 +253,7 @@ const CarSelector = ({ handleIsOpenToggle }) => {
         <div className="flex justify-center p-4 bg-gray-50">
           <button
             onClick={() => handleIsOpenToggle()}
-            className="bg-blue-800 text-white px-6 py-2 rounded-md hover:bg-blue-900 transition"
+            className="bg-blue-950 text-white px-6 py-2 rounded-md "
           >
             Done
           </button>
