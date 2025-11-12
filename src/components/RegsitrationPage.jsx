@@ -142,7 +142,7 @@ const RegistrationPage = () => {
               onChange={handleChange}
               placeholder="Please Enter Your Full Name"
               required
-              className="w-full px-3 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-400 focus:outline-none text-sm "
+              className="w-full px-3 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-900 focus:outline-none text-sm "
             />
           </div>
 
@@ -162,7 +162,7 @@ const RegistrationPage = () => {
           ${
             error
               ? "border-red-500 focus:ring-red-400"
-              : "border-gray-300 focus:ring-blue-400"
+              : "border-gray-300 focus:ring-blue-900"
           }`}
             />
             {error && <p className="text-red-500 text-xs mt-1">{error}</p>}
@@ -199,7 +199,7 @@ const RegistrationPage = () => {
               onChange={handleChange}
               placeholder="Please Enter Your Password"
               required
-              className="w-full px-3 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-400 focus:outline-none text-sm"
+              className="w-full px-3 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-900 focus:outline-none text-sm"
             />
           </div>
 

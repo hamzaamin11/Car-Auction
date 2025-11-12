@@ -72,7 +72,7 @@ export const EmailSignUpModal = ({ handleModal }) => {
         {/* Close Button */}
         <button
           onClick={() => handleModal("")}
-          className="absolute top-3 right-3 font-bold text-gray-600 hover:text-red-500"
+          className="absolute top-6 right-7 font-bold text-gray-600 hover:text-red-500"
         >
           ✕
         </button>

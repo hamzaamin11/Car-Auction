@@ -94,7 +94,7 @@ const SignInPage = () => {
               onChange={handleChange}
               required
               placeholder="Enter Email or Phone Number"
-              className="w-full p-3 rounded-lg border border-gray-300 bg-white text-gray-800 placeholder-gray-400 focus:ring-2 focus:ring-blue-500 outline-none"
+              className="w-full p-3 rounded-lg border border-gray-300 bg-white text-gray-800 placeholder-gray-400 focus:ring-2 focus:ring-blue-900 outline-none"
             />
           </div>
 
@@ -109,7 +109,7 @@ const SignInPage = () => {
               onChange={handleChange}
               required
               placeholder="Enter Password"
-              className="w-full p-3 rounded-lg border border-gray-300 bg-white text-gray-800 placeholder-gray-400 focus:ring-2 focus:ring-blue-500 outline-none"
+              className="w-full p-3 rounded-lg border border-gray-300 bg-white text-gray-800 placeholder-gray-400 focus:ring-2 focus:ring-blue-900 outline-none"
             />
           </div>
 
