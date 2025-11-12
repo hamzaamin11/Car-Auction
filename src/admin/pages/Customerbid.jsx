@@ -19,6 +19,10 @@ export const Customerbid = () => {
 
   const userId = currentUser?.id;
 
+  const token = currentUser?.token;
+
+  console.log("userid =>", userId);
+
   const [isOpen, setIsOpen] = useState(false);
 
   const [isOpenModal, setIsOpenModal] = useState("");
@@ -74,7 +78,11 @@ export const Customerbid = () => {
 
   const handleGetPrice = async () => {
     try {
-      const res = await axios.get(`${BASE_URL}/getVehiclesById/${vehicleId}`);
+      const res = await axios.get(`${BASE_URL}/getVehiclesById/${vehicleId}`, {
+        headers: {
+          Authorization: token,
+        },
+      });
       setSelectedPrice(res.data);
     } catch (error) {
       console.log(error);
@@ -527,7 +535,7 @@ export const Customerbid = () => {
                 <tr className="border-b border-gray-100">
                   <th className="text-left p-2 font-medium ">Your Bid:</th>
                   <td className="p-2 font-semibold  ">
-                    {selectedPrice?.currentBid || "--"}
+                    {selectedPrice?.userMaxBid || "--"}
                   </td>
                 </tr>
               )}
