@@ -453,7 +453,9 @@ export const Customerbid = () => {
                   Bid Status:
                 </th>
                 <td className="p-2 font-semibold ">
-                  {selectedPrice?.bidStatus || "N/A"}
+                  {selectedPrice?.userMaxBid
+                    ? "You have bid"
+                    : "You haven't bid" || "N/A"}
                 </td>
               </tr>
 
@@ -462,22 +464,29 @@ export const Customerbid = () => {
                   Eligibility Status:
                 </th>
                 <td className="p-2 font-semibold flex items-center gap-2">
-                  <span className="w-3 h-3 bg-red-600 rounded-full"></span>
                   <span>
                     {currentUser &&
                     currentUser.cnic &&
                     selectedPrice?.eligibilityStatus ? (
-                      "Yes"
-                    ) : (
-                      <p className="text-red-600">
-                        Not eligible to bid{" "}
-                        <span
-                          onClick={() => handleIsOpenModal("warning")}
-                          className="text-blue-800 underline text-xs hover:cursor-pointer font-semibold"
-                        >
-                          Check Why
+                      <div className="flex items-center gap-2">
+                        <span className="w-3 h-3 bg-green-600 rounded-full"></span>
+                        <span className="text-green-600 font-semibold">
+                          Yes
                         </span>
-                      </p>
+                      </div>
+                    ) : (
+                      <div className="flex items-center gap-2">
+                        <span className="w-3 h-3 bg-red-600 rounded-full"></span>
+                        <p className="text-red-600 text-sm">
+                          Not eligible to bid{" "}
+                          <span
+                            onClick={() => handleIsOpenModal("warning")}
+                            className="text-blue-800 underline text-xs hover:cursor-pointer font-semibold"
+                          >
+                            Check Why
+                          </span>
+                        </p>
+                      </div>
                     )}
                   </span>
                 </td>
@@ -535,7 +544,7 @@ export const Customerbid = () => {
                 <tr className="border-b border-gray-100">
                   <th className="text-left p-2 font-medium ">Your Bid:</th>
                   <td className="p-2 font-semibold  ">
-                    {selectedPrice?.userMaxBid || "--"}
+                    PKR {selectedPrice?.userMaxBid?.toLocaleString() || "--"}
                   </td>
                 </tr>
               )}
@@ -763,7 +772,9 @@ export const Customerbid = () => {
                   Bid Status:
                 </th>
                 <td className="p-2 font-semibold text-right">
-                  {selectedPrice?.bidStatus || "N/A"}
+                  {selectedPrice?.userMaxBid
+                    ? "You have bid"
+                    : "You haven't bid" || "N/A"}
                 </td>
               </tr>
 
@@ -774,9 +785,25 @@ export const Customerbid = () => {
                 <td className="p-2 font-semibold text-right ">
                   {currentUser &&
                   currentUser.cnic &&
-                  selectedPrice?.eligibilityStatus
-                    ? "Check Now"
-                    : "Not eligibile" || "N/A"}
+                  selectedPrice?.eligibilityStatus ? (
+                    <div className="flex items-center gap-2 justify-end">
+                      <span className="w-3 h-3 bg-green-600 rounded-full"></span>
+                      <span className="text-green-600 font-semibold">Yes</span>
+                    </div>
+                  ) : (
+                    <div className="flex items-center gap-2">
+                      <span className="w-3 h-3 bg-red-600 rounded-full"></span>
+                      <p className="text-red-600 text-sm">
+                        Not eligible to bid{" "}
+                        <span
+                          onClick={() => handleIsOpenModal("warning")}
+                          className="text-blue-800 underline text-xs hover:cursor-pointer font-semibold"
+                        >
+                          Check Why
+                        </span>
+                      </p>
+                    </div>
+                  )}
                 </td>
               </tr>
 
@@ -832,7 +859,7 @@ export const Customerbid = () => {
                     Your Bid:
                   </th>
                   <td className="p-2 font-semibold text-right ">
-                    {selectedPrice?.currentBid || "--"}
+                    PKR {selectedPrice?.userMaxBid?.toLocaleString() || "--"}
                   </td>
                 </tr>
               )}
