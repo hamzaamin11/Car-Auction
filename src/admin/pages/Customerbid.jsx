@@ -12,14 +12,18 @@ import { current } from "@reduxjs/toolkit";
 import Swal from "sweetalert2";
 import { IoMdArrowBack } from "react-icons/io";
 import { ChevronRight } from "lucide-react";
+import { WarningModal } from "../../components/ModelModal/WarningModel";
 
 export const Customerbid = () => {
-
   const { currentUser } = useSelector((state) => state.auth);
 
   const userId = currentUser?.id;
 
   const [isOpen, setIsOpen] = useState(false);
+
+  const [isOpenModal, setIsOpenModal] = useState("");
+
+  console.log("isopenmodal =>", isOpenModal);
 
   const [viewImage, setViewImage] = useState(null);
 
@@ -50,9 +54,11 @@ export const Customerbid = () => {
 
   const imageList = selectedPrice?.images || [];
 
-  const yourBid = 
+  const handleIsOpenModal = (active) => {
+    setIsOpenModal((prev) => (prev === active ? "" : active));
+  };
 
-  useEffect(() => {
+  const yourBid = useEffect(() => {
     if (imageList.length > 0) setViewImage(imageList[0]);
   }, [selectedPrice]);
 
@@ -448,11 +454,23 @@ export const Customerbid = () => {
                   Eligibility Status:
                 </th>
                 <td className="p-2 font-semibold flex items-center gap-2">
-                  <span className="w-2 h-2 bg-blue-800 rounded-full"></span>
+                  <span className="w-3 h-3 bg-red-600 rounded-full"></span>
                   <span>
-                    {selectedPrice?.eligibilityStatus
-                      ? "Check Now"
-                      : "No" || "N/A"}
+                    {currentUser &&
+                    currentUser.cnic &&
+                    selectedPrice?.eligibilityStatus ? (
+                      "Yes"
+                    ) : (
+                      <p className="text-red-600">
+                        Not eligible to bid{" "}
+                        <span
+                          onClick={() => handleIsOpenModal("warning")}
+                          className="text-blue-800 underline text-xs hover:cursor-pointer font-semibold"
+                        >
+                          Check Why
+                        </span>
+                      </p>
+                    )}
                   </span>
                 </td>
               </tr>
@@ -746,9 +764,11 @@ export const Customerbid = () => {
                   Eligibility Status:
                 </th>
                 <td className="p-2 font-semibold text-right ">
-                  {selectedPrice?.eligibilityStatus
+                  {currentUser &&
+                  currentUser.cnic &&
+                  selectedPrice?.eligibilityStatus
                     ? "Check Now"
-                    : "No" || "N/A"}
+                    : "Not eligibile" || "N/A"}
                 </td>
               </tr>
 
@@ -939,6 +959,9 @@ export const Customerbid = () => {
         />
       )}
       <ToastContainer />
+      {isOpenModal === "warning" && (
+        <WarningModal onClose={() => handleIsOpenModal("")} />
+      )}
     </div>
   );
 };

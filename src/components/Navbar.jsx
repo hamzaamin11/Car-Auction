@@ -72,8 +72,10 @@ const Navbar = () => {
   });
 
   // Profile form state
-   // 2. State – initialise with the helper
-  const [profileForm, setProfileForm] = useState(getInitialProfileForm(currentUser));
+  // 2. State – initialise with the helper
+  const [profileForm, setProfileForm] = useState(
+    getInitialProfileForm(currentUser)
+  );
 
   // Options lists
   const countries = ["Pakistan"];
@@ -336,7 +338,7 @@ const Navbar = () => {
   }, [currentUser]);
 
   // ✅ FIXED: Initialize search fields and image preview when modal opens
-    // Initialize search fields and image preview when modal opens
+  // Initialize search fields and image preview when modal opens
   // 3. Reset on modal open – always start from the real user data
   useEffect(() => {
     if (profileModalOpen) {
@@ -346,7 +348,8 @@ const Navbar = () => {
       setCitySearch(currentUser?.city || "");
       setGenderSearch(
         currentUser?.gender
-          ? currentUser.gender.charAt(0).toUpperCase() + currentUser.gender.slice(1)
+          ? currentUser.gender.charAt(0).toUpperCase() +
+              currentUser.gender.slice(1)
           : ""
       );
 
@@ -1184,7 +1187,7 @@ const Navbar = () => {
                   <input
                     type="text"
                     name="username"
-                    value={profileForm.username}
+                    value={profileForm.username }
                     onChange={handleProfileChange}
                     className="p-2.5 w-full border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-900 bg-gray-100"
                     readOnly
