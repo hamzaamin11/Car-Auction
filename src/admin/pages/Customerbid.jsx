@@ -1,4 +1,4 @@
-import { FaArrowLeft, FaArrowRight, FaClock } from "react-icons/fa";
+import { FaArrowLeft, FaArrowRight, FaClock, FaCalendarPlus } from "react-icons/fa";
 import { useEffect, useState } from "react";
 import axios from "axios";
 import { Link, useParams } from "react-router-dom";
@@ -94,10 +94,10 @@ export const Customerbid = () => {
       const res = await axios.get(
         `${BASE_URL}/admin/bidsPlacedById/${vehicleId}`
       );
-      console.log("📋 Fetched bids:", res.data);
+      console.log("Fetched bids:", res.data);
       setAllCustomerBid(res.data);
     } catch (error) {
-      console.error("❌ Error fetching bids:", error);
+      console.error("Error fetching bids:", error);
     }
   };
 
@@ -107,14 +107,14 @@ export const Customerbid = () => {
         `${BASE_URL}/customer/startBidding`,
         bidAmount
       );
-      console.log("✅ Bid submitted:", response.data);
+      console.log("Bid submitted:", response.data);
 
       // Refresh bids immediately after submission
       setTimeout(() => {
         handleGetallBid();
       }, 500);
     } catch (error) {
-      console.error("❌ Bid submission failed=>", error);
+      console.error("Bid submission failed=>", error);
       Swal.fire({
         icon: "warning",
         title: "",
@@ -128,7 +128,7 @@ export const Customerbid = () => {
 
   // SOCKET CONNECTION - STAYS ACTIVE EVEN WHEN MODAL IS CLOSED
   useEffect(() => {
-    console.log("🔌 Initializing socket connection for vehicle:", vehicleId);
+    console.log("Initializing socket connection for vehicle:", vehicleId);
 
     const newSocket = io("http://localhost:3001", {
       transports: ["websocket"],
@@ -139,18 +139,18 @@ export const Customerbid = () => {
     });
 
     newSocket.on("connect", () => {
-      console.log("✅ Socket connected:", newSocket.id);
-      console.log("📡 Joining room for vehicle:", vehicleId);
+      console.log("Socket connected:", newSocket.id);
+      console.log("Joining room for vehicle:", vehicleId);
       newSocket.emit("joinVehicleRoom", { vehicleId });
     });
 
     // Listen for bidUpdate event
     newSocket.on("bidUpdate", (data) => {
-      console.log("📥 Received bidUpdate event:", data);
+      console.log("Received bidUpdate event:", data);
 
       // Check if the vehicleId matches (handle both string and number)
       if (data.vehicleId == vehicleId) {
-        console.log("✅ VehicleId matches, processing bid");
+        console.log("VehicleId matches, processing bid");
         setAllCustomerBid((prev) => {
           // Avoid duplicates by checking if bid already exists
           const bidExists = prev.some(
@@ -162,40 +162,40 @@ export const Customerbid = () => {
           );
 
           if (bidExists) {
-            console.log("⚠️ Bid already exists, skipping");
+            console.log("Bid already exists, skipping");
             return prev;
           }
 
-          console.log("✅ Adding new bid to list:", data.latestBid);
+          console.log("Adding new bid to list:", data.latestBid);
           return [...prev, data.latestBid];
         });
       } else {
-        console.log("⚠️ VehicleId mismatch:", data.vehicleId, "vs", vehicleId);
+        console.log("VehicleId mismatch:", data.vehicleId, "vs", vehicleId);
       }
     });
 
     // Listen for ANY event (for debugging)
     newSocket.onAny((eventName, ...args) => {
-      console.log("🎯 Received socket event:", eventName, args);
+      console.log("Received socket event:", eventName, args);
     });
 
     newSocket.on("disconnect", () => {
-      console.log("❌ Socket disconnected");
+      console.log("Socket disconnected");
     });
 
     newSocket.on("connect_error", (error) => {
-      console.error("🔥 Socket connection error:", error);
+      console.error("Socket connection error:", error);
     });
 
     newSocket.on("error", (error) => {
-      console.error("🔥 Socket error:", error);
+      console.error("Socket error:", error);
     });
 
     setSocket(newSocket);
     handleGetallBid();
 
     return () => {
-      console.log("🧹 Cleaning up socket connection");
+      console.log("Cleaning up socket connection");
       newSocket.emit("leaveVehicleRoom", { vehicleId });
       newSocket.off("bidUpdate");
       newSocket.off("connect");
@@ -209,14 +209,14 @@ export const Customerbid = () => {
 
   // POLLING FALLBACK - Check for new bids every 3 seconds
   useEffect(() => {
-    console.log("⏰ Starting polling mechanism");
+    console.log("Starting polling mechanism");
     const pollingInterval = setInterval(() => {
-      console.log("🔄 Polling for new bids...");
+      console.log("Polling for new bids...");
       handleGetallBid();
     }, 3000); // Poll every 3 seconds
 
     return () => {
-      console.log("⏰ Stopping polling mechanism");
+      console.log("Stopping polling mechanism");
       clearInterval(pollingInterval);
     };
   }, [vehicleId]);
@@ -224,7 +224,7 @@ export const Customerbid = () => {
   // TIMER LOGIC
   useEffect(() => {
     if (!allCustomerBid[0]?.startTime || !allCustomerBid[0]?.endTime) {
-      console.log("⏰ Missing startTime or endTime:", allCustomerBid[0]);
+      console.log("Missing startTime or endTime:", allCustomerBid[0]);
       return;
     }
 
@@ -235,15 +235,15 @@ export const Customerbid = () => {
     if (now < start) {
       setPhase("before");
       setRemainingTime(start - now);
-      console.log("⏳ Auction starts in:", start - now, "seconds");
+      console.log("Auction starts in:", start - now, "seconds");
     } else if (now >= start && now <= end) {
       setPhase("running");
       setRemainingTime(end - now);
-      console.log("🏃 Auction running, ends in:", end - now, "seconds");
+      console.log("Auction running, ends in:", end - now, "seconds");
     } else {
       setPhase("ended");
       setRemainingTime(0);
-      console.log("🏁 Auction ended");
+      console.log("Auction ended");
     }
 
     setKey((prev) => prev + 1);
@@ -252,6 +252,45 @@ export const Customerbid = () => {
   useEffect(() => {
     handleGetPrice();
   }, []);
+
+  // === ADD TO CALENDAR FUNCTION ===
+  const generateICS = () => {
+    if (!selectedPrice?.startTime || !selectedPrice?.endTime) return;
+
+    const start = moment(selectedPrice.startTime).utc();
+    const end = moment(selectedPrice.endTime).utc();
+
+    const event = {
+      title: `Bid: ${selectedPrice.make} ${selectedPrice.model} ${selectedPrice.year}`,
+      description: `Auction for Lot #${selectedPrice.lot_number}. Current Bid: PKR ${selectedPrice.buyNowPrice?.toLocaleString()}. Join at: ${window.location.href}`,
+      location: "Online Auction",
+      start: start.format("YYYYMMDD[T]HHmmss[Z]"),
+      end: end.format("YYYYMMDD[T]HHmmss[Z]"),
+    };
+
+    const icsContent = `
+BEGIN:VCALENDAR
+VERSION:2.0
+PRODID:-//Your App//Auction Reminder//EN
+BEGIN:VEVENT
+UID:${Date.now()}@yourapp.com
+DTSTAMP:${moment().utc().format("YYYYMMDD[T]HHmmss[Z]")}
+DTSTART:${event.start}
+DTEND:${event.end}
+SUMMARY:${event.title}
+DESCRIPTION:${event.description.replace(/\n/g, "\\n")}
+LOCATION:${event.location}
+END:VEVENT
+END:VCALENDAR`.trim();
+
+    const blob = new Blob([icsContent], { type: "text/calendar;charset=utf-8" });
+    const url = window.URL.createObjectURL(blob);
+    const link = document.createElement("a");
+    link.href = url;
+    link.download = `Auction-${selectedPrice.lot_number}-${selectedPrice.make}-${selectedPrice.model}.ics`;
+    link.click();
+    window.URL.revokeObjectURL(url);
+  };
 
   return (
     <div className="max-w-screen-2xl mx-auto p-4 bg-gray-100 min-h-screen">
@@ -340,6 +379,8 @@ export const Customerbid = () => {
             ))}
           </div>
         </div>
+
+        {/* CENTER: VEHICLE DETAILS (DESKTOP) */}
         <div className="hidden lg:block space-y-6">
           {/* Vehicle Details Card */}
           <div className="bg-white rounded-xl shadow-md p-6 h-full">
@@ -448,6 +489,7 @@ export const Customerbid = () => {
           </div>
         </div>
 
+        {/* RIGHT: BID INFORMATION (DESKTOP) */}
         <div className="bg-white rounded-xl shadow-md p-6 hidden lg:block">
           <h2 className="text-xl font-bold text-gray-800 mb-3 border-b pb-2 border-gray-100">
             Bid Information
@@ -506,32 +548,45 @@ export const Customerbid = () => {
 
               <tr className="border-b border-gray-100">
                 <th className="text-left p-2 font-medium ">Time Left:</th>
-                <td className="p-2 font-semibold text-red-600 flex items-center gap-1">
-                  {(() => {
-                    if (remainingTime <= 0) {
-                      return (
-                        <span className="text-gray-700">
-                          The bidding for this vehicle has ended
-                        </span>
-                      );
-                    }
+                <td className="p-2 font-semibold text-red-600 flex flex-col gap-1">
+                  <div className="flex items-center gap-1">
+                    {(() => {
+                      if (remainingTime <= 0) {
+                        return (
+                          <span className="text-gray-700">
+                            The bidding for this vehicle has ended
+                          </span>
+                        );
+                      }
 
-                    const hours = Math.floor(remainingTime / 3600);
-                    const minutes = Math.floor((remainingTime % 3600) / 60);
-                    const seconds = remainingTime % 60;
+                      const hours = Math.floor(remainingTime / 3600);
+                      const minutes = Math.floor((remainingTime % 3600) / 60);
+                      const seconds = remainingTime % 60;
 
-                    const formatted = `${hours
-                      .toString()
-                      .padStart(2, "0")}:${minutes
-                      .toString()
-                      .padStart(2, "0")}:${seconds
-                      .toString()
-                      .padStart(2, "0")}`;
+                      const formatted = `${hours
+                        .toString()
+                        .padStart(2, "0")}:${minutes
+                        .toString()
+                        .padStart(2, "0")}:${seconds
+                        .toString()
+                        .padStart(2, "0")}`;
 
-                    return formatted;
-                  })()}
-                  {remainingTime > 0 && (
-                    <FaClock className="text-red-600 text-sm" />
+                      return formatted;
+                    })()}
+                    {remainingTime > 0 && (
+                      <FaClock className="text-red-600 text-sm" />
+                    )}
+                  </div>
+
+                  {/* ADD TO CALENDAR - DESKTOP */}
+                  {selectedPrice?.startTime && (
+                    <button
+                      onClick={generateICS}
+                      className="flex items-center gap-1 text-xs text-blue-700 hover:text-blue-900 underline mt-1"
+                    >
+                      <FaCalendarPlus size={12} />
+                      Add to Calendar
+                    </button>
                   )}
                 </td>
               </tr>
@@ -669,6 +724,8 @@ export const Customerbid = () => {
 
         {/* RIGHT: VEHICLE + BID DETAILS */}
       </div>
+
+      {/* MOBILE LAYOUT */}
       <div className="col-span-1 space-y-6 lg:hidden block">
         {/* Vehicle Details Card */}
         <div className="bg-white rounded-xl shadow-md p-6 mt-4">
@@ -817,32 +874,45 @@ export const Customerbid = () => {
               <tr className="border-b border-gray-100 ">
                 <th className="text-left p-2 font-medium ">Time Left:</th>
 
-                <td className="p-2 font-semibold justify-end text-red-600 flex items-center gap-1">
-                  {(() => {
-                    if (remainingTime <= 0) {
-                      return (
-                        <span className="text-gray-800">
-                          The bidding for this vehicle has ended
-                        </span>
-                      );
-                    }
+                <td className="p-2 font-semibold justify-end text-red-600 flex flex-col items-end gap-1">
+                  <div className="flex items-center gap-1">
+                    {(() => {
+                      if (remainingTime <= 0) {
+                        return (
+                          <span className="text-gray-800">
+                            The bidding for this vehicle has ended
+                          </span>
+                        );
+                      }
 
-                    const hours = Math.floor(remainingTime / 3600);
-                    const minutes = Math.floor((remainingTime % 3600) / 60);
-                    const seconds = remainingTime % 60;
+                      const hours = Math.floor(remainingTime / 3600);
+                      const minutes = Math.floor((remainingTime % 3600) / 60);
+                      const seconds = remainingTime % 60;
 
-                    const formatted = `${hours
-                      .toString()
-                      .padStart(2, "0")}:${minutes
-                      .toString()
-                      .padStart(2, "0")}:${seconds
-                      .toString()
-                      .padStart(2, "0")}`;
+                      const formatted = `${hours
+                        .toString()
+                        .padStart(2, "0")}:${minutes
+                        .toString()
+                        .padStart(2, "0")}:${seconds
+                        .toString()
+                        .padStart(2, "0")}`;
 
-                    return formatted;
-                  })()}
-                  {remainingTime > 0 && (
-                    <FaClock className="text-red-600 text-sm" />
+                      return formatted;
+                    })()}
+                    {remainingTime > 0 && (
+                      <FaClock className="text-red-600 text-sm" />
+                    )}
+                  </div>
+
+                  {/* ADD TO CALENDAR - MOBILE */}
+                  {selectedPrice?.startTime && (
+                    <button
+                      onClick={generateICS}
+                      className="flex items-center gap-1 text-xs text-blue-700 hover:text-blue-900 underline mt-1"
+                    >
+                      <FaCalendarPlus size={12} />
+                      Add to Calendar
+                    </button>
                   )}
                 </td>
               </tr>
