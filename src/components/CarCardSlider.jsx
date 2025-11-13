@@ -116,9 +116,13 @@ const CarCard = ({ car }) => {
 
         <p className="text-sm text-black">
           <span className="font-base text-black">Current Bid:</span>{" "}
-          <span className="text-black font-bold">
-            PKR {car?.buyNowPrice?.toLocaleString()}
-          </span>
+          {car?.auctionStatus === "live" ? (
+            <span className="text-black font-bold">Start the Bidding</span>
+          ) : (
+            <span className="text-black font-bold">
+              PKR {car?.buyNowPrice?.toLocaleString()}
+            </span>
+          )}
         </p>
 
         <p className="text-sm text-black">

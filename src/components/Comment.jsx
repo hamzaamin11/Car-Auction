@@ -17,14 +17,21 @@ const LiveCommentsModal = ({
   remainingTime,
   timerKey,
   selectedPrice,
+  handleGetallBid,
+  handleGetPrice,
 }) => {
   const { currentUser } = useSelector((state) => state.auth);
   const userId = currentUser?.id;
   const { id: vehicleId } = useParams();
 
   const initialState = { vehicleId, userId, maxBid: "" };
+
+
   const [bidAmount, setBidAmount] = useState(initialState);
+
+  console.log("mall",bidAmount.maxBid)
   const [loading, setLoading] = useState(false);
+
   const [showIncrementModal, setShowIncrementModal] = useState(false);
   const commentsEndRef = useRef(null);
 
@@ -38,17 +45,46 @@ const LiveCommentsModal = ({
   const numberToIndianWords = (num) => {
     if (num === 0) return "Zero";
     const ones = [
-      "", "One", "Two", "Three", "Four", "Five", "Six", "Seven", "Eight", "Nine",
-      "Ten", "Eleven", "Twelve", "Thirteen", "Fourteen", "Fifteen", "Sixteen",
-      "Seventeen", "Eighteen", "Nineteen",
+      "",
+      "One",
+      "Two",
+      "Three",
+      "Four",
+      "Five",
+      "Six",
+      "Seven",
+      "Eight",
+      "Nine",
+      "Ten",
+      "Eleven",
+      "Twelve",
+      "Thirteen",
+      "Fourteen",
+      "Fifteen",
+      "Sixteen",
+      "Seventeen",
+      "Eighteen",
+      "Nineteen",
     ];
     const tens = [
-      "", "", "Twenty", "Thirty", "Forty", "Fifty", "Sixty", "Seventy", "Eighty", "Ninety",
+      "",
+      "",
+      "Twenty",
+      "Thirty",
+      "Forty",
+      "Fifty",
+      "Sixty",
+      "Seventy",
+      "Eighty",
+      "Ninety",
     ];
     const twoDigits = (n) =>
-      n < 20 ? ones[n] : tens[Math.floor(n / 10)] + (n % 10 ? " " + ones[n % 10] : "");
+      n < 20
+        ? ones[n]
+        : tens[Math.floor(n / 10)] + (n % 10 ? " " + ones[n % 10] : "");
     const threeDigits = (n) =>
-      (Math.floor(n / 100) ? ones[Math.floor(n / 100)] + " Hundred " : "") + twoDigits(n % 100);
+      (Math.floor(n / 100) ? ones[Math.floor(n / 100)] + " Hundred " : "") +
+      twoDigits(n % 100);
 
     let words = "";
     if (Math.floor(num / 10000000) > 0) {
@@ -78,6 +114,8 @@ const LiveCommentsModal = ({
       await onSubmitBid(bidAmount);
       setBidAmount(initialState);
       setLoading(false);
+      handleGetallBid();
+      handleGetPrice();
 
       Swal.fire({
         icon: "success",
@@ -93,7 +131,7 @@ const LiveCommentsModal = ({
       Swal.fire({
         icon: "error",
         title: "Failed!",
-        text: "Failed to add bid. Please try again.",
+        text: error.response.data.message,
         confirmButtonColor: "#2563eb",
         confirmButtonText: "OK",
       });
@@ -136,7 +174,8 @@ const LiveCommentsModal = ({
 
             <h2 className="text-lg font-semibold">Live Auction</h2>
             <h2 className="text-lg font-semibold">
-              {selectedPrice.make} {selectedPrice.model} - PKR {selectedPrice.buyNowPrice}
+              {selectedPrice.make} {selectedPrice.model} - PKR{" "}
+              {selectedPrice.buyNowPrice}
             </h2>
             <CountdownCircleTimer
               key={timerKey}
@@ -156,7 +195,9 @@ const LiveCommentsModal = ({
                 const hours = Math.floor(remainingTime / 3600);
                 const minutes = Math.floor((remainingTime % 3600) / 60);
                 const seconds = remainingTime % 60;
-                const formatted = `${hours.toString().padStart(2, "0")}:${minutes
+                const formatted = `${hours
+                  .toString()
+                  .padStart(2, "0")}:${minutes
                   .toString()
                   .padStart(2, "0")}:${seconds.toString().padStart(2, "0")}`;
                 return (
@@ -177,7 +218,9 @@ const LiveCommentsModal = ({
 
           {/* Bids List */}
           <div className="flex-1 overflow-y-auto p-4 space-y-3 bg-gray-50 min-h-0">
-            {allCustomerBid.filter((bid) => bid.role !== "admin" && bid.role !== "seller").length === 0 ? (
+            {allCustomerBid.filter(
+              (bid) => bid.role !== "admin" && bid.role !== "seller"
+            ).length === 0 ? (
               <div className="flex flex-col items-center justify-center h-48 text-gray-400">
                 <span className="text-5xl mb-3">Money</span>
                 <p className="text-center font-medium">No bids yet...</p>
@@ -239,8 +282,19 @@ const LiveCommentsModal = ({
                   className="absolute right-1 top-1/2 -translate-y-1/2 bg-green-600 text-white rounded-md p-1.5  transition"
                   disabled={phase !== "running" || loading}
                 >
-                  <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 4v16m8-8H4" />
+                  <svg
+                    xmlns="http://www.w3.org/2000/svg"
+                    className="h-4 w-4"
+                    fill="none"
+                    viewBox="0 0 24 24"
+                    stroke="currentColor"
+                  >
+                    <path
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                      strokeWidth={2}
+                      d="M12 4v16m8-8H4"
+                    />
                   </svg>
                 </button>
               </div>
@@ -280,9 +334,9 @@ const LiveCommentsModal = ({
             {/* Bid Increment Info */}
             <div className="mt-3 text-sm text-gray-700">
               <p className="font-semibold text-gray-900">
-                Bid Increment: <span className="text-blue-950 font-bold">Auto</span>
+                Bid Increment:{" "}
+                <span className="text-blue-950 font-bold">Auto</span>
               </p>
-            
             </div>
           </div>
 
@@ -302,7 +356,9 @@ const LiveCommentsModal = ({
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 backdrop-blur-sm p-4">
           <div className="bg-white rounded-2xl shadow-2xl max-w-xs w-full p-6 animate-in fade-in zoom-in duration-200">
             <div className="flex justify-between items-center mb-4">
-              <h3 className="text-lg font-bold text-blue-950">Quick Bid Increment</h3>
+              <h3 className="text-lg font-bold text-blue-950">
+                Quick Bid Increment
+              </h3>
               <button
                 onClick={() => setShowIncrementModal(false)}
                 className="text-gray-400 hover:text-red-600 text-xl"
@@ -329,8 +385,12 @@ const LiveCommentsModal = ({
             </div>
 
             <div className="mt-4 text-center text-xs text-gray-500">
-              Current Bid: <span className="font-bold text-blue-950">
-                PKR {bidAmount.maxBid ? parseInt(bidAmount.maxBid).toLocaleString() : "0"}
+              Current Bid:{" "}
+              <span className="font-bold text-blue-950">
+                PKR{" "}
+                {bidAmount.maxBid
+                  ? parseInt(bidAmount.maxBid).toLocaleString()
+                  : "0"}
               </span>
             </div>
           </div>

@@ -114,8 +114,15 @@ export const Customerbid = () => {
         handleGetallBid();
       }, 500);
     } catch (error) {
-      console.error("❌ Bid submission failed:", error);
-      throw error;
+      console.error("❌ Bid submission failed=>", error);
+      Swal.fire({
+        icon: "warning",
+        title: "",
+        text: error.response.data.message,
+        confirmButtonColor: "#233D7B",
+      });
+
+      throw error.response.data.message;
     }
   };
 
@@ -394,7 +401,7 @@ export const Customerbid = () => {
                   <tr className="border-b border-gray-100 ">
                     <td className=" py-2 px-2 ">Meter Reading:</td>
                     <td className="py-2 font-semibold">
-                      {selectedPrice?.mileage || "N/A"}
+                      {selectedPrice?.mileage || "N/A"} KM
                     </td>
                   </tr>
                   <tr className="border-b border-gray-100 ">
@@ -494,12 +501,7 @@ export const Customerbid = () => {
 
               <tr className="border-b border-gray-100">
                 <th className="text-left p-2 font-medium  ">Sale Status:</th>
-                <td className="p-2 font-semibold ">
-                  {selectedPrice?.saleStatus
-                    ? selectedPrice.saleStatus.charAt(0).toUpperCase() +
-                      selectedPrice.saleStatus.slice(1)
-                    : "N/A"}
-                </td>
+                <td className="p-2 font-semibold ">On Approval</td>
               </tr>
 
               <tr className="border-b border-gray-100">
@@ -727,7 +729,7 @@ export const Customerbid = () => {
                 <tr className="border-b border-gray-100">
                   <td className=" px-2 py-2">Meter Reading:</td>
                   <td className="py-2 font-semibold text-right">
-                    {selectedPrice?.mileage || "N/A"}
+                    {selectedPrice?.mileage || "N/A"} KM
                   </td>
                 </tr>
                 <tr className="border-b border-gray-100">
@@ -809,9 +811,7 @@ export const Customerbid = () => {
 
               <tr className="border-b border-gray-100 ">
                 <th className="text-left p-2 font-medium ">Sale Status:</th>
-                <td className="p-2 font-semibold text-right ">
-                  {selectedPrice?.saleStatus || "N/A"}
-                </td>
+                <td className="p-2 font-semibold text-right ">On Approval</td>
               </tr>
 
               <tr className="border-b border-gray-100 ">
@@ -991,6 +991,8 @@ export const Customerbid = () => {
           remainingTime={remainingTime}
           timerKey={key}
           selectedPrice={selectedPrice}
+          handleGetallBid={handleGetallBid}
+          handleGetPrice={handleGetPrice}
         />
       )}
       <ToastContainer />

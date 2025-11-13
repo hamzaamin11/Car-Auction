@@ -25,21 +25,21 @@ const JoinAuctionTable = ({ allLive, upComing }) => {
       setAddBiding((p) => ({ ...p, vehicleId: getId.vehicleId }));
   }, [getId]);
 
-  const handleSubmitBid = async (e) => {
-    e.preventDefault();
-    const filteredData = Object.fromEntries(
-      Object.entries(addBiding).filter(([_, v]) => v !== "")
-    );
-    try {
-      const res = await axios.post(
-        `${BASE_URL}/customer/startBidding`,
-        filteredData
-      );
-      console.log(res.data);
-    } catch (error) {
-      console.log(error);
-    }
-  };
+  // const handleSubmitBid = async (e) => {
+  //   e.preventDefault();
+  //   const filteredData = Object.fromEntries(
+  //     Object.entries(addBiding).filter(([_, v]) => v !== "")
+  //   );
+  //   try {
+  //     const res = await axios.post(
+  //       `${BASE_URL}/customer/startBidding`,
+  //       filteredData
+  //     );
+  //     console.log(res.data);
+  //   } catch (error) {
+  //     console.log(error);
+  //   }
+  // };
 
   return (
     <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6 font-sans">
