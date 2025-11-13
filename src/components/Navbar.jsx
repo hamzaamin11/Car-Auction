@@ -429,6 +429,9 @@ const Navbar = () => {
         { to: "/finder", label: "Vehicle Finder" },
         { to: "/saleslist", label: "Search By Makes" },
         { to: "/certified", label: "Certified Cars" },
+         { to: "/search", label: "Search List" },
+         { to: "/wishlist", label: "Wish List" },
+          { to: "/alert", label: "Vehicle Alert" },
       ],
     },
     {

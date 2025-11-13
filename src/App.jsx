@@ -9,7 +9,7 @@ import {
 import "./App.css";
 
 import ScrollToTop from "./pages/ScrollTop";
-
+import SearchPage from "./pages/search";
 import Navbar from "./components/Navbar";
 import Footer from "./components/Footer";
 import Home from "./pages/Home";
@@ -75,6 +75,7 @@ import SellerVehicleSpects from "./components/SellerVehicleSpects";
 import SellerProtectedRoute from "./SellerProtectedRoute";
 import CustomerList from "./admin/pages/CustomerList";
 import FilterPriceCars from "./pages/FilterPriceCars";
+import WheelBidzAlert from "./pages/alert";
 import { useDispatch, useSelector } from "react-redux";
 import { BrandList } from "./admin/pages/BrandList";
 import { Customerbid } from "./admin/pages/Customerbid";
@@ -137,6 +138,8 @@ function Layout() {
       <Routes>
         {/* Main Routes */}
         <Route path="/" element={<Home />} />
+        <Route path="/alert" element={<VehicleAlerts />} />
+        <Route path="/search" element={<SearchPage />} />
         <Route path="/soldVehicles" element={<SoldVehicles />} />
 
         <Route path="/about" element={<About />} />

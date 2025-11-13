@@ -60,9 +60,27 @@ export const WishList = () => {
   }
 
   return (
-    <div className="min-h-screen bg-gray-50 px-4 py-8">
+    <div className="min-h-screen bg-gray-50">
+
+      {/* Hero Section / Banner */}
+      <div
+        className="relative w-full h-99 flex items-center justify-center"
+        style={{
+          backgroundImage: "url('/banner.jpg')",
+          backgroundSize: "cover",
+          backgroundPosition: "center",
+        }}
+      >
+        {/* Black overlay */}
+        <div className="absolute inset-0 bg-black opacity-50"></div>
+        {/* Text */}
+        <h1 className="relative text-white text-3xl md:text-4xl font-bold text-center px-4">
+           Keep Track of Your Favorite Vehicles
+        </h1>
+      </div>
+
       {/* Header */}
-      <div className="max-w-6xl mx-auto mb-6 flex items-center justify-between">
+      <div className="max-w-6xl mx-auto mb-6 flex items-center justify-between px-4 py-6">
         <h1 className="text-2xl font-bold text-gray-800 flex items-center gap-2">
           <FaCarSide className="text-red-600" />
           My Wishlist
@@ -73,7 +91,7 @@ export const WishList = () => {
       </div>
 
       {/* Wishlist Grid */}
-      <div className="max-w-6xl mx-auto grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+      <div className="max-w-6xl mx-auto grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 px-4">
         {wishVehicle?.length > 0 ? (
           wishVehicle?.map((car) => (
             <div
