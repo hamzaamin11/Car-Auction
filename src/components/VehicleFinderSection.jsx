@@ -212,7 +212,7 @@ const VehicleFinderSection = () => {
         {/* SEARCH BUTTON */}
         <button
           onClick={handleGetCars}
-          className="bg-red-600 text-white rounded px-5 py-2 font-semibold  transition w-full md:mt-6 mt-0"
+          className="bg-blue-950 text-white rounded px-5 py-2 font-semibold  transition w-full md:mt-6 mt-0"
         >
           Search
         </button>
@@ -279,20 +279,20 @@ const VehicleFinderSection = () => {
                 />
                 <div className="p-4 flex flex-col justify-between flex-grow">
                   <div>
-                    <h3 className="text-lg font-semibold mb-1">
+                    <h3 className="text-lg font-semibold mb-1 text-[15px]">
                       {car.make} {car.model}
                     </h3>
 
-                    <p className="text-sm font-base text-gray-800">
+                    <p className="text-sm font-base text-gray-800 text-[13px]">
                       Lot# <span>{car.lot_number}</span>
                     </p>
-                    <p className="text-sm font-base text-black">
+                    <p className="text-sm font-base text-black  text-[13px]">
                       Model Year: <span>{car.year}</span>
                     </p>
-                    <p className="text-sm font-base">
+                    <p className="text-sm font-base text-[13px]">
                       Current Bid: <b> PKR {car.buyNowPrice}</b>
                     </p>
-                    <p className="text-sm font-base text-black">
+                    <p className="text-sm font-base text-black  text-[13px]">
                       Location: <span>{car.cityName}</span>
                     </p>
                     {/* <p className="text-sm font-semibold text-black">
@@ -308,7 +308,7 @@ const VehicleFinderSection = () => {
               </span>
             </p> */}
                   </div>
-                  <button className="bg-red-600 py-2 text-white text-sm px-3 rounded mt-1">
+                  <button className="bg-blue-950 py-2 text-white text-sm px-3 text-[13px] rounded mt-4">
                     View Details
                   </button>
                 </div>

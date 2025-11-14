@@ -86,7 +86,7 @@ const CarCard = ({ car }) => {
 
         {/* Title + Heart (for Mobile) */}
         <div className="flex sm:hidden justify-between items-center">
-          <h3 className="text-lg font-bold text-gray-800 transition">
+          <h3 className="text-lg font-bold text-[15px] text-gray-800 transition">
             {car?.make} {car?.model}
           </h3>
 
@@ -104,18 +104,21 @@ const CarCard = ({ car }) => {
         </div>
 
         {/* Keep original title for desktop only */}
-        <h3 className="hidden sm:block text-lg font-bold  text-gray-800 transition">
-          {car?.make} {car?.model}
-        </h3>
-        <p className="text-sm text-gray-800">
-          <span className="font-base text-gray-800">Lot#</span> {car.lot_number}
+       <h3
+  className="hidden sm:block text-[15px] font-bold text-gray-800 transition -mt-8"
+>
+  {car?.make} {car?.model}
+</h3>
+
+        <p className="text-sm text-gray-800 text-[13px]">
+          <span className="font-base text-gray-800 text-[13px]">Lot#</span> {car.lot_number}
         </p>
-        <p className="text-sm text-black">
-          <span className="font-base text-black">Model Year:</span> {car.year}
+        <p className="text-sm text-black text-[13px]">
+          <span className="font-base text-black text-[13px]">Model Year:</span> {car.year}
         </p>
 
-        <p className="text-sm text-black">
-          <span className="font-base text-black">Current Bid:</span>{" "}
+        <p className="text-sm text-black text-[13px]">
+          <span className="font-base text-black text-[13px]">Current Bid:</span>{" "}
           {car?.auctionStatus === "live" ? (
             <span className="text-black font-bold">Start the Bidding</span>
           ) : (
@@ -125,13 +128,13 @@ const CarCard = ({ car }) => {
           )}
         </p>
 
-        <p className="text-sm text-black">
-          <span className="font-base text-black">Location:</span> {car.cityName}
+        <p className="text-sm text-black text-[13px]">
+          <span className="font-base text-black text-[13px]">Location:</span> {car.cityName}
         </p>
 
         <span
           onClick={() => navigate(`/detailbid/${car.id}`)}
-          className="mt-auto block bg-red-600 text-center text-sm font-semibold text-white py-2 rounded transition-all duration-300 cursor-pointer"
+          className="mt-3 block bg-blue-950 text-center text-sm text-[13px] font-semibold text-white py-2 rounded transition-all duration-300 cursor-pointer"
         >
           View Details
         </span>

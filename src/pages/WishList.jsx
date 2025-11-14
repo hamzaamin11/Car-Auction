@@ -91,7 +91,7 @@ export const WishList = () => {
       </div>
 
       {/* Wishlist Grid */}
-      <div className="max-w-6xl mx-auto grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 px-4">
+      <div className="max-w-6xl mx-auto grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 px-4 pb-6 -mt-5">
         {wishVehicle?.length > 0 ? (
           wishVehicle?.map((car) => (
             <div
@@ -107,28 +107,28 @@ export const WishList = () => {
 
               {/* Car Details */}
               <div className="p-4 flex flex-col flex-grow">
-                <h3 className="text-lg font-semibold text-gray-800 mb-1">
+                <h3 className="text-lg font-semibold text-gray-800 mb-1 text-[15px]">
                   {car.make} {car.model} ({car.year})
                 </h3>
-                <p className="text-md font-bold text-gray-700 mb-3">
+                <p className="text-md font-bold text-gray-700 mb-1 text-[13px]">
                   Price: ${car?.buyNowPrice}
                 </p>
-                <p className="text-sm text-gray-600 mb-2">
-                  <span className="font-medium">Location:</span> {car.cityName}
+                <p className="text-sm text-gray-600 mb-2 text-[13px]">
+                  <span className="font-medium text-[13px]">Location:</span> {car.cityName}
                 </p>
 
                 {/* Buttons */}
                 <div className="mt-auto flex justify-between items-center">
                   <button
                     onClick={() => navigate(`/detailbid/${car.id}`)}
-                    className="bg-red-600 text-white text-sm font-semibold px-4 py-2 rounded transition"
+                    className="bg-blue-950 text-white text-sm font-semibold px-4 py-2 rounded transition mt-2"
                   >
                     View Details
                   </button>
 
                   <button
                     onClick={() => handleRemove(car.id)}
-                    className="text-red-600 hover:text-red-700 transition"
+                    className="text-blue-950 "
                     title="Remove from wishlist"
                   >
                     <FaTrashAlt size={18} />
