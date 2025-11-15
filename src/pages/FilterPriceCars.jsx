@@ -40,6 +40,7 @@ const FilterPriceCars = () => {
   const [filterData, setFilterData] = useState({
     vehicleType: name === "bodyStyle" ? decodeURIComponent(value || "") : "",
     selectYear: "",
+    toYear: "",
     allMakes: "",
     allModels: name === "model" ? decodeURIComponent(value || "") : "",
     location: "",
@@ -52,6 +53,8 @@ const FilterPriceCars = () => {
         ? decodeURIComponent(value || "").split("-")[1] || ""
         : "",
   });
+
+  console.log("dasdsad =>>>", filterData);
   const [allFilterCars, setAllFilterCars] = useState([]);
   const [filterModel, setFilterModel] = useState([]);
   const [activeTab, setActiveTab] = useState("all");
@@ -208,7 +211,8 @@ const FilterPriceCars = () => {
           minPrice: filterData?.formCash,
           maxPrice: filterData?.toCash,
           sortType: sorting,
-          year: filterData.selectYear || "",
+          yearStart: filterData.selectYear || "",
+          yearEnd: filterData.toYear || "",
           vehicleCondition: activeTab !== "all" ? activeTab : undefined,
         },
       });
@@ -375,31 +379,61 @@ const FilterPriceCars = () => {
           />
         </div>
 
-        <div className="relative w-full max-w-sm">
-          <label className="block text-sm font-medium text-gray-700">
-            Select Year
-          </label>
-          <CustomDropdown
-            options={[
-              { label: "Select Model Year", value: "" },
-              ...currentYear,
-            ]}
-            value={
-              currentYear.find(
-                (option) => option.value === filterData.selectYear
-              ) || { label: "Select Model Year", value: "" }
-            }
-            onChange={(selected) => handleChange("selectYear", selected.value)}
-            placeholder="Select Year"
-            isSearchable
-            className="w-full"
-            styles={{
-              singleValue: (provided, state) => ({
-                ...provided,
-                color: state.data.value === "" ? "#d1d5db" : "#111827",
-              }),
-            }}
-          />
+        <div className="flex w-full gap-2">
+          {/* From Year */}
+          <div className="relative w-48 max-w-sm">
+            <label className="block text-sm font-medium text-gray-700">
+              From Year
+            </label>
+            <CustomDropdown
+              options={[
+                { label: "Select Model Year", value: "" },
+                ...currentYear,
+              ]}
+              value={
+                currentYear.find(
+                  (option) => option.value === filterData.selectYear
+                ) || { label: "Select From Year", value: "" }
+              }
+              onChange={(selected) =>
+                handleChange("selectYear", selected.value)
+              }
+              placeholder="Select Year"
+              isSearchable
+              className="w-full"
+              styles={{
+                singleValue: (provided, state) => ({
+                  ...provided,
+                  color: state.data.value === "" ? "#d1d5db" : "#111827",
+                }),
+              }}
+            />
+          </div>
+
+          {/* To Year */}
+          <div className="relative w-48 max-w-sm">
+            <label className="block text-sm font-medium text-gray-700">
+              To Year
+            </label>
+            <CustomDropdown
+              options={[{ label: "Select To Year", value: "" }, ...currentYear]}
+              value={
+                currentYear.find(
+                  (option) => option.value === filterData.toYear
+                ) || { label: "Select To Year", value: "" }
+              }
+              onChange={(selected) => handleChange("toYear", selected.value)}
+              placeholder="To Year"
+              isSearchable
+              className="w-full"
+              styles={{
+                singleValue: (provided, state) => ({
+                  ...provided,
+                  color: state.data.value === "" ? "#d1d5db" : "#111827",
+                }),
+              }}
+            />
+          </div>
         </div>
 
         <div className="relative w-full max-w-sm">
@@ -613,7 +647,9 @@ const FilterPriceCars = () => {
                       PKR {car.buyNowPrice}
                     </span>
                   </div>
-                  <p className="text-sm text-gray-600 mt-1">Lot # {car.lot_number}</p>
+                  <p className="text-sm text-gray-600 mt-1">
+                    Lot # {car.lot_number}
+                  </p>
                   <p className="text-sm text-gray-600 mt-1">{car.cityName}</p>
                   <div className="flex flex-wrap gap-2 mt-2">
                     <span className="px-3 py-1 bg-gray-100 text-xs font-medium rounded-full shadow-sm">
