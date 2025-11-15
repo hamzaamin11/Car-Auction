@@ -107,7 +107,7 @@ const CertifiedCarsPage = () => {
      
         <>
           {/* Vehicle Grid */}
-          <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 max-w-7xl mx-auto">
+          <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 max-w-5xl mx-auto">
             {currentVehicles.map((car) => (
               <div
                 key={car.id}
@@ -166,67 +166,69 @@ const CertifiedCarsPage = () => {
           </div>
 
           {/* Pagination Controls – Prev left, Page center, Next right */}
-          {totalPages > 1 && (
-            <div className="flex justify-between items-center mt-10 max-w-7xl mx-auto px-4">
-              {/* Prev Button – Left */}
-              <button
-                onClick={goToPrevPage}
-                disabled={currentPage === 1}
-                className={`flex items-center gap-2 px-5 py-2.5 rounded-lg font-medium text-white transition-all ${
-                  currentPage === 1
-                    ? "bg-gray-400 cursor-not-allowed"
-                    : "bg-blue-950 "
-                }`}
-                aria-label="Previous page"
-              >
-                <svg
-                  xmlns="http://www.w3.org/2000/svg"
-                  className="h-5 w-5"
-                  fill="none"
-                  viewBox="0 0 24 24"
-                  stroke="currentColor"
-                >
-                  <path
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                    strokeWidth={2}
-                    d="M15 19l-7-7 7-7"
-                  />
-                </svg>
-                Prev
-              </button>
+      {/* Pagination Controls – Prev left, Page center, Next right */}
+{totalPages > 1 && (
+  <div className="flex justify-between items-center mt-10 max-w-5xl mx-auto px-4">
+    {/* Prev Button – aligned left with cards */}
+    <button
+      onClick={goToPrevPage}
+      disabled={currentPage === 1}
+      className={`flex items-center gap-2 px-5 py-2.5 rounded-lg font-medium text-white transition-all ${
+        currentPage === 1
+          ? "bg-gray-400 cursor-not-allowed"
+          : "bg-blue-950"
+      }`}
+      aria-label="Previous page"
+    >
+      <svg
+        xmlns="http://www.w3.org/2000/svg"
+        className="h-5 w-5"
+        fill="none"
+        viewBox="0 0 24 24"
+        stroke="currentColor"
+      >
+        <path
+          strokeLinecap="round"
+          strokeLinejoin="round"
+          strokeWidth={2}
+          d="M15 19l-7-7 7-7"
+        />
+      </svg>
+      Prev
+    </button>
 
-           
+ 
 
-              {/* Next Button – Right */}
-              <button
-                onClick={goToNextPage}
-                disabled={currentPage === totalPages}
-                className={`flex items-center gap-2 px-5 py-2.5 rounded-lg font-medium text-white transition-all ${
-                  currentPage === totalPages
-                    ? "bg-gray-400 cursor-not-allowed"
-                    : "bg-blue-950 "
-                }`}
-                aria-label="Next page"
-              >
-                Next
-                <svg
-                  xmlns="http://www.w3.org/2000/svg"
-                  className="h-5 w-5"
-                  fill="none"
-                  viewBox="0 0 24 24"
-                  stroke="currentColor"
-                >
-                  <path
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                    strokeWidth={2}
-                    d="M9 5l7 7-7 7"
-                  />
-                </svg>
-              </button>
-            </div>
-          )}
+    {/* Next Button – aligned right with cards */}
+    <button
+      onClick={goToNextPage}
+      disabled={currentPage === totalPages}
+      className={`flex items-center gap-2 px-5 py-2.5 rounded-lg font-medium text-white transition-all ${
+        currentPage === totalPages
+          ? "bg-gray-400 cursor-not-allowed"
+          : "bg-blue-950"
+      }`}
+      aria-label="Next page"
+    >
+      Next
+      <svg
+        xmlns="http://www.w3.org/2000/svg"
+        className="h-5 w-5"
+        fill="none"
+        viewBox="0 0 24 24"
+        stroke="currentColor"
+      >
+        <path
+          strokeLinecap="round"
+          strokeLinejoin="round"
+          strokeWidth={2}
+          d="M9 5l7 7-7 7"
+        />
+      </svg>
+    </button>
+  </div>
+)}
+
         </>
       {""}
 

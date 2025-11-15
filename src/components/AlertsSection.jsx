@@ -141,7 +141,7 @@ const WheelBidzAlert = () => {
             label="Vehicle Type"
             options={vehicleTypes}
             value={selectedVehicleType}
-            onChange={setSelectedVehicleType}
+          
           />
 
           {/* Year Range */}

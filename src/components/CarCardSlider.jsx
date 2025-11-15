@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { ChevronLeft, ChevronRight, X } from "lucide-react";
+import { ChevronLeft, ChevronRight } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import axios from "axios";
 import { BASE_URL } from "./Contant/URL";
@@ -8,23 +8,21 @@ import { useDispatch, useSelector } from "react-redux";
 import { addInList } from "./Redux/WishlistSlice";
 import Swal from "sweetalert2";
 
-// ---------------- CarCard  -------------------
+// ---------------- CarCard -------------------
 const CarCard = ({ car }) => {
   const navigate = useNavigate();
   const dispatch = useDispatch();
 
-  console.log("car = >", car);
-
   const currentUser = useSelector((state) => state?.auth?.currentUser);
-  const wishlistByUser = useSelector(
-    (state) => state?.wishList?.wishlistByUser
-  );
+  const wishlistByUser = useSelector((state) => state?.wishList?.wishlistByUser);
 
   const isInWishlist =
     currentUser?.id &&
     wishlistByUser?.[currentUser.id]?.some((v) => v.id === car.id);
 
-  const handleWishlist = () => {
+  const handleWishlist = (e) => {
+    e.stopPropagation(); // ← THIS IS THE KEY FIX
+
     if (!currentUser) {
       Swal.fire({
         title: "Login Required",
@@ -42,38 +40,33 @@ const CarCard = ({ car }) => {
       return;
     }
 
+    if (isInWishlist) return; // already in wishlist → do nothing
+
     dispatch(addInList({ userId: currentUser.id, vehicle: car }));
   };
 
-  const handleTodayAuction = async () => {
-    try {
-      const res = await axios.get(`${BASE_URL}/todayAuction`);
-      console.log("home =>", res.data);
-    } catch (error) {
-      console.log(error);
-    }
-  };
+  const goToDetail = () => navigate(`/detailbid/${car.id}`);
 
-  useEffect(() => {
-    handleTodayAuction();
-  }, []);
   return (
-    <div className="relative bg-white rounded-xl shadow-lg hover:shadow-2xl transition-all duration-300 overflow-hidden w-full h-full flex flex-col ">
+    <div
+      className="relative bg-white rounded-xl shadow-lg hover:shadow-2xl transition-all duration-300 overflow-hidden w-full h-full flex flex-col cursor-pointer"
+      onClick={goToDetail} // whole card clickable except heart
+    >
+      {/* Image */}
       <div className="relative w-full">
         <img
           src={car.images[0]}
-          alt="car"
-          className="w-full h-48 object-cover rounded-t-xl hover:cursor-pointer"
-          onClick={() => navigate(`/detailbid/${car.id}`)}
+          alt={`${car.make} ${car.model}`}
+          className="w-full h-48 object-cover rounded-t-xl"
         />
       </div>
 
-      <div className="relative group p-4 space-y-1 text-gray-800 flex-grow flex flex-col bg-white rounded-xl shadow-md hover:shadow-xl transition-all duration-300 border border-gray-100 ">
-        {/* For Desktop → Heart at top right */}
-        <div className="hidden sm:flex justify-end">
+      {/* Content */}
+      <div className="p-4 space-y-1 flex-grow flex flex-col">
+        {/* Desktop: Heart at top-right */}
+        <div className="hidden sm:flex justify-end -mt-2">
           <button
             onClick={handleWishlist}
-            disabled={isInWishlist}
             className={`p-2 rounded-full transition-all duration-300 ${
               isInWishlist
                 ? "text-red-600 cursor-default"
@@ -84,15 +77,13 @@ const CarCard = ({ car }) => {
           </button>
         </div>
 
-        {/* Title + Heart (for Mobile) */}
+        {/* Mobile: Title + Heart */}
         <div className="flex sm:hidden justify-between items-center">
-          <h3 className="text-lg font-bold text-[15px] text-gray-800 transition">
+          <h3 className="text-[15px] font-bold text-gray-800 line-clamp-1">
             {car?.make} {car?.model}
           </h3>
-
           <button
             onClick={handleWishlist}
-            disabled={isInWishlist}
             className={`p-2 rounded-full transition-all duration-300 ${
               isInWishlist
                 ? "text-red-600 cursor-default"
@@ -103,59 +94,56 @@ const CarCard = ({ car }) => {
           </button>
         </div>
 
-        {/* Keep original title for desktop only */}
-       <h3
-  className="hidden sm:block text-[15px] font-bold text-gray-800 transition -mt-8"
->
-  {car?.make} {car?.model}
-</h3>
+        {/* Desktop Title (below heart) */}
+        <h3 className="hidden sm:block text-[15px] font-bold text-gray-800 -mt-6">
+          {car?.make} {car?.model}
+        </h3>
 
+        {/* Details */}
         <p className="text-sm text-gray-800 text-[13px]">
-          <span className="font-base text-gray-800 text-[13px]">Lot#</span> {car.lot_number}
+          <span className="font-medium">Lot#</span> {car.lot_number}
         </p>
         <p className="text-sm text-black text-[13px]">
-          <span className="font-base text-black text-[13px]">Model Year:</span> {car.year}
+          <span className="font-medium">Model Year:</span> {car.year}
         </p>
-
         <p className="text-sm text-black text-[13px]">
-          <span className="font-base text-black text-[13px]">Current Bid:</span>{" "}
+          <span className="font-medium">Current Bid:</span>{" "}
           {car?.auctionStatus === "live" ? (
-            <span className="text-black font-bold">Start the Bidding</span>
+            <span className="font-bold text-green-600">Start the Bidding</span>
           ) : (
-            <span className="text-black font-bold">
+            <span className="font-bold">
               PKR {car?.buyNowPrice?.toLocaleString()}
             </span>
           )}
         </p>
-
         <p className="text-sm text-black text-[13px]">
-          <span className="font-base text-black text-[13px]">Location:</span> {car.cityName}
+          <span className="font-medium">Location:</span> {car.cityName}
         </p>
 
-        <span
-          onClick={() => navigate(`/detailbid/${car.id}`)}
-          className="mt-3 block bg-blue-950 text-center text-sm text-[13px] font-semibold text-white py-2 rounded transition-all duration-300 cursor-pointer"
+        <button
+          onClick={goToDetail}
+          className="mt-3 block bg-blue-950 text-center text-sm text-[13px] font-semibold text-white py-2 rounded transition-all duration-300"
         >
           View Details
-        </span>
+        </button>
       </div>
     </div>
   );
 };
 
-// ---------------- CarCardSlider  -------------------
+// ---------------- CarCardSlider -------------------
 const CarCardSlider = () => {
   const [currentIndex, setCurrentIndex] = useState(0);
   const [visibleCards, setVisibleCards] = useState(4);
   const [allCars, setAllCars] = useState([]);
 
-  // Fetch
+  // Fetch vehicles
   const handleGetVehicles = async () => {
     try {
       const res = await axios.get(`${BASE_URL}/getApprovedVehicles`);
       setAllCars(res.data);
     } catch (error) {
-      console.log(error);
+      console.error("Failed to fetch vehicles:", error);
     }
   };
 
@@ -163,7 +151,7 @@ const CarCardSlider = () => {
     handleGetVehicles();
   }, []);
 
-  // Responsive
+  // Responsive visible cards
   useEffect(() => {
     const update = () => {
       if (window.innerWidth < 640) setVisibleCards(1);
@@ -176,8 +164,7 @@ const CarCardSlider = () => {
     return () => window.removeEventListener("resize", update);
   }, []);
 
-  // ← ← ← ← ← ← ← ← ← ← ← ← ← ← ← ← ← ← ← ← ←
-  // ONLY THESE TWO FUNCTIONS CHANGED
+  // Slider controls
   const prevCards = () => {
     setCurrentIndex((prev) => Math.max(0, prev - visibleCards));
   };
@@ -187,7 +174,6 @@ const CarCardSlider = () => {
       Math.min(allCars.length - visibleCards, prev + visibleCards)
     );
   };
-  // ← ← ← ← ← ← ← ← ← ← ← ← ← ← ← ← ← ← ← ← ←
 
   const getVisibleCars = () =>
     allCars.slice(currentIndex, currentIndex + visibleCards);
@@ -214,32 +200,33 @@ const CarCardSlider = () => {
         Popular Vehicles
       </h2>
 
-      <div className="relative flex items-center justify-center">
+      <div className="relative">
+        {/* Left Arrow */}
         {allCars.length > visibleCards && (
           <button
             onClick={prevCards}
             disabled={currentIndex === 0}
-            className="absolute left-0 md:-left-10 bg-white p-2 rounded-full shadow text-gray-700 z-10 hover:bg-red-600 hover:text-white transition-transform hover:scale-110"
-            style={{ top: "50%", transform: "translateY(-50%)" }}
+            className="absolute left-0 top-1/2 -translate-y-1/2 md:-left-12 bg-white p-2 rounded-full shadow-lg text-gray-700 z-20 hover:bg-red-600 hover:text-white disabled:opacity-50 disabled:cursor-not-allowed transition-all duration-300 hover:scale-110"
           >
-            <ChevronLeft size={24} className="md:w-7 md:h-7" />
+            <ChevronLeft size={28} />
           </button>
         )}
 
-        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6 w-full max-w-7xl">
+        {/* Grid */}
+        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6 w-full max-w-7xl mx-auto">
           {getVisibleCars().map((car) => (
             <CarCard key={car.id} car={car} />
           ))}
         </div>
 
+        {/* Right Arrow */}
         {allCars.length > visibleCards && (
           <button
             onClick={nextCards}
             disabled={currentIndex + visibleCards >= allCars.length}
-            className="absolute right-0 md:-right-10 bg-white p-2 rounded-full shadow text-gray-700 z-10 hover:bg-red-600 hover:text-white disabled:opacity-50 transition-transform hover:scale-110"
-            style={{ top: "50%", transform: "translateY(-50%)" }}
+            className="absolute right-0 top-1/2 -translate-y-1/2 md:-right-12 bg-white p-2 rounded-full shadow-lg text-gray-700 z-20 hover:bg-red-600 hover:text-white disabled:opacity-50 disabled:cursor-not-allowed transition-all duration-300 hover:scale-110"
           >
-            <ChevronRight size={24} className="md:w-7 md:h-7" />
+            <ChevronRight size={28} />
           </button>
         )}
       </div>

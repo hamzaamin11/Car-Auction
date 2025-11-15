@@ -14,13 +14,7 @@ const AlertsBanner = () => {
         <h1 className="text-3xl md:text-5xl font-bold text-white animate-fade-in">
           Vehicles Alerts
         </h1>
-        <Link
-          to="/register"
-          className="text-white mt-4 text-sm md:text-lg max-w-2xl mx-auto block text-center  transition-colors duration-300"
-        >
-          Sign up for WheelBidz Vehicle Alerts.
-          <FaAngleRight className="inline-block ml-1" />
-        </Link>
+      
       </div>
     </section>
   );

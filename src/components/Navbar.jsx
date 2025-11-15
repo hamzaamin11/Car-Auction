@@ -511,11 +511,11 @@ const Navbar = () => {
         >
           <img src={logoImage} alt="Logo" className="h-12 pt-4 lg:pt-0 " />
         </Link>
-        <ul className="hidden md:flex items-center  font-semibold relative">
+        <ul className="hidden md:flex items-center  font-base relative gap-2">
           <li>
             <Link
               to="/"
-              className={`hover:text-red-600 px-3 ${
+              className={`hover:text-red-600 px-3 text-[14px] ${
                 isActive("/") ? "text-red-600 font-semibold " : ""
               }`}
             >
@@ -543,7 +543,7 @@ const Navbar = () => {
               onMouseLeave={() => setActiveDropdown(null)}
             >
               <button
-                className={`flex items-center  font-medium hover:text-red-600 ${
+                className={`flex items-center  font-medium hover:text-red-600 text-[14px]${
                   activeDropdown === dropdown.id ? "text-red-600" : ""
                 }`}
               >
@@ -559,7 +559,7 @@ const Navbar = () => {
                   <li key={idx}>
                     <Link
                       to={item.to}
-                      className="block px-4 py-1 hover:bg-red-50 hover:text-red-600 transition"
+                      className="block px-4 py-1 hover:bg-red-50 hover:text-red-600 transition text-[14px]"
                     >
                       {item.label}
                     </Link>
@@ -572,7 +572,7 @@ const Navbar = () => {
           <li className="space-x-3">
             <Link
               to="/partner"
-              className={`hover:text-red-600 ${
+              className={`hover:text-red-600 text-[14px] ${
                 isActive("/partner") ? "text-red-600 font-semibold" : ""
               }`}
             >
@@ -581,7 +581,7 @@ const Navbar = () => {
 
             <Link
               to="/work"
-              className={`hover:text-red-600 ${
+              className={`hover:text-red-600 text-[14px] ${
                 isActive("/work") ? "text-red-600 font-semibold" : ""
               }`}
             >
@@ -599,7 +599,7 @@ const Navbar = () => {
 
             <Link
               to="/contact"
-              className={`hover:text-red-600 ${
+              className={`hover:text-red-600 text-[14px] ${
                 isActive("/contact") ? "text-red-600 font-semibold" : ""
               }`}
             >
@@ -732,7 +732,7 @@ const Navbar = () => {
 
       {/* Mobile Menu */}
       {menuOpen && (
-        <div className="md:hidden bg-red-600 text-white px-6 pb-6 space-y-2">
+        <div className="md:hidden bg-red-600 text-white px-6 pb-6 space-y-2 text-[14px]">
           <Link
             to="/"
             onClick={() => setMenuOpen(false)}
@@ -750,7 +750,7 @@ const Navbar = () => {
           <Link
             to="/contact"
             onClick={() => setMenuOpen(false)}
-            className="block font-medium"
+            className="block font-medium text-[14px]"
           >
             Contact Us
           </Link>
@@ -766,7 +766,7 @@ const Navbar = () => {
           <Link
             to="/partner"
             onClick={() => setMenuOpen(false)}
-            className="block font-medium"
+            className="block font-medium text-[14px]"
           >
             Become A Partner
           </Link>
@@ -774,7 +774,7 @@ const Navbar = () => {
           <Link
             to="/wishlist"
             onClick={() => setMenuOpen(false)}
-            className="block font-medium"
+            className="block font-medium text-[14px]"
           >
             WishList
           </Link>
@@ -782,7 +782,7 @@ const Navbar = () => {
           {currentUser?.role === "customer" ? null : (
             <button
               onClick={() => navigate("/sellerIntro")}
-              className=" text-white  hover:cursor-pointer"
+              className=" text-white  hover:cursor-pointer text-[14px]"
             >
               Sell Now
             </button>
@@ -820,7 +820,7 @@ const Navbar = () => {
                     activeDropdown === dropdown.id ? null : dropdown.id
                   )
                 }
-                className="w-full flex justify-between items-center font-medium"
+                className="w-full flex justify-between items-center font-medium text-[14px]"
               >
                 {dropdown.label}
                 <RiArrowDropDownLine size={24} />

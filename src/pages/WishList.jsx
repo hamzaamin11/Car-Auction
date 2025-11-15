@@ -44,7 +44,7 @@ export const WishList = () => {
   if (!currentUser) {
     return (
       <div className="min-h-screen bg-gray-50 px-4 py-8">
-        <div className="max-w-6xl mx-auto text-center py-20">
+        <div className="max-w-5xl mx-auto text-center py-20">
           <FaCarSide className="text-gray-400 text-6xl mx-auto mb-4" />
           <h2 className="text-2xl font-bold text-gray-700 mb-2">Please Log In</h2>
           <p className="text-gray-500">You need to be logged in to view your wishlist.</p>
@@ -80,71 +80,88 @@ export const WishList = () => {
       </div>
 
       {/* Header */}
-      <div className="max-w-6xl mx-auto mb-6 flex items-center justify-between px-4 py-6">
-        <h1 className="text-2xl font-bold text-gray-800 flex items-center gap-2">
-          <FaCarSide className="text-red-600" />
+    <div className="max-w-5xl mx-auto mb-2 flex items-center justify-between px-4 py-6">
+
+
+        <h1 className="text-2xl font-bold text-gray-800 flex items-center gap-2 ">
+         
           My Wishlist
         </h1>
-        <p className="text-sm text-gray-600">
-          {wishVehicle.length} {wishVehicle.length === 1 ? 'vehicle' : 'vehicles'}
-        </p>
+         <p className="text-sm text-gray-600 ml-auto">
+    {wishVehicle.length} {wishVehicle.length === 1 ? 'vehicle' : 'vehicles'}
+  </p>
       </div>
 
       {/* Wishlist Grid */}
-      <div className="max-w-6xl mx-auto grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 px-4 pb-6 -mt-5">
-        {wishVehicle?.length > 0 ? (
-          wishVehicle?.map((car) => (
-            <div
-              key={car.id}
-              className="bg-white rounded-xl shadow-md hover:shadow-lg transition-all duration-300 overflow-hidden flex flex-col"
+
+<div
+  className="
+    max-w-5xl 
+    grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3
+    gap-4        /* <-- SPACE BETWEEN CARDS */
+    pb-6 -mt-5 
+    px-4
+    mx-auto
+    sm:px-3
+    
+  "
+>
+
+
+  {wishVehicle?.length > 0 ? (
+    wishVehicle?.map((car) => (
+      <div
+        key={car.id}
+        className="bg-white rounded-xl shadow-md hover:shadow-lg transition-all duration-300 overflow-hidden flex flex-col"
+      >
+        {/* Car Image */}
+        <img
+          src={car.images[0]}
+          alt={`${car.make} ${car.model}`}
+          className="w-full h-40 object-cover"
+        />
+
+        {/* Car Details */}
+        <div className="p-4 flex flex-col flex-grow">
+          <h3 className="text-lg font-semibold text-gray-800 mb-1 text-[15px]">
+            {car.make} {car.model} ({car.year})
+          </h3>
+          <p className="text-md font-bold text-gray-700 mb-1 text-[13px]">
+            Price: ${car?.buyNowPrice}
+          </p>
+          <p className="text-sm text-gray-600 mb-2 text-[13px]">
+            <span className="font-medium text-[13px]">Location:</span> {car.cityName}
+          </p>
+
+          {/* Buttons */}
+          <div className="mt-auto flex justify-between items-center gap-2">
+            <button
+              onClick={() => navigate(`/detailbid/${car.id}`)}
+              className="bg-blue-950 text-white text-sm font-semibold px-4 py-2 rounded transition"
             >
-              {/* Car Image */}
-              <img
-                src={car.images[0]}
-                alt={`${car.make} ${car.model}`}
-                className="w-full h-40 object-cover"
-              />
+              View Details
+            </button>
 
-              {/* Car Details */}
-              <div className="p-4 flex flex-col flex-grow">
-                <h3 className="text-lg font-semibold text-gray-800 mb-1 text-[15px]">
-                  {car.make} {car.model} ({car.year})
-                </h3>
-                <p className="text-md font-bold text-gray-700 mb-1 text-[13px]">
-                  Price: ${car?.buyNowPrice}
-                </p>
-                <p className="text-sm text-gray-600 mb-2 text-[13px]">
-                  <span className="font-medium text-[13px]">Location:</span> {car.cityName}
-                </p>
-
-                {/* Buttons */}
-                <div className="mt-auto flex justify-between items-center">
-                  <button
-                    onClick={() => navigate(`/detailbid/${car.id}`)}
-                    className="bg-blue-950 text-white text-sm font-semibold px-4 py-2 rounded transition mt-2"
-                  >
-                    View Details
-                  </button>
-
-                  <button
-                    onClick={() => handleRemove(car.id)}
-                    className="text-blue-950 "
-                    title="Remove from wishlist"
-                  >
-                    <FaTrashAlt size={18} />
-                  </button>
-                </div>
-              </div>
-            </div>
-          ))
-        ) : (
-          <div className="col-span-full text-center py-10 text-gray-500">
-            <FaCarSide className="text-gray-300 text-5xl mx-auto mb-3" />
-            <p className="text-lg font-medium">No vehicles in your wishlist yet.</p>
-            <p className="text-sm mt-1">Start adding vehicles to keep track of your favorites!</p>
+            <button
+              onClick={() => handleRemove(car.id)}
+              className="bg-red-600 text-white text-sm font-semibold px-7 py-2 rounded transition"
+              title="Remove from wishlist"
+            >
+              Delete
+            </button>
           </div>
-        )}
+        </div>
       </div>
+    ))
+  ) : (
+    <div className="col-span-full text-center py-10 text-gray-500">
+      <FaCarSide className="text-gray-300 text-5xl mx-auto mb-3" />
+      <p className="text-lg font-medium">No vehicles in your wishlist yet.</p>
+      <p className="text-sm mt-1">Start adding vehicles to keep track of your favorites!</p>
+    </div>
+  )}
+</div>
+
     </div>
   );
 };
