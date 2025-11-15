@@ -1,54 +1,21 @@
 import React, { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
 import CustomDropdown from "../CustomDropdown";
+import axios from "axios";
+import { BASE_URL } from "./Contant/URL"; // Adjust path if needed
 
 const WheelBidzAlert = () => {
-  // Years
+  // ────── Years (static) ──────
   const searchYears = Array.from({ length: 30 }, (_, i) => ({
     label: (2025 - i).toString(),
     value: (2025 - i).toString(),
   }));
 
-  // Vehicle Types
-  const vehicleTypes = [
-    "All Types",
-    "Agricultural",
-    "Boats",
-    "Caravan",
-    "Commercial Under 7.5T",
-    "HGV",
-    "Jet Ski",
-    "RV",
-    "Vehicles Under 7.5T",
-  ].map((item) => ({ label: item, value: item }));
+  // ────── Vehicle Type: ONLY "Cars" ──────
+  const vehicleTypes = [{ label: "Cars", value: "Cars" }]; // Only one option
+  const [selectedVehicleType] = useState(vehicleTypes[0]); // Always "Cars"
 
-  // Makes
-  const staticMakes = [
-    "Toyota",
-    "Honda",
-    "Ford",
-    "BMW",
-    "Mercedes",
-    "Audi",
-    "Hyundai",
-    "Kia",
-    "Nissan",
-    "Chevrolet",
-  ].map((item) => ({ label: item, value: item }));
-
-  // Models
-  const staticModels = [
-    "Tesla Model Y",
-    "Toyota RAV4/Wildlander",
-    "Honda CR-V/Breeze",
-    "Toyota Corolla",
-    "Toyota Camry",
-    "Ford F-150",
-    "Toyota Hilux",
-    "Nissan Sentra",
-    "Tesla Model 3",
-  ].map((item) => ({ label: item, value: item }));
-
+  // ────── Form fields ──────
   const [formData, setFormData] = useState({
     email: "",
     firstname: "",
@@ -56,23 +23,87 @@ const WheelBidzAlert = () => {
     agree: false,
   });
 
-  const [selectedVehicleType, setSelectedVehicleType] = useState(vehicleTypes[0]);
-  const [selectedMake, setSelectedMake] = useState(staticMakes[0]);
-  const [selectedModel, setSelectedModel] = useState(staticModels[0]);
-  const [yearFrom, setYearFrom] = useState(searchYears[10]);
-  const [yearTo, setYearTo] = useState(searchYears[0]);
+  // ────── Dropdown states ──────
+  const [brands, setBrands] = useState([]);
+  const [models, setModels] = useState([]);
+  const [selectedMake, setSelectedMake] = useState(null);
+  const [selectedModel, setSelectedModel] = useState(null);
+  const [yearFrom, setYearFrom] = useState(searchYears[10]); // 2015
+  const [yearTo, setYearTo] = useState(searchYears[0]);     // 2025
 
+  // ────── Loading states ──────
+  const [loadingBrands, setLoadingBrands] = useState(false);
+  const [loadingModels, setLoadingModels] = useState(false);
+
+  // ────── Fetch Brands ──────
+  useEffect(() => {
+    const fetchBrands = async () => {
+      setLoadingBrands(true);
+      try {
+        const res = await axios.get(`${BASE_URL}/admin/getBrands`);
+        const brandOpts = res.data.map((b) => ({
+          label: b.brandName,
+          value: b.id.toString(),
+        }));
+        setBrands(brandOpts);
+
+        if (brandOpts.length > 0) {
+          setSelectedMake(brandOpts[0]);
+        }
+      } catch (err) {
+        console.error("Failed to load brands:", err);
+      } finally {
+        setLoadingBrands(false);
+      }
+    };
+
+    fetchBrands();
+  }, []);
+
+  // ────── Fetch Models when Make changes ──────
+  useEffect(() => {
+    if (!selectedMake) return;
+
+    const fetchModels = async () => {
+      setLoadingModels(true);
+      setModels([]);
+      setSelectedModel(null);
+
+      try {
+        const res = await axios.get(
+          `${BASE_URL}/getModelById/${selectedMake.value}`
+        );
+        const modelOpts = res.data.map((m) => ({
+          label: m.modelName,
+          value: m.modelId.toString(),
+        }));
+        setModels(modelOpts);
+
+        if (modelOpts.length > 0) {
+          setSelectedModel(modelOpts[0]);
+        }
+      } catch (err) {
+        console.error("Failed to load models:", err);
+      } finally {
+        setLoadingModels(false);
+      }
+    };
+
+    fetchModels();
+  }, [selectedMake]);
+
+  // ────── Input handlers ──────
   const handleChange = (e) => {
     const { name, value, type, checked } = e.target;
-    setFormData({
-      ...formData,
+    setFormData((prev) => ({
+      ...prev,
       [name]: type === "checkbox" ? checked : value,
-    });
+    }));
   };
 
   const handleSubmit = (e) => {
     e.preventDefault();
-    console.log("Submitted Data:", {
+    console.log("Submitted:", {
       ...formData,
       selectedVehicleType,
       selectedMake,
@@ -82,9 +113,10 @@ const WheelBidzAlert = () => {
     });
   };
 
+  // ────── Render ──────
   return (
     <div className="flex flex-col md:flex-row bg-gray-100 p-8 rounded-lg shadow-md">
-      {/* Left Section */}
+      {/* LEFT – Info */}
       <div className="md:w-1/2 mb-6 md:mb-0 md:pr-8">
         <h2 className="text-2xl text-gray-800 font-bold mb-6 mt-6">
           Don’t see the vehicle you want? Sign up for WheelBidz Vehicle Alerts.
@@ -113,15 +145,12 @@ const WheelBidzAlert = () => {
         />
       </div>
 
-      {/* Right Section - Form */}
+      {/* RIGHT – Form */}
       <div className="md:w-1/2 bg-white p-6 rounded-lg shadow-inner">
         <form onSubmit={handleSubmit} className="space-y-4">
           {/* Email */}
           <div>
-            <label
-              htmlFor="email"
-              className="block text-sm font-medium text-gray-800"
-            >
+            <label htmlFor="email" className="block text-sm font-medium text-gray-800">
               Email
             </label>
             <input
@@ -136,31 +165,26 @@ const WheelBidzAlert = () => {
             />
           </div>
 
-          {/* Vehicle Type Dropdown */}
+          {/* Vehicle Type: Only "Cars" */}
           <CustomDropdown
             label="Vehicle Type"
             options={vehicleTypes}
             value={selectedVehicleType}
-          
+            disabled
           />
 
           {/* Year Range */}
           <div className="flex flex-wrap gap-4">
             <div className="flex flex-col w-40">
-              <label className="text-sm font-medium text-gray-800">
-                From Year
-              </label>
+              <label className="text-sm font-medium text-gray-800">From Year</label>
               <CustomDropdown
                 options={searchYears}
                 value={yearFrom}
                 onChange={setYearFrom}
               />
             </div>
-
             <div className="flex flex-col w-40">
-              <label className="text-sm font-medium text-gray-800">
-                To Year
-              </label>
+              <label className="text-sm font-medium text-gray-800">To Year</label>
               <CustomDropdown
                 options={searchYears}
                 value={yearTo}
@@ -172,25 +196,32 @@ const WheelBidzAlert = () => {
           {/* Make Dropdown */}
           <CustomDropdown
             label="Make"
-            options={staticMakes}
+            options={brands}
             value={selectedMake}
             onChange={setSelectedMake}
+            placeholder={loadingBrands ? "Loading brands…" : "Select a make"}
+            disabled={loadingBrands}
           />
 
           {/* Model Dropdown */}
           <CustomDropdown
             label="Model"
-            options={staticModels}
+            options={models}
             value={selectedModel}
             onChange={setSelectedModel}
+            placeholder={
+              loadingModels
+                ? "Loading models…"
+                : models.length === 0
+                ? "No models for this make"
+                : "Select a model"
+            }
+            disabled={loadingModels || models.length === 0}
           />
 
-          {/* First & Last Name */}
+          {/* First Name */}
           <div>
-            <label
-              htmlFor="firstname"
-              className="block text-sm font-medium text-gray-800"
-            >
+            <label htmlFor="firstname" className="block text-sm font-medium text-gray-800">
               First Name
             </label>
             <input
@@ -205,11 +236,9 @@ const WheelBidzAlert = () => {
             />
           </div>
 
+          {/* Last Name */}
           <div>
-            <label
-              htmlFor="lastname"
-              className="block text-sm font-medium text-gray-800"
-            >
+            <label htmlFor="lastname" className="block text-sm font-medium text-gray-800">
               Last Name
             </label>
             <input
@@ -224,7 +253,7 @@ const WheelBidzAlert = () => {
             />
           </div>
 
-          {/* Consent Checkbox */}
+          {/* Consent */}
           <div className="flex items-start">
             <input
               type="checkbox"
@@ -244,7 +273,7 @@ const WheelBidzAlert = () => {
           <div className="w-full">
             <Link
               to="/register"
-              className="w-full block text-center bg-blue-950 text-white font-semibold py-2 px-4 rounded-md"
+              className="w-full block text-center bg-blue-950 text-white font-semibold py-2 px-4 rounded-md transition"
             >
               Sign Up
             </Link>
