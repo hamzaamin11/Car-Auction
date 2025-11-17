@@ -5,6 +5,7 @@ import axios from "axios";
 import { BASE_URL } from "../../components/Contant/URL";
 import Swal from "sweetalert2";
 import { authSuccess } from "../../components/Redux/UserSlice";
+import { Navigate, useNavigate } from "react-router-dom";
 
 /* ... formatters ... */
 const formatCNIC = (value) => {
@@ -12,7 +13,12 @@ const formatCNIC = (value) => {
   if (digits.length > 5 && digits.length <= 12) {
     digits = digits.slice(0, 5) + "-" + digits.slice(5);
   } else if (digits.length > 12) {
-    digits = digits.slice(0, 5) + "-" + digits.slice(5, 12) + "-" + digits.slice(12, 13);
+    digits =
+      digits.slice(0, 5) +
+      "-" +
+      digits.slice(5, 12) +
+      "-" +
+      digits.slice(12, 13);
   }
   return digits;
 };
@@ -24,7 +30,12 @@ const formatMobile = (value) => {
   if (digits.length > 6 && digits.length <= 10) {
     digits = digits.slice(0, 6) + "-" + digits.slice(6);
   } else if (digits.length > 10) {
-    digits = digits.slice(0, 6) + "-" + digits.slice(6, 10) + "-" + digits.slice(10, 15);
+    digits =
+      digits.slice(0, 6) +
+      "-" +
+      digits.slice(6, 10) +
+      "-" +
+      digits.slice(10, 15);
   }
   return digits;
 };
@@ -37,7 +48,7 @@ export const WarningModal = ({ onClose }) => {
   const [loading, setLoading] = useState(false);
   const [imageFile, setImageFile] = useState(null);
   const [imagePreview, setImagePreview] = useState("");
-
+  const navigate = useNavigate();
   // ---------- NEW: disable body scroll ----------
   useEffect(() => {
     if (profileModalOpen) {
@@ -70,8 +81,17 @@ export const WarningModal = ({ onClose }) => {
   const genders = ["Male", "Female", "Other"];
   const countries = ["Pakistan"];
   const cities = [
-    "Karachi", "Lahore", "Islamabad", "Rawalpindi", "Faisalabad",
-    "Multan", "Gujranwala", "Peshawar", "Quetta", "Sialkot", "Hyderabad",
+    "Karachi",
+    "Lahore",
+    "Islamabad",
+    "Rawalpindi",
+    "Faisalabad",
+    "Multan",
+    "Gujranwala",
+    "Peshawar",
+    "Quetta",
+    "Sialkot",
+    "Hyderabad",
   ];
 
   // Filter functions
@@ -87,8 +107,16 @@ export const WarningModal = ({ onClose }) => {
 
   // Profile form
   const [profileForm, setProfileForm] = useState({
-    name: "", cnic: "", username: "", email: "", mobileNumber: "",
-    dateOfBirth: "", gender: "", country: "Pakistan", city: "", role: "",
+    name: "",
+    cnic: "",
+    username: "",
+    email: "",
+    mobileNumber: "",
+    dateOfBirth: "",
+    gender: "",
+    country: "Pakistan",
+    city: "",
+    role: "",
   });
 
   // Reset form when modal opens
@@ -109,14 +137,18 @@ export const WarningModal = ({ onClose }) => {
 
       setGenderSearch(
         currentUser.gender
-          ? currentUser.gender.charAt(0).toUpperCase() + currentUser.gender.slice(1)
+          ? currentUser.gender.charAt(0).toUpperCase() +
+              currentUser.gender.slice(1)
           : ""
       );
       setCountrySearch(currentUser.country || "Pakistan");
       setCitySearch(currentUser.city || "");
 
       setImagePreview(
-        currentUser.image || currentUser.imageUrl || currentUser.profileImage || ""
+        currentUser.image ||
+          currentUser.imageUrl ||
+          currentUser.profileImage ||
+          ""
       );
       setImageFile(null);
     }
@@ -125,13 +157,22 @@ export const WarningModal = ({ onClose }) => {
   // Close dropdowns on outside click
   useEffect(() => {
     const handleClickOutside = (e) => {
-      if (genderDropdownRef.current && !genderDropdownRef.current.contains(e.target)) {
+      if (
+        genderDropdownRef.current &&
+        !genderDropdownRef.current.contains(e.target)
+      ) {
         setShowGenderDropdown(false);
       }
-      if (countryDropdownRef.current && !countryDropdownRef.current.contains(e.target)) {
+      if (
+        countryDropdownRef.current &&
+        !countryDropdownRef.current.contains(e.target)
+      ) {
         setShowCountryDropdown(false);
       }
-      if (cityDropdownRef.current && !cityDropdownRef.current.contains(e.target)) {
+      if (
+        cityDropdownRef.current &&
+        !cityDropdownRef.current.contains(e.target)
+      ) {
         setShowCityDropdown(false);
       }
     };
@@ -148,7 +189,10 @@ export const WarningModal = ({ onClose }) => {
     setProfileForm((prev) => ({ ...prev, cnic: formatCNIC(e.target.value) }));
   };
   const handleMobileChange = (e) => {
-    setProfileForm((prev) => ({ ...prev, mobileNumber: formatMobile(e.target.value) }));
+    setProfileForm((prev) => ({
+      ...prev,
+      mobileNumber: formatMobile(e.target.value),
+    }));
   };
   const handleImageChange = (e) => {
     const file = e.target.files?.[0];
@@ -239,30 +283,45 @@ export const WarningModal = ({ onClose }) => {
           your profile.
         </p>
 
-        <div className="flex justify-center mt-10">
-          <button
-            onClick={() => setProfileModalOpen(true)}
-            className="bg-blue-950 text-white font-medium px-4 py-2 rounded-md"
-          >
-            Update Information
-          </button>
-        </div>
+        {currentUser ? (
+          <div className="flex justify-center mt-10">
+            <button
+              onClick={() => setProfileModalOpen(true)}
+              className="bg-blue-950 text-white font-medium px-4 py-2 rounded-md"
+            >
+              Complete Registration
+            </button>
+          </div>
+        ) : (
+          <div className="flex justify-center mt-10">
+            <button
+              onClick={() => navigate("/login")}
+              className="bg-blue-950 text-white font-medium px-4 py-2 rounded-md"
+            >
+              Register
+            </button>
+          </div>
+        )}
       </div>
 
       {/* Profile Modal */}
       {profileModalOpen && (
         <div className="fixed inset-0 backdrop-blur-md bg-blur  flex items-center justify-center z-50">
           <div className="bg-white rounded-lg p-8 w-full max-w-2xl shadow-xl max-h-[90vh] overflow-y-auto relative">
-           
-
-            <h2 className="text-2xl font-semibold mb-6 text-center">My Profile</h2>
+            <h2 className="text-2xl font-semibold mb-6 text-center">
+              My Profile
+            </h2>
 
             {/* Profile Picture */}
             <div className="flex flex-col items-center mb-6">
               <div className="relative">
                 <div className="w-32 h-32 rounded-full bg-gray-200 flex items-center justify-center overflow-hidden">
                   {imagePreview ? (
-                    <img src={imagePreview} alt="Profile" className="w-full h-full object-cover" />
+                    <img
+                      src={imagePreview}
+                      alt="Profile"
+                      className="w-full h-full object-cover"
+                    />
                   ) : (
                     <FaUserCircle size={128} className="text-gray-400" />
                   )}
@@ -279,7 +338,12 @@ export const WarningModal = ({ onClose }) => {
                   className="absolute bottom-0 right-0 bg-blue-950 text-white p-2 rounded-full cursor-pointer"
                   title="Change profile picture"
                 >
-                  <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
+                  <svg
+                    xmlns="http://www.w3.org/2000/svg"
+                    className="h-5 w-5"
+                    viewBox="0 0 20 20"
+                    fill="currentColor"
+                  >
                     <path d="M13.586 3.586a2 2 0 112.828 2.828l-.793.793-2.828-2.828.793-.793zM11.379 5.793L3 14.172V17h2.828l8.38-8.379-2.83-2.828z" />
                   </svg>
                 </label>
@@ -291,7 +355,8 @@ export const WarningModal = ({ onClose }) => {
 
             <div className="bg-red-50 border border-red-200 rounded-md p-3 mb-4">
               <p className="text-sm text-red-600">
-                Picture can be changed. Select an image to update your profile picture.
+                Picture can be changed. Select an image to update your profile
+                picture.
               </p>
             </div>
 
@@ -299,7 +364,9 @@ export const WarningModal = ({ onClose }) => {
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
               {/* ... all form fields stay exactly the same ... */}
               <div>
-                <label className="block text-sm font-medium text-gray-700">Full Name</label>
+                <label className="block text-sm font-medium text-gray-700">
+                  Full Name
+                </label>
                 <input
                   type="text"
                   name="name"
@@ -311,7 +378,9 @@ export const WarningModal = ({ onClose }) => {
               </div>
 
               <div>
-                <label className="block text-sm font-medium text-gray-700">CNIC</label>
+                <label className="block text-sm font-medium text-gray-700">
+                  CNIC
+                </label>
                 <input
                   type="text"
                   name="cnic"
@@ -326,7 +395,9 @@ export const WarningModal = ({ onClose }) => {
 
               {/* Searchable Gender */}
               <div className="relative" ref={genderDropdownRef}>
-                <label className="block text-sm font-medium text-gray-700">Gender</label>
+                <label className="block text-sm font-medium text-gray-700">
+                  Gender
+                </label>
                 <input
                   type="text"
                   value={genderSearch}
@@ -354,7 +425,9 @@ export const WarningModal = ({ onClose }) => {
               </div>
 
               <div>
-                <label className="block text-sm font-medium text-gray-700">Date of Birth</label>
+                <label className="block text-sm font-medium text-gray-700">
+                  Date of Birth
+                </label>
                 <input
                   type="date"
                   name="dateOfBirth"
@@ -366,7 +439,9 @@ export const WarningModal = ({ onClose }) => {
 
               {/* Searchable Country */}
               <div className="relative" ref={countryDropdownRef}>
-                <label className="block text-sm font-medium text-gray-700">Country</label>
+                <label className="block text-sm font-medium text-gray-700">
+                  Country
+                </label>
                 <input
                   type="text"
                   value={countrySearch}
@@ -395,7 +470,9 @@ export const WarningModal = ({ onClose }) => {
 
               {/* Searchable City */}
               <div className="relative" ref={cityDropdownRef}>
-                <label className="block text-sm font-medium text-gray-700">City</label>
+                <label className="block text-sm font-medium text-gray-700">
+                  City
+                </label>
                 <input
                   type="text"
                   value={citySearch}
@@ -423,7 +500,9 @@ export const WarningModal = ({ onClose }) => {
               </div>
 
               <div>
-                <label className="block text-sm font-medium text-gray-700">Mobile Number</label>
+                <label className="block text-sm font-medium text-gray-700">
+                  Mobile Number
+                </label>
                 <input
                   type="text"
                   name="mobileNumber"
@@ -438,7 +517,9 @@ export const WarningModal = ({ onClose }) => {
             </div>
 
             <div className="mt-4">
-              <label className="block text-sm font-medium text-gray-700">Email</label>
+              <label className="block text-sm font-medium text-gray-700">
+                Email
+              </label>
               <input
                 type="email"
                 name="email"
@@ -449,7 +530,9 @@ export const WarningModal = ({ onClose }) => {
             </div>
 
             <div className="mt-4">
-              <label className="block text-sm font-medium text-gray-700">Username</label>
+              <label className="block text-sm font-medium text-gray-700">
+                Username
+              </label>
               <input
                 type="text"
                 name="username"

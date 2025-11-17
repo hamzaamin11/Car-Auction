@@ -70,7 +70,7 @@ const FilterPriceCars = () => {
   const cityOptions = useMemo(
     () =>
       allCities.map((city) => ({
-        label: city.cityName,
+        label: city.cityName.charAt(0).toUpperCase() + city.cityName.slice(1),
         value: city.id,
       })),
     [allCities]

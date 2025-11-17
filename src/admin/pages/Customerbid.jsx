@@ -1,7 +1,12 @@
-import { FaArrowLeft, FaArrowRight, FaClock, FaCalendarPlus } from "react-icons/fa";
+import {
+  FaArrowLeft,
+  FaArrowRight,
+  FaClock,
+  FaCalendarPlus,
+} from "react-icons/fa";
 import { useEffect, useState } from "react";
 import axios from "axios";
-import { Link, useParams } from "react-router-dom";
+import { Link, Navigate, useNavigate, useParams } from "react-router-dom";
 import { BASE_URL } from "../../components/Contant/URL";
 import { useSelector } from "react-redux";
 import { toast, ToastContainer } from "react-toastify";
@@ -20,6 +25,8 @@ export const Customerbid = () => {
   const userId = currentUser?.id;
 
   const token = currentUser?.token;
+
+  const navigate = useNavigate();
 
   console.log("userid =>", userId);
 
@@ -262,7 +269,11 @@ export const Customerbid = () => {
 
     const event = {
       title: `Bid: ${selectedPrice.make} ${selectedPrice.model} ${selectedPrice.year}`,
-      description: `Auction for Lot #${selectedPrice.lot_number}. Current Bid: PKR ${selectedPrice.buyNowPrice?.toLocaleString()}. Join at: ${window.location.href}`,
+      description: `Auction for Lot #${
+        selectedPrice.lot_number
+      }. Current Bid: PKR ${selectedPrice.buyNowPrice?.toLocaleString()}. Join at: ${
+        window.location.href
+      }`,
       location: "Online Auction",
       start: start.format("YYYYMMDD[T]HHmmss[Z]"),
       end: end.format("YYYYMMDD[T]HHmmss[Z]"),
@@ -283,7 +294,9 @@ LOCATION:${event.location}
 END:VEVENT
 END:VCALENDAR`.trim();
 
-    const blob = new Blob([icsContent], { type: "text/calendar;charset=utf-8" });
+    const blob = new Blob([icsContent], {
+      type: "text/calendar;charset=utf-8",
+    });
     const url = window.URL.createObjectURL(blob);
     const link = document.createElement("a");
     link.href = url;
@@ -311,8 +324,10 @@ END:VCALENDAR`.trim();
 
           <ChevronRight className="mx-2 w-4 h-4 text-gray-400" />
 
-          <span    onClick={() => window.history.back()}  className="text-blue-950 capitalize hover:cursor-pointer hover:underline"
-            >
+          <span
+            onClick={() => window.history.back()}
+            className="text-blue-950 capitalize hover:cursor-pointer hover:underline"
+          >
             {selectedPrice?.make || "N/A"}
           </span>
 
@@ -324,35 +339,35 @@ END:VCALENDAR`.trim();
         </nav>
 
         {/* Header with Back Button */}
-<div className="flex items-center">
-  {/* Back Button */}
-  <button
-    onClick={() => window.history.back()}
-    className="flex items-center text-gray-700 hover:text-black font-medium text-sm lg:text-base mr-4 transition-all duration-200 group"
-  >
-    <svg
-      xmlns="http://www.w3.org/2000/svg"
-      className="h-5 w-5 mr-1.5 text-black "
-      fill="none"
-      viewBox="0 0 24 24"
-      stroke="currentColor"
-      strokeWidth={2.5}
-    >
-      <path
-        strokeLinecap="round"
-        strokeLinejoin="round"
-        d="M10.5 19.5L3 12m0 0l7.5-7.5M3 12h18"
-      />
-    </svg>
-    Back
-  </button>
+        <div className="flex items-center">
+          {/* Back Button */}
+          <button
+            onClick={() => window.history.back()}
+            className="flex items-center text-gray-700 hover:text-black font-medium text-sm lg:text-base mr-4 transition-all duration-200 group"
+          >
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              className="h-5 w-5 mr-1.5 text-black "
+              fill="none"
+              viewBox="0 0 24 24"
+              stroke="currentColor"
+              strokeWidth={2.5}
+            >
+              <path
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                d="M10.5 19.5L3 12m0 0l7.5-7.5M3 12h18"
+              />
+            </svg>
+            Back
+          </button>
 
-  {/* Title */}
-  <h1 className="lg:text-3xl text-xl font-bold text-black">
-    {selectedPrice?.make} {selectedPrice?.model} {selectedPrice?.series}{" "}
-    {selectedPrice?.year}
-  </h1>
-</div>
+          {/* Title */}
+          <h1 className="lg:text-3xl text-xl font-bold text-black">
+            {selectedPrice?.make} {selectedPrice?.model} {selectedPrice?.series}{" "}
+            {selectedPrice?.year}
+          </h1>
+        </div>
       </div>
 
       <div className="grid lg:grid-cols-3 gap-1">
@@ -731,16 +746,11 @@ END:VCALENDAR`.trim();
             {!currentUser && (
               <button
                 onClick={() => {
-                  Swal.fire({
-                    icon: "warning",
-                    title: "Login Required",
-                    text: "Please login first, then join the auction.",
-                    confirmButtonColor: "#233D7B",
-                  });
+                  navigate("/login");
                 }}
                 className="w-full py-3 rounded-lg font-semibold transition-all text-white bg-blue-950 hover:cursor-pointer"
               >
-               {currentUser ? "Join Auction" : "Bid Now" } 
+                {currentUser ? "Join Auction" : "Bid Now"}
               </button>
             )}
           </div>

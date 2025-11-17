@@ -157,7 +157,7 @@ const TabsSection = () => {
 
   // ✅ Map city data
   const cityData = allCities.map((city) => ({
-    label: city.cityName,
+    label: city.cityName.charAt(0).toUpperCase() + city.cityName.slice(1),
     value: city.id,
   }));
 
