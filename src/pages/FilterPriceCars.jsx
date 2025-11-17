@@ -1,10 +1,10 @@
 import axios from "axios";
 import React, { useEffect, useState, useMemo } from "react";
 import { useNavigate, useParams } from "react-router-dom";
-import Select from "react-select";
+import CustomDropdown from "../CustomDropdown";
 import { BASE_URL } from "../components/Contant/URL";
 import numberToWords from "number-to-words";
-import CustomDropdown from "../CustomDropdown";
+
 const BodyType = [
   { label: "Mini Vehicles", value: "Mini Vehicles" },
   { label: "Van", value: "Van" },
@@ -32,7 +32,6 @@ const BodyType = [
 
 const FilterPriceCars = () => {
   const { name, value } = useParams();
-
   const navigate = useNavigate();
 
   const [allMake, setAllMake] = useState([]);
@@ -54,7 +53,6 @@ const FilterPriceCars = () => {
         : "",
   });
 
-  console.log("dasdsad =>>>", filterData);
   const [allFilterCars, setAllFilterCars] = useState([]);
   const [filterModel, setFilterModel] = useState([]);
   const [activeTab, setActiveTab] = useState("all");
@@ -64,9 +62,9 @@ const FilterPriceCars = () => {
 
   // Pagination states
   const [currentPage, setCurrentPage] = useState(1);
-  const carsPerPage = 10;
+  const [carsPerPage, setCarsPerPage] = useState(10);
 
-  // Transform cities for react-select
+  // Transform cities
   const cityOptions = useMemo(
     () =>
       allCities.map((city) => ({
@@ -76,70 +74,76 @@ const FilterPriceCars = () => {
     [allCities]
   );
 
-  // Transform makes for react-select
+  // Transform makes
   const allMakes = useMemo(
     () =>
       allMake.map((make) => ({
         label: `${make.brandName} (${make.vehicleCount})`,
         value: make.id,
-        brandName: make.brandName,
+        brandName: make.brandsName,
         vehicleCount: make.vehicleCount,
       })),
     [allMake]
   );
 
+  // Transform models
+  const allModels = useMemo(
+    () =>
+      filterModel.map((m) => ({
+        label: `${m.modelName} (${m.vehicleCount})`,
+        value: m.modelName,
+      })),
+    [filterModel]
+  );
+
   const handleGetYear = async () => {
     try {
       const res = await axios.get(`${BASE_URL}/admin/fetchVehicleYears`);
-      // Assuming res.data is an array of years like [2020, 2021, 2022]
       const formattedYears = res.data.map((year) => ({
-        label: year, // Displayed in UI
-        value: year, // Value used in your logic
+        label: year,
+        value: year,
       }));
-      console.log(formattedYears);
       setCurrentYears(formattedYears);
     } catch (error) {
       console.log(error);
     }
   };
 
-  // Transform models for react-select
-  const allModels = useMemo(
-    () =>
-      filterModel.map((m) => ({
-        label: `${m.modelName} (${m.vehicleCount})`,
-        value: m.modelName,
-        brandName: m.modelName,
-        vehicleCount: m.vehicleCount,
-      })),
-    [filterModel]
-  );
   // Sorted + paginated cars
   const sortedCars = useMemo(() => {
     let cars = [...allFilterCars];
 
-    // ---- PRICE SORTING ----
     if (sorting === "low") {
       cars.sort((a, b) => a.buyNowPrice - b.buyNowPrice);
     } else if (sorting === "high") {
       cars.sort((a, b) => b.buyNowPrice - a.buyNowPrice);
-    }
-
-    // ---- YEAR SORTING (NEW) ----
-    else if (sorting === "year_desc") {
-      cars.sort((a, b) => b.year - a.year); // newest first
+    } else if (sorting === "year_desc") {
+      cars.sort((a, b) => b.year - a.year);
     } else if (sorting === "year_asc") {
-      cars.sort((a, b) => a.year - b.year); // oldest first
+      cars.sort((a, b) => a.year - b.year);
     }
 
     return cars;
   }, [allFilterCars, sorting]);
 
-  // Pagination calculations
-  const indexOfLastCar = currentPage * carsPerPage;
-  const indexOfFirstCar = indexOfLastCar - carsPerPage;
-  const currentCars = sortedCars.slice(indexOfFirstCar, indexOfLastCar);
+  // === PAGINATION LOGIC ===
   const totalPages = Math.ceil(sortedCars.length / carsPerPage);
+  const startIndex = (currentPage - 1) * carsPerPage;
+  const endIndex = Math.min(startIndex + carsPerPage, sortedCars.length);
+  const currentCars = sortedCars.slice(startIndex, endIndex);
+
+  const goToPage = (page) => {
+    setCurrentPage(page);
+    window.scrollTo({ top: 0, behavior: "smooth" });
+  };
+
+  const goToPrevPage = () => {
+    if (currentPage > 1) goToPage(currentPage - 1);
+  };
+
+  const goToNextPage = () => {
+    if (currentPage < totalPages) goToPage(currentPage + 1);
+  };
 
   // Map URL value to option value (ID) for city and make
   useEffect(() => {
@@ -204,7 +208,6 @@ const FilterPriceCars = () => {
     return filters.length > 0 ? `/filterprice/${filters[0]}` : "/filterprice";
   };
 
-  // Fetch vehicles with all filters
   const handleGetFilterByVehicle = async () => {
     setLoading(true);
     try {
@@ -223,17 +226,15 @@ const FilterPriceCars = () => {
         },
       });
       setAllFilterCars(res.data);
-      setCurrentPage(1); // Reset to first page on new search
+      setCurrentPage(1);
       setLoading(false);
     } catch (error) {
       console.log("Error fetching cars:", error);
-
       setAllFilterCars([]);
       setLoading(false);
     }
   };
 
-  // Fetch models when make changes
   const handleGetFilterModel = async () => {
     if (!filterData.allMakes) {
       setFilterModel([]);
@@ -270,29 +271,13 @@ const FilterPriceCars = () => {
     }
   };
 
-  // Update state from form
   const handleChange = (name, value) => {
     const updatedFilterData = { ...filterData, [name]: value };
     if (name === "allMakes") {
       updatedFilterData.allModels = "";
     }
     setFilterData(updatedFilterData);
-    navigate(buildFilterUrl(updatedFilterData));
-  };
-
-  // Pagination handlers
-  const handlePrevPage = () => {
-    if (currentPage > 1) {
-      setCurrentPage(currentPage - 1);
-      window.scrollTo({ top: 0, behavior: "smooth" });
-    }
-  };
-
-  const handleNextPage = () => {
-    if (currentPage < totalPages) {
-      setCurrentPage(currentPage + 1);
-      window.scrollTo({ top: 0, behavior: "smooth" });
-    }
+        navigate(buildFilterUrl(updatedFilterData));
   };
 
   useEffect(() => {
@@ -309,7 +294,6 @@ const FilterPriceCars = () => {
     handleGetFilterModel();
   }, [filterData.allMakes]);
 
-  // Convert number to Pakistani words
   const convertToPakistaniWords = (number) => {
     if (!number || isNaN(number)) return "";
     const num = Number(number);
@@ -322,18 +306,10 @@ const FilterPriceCars = () => {
     const remainder = num % 1000;
 
     let result = [];
-    if (crore > 0) {
-      result.push(`${toWords(crore)} crore${crore > 1 ? "s" : ""}`);
-    }
-    if (lakh > 0) {
-      result.push(`${toWords(lakh)} lakh${lakh > 1 ? "s" : ""}`);
-    }
-    if (thousand > 0) {
-      result.push(`${toWords(thousand)} thousand`);
-    }
-    if (remainder > 0) {
-      result.push(toWords(remainder));
-    }
+    if (crore > 0) result.push(`${toWords(crore)} crore${crore > 1 ? "s" : ""}`);
+    if (lakh > 0) result.push(`${toWords(lakh)} lakh${lakh > 1 ? "s" : ""}`);
+    if (thousand > 0) result.push(`${toWords(thousand)} thousand`);
+    if (remainder > 0) result.push(toWords(remainder));
 
     return result.length === 0 ? "" : result.join(" ");
   };
@@ -346,9 +322,9 @@ const FilterPriceCars = () => {
 
         {/* Tabs */}
         <div className="flex space-x-2">
-          {["All", "Used", "New"].map((tab, index) => (
+          {["All", "Used", "New"].map((tab) => (
             <button
-              key={index}
+              key={tab}
               onClick={() => setActiveTab(tab.toLowerCase())}
               className={`flex-1 py-2 rounded text-sm font-semibold ${
                 activeTab === tab.toLowerCase()
@@ -361,7 +337,7 @@ const FilterPriceCars = () => {
           ))}
         </div>
 
-        {/* Filters t */}
+        {/* All Filters - Same as before */}
         <div className="relative w-full max-w-sm">
           <label className="block text-sm font-medium text-gray-700">
             Select Body Style
@@ -369,9 +345,7 @@ const FilterPriceCars = () => {
           <CustomDropdown
             options={[{ label: "Select All Type ", value: "" }, ...BodyType]}
             value={
-              BodyType.find(
-                (option) => option.value === filterData.vehicleType
-              ) || { label: "Select All Type", value: "" }
+              BodyType.find((option) => option.value === filterData.vehicleType) || { label: "Select All Type", value: "" }
             }
             onChange={(selected) => handleChange("vehicleType", selected.value)}
             placeholder="Select Body Style"
@@ -387,164 +361,77 @@ const FilterPriceCars = () => {
         </div>
 
         <div className="flex w-full gap-2">
-          {/* From Year */}
           <div className="relative w-48 max-w-sm">
-            <label className="block text-sm font-medium text-gray-700">
-              From Year
-            </label>
+            <label className="block text-sm font-medium text-gray-700">From Year</label>
             <CustomDropdown
-              options={[
-                { label: "Select Model Year", value: "" },
-                ...currentYear,
-              ]}
-              value={
-                currentYear.find(
-                  (option) => option.value === filterData.selectYear
-                ) || { label: "Select From Year", value: "" }
-              }
-              onChange={(selected) =>
-                handleChange("selectYear", selected.value)
-              }
+              options={[{ label: "Select Model Year", value: "" }, ...currentYear]}
+              value={currentYear.find((option) => option.value === filterData.selectYear) || { label: "Select From Year", value: "" }}
+              onChange={(selected) => handleChange("selectYear", selected.value)}
               placeholder="Select Year"
               isSearchable
               className="w-full"
-              styles={{
-                singleValue: (provided, state) => ({
-                  ...provided,
-                  color: state.data.value === "" ? "#d1d5db" : "#111827",
-                }),
-              }}
             />
           </div>
-
-          {/* To Year */}
           <div className="relative w-48 max-w-sm">
-            <label className="block text-sm font-medium text-gray-700">
-              To Year
-            </label>
+            <label className="block text-sm font-medium text-gray-700">To Year</label>
             <CustomDropdown
               options={[{ label: "Select To Year", value: "" }, ...currentYear]}
-              value={
-                currentYear.find(
-                  (option) => option.value === filterData.toYear
-                ) || { label: "Select To Year", value: "" }
-              }
+              value={currentYear.find((option) => option.value === filterData.toYear) || { label: "Select To Year", value: "" }}
               onChange={(selected) => handleChange("toYear", selected.value)}
               placeholder="To Year"
               isSearchable
               className="w-full"
-              styles={{
-                singleValue: (provided, state) => ({
-                  ...provided,
-                  color: state.data.value === "" ? "#d1d5db" : "#111827",
-                }),
-              }}
             />
           </div>
         </div>
 
         <div className="relative w-full max-w-sm">
-          <label className="block text-sm font-medium text-gray-700">
-            Select Make
-          </label>
+          <label className="block text-sm font-medium text-gray-700">Select Make</label>
           <CustomDropdown
             options={[{ label: "Select Vehicle Make", value: "" }, ...allMakes]}
-            value={
-              allMakes.find(
-                (option) => option.value === filterData.allMakes
-              ) || {
-                label: "Select Vehicle Make",
-                value: "",
-              }
-            }
+            value={allMakes.find((option) => option.value === filterData.allMakes) || { label: "Select Vehicle Make", value: "" }}
             onChange={(selected) => handleChange("allMakes", selected.value)}
             placeholder="Select Make"
             isSearchable
             className="w-full"
-            styles={{
-              singleValue: (provided, state) => ({
-                ...provided,
-                color: state.data.value === "" ? "#d1d5db" : "#111827",
-              }),
-            }}
           />
         </div>
 
         <div className="relative w-full max-w-sm">
-          <label className="block text-sm font-medium text-gray-700">
-            Select Model
-          </label>
+          <label className="block text-sm font-medium text-gray-700">Select Model</label>
           <CustomDropdown
-            options={[
-              { label: "Select Vehicle Model", value: "" },
-              ...allModels,
-            ]}
-            value={
-              allModels.find(
-                (option) => option.value === filterData.allModels
-              ) || {
-                label: "Select Vehicle Model",
-                value: "",
-              }
-            }
+            options={[{ label: "Select Vehicle Model", value: "" }, ...allModels]}
+            value={allModels.find((option) => option.value === filterData.allModels) || { label: "Select Vehicle Model", value: "" }}
             onChange={(selected) => handleChange("allModels", selected.value)}
             placeholder="Select Model"
             isSearchable
             className="w-full"
-            styles={{
-              singleValue: (provided, state) => ({
-                ...provided,
-                color: state.data.value === "" ? "#d1d5db" : "#111827",
-              }),
-            }}
           />
         </div>
 
         <div className="relative w-full max-w-sm">
-          <label className="block text-sm font-medium text-gray-700">
-            Select Location
-          </label>
+          <label className="block text-sm font-medium text-gray-700">Select Location</label>
           <CustomDropdown
-            options={[
-              { label: "Select Vehicle Location", value: "" },
-              ...cityOptions,
-            ]}
-            value={
-              cityOptions.find(
-                (option) => option.value === filterData.location
-              ) || {
-                label: "Select Vehicle Location",
-                value: "",
-              }
-            }
+            options={[{ label: "Select Vehicle Location", value: "" }, ...cityOptions]}
+            value={cityOptions.find((option) => option.value === filterData.location) || { label: "Select Vehicle Location", value: "" }}
             onChange={(selected) => handleChange("location", selected.value)}
             placeholder="Select Location"
             isSearchable
             className="w-full"
-            styles={{
-              singleValue: (provided, state) => ({
-                ...provided,
-                color: state.data.value === "" ? "#d1d5db" : "#111827",
-              }),
-            }}
           />
         </div>
 
-        {/* Price Filter */}
         <div className="relative w-full max-w-sm">
-          <label className="block text-sm font-medium text-gray-700 mb-1">
-            Filter Price
-          </label>
+          <label className="block text-sm font-medium text-gray-700 mb-1">Filter Price</label>
           <div className="flex flex-col md:flex-col lg:flex-row w-full gap-2">
             <div className="w-full">
               <input
                 className="border p-2 rounded w-full"
-                name="formCash"
                 value={filterData.formCash}
                 onChange={(e) => {
-                  const value = e.target.value;
-                  if (/^\d*$/.test(value) && value.length <= 9) {
-                    handleChange("formCash", value);
+                  const val = e.target.value;
+                  if (/^\d*$/.test(val) && val.length <= 9) {
+                    handleChange("formCash", val);
                   }
                 }}
                 placeholder="From"
@@ -558,12 +445,11 @@ const FilterPriceCars = () => {
             <div className="w-full">
               <input
                 className="border p-2 rounded w-full"
-                name="toCash"
                 value={filterData.toCash}
                 onChange={(e) => {
-                  const value = e.target.value;
-                  if (/^\d*$/.test(value) && value.length <= 9) {
-                    handleChange("toCash", value);
+                  const val = e.target.value;
+                  if (/^\d*$/.test(val) && val.length <= 9) {
+                    handleChange("toCash", val);
                   }
                 }}
                 placeholder="To"
@@ -594,19 +480,19 @@ const FilterPriceCars = () => {
           <h1 className="text-black font-bold text-lg sm:text-xl">
             {allFilterCars.length}{" "}
             {filterData.allMakes
-              ? allMakes.find((m) => m.value === filterData.allMakes)?.brandName
+              ? allMakes.find((m) => m.value === filterData.allMakes)?.label.split(" (")[0]
               : "Cars"}{" "}
             Vehicles For Sale
           </h1>
 
           <select
-            className="border p-2 text-sm rounded w-full sm:w-auto focus:outline-none focus:ring-2 focus:ring-blue-900 
-               cursor-pointer "
-            onChange={(e) => setSorting(e.target.value)}
-            name="sorting"
+            className="border p-2 text-sm rounded w-full sm:w-auto focus:outline-none focus:ring-2 focus:ring-blue-900 cursor-pointer"
+            onChange={(e) => {
+              setSorting(e.target.value);
+              setCurrentPage(1);
+            }}
             value={sorting}
           >
-            {/* <option value="">Updated Date: Recent First</option> */}
             <option value="low">Price: Low to High</option>
             <option value="high">Price: High to Low</option>
             <option value="year_desc">Year: Newest to Oldest</option>
@@ -615,8 +501,8 @@ const FilterPriceCars = () => {
         </div>
 
         <div className="overflow-y-auto max-h-screen">
-          {currentCars &&
-            currentCars?.map((car) => (
+          {currentCars.length > 0 ? (
+            currentCars.map((car) => (
               <div
                 key={car.id}
                 onClick={() => navigate(`/detailbid/${car.id}`)}
@@ -633,7 +519,7 @@ const FilterPriceCars = () => {
                 )}
                 <div className="w-full md:w-40 h-48 md:h-28 overflow-hidden rounded-md mb-4 md:mb-0 md:mr-4">
                   <img
-                    src={car.images[0]}
+                    src={car.images?.[0] || "/placeholder.png"}
                     alt={car.make}
                     className="w-full h-full object-cover"
                   />
@@ -642,104 +528,117 @@ const FilterPriceCars = () => {
                   <div className="flex flex-col sm:flex-row justify-between sm:items-center">
                     <h3
                       className={`font-semibold text-sm sm:text-base ${
-                        car.certifyStatus === "Certified"
-                          ? "text-green-700"
-                          : "text-gray-800"
+                        car.certifyStatus === "Certified" ? "text-green-700" : "text-gray-800"
                       }`}
                     >
-                      {car.make} {car.model} {car.series} {car.engine} for sale
+                      {car.make} {car.model} {car.series || ""} {car.engine || ""} for sale
                     </h3>
-
                     <span className="text-lg font-bold text-gray-800 mt-2 sm:mt-0">
                       PKR {car.buyNowPrice}
                     </span>
                   </div>
-                  <p className="text-sm text-gray-600 mt-1">
-                    Lot # {car.lot_number}
-                  </p>
+                  <p className="text-sm text-gray-600 mt-1">Lot # {car.lot_number}</p>
                   <p className="text-sm text-gray-600 mt-1">{car.cityName}</p>
                   <div className="flex flex-wrap gap-2 mt-2">
-                    <span className="px-3 py-1 bg-gray-100 text-xs font-medium rounded-full shadow-sm">
-                      {car.year}
-                    </span>
-                    <span className="px-3 py-1 bg-gray-100 text-xs font-medium rounded-full shadow-sm">
-                      {car.mileage} km
-                    </span>
-                    <span className="px-3 py-1 bg-gray-100 text-xs font-medium rounded-full shadow-sm">
-                      {car.fuelType}
-                    </span>
-                    <span className="px-3 py-1 bg-gray-100 text-xs font-medium rounded-full shadow-sm">
-                      {car.bodyStyle}
-                    </span>
-                    <span className="px-3 py-1 bg-gray-100 text-xs font-medium rounded-full shadow-sm">
-                      {car.color}
-                    </span>
-                    <span className="px-3 py-1 bg-gray-100 text-xs font-medium rounded-full shadow-sm">
-                      {car.transmission}
-                    </span>
-                    <span className="px-3 py-1 bg-gray-100 text-xs font-medium rounded-full shadow-sm">
-                      {car.cityName}
-                    </span>
+                    <span className="px-3 py-1 bg-gray-100 text-xs font-medium rounded-full shadow-sm">{car.year}</span>
+                    <span className="px-3 py-1 bg-gray-100 text-xs font-medium rounded-full shadow-sm">{car.mileage} km</span>
+                    <span className="px-3 py-1 bg-gray-100 text-xs font-medium rounded-full shadow-sm">{car.fuelType}</span>
+                    <span className="px-3 py-1 bg-gray-100 text-xs font-medium rounded-full shadow-sm">{car.bodyStyle}</span>
+                    <span className="px-3 py-1 bg-gray-100 text-xs font-medium rounded-full shadow-sm">{car.color}</span>
+                    <span className="px-3 py-1 bg-gray-100 text-xs font-medium rounded-full shadow-sm">{car.transmission}</span>
+                    <span className="px-3 py-1 bg-gray-100 text-xs font-medium rounded-full shadow-sm">{car.cityName}</span>
                   </div>
                 </div>
               </div>
-            ))}
-          {allFilterCars.length === 0 && (
+            ))
+          ) : (
             <div className="text-center text-gray-600 mt-10">No cars found</div>
           )}
 
-          {/* Pagination Controls */}
+          {/* === FULL IDENTICAL PAGINATION FROM FIRST COMPONENT === */}
           {allFilterCars.length > 0 && (
-            <div className="flex justify-between items-center mt-6 mb-6 px-6">
-              {/* Prev Button */}
-              <button
-                onClick={handlePrevPage}
-                disabled={currentPage === 1}
-                className={`flex items-center px-6 py-2 rounded-lg font-semibold transition-all ${
-                  currentPage === 1
-                    ? "bg-gray-300 text-gray-500 cursor-not-allowed"
-                    : "bg-blue-950 text-white"
-                }`}
-              >
-                <svg
-                  xmlns="http://www.w3.org/2000/svg"
-                  className="h-5 w-5 mr-1"
-                  viewBox="0 0 20 20"
-                  fill="currentColor"
-                >
-                  <path
-                    fillRule="evenodd"
-                    d="M12.707 5.293a1 1 0 010 1.414L9.414 10l3.293 3.293a1 1 0 01-1.414 1.414l-4-4a1 1 0 010-1.414l4-4a1 1 0 011.414 0z"
-                    clipRule="evenodd"
-                  />
-                </svg>
-                Prev
-              </button>
+            <div className="bg-white rounded-lg shadow-sm p-4 mt-6">
+              <div className="flex flex-col sm:flex-row justify-between items-center gap-4 text-sm text-gray-700">
 
-              {/* Next Button */}
-              <button
-                onClick={handleNextPage}
-                disabled={currentPage === totalPages}
-                className={`flex items-center gap-2 px-6 py-2 rounded-lg font-semibold transition-all ${
-                  currentPage === totalPages
-                    ? "bg-gray-300 text-gray-500 cursor-not-allowed"
-                    : "bg-blue-950 text-white"
-                }`}
-              >
-                Next
-                <svg
-                  xmlns="http://www.w3.org/2000/svg"
-                  className="h-5 w-5 ml-1"
-                  viewBox="0 0 20 20"
-                  fill="currentColor"
-                >
-                  <path
-                    fillRule="evenodd"
-                    d="M7.293 14.707a1 1 0 010-1.414L10.586 10 7.293 6.707a1 1 0 011.414-1.414l4 4a1 1 0 010 1.414l-4 4a1 1 0 01-1.414 0z"
-                    clipRule="evenodd"
-                  />
-                </svg>
-              </button>
+                {/* Showing X to Y of Z */}
+                <div className="text-gray-600">
+                  Showing{" "}
+                  <span className="font-medium">{startIndex + 1} to {endIndex}</span>{" "}
+                  of <span className="font-medium">{sortedCars.length}</span> entries
+                </div>
+
+                {/* Page Buttons */}
+                <div className="flex items-center gap-1">
+                  <button
+                    onClick={() => goToPage(1)}
+                    disabled={currentPage === 1}
+                    className={`px-3 py-1 rounded border ${currentPage === 1 ? "bg-gray-100 text-gray-400 cursor-not-allowed" : "bg-white text-gray-700 hover:bg-gray-50"}`}
+                  >
+                    {"<<"}
+                  </button>
+
+                  <button
+                    onClick={goToPrevPage}
+                    disabled={currentPage === 1}
+                    className={`px-3 py-1 rounded border ${currentPage === 1 ? "bg-gray-100 text-gray-400 cursor-not-allowed" : "bg-white text-gray-700 hover:bg-gray-50"}`}
+                  >
+                    {"<"}
+                  </button>
+
+                  {Array.from({ length: Math.min(5, totalPages) }, (_, i) => {
+                    let pageNum;
+                    if (totalPages <= 5) pageNum = i + 1;
+                    else if (currentPage <= 3) pageNum = i + 1;
+                    else if (currentPage >= totalPages - 2) pageNum = totalPages - 4 + i;
+                    else pageNum = currentPage - 2 + i;
+
+                    return (
+                      <button
+                        key={pageNum}
+                        onClick={() => goToPage(pageNum)}
+                        className={`px-3 py-1 rounded border ${currentPage === pageNum ? "bg-blue-950 text-white" : "bg-white text-gray-700 hover:bg-gray-50"}`}
+                      >
+                        {pageNum}
+
+                      </button>
+                    );
+                  })}
+
+                  <button
+                    onClick={goToNextPage}
+                    disabled={currentPage === totalPages}
+                    className={`px-3 py-1 rounded border ${currentPage === totalPages ? "bg-gray-100 text-gray-400 cursor-not-allowed" : "bg-white text-gray-700 hover:bg-gray-50"}`}
+                  >
+                    {">"}
+                  </button>
+
+                  <button
+                    onClick={() => goToPage(totalPages)}
+                    disabled={currentPage === totalPages}
+                    className={`px-3 py-1 rounded border ${currentPage === totalPages ? "bg-gray-100 text-gray-400 cursor-not-allowed" : "bg-white text-gray-700 hover:bg-gray-50"}`}
+                  >
+                    {">>"}
+                  </button>
+                </div>
+
+                {/* Show entries */}
+                <div className="flex items-center gap-2">
+                  <span className="text-gray-600">Show</span>
+                  <select
+                    value={carsPerPage}
+                    onChange={(e) => {
+                      setCarsPerPage(Number(e.target.value));
+                      setCurrentPage(1);
+                    }}
+                    className="border rounded px-2 py-1 text-sm focus:outline-none focus:ring-2 focus:ring-blue-900"
+                  >
+                    {[10, 20, 50, 100].map((size) => (
+                      <option key={size} value={size}>{size}</option>
+                    ))}
+                  </select>
+                  <span className="text-gray-600">entries</span>
+                </div>
+              </div>
             </div>
           )}
         </div>
