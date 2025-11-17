@@ -530,7 +530,7 @@ END:VCALENDAR`.trim();
                           Not eligible to bid{" "}
                           <span
                             onClick={() => handleIsOpenModal("warning")}
-                            className="text-blue-800 underline text-xs hover:cursor-pointer font-semibold"
+                            className="text-blue-950 underline text-xs hover:cursor-pointer font-semibold"
                           >
                             Check Why
                           </span>
@@ -582,7 +582,7 @@ END:VCALENDAR`.trim();
                   {selectedPrice?.startTime && (
                     <button
                       onClick={generateICS}
-                      className="flex items-center gap-1 text-xs text-blue-700 hover:text-blue-900 underline mt-1"
+                      className="flex items-center gap-1 text-xs text-blue-950  underline mt-1"
                     >
                       <FaCalendarPlus size={12} />
                       Add to Calendar
@@ -856,7 +856,7 @@ END:VCALENDAR`.trim();
                         Not eligible to bid{" "}
                         <span
                           onClick={() => handleIsOpenModal("warning")}
-                          className="text-blue-800 underline text-xs hover:cursor-pointer font-semibold"
+                          className="text-blue-950 underline text-xs hover:cursor-pointer font-semibold"
                         >
                           Check Why
                         </span>
@@ -908,7 +908,7 @@ END:VCALENDAR`.trim();
                   {selectedPrice?.startTime && (
                     <button
                       onClick={generateICS}
-                      className="flex items-center gap-1 text-xs text-blue-700 hover:text-blue-900 underline mt-1"
+                      className="flex items-center gap-1 text-xs text-blue-950 underline mt-1"
                     >
                       <FaCalendarPlus size={12} />
                       Add to Calendar
