@@ -32,10 +32,19 @@ const BodyType = [
 
 const FilterPriceCars = () => {
   const { name, value } = useParams();
+
   const navigate = useNavigate();
 
   const [allMake, setAllMake] = useState([]);
+
   const [allCities, setAllCities] = useState([]);
+
+  const [filterPrice, setFilterPrice] = useState({
+    budget: { min: "", max: "" },
+  });
+
+  console.log("filter =>", filterPrice);
+
   const [filterData, setFilterData] = useState({
     vehicleType: name === "bodyStyle" ? decodeURIComponent(value || "") : "",
     selectYear: "",
@@ -54,14 +63,20 @@ const FilterPriceCars = () => {
   });
 
   const [allFilterCars, setAllFilterCars] = useState([]);
+
   const [filterModel, setFilterModel] = useState([]);
+
   const [activeTab, setActiveTab] = useState("all");
+
   const [sorting, setSorting] = useState("");
+
   const [loading, setLoading] = useState(false);
+
   const [currentYear, setCurrentYears] = useState([]);
 
   // Pagination states
   const [currentPage, setCurrentPage] = useState(1);
+
   const [carsPerPage, setCarsPerPage] = useState(10);
 
   // Transform cities
@@ -73,6 +88,21 @@ const FilterPriceCars = () => {
       })),
     [allCities]
   );
+
+  const budgetData = [
+    { label: "5–10 Lac", min: 500000, max: 1000000 },
+    { label: "10–20 Lac", min: 1000000, max: 2000000 },
+    { label: "20–40 Lac", min: 2000000, max: 4000000 },
+    { label: "40–60 Lac", min: 4000000, max: 6000000 },
+    { label: "60–80 Lac", min: 6000000, max: 8000000 },
+    { label: "80 Lac – 1 Crore", min: 8000000, max: 10000000 },
+    { label: "1 – 2 Crore", min: 10000000, max: 20000000 },
+    { label: "2 – 5 Crore", min: 20000000, max: 50000000 },
+    { label: "5 – 10 Crore", min: 50000000, max: 100000000 },
+    { label: "10 – 20 Crore", min: 100000000, max: 200000000 },
+    { label: "20 – 50 Crore", min: 200000000, max: 500000000 },
+    { label: "50 – 99 Crore", min: 500000000, max: 990000000 },
+  ];
 
   // Transform makes
   const allMakes = useMemo(
@@ -217,8 +247,8 @@ const FilterPriceCars = () => {
           make: filterData?.allMakes,
           model: filterData?.allModels,
           bodyStyle: filterData?.vehicleType,
-          minPrice: filterData?.formCash,
-          maxPrice: filterData?.toCash,
+          minPrice: filterData?.formCash || filterPrice.budget.min,
+          maxPrice: filterData?.toCash || filterPrice.budget.max,
           sortType: sorting,
           yearStart: filterData.selectYear || "",
           yearEnd: filterData.toYear || "",
@@ -280,6 +310,14 @@ const FilterPriceCars = () => {
     navigate(buildFilterUrl(updatedFilterData));
   };
 
+  const handleFilterPrice = (e) => {
+    const { name, value } = e.target;
+    const [min, max] = value.split("-").map(Number);
+    setFilterPrice({
+      ...filterPrice,
+      [name]: { min, max },
+    });
+  };
   useEffect(() => {
     handleGetAllCities();
     handleGetAllMakes();
@@ -288,7 +326,7 @@ const FilterPriceCars = () => {
 
   useEffect(() => {
     handleGetFilterByVehicle();
-  }, [activeTab, sorting, filterData]);
+  }, [activeTab, sorting, filterData,filterPrice]);
 
   useEffect(() => {
     handleGetFilterModel();
@@ -511,20 +549,41 @@ const FilterPriceCars = () => {
               : "Cars"}{" "}
             Vehicles For Sale
           </h1>
+          <div className="flex items-center gap-1">
+          <div className="font-semibold" >Sort By</div>
+          <div className="flex gap-2">
+          <div className="w-full">
+                <CustomDropdown
+                  datas={budgetData.map((b) => ({
+                    label: b.label,
+                    value: `${b.min}-${b.max}`,
+                  }))}
+                  placeholder="Select Budget"
+                  name="budget"
+                  value={
+                    filterPrice.budget.min
+                      ? `${filterPrice.budget.min}-${filterPrice.budget.max}`
+                      : ""
+                  }
+                  onChange={handleFilterPrice}
+                />
+              </div>
 
-          <select
-            className="border p-2 text-sm rounded w-full sm:w-auto focus:outline-none focus:ring-2 focus:ring-blue-900 cursor-pointer"
-            onChange={(e) => {
-              setSorting(e.target.value);
-              setCurrentPage(1);
-            }}
-            value={sorting}
-          >
-            <option value="low">Price: Low to High</option>
-            <option value="high">Price: High to Low</option>
-            <option value="year_desc">Year: Newest to Oldest</option>
-            <option value="year_asc">Year: Oldest to Newest</option>
-          </select>
+              <select
+                className="border text-black border-black focus:border-blue-900 focus:ring-1 focus:ring-blue-900 rounded-lg px-3 py-2 text-sm w-full sm:w-auto cursor-pointer bg-white outline-none transition-all duration-200"
+                onChange={(e) => {
+                  setSorting(e.target.value);
+                  setCurrentPage(1);
+                }}
+                value={sorting}
+              >
+                <option value="low">Price: Low to High</option>
+                <option value="high">Price: High to Low</option>
+                <option value="year_desc">Year: Newest to Oldest</option>
+                <option value="year_asc">Year: Oldest to Newest</option>
+              </select>
+            </div>
+          </div>
         </div>
 
         <div className="overflow-y-auto max-h-screen">

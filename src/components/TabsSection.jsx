@@ -109,14 +109,6 @@ const SearchableOption = ({ datas, placeholder, name, value, onChange }) => {
   );
 };
 
-const initialState = {
-  city: "",
-  make: "",
-  model: "",
-  budget: {},
-  bodyStyle: "",
-};
-
 const TabsSection = () => {
   const [filterData, setFilterData] = useState({
     city: "",
@@ -252,7 +244,7 @@ const TabsSection = () => {
         <div className="max-w-xs">
           <CustomDropdown
             datas={cityData}
-            placeholder="Search City"
+            placeholder="Select City"
             name="city"
             value={filterData.city || ""}
             onChange={handleChange}
@@ -263,7 +255,7 @@ const TabsSection = () => {
         <div className="max-w-xs">
           <CustomDropdown
             datas={makeData}
-            placeholder="Search Make"
+            placeholder="Select Make"
             name="make"
             value={filterData.make || ""}
             onChange={handleChange}
@@ -274,7 +266,7 @@ const TabsSection = () => {
         <div className="max-w-xs">
           <CustomDropdown
             datas={bodyData}
-            placeholder="Search BodyStyle"
+            placeholder="Select BodyStyle"
             name="bodyStyle"
             value={filterData.bodyStyle || ""}
             onChange={handleChange}
@@ -288,7 +280,7 @@ const TabsSection = () => {
               label: b.label,
               value: `${b.min}-${b.max}`,
             }))}
-            placeholder="Search Budget"
+            placeholder="Select Budget"
             name="budget"
             value={
               filterData.budget.min
