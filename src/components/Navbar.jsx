@@ -511,30 +511,23 @@ const Navbar = () => {
         >
           <img src={logoImage} alt="Logo" className="h-12 pt-4 lg:pt-0 " />
         </Link>
-        <ul className="hidden md:flex items-center  font-base relative">
+        <ul className="hidden md:flex items-center gap-0 font-base relative">
+          {/* Home */}
           <li>
             <Link
               to="/"
-              className={`hover:text-red-600 px-5 text-[14px]  ${
-                isActive("/") ? "text-red-600 font-semibold " : ""
+              className={`px-4 text-[14px] hover:text-red-600 ${
+                isActive("/") ? "text-red-600 font-semibold" : ""
               }`}
             >
               Home
             </Link>
           </li>
 
-          <li>
-            {""}
-            {/* <Link
-              to="/about"
-              className={`hover:text-red-600 px-3 ${
-                isActive("/about") ? "text-red-600 font-semibold " : ""
-              }`}
-            >
-              About
-            </Link> */}
-          </li>
+          {/* Empty li (About removed) */}
+          <li></li>
 
+          {/* Dropdown Menus */}
           {dropdowns.map((dropdown) => (
             <li
               key={dropdown.id}
@@ -543,13 +536,14 @@ const Navbar = () => {
               onMouseLeave={() => setActiveDropdown(null)}
             >
               <button
-                className={`flex items-center  font-medium hover:text-red-600 text-[14px]${
+                className={`flex items-center mr-4 font-medium text-[14px] hover:text-red-600 ${
                   activeDropdown === dropdown.id ? "text-red-600" : ""
                 }`}
               >
                 {dropdown.label}
                 <RiArrowDropDownLine size={22} />
               </button>
+
               <ul
                 className={`absolute left-0 top-full w-56 bg-white shadow-lg rounded-md py-2 z-40 transition-all duration-200 ${
                   activeDropdown === dropdown.id ? "block" : "hidden"
@@ -559,7 +553,7 @@ const Navbar = () => {
                   <li key={idx}>
                     <Link
                       to={item.to}
-                      className="block px-4 py-1 hover:bg-red-50 hover:text-red-600 transition text-[14px]"
+                      className="block px-4 py-1 text-[14px] hover:bg-red-50 hover:text-red-600 transition"
                     >
                       {item.label}
                     </Link>
@@ -569,10 +563,11 @@ const Navbar = () => {
             </li>
           ))}
 
-          <li className="space-x-3">
+          {/* Partner / Work / Contact */}
+          <li className="flex items-center gap-3 ml-2">
             <Link
               to="/partner"
-              className={`hover:text-red-600 text-[14px] ${
+              className={`text-[14px] hover:text-red-600 ${
                 isActive("/partner") ? "text-red-600 font-semibold" : ""
               }`}
             >
@@ -581,25 +576,16 @@ const Navbar = () => {
 
             <Link
               to="/work"
-              className={`hover:text-red-600 text-[14px] ${
+              className={`text-[14px] mx-2 hover:text-red-600 ${
                 isActive("/work") ? "text-red-600 font-semibold" : ""
               }`}
             >
               How it works
             </Link>
 
-            {/* <Link
-              to="/suggestion"
-              className={`hover:text-red-600 ${
-                isActive("/suggestion") ? "text-red-600 font-semibold" : ""
-              }`}
-            >
-              Suggestions
-            </Link> */}
-
             <Link
               to="/contact"
-              className={`hover:text-red-600 text-[14px] ${
+              className={`text-[14px]  hover:text-red-600 ${
                 isActive("/contact") ? "text-red-600 font-semibold" : ""
               }`}
             >
@@ -607,35 +593,35 @@ const Navbar = () => {
             </Link>
           </li>
 
+          {/* Sell Now */}
           <li>
             {currentUser?.role === "customer" ? null : (
               <button
                 onClick={() => navigate("/sellerIntro")}
-                className="bg-red-600 text-white font-bold px-2 py-1.5 ml-2 rounded hover:cursor-pointer"
+                className="ml-2 px-2 py-1.5 bg-red-600 text-white font-bold rounded hover:cursor-pointer"
               >
                 Sell Now
               </button>
             )}
           </li>
 
+          {/* LIVE badge */}
           <li>
             {showLive.some((item) => item.auctionStatus === "live") && (
               <Link
                 to="/today"
-                className="relative flex items-center gap-2 bg-red-600 ml-2 text-white font-bold px-4 py-1.5 
-             rounded  transition-all overflow-hidden"
+                className="relative ml-2 flex items-center gap-2 px-4 py-1.5 bg-red-600 text-white font-bold rounded transition-all overflow-hidden"
               >
-                {/* Pulsing background */}
-                <span className="absolute inset-0 rounded-full bg-red-500/50 "></span>
-
-                {/* Icon and Text */}
-                <FaCarSide className="relative text-white text-lg" />
-                <span className="relative z-10">LIVE </span>
+                <span className="absolute inset-0 rounded-full bg-red-500/50"></span>
+                <FaCarSide className="relative text-lg" />
+                <span className="relative z-10">LIVE</span>
               </Link>
             )}
           </li>
-          <div className="hidden md:flex pl-2  relative" ref={dropdownRef}>
-            {currentUser ? (
+
+          {/* Profile Dropdown */}
+          <div className="hidden md:flex pl-2 relative" ref={dropdownRef}>
+            {currentUser && (
               <div className="relative">
                 <button
                   onClick={toggleDropdown}
@@ -651,75 +637,82 @@ const Navbar = () => {
                         currentUser?.profileImage
                       }
                       alt="Profile"
-                      className="w-10 h-10 rounded-full object-cover border-2 border-gray-300 group-hover:border-red-600 transition-colors duration-300"
+                      className="w-10 h-10 object-cover rounded-full border-2 border-gray-300 group-hover:border-red-600 transition"
                     />
                   ) : (
                     <FaUserCircle
                       size={40}
-                      className="text-gray-700 group-hover:text-red-600 transition-colors duration-300"
+                      className="text-gray-700 group-hover:text-red-600 transition"
                     />
                   )}
                 </button>
 
                 <div
-                  className={`absolute right-0 mt-2 w-44 bg-white rounded-md shadow-lg transition-all duration-200 ease-in-out ${
+                  className={`absolute right-0 mt-2 w-44 bg-white rounded-md shadow-lg transition-all duration-200 ${
                     dropdownOpen
                       ? "opacity-100 scale-100 visible"
                       : "opacity-0 scale-95 invisible"
                   }`}
                 >
+                  {/* User Info */}
                   <div className="px-4 py-3 border-b border-gray-200">
                     <p className="text-sm text-gray-800">Signed in as</p>
-                    <p className="text-sm font-normal text-gray-600 truncate">
-                      <div className="text-gray-500 text-xs ">
+                    <p className="text-sm text-gray-600 truncate">
+                      <span className="text-gray-500 text-xs">
                         {currentUser?.role || "--"}
-                      </div>
-                      {currentUser?.name || "--"}{" "}
+                      </span>
+                      <br />
+                      {currentUser?.name || "--"}
                     </p>
                   </div>
+
+                  {/* Change password */}
                   <div
                     onClick={() => {
                       setPasswordModalOpen(true);
                       setDropdownOpen(false);
                     }}
-                    className="flex items-center gap-2 px-4 py-1 text-gray-600 hover:bg-gray-100 cursor-pointer transition-colors duration-200"
+                    className="px-4 py-1 text-gray-600 hover:bg-gray-100 cursor-pointer transition"
                   >
-                    <span className="text-sm font-normal ">
-                      Change Password
-                    </span>
+                    Change Password
                   </div>
+
+                  {/* Manage Profile */}
                   <div
                     onClick={() => {
                       setProfileModalOpen(true);
                       setDropdownOpen(false);
                     }}
-                    className="flex items-center gap-2 px-4 py-1 text-gray-600 hover:bg-gray-100 cursor-pointer transition-colors duration-200"
+                    className="px-4 py-1 text-gray-600 hover:bg-gray-100 cursor-pointer transition"
                   >
-                    <span className="text-sm font-normal">Manage Profile</span>
+                    Manage Profile
                   </div>
+
+                  {/* Sold Vehicles */}
                   <div
                     onClick={() => {
                       navigate("/soldVehicles");
                       setDropdownOpen(false);
                     }}
-                    className="flex items-center gap-2 px-4 py-1 text-gray-600 hover:bg-gray-100 cursor-pointer transition-colors duration-200"
+                    className="px-4 py-1 text-gray-600 hover:bg-gray-100 cursor-pointer transition"
                   >
-                    <span className="text-sm font-normal">Sold Vehicles</span>
+                    Sold Vehicles
                   </div>
+
+                  {/* Logout */}
                   <div
                     onClick={handleLogout}
-                    className="flex items-center gap-2 px-4 py-1 pb-2 text-red-600 hover:bg-gray-100 cursor-pointer transition-colors duration-200"
+                    className="flex items-center gap-2 px-4 py-1 pb-2 text-red-600 font-semibold hover:bg-gray-100 cursor-pointer transition"
                   >
                     <AiOutlineLogout size={20} />
-                    <span className="text-sm font-semibold">Logout</span>
+                    Logout
                   </div>
                 </div>
               </div>
-            ) : (
-              <></>
             )}
           </div>
         </ul>
+
         {/* Profile Dropdown */}
 
         {/* Mobile Toggle */}
