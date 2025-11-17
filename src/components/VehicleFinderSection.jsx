@@ -55,10 +55,10 @@ const VehicleFinderSection = () => {
   const [sorting, setSorting] = useState("low");
   const [years, setYears] = useState([]);
   const [activeTab, setActiveTab] = useState("all");
-
+const [carsPerPage, setCarsPerPage] = useState(10);
   // Pagination
   const [currentPage, setCurrentPage] = useState(1);
-  const carsPerPage = 10; // Updated to match original
+
 
   const vehicleData = useSelector((state) => state.carSelector);
 
@@ -208,10 +208,10 @@ const VehicleFinderSection = () => {
   }));
 
   // === Pagination Logic ===
-  const totalPages = Math.ceil(allCars.length / carsPerPage);
-  const startIndex = (currentPage - 1) * carsPerPage;
-  const endIndex = startIndex + carsPerPage;
-  const currentCars = allCars.slice(startIndex, endIndex);
+const totalPages = Math.ceil(allCars.length / carsPerPage);
+const startIndex = (currentPage - 1) * carsPerPage;
+const endIndex = Math.min(startIndex + carsPerPage, allCars.length);
+const currentCars = allCars.slice(startIndex, endIndex);
 
   const goToNextPage = () => {
     if (currentPage < totalPages) {
@@ -567,61 +567,85 @@ const VehicleFinderSection = () => {
           )}
 
           {/* Pagination */}
-          {allCars.length > 0 && (
-            <div className="flex justify-between items-center mt-6 mb-6 px-6">
-              <button
-                onClick={goToPrevPage}
-                disabled={currentPage === 1}
-                className={`flex items-center px-6 py-2 rounded-lg font-semibold transition-all ${
-                  currentPage === 1
-                    ? "bg-gray-300 text-gray-500 cursor-not-allowed"
-                    : "bg-blue-950 text-white"
-                }`}
-              >
-                <svg
-                  xmlns="http://www.w3.org/2000/svg"
-                  className="h-5 w-5 mr-1"
-                  viewBox="0 0 20 20"
-                  fill="currentColor"
-                >
-                  <path
-                    fillRule="evenodd"
-                    d="M12.707 5.293a1 1 0 010 1.414L9.414 10l3.293 3.293a1 1 0 01-1.414 1.414l-4-4a1 1 0 010-1.414l-4-4a1 1 0 011.414 0z"
-                    clipRule="evenodd"
-                  />
-                </svg>
-                Prev
-              </button>
+        {allCars.length > 0 && (
+  <div className="bg-white rounded-lg shadow-sm p-4 mt-6">
+    <div className="flex flex-col sm:flex-row justify-between items-center gap-4 text-sm text-gray-700">
 
-              <button
-                onClick={goToNextPage}
-                disabled={currentPage === totalPages}
-                className={`flex items-center gap-2 px-6 py-2 rounded-lg font-semibold transition-all ${
-                  currentPage === totalPages
-                    ? "bg-gray-300 text-gray-500 cursor-not-allowed"
-                    : "bg-blue-950 text-white"
-                }`}
-              >
-                Next
-                <svg
-                  xmlns="http://www.w3.org/2000/svg"
-                  className="h-5 w-5 ml-1"
-                  viewBox="0 0 20 20"
-                  fill="currentColor"
-                >
-                  <path
-                    fillRule="evenodd"
-                    d="M7.293 14.707a1 1 0 010-1.414L10.586 10 7.293 6.707a1 1 0 011.414-1.414l-4 4a1 1 0 010 1.414l-4 4a1 1 0 01-1.414 0z"
-                    clipRule="evenodd"
-                  />
-                </svg>
-              </button>
-            </div>
-          )}
+      {/* Showing X to Y of Z */}
+      <div className="text-gray-600">
+        Showing{" "}
+        <span className="font-medium">
+          {startIndex + 1} to {endIndex}
+        </span>{" "}
+        of <span className="font-medium">{allCars.length}</span> entries
+      </div>
+
+      {/* Page Buttons */}
+      <div className="flex items-center gap-1">
+        <button
+          onClick={() => { setCurrentPage(1); window.scrollTo({ top: 0, behavior: "smooth" }); }}
+          disabled={currentPage === 1}
+          className={`px-3 py-1 rounded border ${currentPage === 1 ? "bg-gray-100 text-gray-400 cursor-not-allowed" : "bg-white text-gray-700 hover:bg-gray-50"}`}
+        >{"<<"}</button>
+
+        <button
+          onClick={goToPrevPage}
+          disabled={currentPage === 1}
+          className={`px-3 py-1 rounded border ${currentPage === 1 ? "bg-gray-100 text-gray-400 cursor-not-allowed" : "bg-white text-gray-700 hover:bg-gray-50"}`}
+        >{"<"}</button>
+
+        {Array.from({ length: Math.min(5, totalPages) }, (_, i) => {
+          let pageNum;
+          if (totalPages <= 5) pageNum = i + 1;
+          else if (currentPage <= 3) pageNum = i + 1;
+          else if (currentPage >= totalPages - 2) pageNum = totalPages - 4 + i;
+          else pageNum = currentPage - 2 + i;
+
+          return (
+            <button
+              key={pageNum}
+              onClick={() => { setCurrentPage(pageNum); window.scrollTo({ top: 0, behavior: "smooth" }); }}
+              className={`px-3 py-1 rounded border ${currentPage === pageNum ? "bg-blue-950 text-white" : "bg-white text-gray-700 hover:bg-gray-50"}`}
+            >
+              {pageNum}
+            </button>
+          );
+        })}
+
+        <button
+          onClick={goToNextPage}
+          disabled={currentPage === totalPages}
+          className={`px-3 py-1 rounded border ${currentPage === totalPages ? "bg-gray-100 text-gray-400 cursor-not-allowed" : "bg-white text-gray-700 hover:bg-gray-50"}`}
+        >{">"}</button>
+
+        <button
+          onClick={() => { setCurrentPage(totalPages); window.scrollTo({ top: 0, behavior: "smooth" }); }}
+          disabled={currentPage === totalPages}
+          className={`px-3 py-1 rounded border ${currentPage === totalPages ? "bg-gray-100 text-gray-400 cursor-not-allowed" : "bg-white text-gray-700 hover:bg-gray-50"}`}
+        >{">>"}</button>
+      </div>
+
+      {/* Show entries */}
+      <div className="flex items-center gap-2">
+        <span className="text-gray-600">Show</span>
+        <select
+          value={carsPerPage}
+          onChange={(e) => { setCarsPerPage(Number(e.target.value)); setCurrentPage(1); }}
+          className="border rounded px-2 py-1 text-sm focus:outline-none focus:ring-2 focus:ring-blue-900"
+        >
+          {[10, 20, 50, 100].map(size => (
+            <option key={size} value={size}>{size}</option>
+          ))}
+        </select>
+        <span className="text-gray-600">entries</span>
+      </div>
+    </div>
+  </div>
+)}
         </div>
       </div>
     </div>
   );
 };
 
-export default VehicleFinderSection;
+export default VehicleFinderSection; 
