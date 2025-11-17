@@ -6,7 +6,6 @@ import { BASE_URL } from "./Contant/URL";
 import { addMake, addModel } from "./Redux/SelectorCarSlice";
 import CustomDropdown from "../CustomDropdown";
 import numberToWords from "number-to-words";
-import { ChevronLeft, ChevronRight } from "lucide-react";
 
 const BodyType = [
   { label: "Mini Vehicles", value: "Mini Vehicles" },
@@ -59,13 +58,13 @@ const VehicleFinderSection = () => {
 
   // Pagination
   const [currentPage, setCurrentPage] = useState(1);
-  const carsPerPage = 4;
+  const carsPerPage = 10; // Updated to match original
 
   const vehicleData = useSelector((state) => state.carSelector);
 
   const handleChange = (name, val) => {
     setFilters((prev) => ({ ...prev, [name]: val }));
-    setCurrentPage(1); // Reset to first page on filter change
+    setCurrentPage(1);
   };
 
   const handleGetCars = async () => {
@@ -217,106 +216,203 @@ const VehicleFinderSection = () => {
   const goToNextPage = () => {
     if (currentPage < totalPages) {
       setCurrentPage((prev) => prev + 1);
+      window.scrollTo({ top: 0, behavior: "smooth" });
     }
   };
 
   const goToPrevPage = () => {
     if (currentPage > 1) {
       setCurrentPage((prev) => prev - 1);
+      window.scrollTo({ top: 0, behavior: "smooth" });
     }
   };
 
   return (
-    <div className="px-2 flex font-sans">
+    <div className="flex flex-col lg:flex-row min-h-screen bg-gray-100 p-4 gap-4">
       {/* ===========================
-        LEFT FILTER
+        SIDEBAR - Vehicle Finder
       ============================ */}
-      <div className="finder-box bg-white shadow p-5 rounded-lg">
-        <h2 className="text-xl font-bold text-gray-700 mb-3">Vehicle Finder</h2>
+      <div className="lg:w-1/3 bg-white p-6 rounded-lg shadow space-y-4">
+        <h2 className="text-2xl font-bold text-gray-600">Vehicle Finder</h2>
 
-        {/* Condition Tabs */}
-        <div className="flex space-x-2 mb-4">
-          {["all", "used", "new"].map((t) => (
+        {/* Tabs */}
+        <div className="flex space-x-2">
+          {["All", "Used", "New"].map((tab) => (
             <button
-              key={t}
-              onClick={() => handleTabClick(t)}
-              className={`flex-1 py-2 rounded font-semibold ${
-                activeTab === t
+              key={tab}
+              onClick={() => handleTabClick(tab.toLowerCase())}
+              className={`flex-1 py-2 rounded text-sm font-semibold ${
+                activeTab === tab.toLowerCase()
                   ? "bg-blue-950 text-white"
-                  : "bg-gray-200 text-gray-600"
+                  : "bg-gray-200 text-gray-700"
               }`}
             >
-              {t.toUpperCase()}
+              {tab}
             </button>
           ))}
         </div>
 
-        {/* Body Type */}
-        <div className="mb-3">
-          <label className="text-sm font-semibold">Body Type</label>
+        {/* Body Style */}
+        <div className="relative w-full max-w-sm">
+          <label className="block text-sm font-medium text-gray-700">
+            Select Body Style
+          </label>
           <CustomDropdown
-            options={[{ label: "All Types", value: "" }, ...BodyType]}
-            value={BodyType.find((o) => o.value === filters.vehicleType)}
+            options={[{ label: "Select All Type", value: "" }, ...BodyType]}
+            value={
+              BodyType.find((o) => o.value === filters.vehicleType) || {
+                label: "Select All Type",
+                value: "",
+              }
+            }
             onChange={(s) => handleChange("vehicleType", s.value)}
+            placeholder="Select Body Style"
             isSearchable
+            className="w-full"
+            styles={{
+              singleValue: (provided, state) => ({
+                ...provided,
+                color: state.data.value === "" ? "#d1d5db" : "#111827",
+              }),
+            }}
           />
         </div>
 
         {/* Year Range */}
-        <div className="flex gap-2 mb-3">
-          <div className="w-48">
-            <label className="text-sm font-semibold">From Year</label>
+        <div className="flex w-full gap-2">
+          <div className="relative w-48 max-w-sm">
+            <label className="block text-sm font-medium text-gray-700">
+              From Year
+            </label>
             <CustomDropdown
-              options={[{ label: "From", value: "" }, ...years]}
-              value={years.find((y) => y.value === filters.fromYear)}
+              options={[{ label: "Select From Year", value: "" }, ...years]}
+              value={
+                years.find((y) => y.value === filters.fromYear) || {
+                  label: "Select From Year",
+                  value: "",
+                }
+              }
               onChange={(s) => handleChange("fromYear", s.value)}
+              placeholder="Select Year"
+              isSearchable
+              className="w-full"
+              styles={{
+                singleValue: (provided, state) => ({
+                  ...provided,
+                  color: state.data.value === "" ? "#d1d5db" : "#111827",
+                }),
+              }}
             />
           </div>
-          <div className="w-48">
-            <label className="text-sm font-semibold">To Year</label>
+          <div className="relative w-48 max-w-sm">
+            <label className="block text-sm font-medium text-gray-700">
+              To Year
+            </label>
             <CustomDropdown
-              options={[{ label: "To", value: "" }, ...years]}
-              value={years.find((y) => y.value === filters.toYear)}
+              options={[{ label: "Select To Year", value: "" }, ...years]}
+              value={
+                years.find((y) => y.value === filters.toYear) || {
+                  label: "Select To Year",
+                  value: "",
+                }
+              }
               onChange={(s) => handleChange("toYear", s.value)}
+              placeholder="To Year"
+              isSearchable
+              className="w-full"
+              styles={{
+                singleValue: (provided, state) => ({
+                  ...provided,
+                  color: state.data.value === "" ? "#d1d5db" : "#111827",
+                }),
+              }}
             />
           </div>
         </div>
 
         {/* Make */}
-        <div className="mb-3">
-          <label className="text-sm font-semibold">Make</label>
+        <div className="relative w-full max-w-sm">
+          <label className="block text-sm font-medium text-gray-700">
+            Select Make
+          </label>
           <CustomDropdown
-            options={[{ label: "Select Make", value: "" }, ...totalMakes]}
-            value={totalMakes.find((o) => o.value === vehicleData.make)}
+            options={[{ label: "Select Vehicle Make", value: "" }, ...totalMakes]}
+            value={
+              totalMakes.find((o) => o.value === vehicleData.make) || {
+                label: "Select Vehicle Make",
+                value: "",
+              }
+            }
             onChange={(s) => {
               dispatch(addMake(s.value));
               dispatch(addModel(""));
+            }}
+            placeholder="Select Make"
+            isSearchable
+            className="w-full"
+            styles={{
+              singleValue: (provided, state) => ({
+                ...provided,
+                color: state.data.value === "" ? "#d1d5db" : "#111827",
+              }),
             }}
           />
         </div>
 
         {/* Model */}
-        <div className="mb-3">
-          <label className="text-sm font-semibold">Model</label>
+        <div className="relative w-full max-w-sm">
+          <label className="block text-sm font-medium text-gray-700">
+            Select Model
+          </label>
           <CustomDropdown
-            options={[{ label: "Select Model", value: "" }, ...totalModels]}
-            value={totalModels.find((o) => o.value === vehicleData.model)}
+            options={[{ label: "Select Vehicle Model", value: "" }, ...totalModels]}
+            value={
+              totalModels.find((o) => o.value === vehicleData.model) || {
+                label: "Select Vehicle Model",
+                value: "",
+              }
+            }
             onChange={(s) => dispatch(addModel(s.value))}
+            placeholder="Select Model"
+            isSearchable
+            className="w-full"
+            styles={{
+              singleValue: (provided, state) => ({
+                ...provided,
+                color: state.data.value === "" ? "#d1d5db" : "#111827",
+              }),
+            }}
           />
         </div>
 
         {/* Location */}
-        <div className="mb-3">
-          <label className="text-sm font-semibold">Location</label>
+        <div className="relative w-full max-w-sm">
+          <label className="block text-sm font-medium text-gray-700">
+            Select Location
+          </label>
           <CustomDropdown
-            options={[{ label: "Select City", value: "" }, ...cityOptions]}
-            value={cityOptions.find((o) => o.value === filters.location)}
+            options={[{ label: "Select Vehicle Location", value: "" }, ...cityOptions]}
+            value={
+              cityOptions.find((o) => o.value === filters.location) || {
+                label: "Select Vehicle Location",
+                value: "",
+              }
+            }
             onChange={(s) => handleChange("location", s.value)}
+            placeholder="Select Location"
+            isSearchable
+            className="w-full"
+            styles={{
+              singleValue: (provided, state) => ({
+                ...provided,
+                color: state.data.value === "" ? "#d1d5db" : "#111827",
+              }),
+            }}
           />
         </div>
 
-        {/* Price */}
-        <div className="relative w-full max-w-sm mb-6">
+        {/* Price Filter */}
+        <div className="relative w-full max-w-sm">
           <label className="block text-sm font-medium text-gray-700 mb-1">
             Filter Price
           </label>
@@ -362,22 +458,23 @@ const VehicleFinderSection = () => {
           </div>
         </div>
 
-        <button
-          onClick={handleGetCars}
-          className="bg-blue-950 text-white py-2 w-full rounded"
-        >
-          Search Vehicle
-        </button>
+        <div className="flex items-center justify-center">
+          <button
+            onClick={handleGetCars}
+            className="bg-blue-950 w-full p-2 px-10 text-white rounded hover:cursor-pointer"
+          >
+            Search Vehicle
+          </button>
+        </div>
       </div>
 
       {/* ===========================
-            CAR LISTING
+        CAR LISTING
       ============================ */}
-      <div className="mt-4 w-full px-5">
-        {/* Header: Count + Sorting */}
+      <div className="w-full lg:w-3/4">
         <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center mb-4 gap-2">
           <h1 className="text-black font-bold text-lg sm:text-xl">
-            {allCars.length} Vehicles For Sale   
+            {allCars.length} Vehicles For Sale
           </h1>
 
           <select
@@ -395,121 +492,133 @@ const VehicleFinderSection = () => {
           </select>
         </div>
 
-        {/* Car Cards */}
-        <div className="space-y-4">
+        <div className="overflow-y-auto max-h-screen">
           {currentCars.length > 0 ? (
             currentCars.map((car) => (
               <div
                 key={car.id}
                 onClick={() => navigate(`/detailbid/${car.id}`)}
-                className={`relative my-3 flex bg-white rounded-lg shadow hover:shadow-lg cursor-pointer overflow-hidden ${
+                className={`relative rounded-lg shadow p-4 mb-4 flex flex-col md:flex-row hover:shadow-lg transition-shadow hover:cursor-pointer ${
                   car.certifyStatus === "Certified"
-                    ? "border border-green-400 bg-green-50"
-                    : ""
+                    ? "bg-gradient-to-r from-green-50 to-green-100 border border-green-400"
+                    : "bg-white"
                 }`}
               >
-                {/* Certified Badge */}
                 {car.certifyStatus === "Certified" && (
-                  <div className="absolute top-2 left-2 bg-green-600 text-white text-xs font-bold px-3 py-1 rounded-full z-10">
+                  <div className="absolute top-2 left-2 bg-green-600 text-white text-xs font-bold px-3 py-1 rounded-full shadow-md">
                     Certified
                   </div>
                 )}
-
-                {/* Car Image */}
-                <div className="w-full md:w-48 h-40 md:h-40 overflow-hidden">
+                <div className="w-full md:w-40 h-48 md:h-28 overflow-hidden rounded-md mb-4 md:mb-0 md:mr-4">
                   <img
                     src={car?.images?.[0] || "/placeholder.png"}
                     alt={car.make}
                     className="w-full h-full object-cover"
                   />
                 </div>
-
-                {/* Car Details */}
-                <div className="flex-1 p-4 flex flex-col justify-between">
-                  <div>
+                <div className="flex-grow">
+                  <div className="flex flex-col sm:flex-row justify-between sm:items-center">
                     <h3
-                      className={`font-semibold ${
+                      className={`font-semibold text-sm sm:text-base ${
                         car.certifyStatus === "Certified"
                           ? "text-green-700"
                           : "text-gray-800"
                       }`}
                     >
-                      {car.make} {car.model} {car.series || ""} {car.engine || ""}{" "}
-                      for sale
+                      {car.make} {car.model} {car.series || ""} {car.engine || ""} for sale
                     </h3>
-                    <p className="text-sm text-gray-600 mt-1">
-                      Lot # {car.lot_number}
-                    </p>
-                    <p className="text-sm text-gray-600 mt-1">{car.cityName}</p>
 
-                    {/* Tags */}
-                    <div className="flex flex-wrap gap-2 mt-2">
-                      <span className="px-3 py-1 bg-gray-100 text-xs font-medium rounded-full shadow-sm">
-                        {car.year}
-                      </span>
-                      <span className="px-3 py-1 bg-gray-100 text-xs font-medium rounded-full shadow-sm">
-                        {car.mileage} km
-                      </span>
-                      <span className="px-3 py-1 bg-gray-100 text-xs font-medium rounded-full shadow-sm">
-                        {car.fuelType}
-                      </span>
-                      <span className="px-3 py-1 bg-gray-100 text-xs font-medium rounded-full shadow-sm">
-                        {car.bodyStyle}
-                      </span>
-                      <span className="px-3 py-1 bg-gray-100 text-xs font-medium rounded-full shadow-sm">
-                        {car.color}
-                      </span>
-                      <span className="px-3 py-1 bg-gray-100 text-xs font-medium rounded-full shadow-sm">
-                        {car.transmission}
-                      </span>
-                    </div>
+                    <span className="text-lg font-bold text-gray-800 mt-2 sm:mt-0">
+                      PKR {car.buyNowPrice}
+                    </span>
                   </div>
-
-                  <div className="mt-3 flex items-center justify-end">
-                    <span className="text-lg font-bold text-gray-800">
-                      PKR {car.buyNowPrice} Lac
+                  <p className="text-sm text-gray-600 mt-1">
+                    Lot # {car.lot_number}
+                  </p>
+                  <p className="text-sm text-gray-600 mt-1">{car.cityName}</p>
+                  <div className="flex flex-wrap gap-2 mt-2">
+                    <span className="px-3 py-1 bg-gray-100 text-xs font-medium rounded-full shadow-sm">
+                      {car.year}
+                    </span>
+                    <span className="px-3 py-1 bg-gray-100 text-xs font-medium rounded-full shadow-sm">
+                      {car.mileage} km
+                    </span>
+                    <span className="px-3 py-1 bg-gray-100 text-xs font-medium rounded-full shadow-sm">
+                      {car.fuelType}
+                    </span>
+                    <span className="px-3 py-1 bg-gray-100 text-xs font-medium rounded-full shadow-sm">
+                      {car.bodyStyle}
+                    </span>
+                    <span className="px-3 py-1 bg-gray-100 text-xs font-medium rounded-full shadow-sm">
+                      {car.color}
+                    </span>
+                    <span className="px-3 py-1 bg-gray-100 text-xs font-medium rounded-full shadow-sm">
+                      {car.transmission}
+                    </span>
+                    <span className="px-3 py-1 bg-gray-100 text-xs font-medium rounded-full shadow-sm">
+                      {car.cityName}
                     </span>
                   </div>
                 </div>
               </div>
             ))
           ) : (
-            <p className="text-center text-gray-500 py-8">No vehicles found.</p>
+            <div className="text-center text-gray-600 mt-10">No vehicles found.</div>
+          )}
+
+          {/* Pagination */}
+          {allCars.length > 0 && (
+            <div className="flex justify-between items-center mt-6 mb-6 px-6">
+              <button
+                onClick={goToPrevPage}
+                disabled={currentPage === 1}
+                className={`flex items-center px-6 py-2 rounded-lg font-semibold transition-all ${
+                  currentPage === 1
+                    ? "bg-gray-300 text-gray-500 cursor-not-allowed"
+                    : "bg-blue-950 text-white"
+                }`}
+              >
+                <svg
+                  xmlns="http://www.w3.org/2000/svg"
+                  className="h-5 w-5 mr-1"
+                  viewBox="0 0 20 20"
+                  fill="currentColor"
+                >
+                  <path
+                    fillRule="evenodd"
+                    d="M12.707 5.293a1 1 0 010 1.414L9.414 10l3.293 3.293a1 1 0 01-1.414 1.414l-4-4a1 1 0 010-1.414l-4-4a1 1 0 011.414 0z"
+                    clipRule="evenodd"
+                  />
+                </svg>
+                Prev
+              </button>
+
+              <button
+                onClick={goToNextPage}
+                disabled={currentPage === totalPages}
+                className={`flex items-center gap-2 px-6 py-2 rounded-lg font-semibold transition-all ${
+                  currentPage === totalPages
+                    ? "bg-gray-300 text-gray-500 cursor-not-allowed"
+                    : "bg-blue-950 text-white"
+                }`}
+              >
+                Next
+                <svg
+                  xmlns="http://www.w3.org/2000/svg"
+                  className="h-5 w-5 ml-1"
+                  viewBox="0 0 20 20"
+                  fill="currentColor"
+                >
+                  <path
+                    fillRule="evenodd"
+                    d="M7.293 14.707a1 1 0 010-1.414L10.586 10 7.293 6.707a1 1 0 011.414-1.414l-4 4a1 1 0 010 1.414l-4 4a1 1 0 01-1.414 0z"
+                    clipRule="evenodd"
+                  />
+                </svg>
+              </button>
+            </div>
           )}
         </div>
-
-        {/* === Pagination Controls === */}
- {totalPages > 1 && (
-  <div className="flex justify-between items-center mt-6 pb-5">
-    <button
-      onClick={goToPrevPage}
-      disabled={currentPage === 1}
-      className={`flex items-center gap-2 px-4 py-2 rounded font-medium transition-all ${
-        currentPage === 1
-          ? "bg-gray-300 text-gray-500 cursor-not-allowed"
-          : "bg-blue-950 text-white "
-      }`}
-    >
-      <ChevronLeft size={18} />
-      Prev
-    </button>
-
-   
-
-    <button
-      onClick={goToNextPage}
-      disabled={currentPage === totalPages}
-      className={`flex items-center gap-2 px-4 py-2 rounded font-medium transition-all ${
-        currentPage === totalPages
-          ? "bg-gray-300 text-gray-500 cursor-not-allowed"
-          : "bg-blue-950 text-white "
-      }`}
-    >
-      Next
-      <ChevronRight size={18} />
-    </button>
-  </div>
-)}
       </div>
     </div>
   );

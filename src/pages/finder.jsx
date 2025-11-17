@@ -6,7 +6,7 @@ const VehicleFinder = () => {
 
     return (
         <>
-        <FinderBanner />
+        
         <VehicleFinderSection />
         </>
     );

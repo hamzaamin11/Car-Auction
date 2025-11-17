@@ -311,7 +311,8 @@ END:VCALENDAR`.trim();
 
           <ChevronRight className="mx-2 w-4 h-4 text-gray-400" />
 
-          <span className="text-blue-950 capitalize">
+          <span    onClick={() => window.history.back()}  className="text-blue-950 capitalize hover:cursor-pointer hover:underline"
+            >
             {selectedPrice?.make || "N/A"}
           </span>
 
@@ -323,12 +324,35 @@ END:VCALENDAR`.trim();
         </nav>
 
         {/* Header with Back Button */}
-        <div className="flex items-center">
-          <h1 className="lg:text-3xl text-xl font-bold text-black ml-4">
-            {selectedPrice?.make} {selectedPrice?.model} {selectedPrice?.series}{" "}
-            {selectedPrice?.year}
-          </h1>
-        </div>
+<div className="flex items-center">
+  {/* Back Button */}
+  <button
+    onClick={() => window.history.back()}
+    className="flex items-center text-gray-700 hover:text-black font-medium text-sm lg:text-base mr-4 transition-all duration-200 group"
+  >
+    <svg
+      xmlns="http://www.w3.org/2000/svg"
+      className="h-5 w-5 mr-1.5 text-black "
+      fill="none"
+      viewBox="0 0 24 24"
+      stroke="currentColor"
+      strokeWidth={2.5}
+    >
+      <path
+        strokeLinecap="round"
+        strokeLinejoin="round"
+        d="M10.5 19.5L3 12m0 0l7.5-7.5M3 12h18"
+      />
+    </svg>
+    Back
+  </button>
+
+  {/* Title */}
+  <h1 className="lg:text-3xl text-xl font-bold text-black">
+    {selectedPrice?.make} {selectedPrice?.model} {selectedPrice?.series}{" "}
+    {selectedPrice?.year}
+  </h1>
+</div>
       </div>
 
       <div className="grid lg:grid-cols-3 gap-1">
@@ -716,7 +740,7 @@ END:VCALENDAR`.trim();
                 }}
                 className="w-full py-3 rounded-lg font-semibold transition-all text-white bg-blue-950 hover:cursor-pointer"
               >
-                Join Auction
+               {currentUser ? "Join Auction" : "Bid Now" } 
               </button>
             )}
           </div>

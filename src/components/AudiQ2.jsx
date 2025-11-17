@@ -29,7 +29,26 @@ const AudiQ2Prices = () => {
   return (
     <div className="px-4 py-6 max-w-6xl mx-auto h-[27rem] ">
       <h3 className="text-2xl font-bold text-black mb-4">
-        Add Bid on {carType} Cars
+        <button
+    onClick={() => window.history.back()}
+    className="flex items-center text-gray-700 hover:text-black font-medium text-sm lg:text-base mr-4 transition-all duration-200 group"
+  >
+    <svg
+      xmlns="http://www.w3.org/2000/svg"
+      className="h-5 w-5 mr-1.5 text-black "
+      fill="none"
+      viewBox="0 0 24 24"
+      stroke="currentColor"
+      strokeWidth={2.5}
+    >
+      <path
+        strokeLinecap="round"
+        strokeLinejoin="round"
+        d="M10.5 19.5L3 12m0 0l7.5-7.5M3 12h18"
+      />
+    </svg>
+    Back
+  </button>  Add Bid on {carType} Cars
       </h3>
 
       <div className="overflow-y-auto max-h-80 rounded">
