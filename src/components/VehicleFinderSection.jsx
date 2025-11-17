@@ -262,7 +262,7 @@ const VehicleFinderSection = () => {
           <CustomDropdown
             options={[...BodyType]}
             value={BodyType.find((o) => o.value === filters.vehicleType)}
-            onChange={(s) => handleChange("vehicleType", s.value)}
+            onChange={(s) => handleChange("vehicleType", s ? s.value : "")}
             placeholder="Select Body Style"
             isSearchable
             className="w-full"
@@ -284,7 +284,7 @@ const VehicleFinderSection = () => {
             <CustomDropdown
               options={[...years]}
               value={years.find((y) => y.value === filters.fromYear)}
-              onChange={(s) => handleChange("fromYear", s.value)}
+             onChange={(s) => handleChange("fromYear", s ? s.value : "")}
               placeholder="Select Year"
               isSearchable
               className="w-full"
@@ -303,7 +303,7 @@ const VehicleFinderSection = () => {
             <CustomDropdown
               options={[...years]}
               value={years.find((y) => y.value === filters.toYear)}
-              onChange={(s) => handleChange("toYear", s.value)}
+              onChange={(s) => handleChange("toYear", s ? s.value : "")}
               placeholder="To Year"
               isSearchable
               className="w-full"
@@ -325,10 +325,10 @@ const VehicleFinderSection = () => {
           <CustomDropdown
             options={[...totalMakes]}
             value={totalMakes.find((o) => o.value === vehicleData.make)}
-            onChange={(s) => {
-              dispatch(addMake(s.value));
-              dispatch(addModel(""));
-            }}
+         onChange={(s) => {
+    dispatch(addMake(s ? s.value : ""));
+    dispatch(addModel(""));
+  }}
             placeholder="Select Make"
             isSearchable
             className="w-full"
@@ -349,7 +349,7 @@ const VehicleFinderSection = () => {
           <CustomDropdown
             options={[...totalModels]}
             value={totalModels.find((o) => o.value === vehicleData.model)}
-            onChange={(s) => dispatch(addModel(s.value))}
+            onChange={(s) => dispatch(addModel(s ? s.value : ""))}
             placeholder="Select Model"
             isSearchable
             className="w-full"
@@ -370,7 +370,7 @@ const VehicleFinderSection = () => {
           <CustomDropdown
             options={[...cityOptions]}
             value={cityOptions.find((o) => o.value === filters.location)}
-            onChange={(s) => handleChange("location", s.value)}
+            onChange={(s) => handleChange("location", s ? s.value : "")}
             placeholder="Select Location"
             isSearchable
             className="w-full"

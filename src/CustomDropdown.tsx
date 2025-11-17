@@ -1,111 +1,93 @@
-import React, { useState } from "react";
+import React from "react";
 import Select from "react-select";
 import { ChevronDown } from "lucide-react";
 
-//  Consistent Blue-950 Focus + Black Border + Black Text Theme
+// Your exact same beautiful styling
 const customSelectStyles = {
   control: (provided: any, state: any) => ({
     ...provided,
     backgroundColor: "white",
-    borderColor: state.isFocused ? "#1E3A8A" : "#000000", //  Blue-950 on focus, black default
+    borderColor: state.isFocused ? "#1E3A8A" : "#000000",
     boxShadow: state.isFocused ? "0 0 0 1px #1E3A8A" : "none",
-    "&:hover": {
-      borderColor: "#1E3A8A",
-    },
+    "&:hover": { borderColor: "#1E3A8A" },
     borderRadius: "0.5rem",
     padding: "2px 4px",
     cursor: "pointer",
+    minHeight: "42px",
   }),
-
   option: (provided: any, state: any) => ({
     ...provided,
-    backgroundColor: state.isSelected
-      ? "#DBEAFE" // light blue for selected
-      : state.isFocused
-      ? "#EFF6FF" // lighter blue hover
-      : "white",
-    color: "#000000", //  Black text for all options
+    backgroundColor: state.isSelected ? "#DBEAFE" : state.isFocused ? "#EFF6FF" : "white",
+    color: "#000000",
     cursor: "pointer",
     fontWeight: state.isSelected ? 600 : 400,
   }),
-
-  placeholder: (provided: any) => ({
-    ...provided,
-    color: "#9CA3AF",
-  }),
-
-  singleValue: (provided: any) => ({
-    ...provided,
-    color: "#000000", //  Black text for selected value
-  }),
-
+  placeholder: (provided: any) => ({ ...provided, color: "#9CA3AF" }),
+  singleValue: (provided: any) => ({ ...provided, color: "#000000" }),
   menu: (provided: any) => ({
     ...provided,
     borderRadius: "0.5rem",
-    boxShadow: "0 4px 10px rgba(0, 0, 0, 0.1)",
+    boxShadow: "0 4px 10px rgba(0,0,0,0.1)",
     overflow: "hidden",
-    zIndex: 50,
+    zIndex: 9999,
   }),
-
   dropdownIndicator: (provided: any, state: any) => ({
     ...provided,
     padding: 4,
     color: state.isFocused ? "#1E3A8A" : "#9CA3AF",
-    "&:hover": {
-      color: "#1E3A8A",
-    },
-    transition: "transform 0.2s ease",
+    "&:hover": { color: "#1E3A8A" },
   }),
-
-  indicatorSeparator: () => ({
-    display: "none",
-  }),
+  indicatorSeparator: () => ({ display: "none" }),
 };
 
+type Option = { label: string; value: string };
+
 interface CustomDropdownProps {
-  datas?: { label: string; value: string }[];
-  options?: { label: string; value: string }[];
-  value: { label: string; value: string } | string | null;
+  options?: Option[];
+  datas?: Option[];
+  value: Option | string | null;
   name?: string;
   placeholder?: string;
-  onChange: (option: any) => void;
+  onChange: (value: any) => void;
   isSearchable?: boolean;
   label?: string;
+  isDisabled?: boolean;
 }
 
 const CustomDropdown: React.FC<CustomDropdownProps> = ({
-  datas,
   options,
+  datas,
   value,
   name,
   placeholder = "Select an option",
   onChange,
   isSearchable = true,
   label,
+  isDisabled = false,
 }) => {
-  const [selectedValue, setSelectedValue] = useState(
-    typeof value === "string"
-      ? (options || datas)?.find((opt) => opt.value === value) || null
-      : value || null
-  );
+  const allOptions = options || datas || [];
 
-  const handleSelect = (selectedOption: any) => {
-    setSelectedValue(selectedOption || null); // <-- this fixes clearable
+  // Convert string value → full option object for react-select
+  const selectedOption =
+    typeof value === "string" && value
+      ? allOptions.find((opt) => opt.value === value) || null
+      : (value as Option | null);
+
+  // This is the ONLY important part for perfect clear behavior
+  const handleChange = (selected: Option | null) => {
     if (name) {
+      // React Hook Form or any form library
       onChange({
-        target: { name, value: selectedOption?.value || "" },
+        target: {
+          name,
+          value: selected ? selected.value : "",   // ← clears with empty string
+        },
       });
     } else {
-      onChange(selectedOption);
+      // Normal useState usage
+      onChange(selected); // ← this sends null → perfect clear
     }
   };
-
-  const mergedOptions = options || datas || [];
-
-  const formattedValue =
-    typeof value === "string"
-      ? mergedOptions.find((opt) => opt.value === value) || null
-      : value;
 
   return (
     <div className="w-full">
@@ -114,26 +96,23 @@ const CustomDropdown: React.FC<CustomDropdownProps> = ({
           {label}
         </label>
       )}
-      <div className="relative">
-        <Select
-          options={mergedOptions}
-          value={formattedValue}
-          onChange={handleSelect}
-          placeholder={placeholder}
-          isSearchable={isSearchable}
-          styles={customSelectStyles}
-          isClearable
-          components={{
-            DropdownIndicator: () => (
-              <ChevronDown
-                size={16}
-                className="w-4 h-4 text-gray-500 transition-transform duration-200"
-              />
-            ),
-            IndicatorSeparator: () => null,
-          }}
-        />
-      </div>
+
+      <Select
+        options={allOptions}
+        value={selectedOption}
+        onChange={handleChange}
+        placeholder={placeholder}
+        isSearchable={isSearchable}
+        isClearable={true}           // ← must be true
+        isDisabled={isDisabled}
+        styles={customSelectStyles}
+        components={{
+          DropdownIndicator: () => (
+            <ChevronDown className="w-5 h-5 text-gray-500" />
+          ),
+          IndicatorSeparator: () => null,
+        }}
+      />
     </div>
   );
 };
