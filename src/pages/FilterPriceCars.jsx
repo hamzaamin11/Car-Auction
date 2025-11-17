@@ -60,20 +60,11 @@ const FilterPriceCars = () => {
   const [activeTab, setActiveTab] = useState("all");
   const [sorting, setSorting] = useState("");
   const [loading, setLoading] = useState(false);
+  const [currentYear, setCurrentYears] = useState([]);
 
   // Pagination states
   const [currentPage, setCurrentPage] = useState(1);
   const carsPerPage = 10;
-
-  // Generate years
-  const currentYear = useMemo(() => {
-    const year = new Date().getFullYear();
-    const years = [];
-    for (let i = 1970; i <= year; i++) {
-      years.unshift({ label: i.toString(), value: i.toString() });
-    }
-    return years;
-  }, []);
 
   // Transform cities for react-select
   const cityOptions = useMemo(
@@ -96,6 +87,21 @@ const FilterPriceCars = () => {
       })),
     [allMake]
   );
+
+  const handleGetYear = async () => {
+    try {
+      const res = await axios.get(`${BASE_URL}/admin/fetchVehicleYears`);
+      // Assuming res.data is an array of years like [2020, 2021, 2022]
+      const formattedYears = res.data.map((year) => ({
+        label: year, // Displayed in UI
+        value: year, // Value used in your logic
+      }));
+      console.log(formattedYears);
+      setCurrentYears(formattedYears);
+    } catch (error) {
+      console.log(error);
+    }
+  };
 
   // Transform models for react-select
   const allModels = useMemo(
@@ -292,6 +298,7 @@ const FilterPriceCars = () => {
   useEffect(() => {
     handleGetAllCities();
     handleGetAllMakes();
+    handleGetYear();
   }, []);
 
   useEffect(() => {

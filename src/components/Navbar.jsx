@@ -429,9 +429,9 @@ const Navbar = () => {
         { to: "/finder", label: "Vehicle Finder" },
         { to: "/saleslist", label: "Search By Makes" },
         { to: "/certified", label: "Certified Cars" },
-         { to: "/search", label: "Search List" },
-         { to: "/wishlist", label: "Wish List" },
-          { to: "/alert", label: "Vehicle Alert" },
+        { to: "/search", label: "Search List" },
+        { to: "/wishlist", label: "Wish List" },
+        { to: "/alert", label: "Vehicle Alert" },
       ],
     },
     {
@@ -511,11 +511,11 @@ const Navbar = () => {
         >
           <img src={logoImage} alt="Logo" className="h-12 pt-4 lg:pt-0 " />
         </Link>
-        <ul className="hidden md:flex items-center  font-base relative gap-2">
+        <ul className="hidden md:flex items-center  font-base relative">
           <li>
             <Link
               to="/"
-              className={`hover:text-red-600 px-3 text-[14px] ${
+              className={`hover:text-red-600 px-5 text-[14px]  ${
                 isActive("/") ? "text-red-600 font-semibold " : ""
               }`}
             >
@@ -1190,7 +1190,7 @@ const Navbar = () => {
                   <input
                     type="text"
                     name="username"
-                    value={profileForm.username }
+                    value={profileForm.username}
                     onChange={handleProfileChange}
                     className="p-2.5 w-full border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-900 bg-gray-100"
                     readOnly
