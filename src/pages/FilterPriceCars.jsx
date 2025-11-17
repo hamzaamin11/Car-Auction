@@ -386,7 +386,7 @@ const FilterPriceCars = () => {
             value={BodyType.find(
               (option) => option.value === filterData.vehicleType
             )}
-            onChange={(selected) => handleChange("vehicleType", selected.value)}
+           onChange={(s) => handleChange("vehicleType", s ? s.value : "")}
             placeholder="Select Body Style"
             isSearchable
             className="w-full"
@@ -409,9 +409,7 @@ const FilterPriceCars = () => {
               value={currentYear.find(
                 (option) => option.value === filterData.selectYear
               )}
-              onChange={(selected) =>
-                handleChange("selectYear", selected.value)
-              }
+            onChange={(s) => handleChange("selectYear", s ? s.value : "")}
               placeholder="Select Year"
               isSearchable
               className="w-full"
@@ -426,7 +424,7 @@ const FilterPriceCars = () => {
               value={currentYear.find(
                 (option) => option.value === filterData.toYear
               )}
-              onChange={(selected) => handleChange("toYear", selected.value)}
+             onChange={(s) => handleChange("toYear", s ? s.value : "")}
               placeholder="To Year"
               isSearchable
               className="w-full"
@@ -443,7 +441,7 @@ const FilterPriceCars = () => {
             value={allMakes.find(
               (option) => option.value === filterData.allMakes
             )}
-            onChange={(selected) => handleChange("allMakes", selected.value)}
+       onChange={(s) => handleChange("allMakes", s ? s.value : "")}
             placeholder="Select Make"
             isSearchable
             className="w-full"
@@ -459,7 +457,7 @@ const FilterPriceCars = () => {
             value={allModels.find(
               (option) => option.value === filterData.allModels
             )}
-            onChange={(selected) => handleChange("allModels", selected.value)}
+            onChange={(s) => handleChange("allModels", s ? s.value : "")}
             placeholder="Select Model"
             isSearchable
             className="w-full"
@@ -475,7 +473,7 @@ const FilterPriceCars = () => {
             value={cityOptions.find(
               (option) => option.value === filterData.location
             )}
-            onChange={(selected) => handleChange("location", selected.value)}
+            onChange={(s) => handleChange("location", s ? s.value : "")}
             placeholder="Select Location"
             isSearchable
             className="w-full"
