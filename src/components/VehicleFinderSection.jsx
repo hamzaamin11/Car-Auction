@@ -260,13 +260,8 @@ const VehicleFinderSection = () => {
             Select Body Style
           </label>
           <CustomDropdown
-            options={[{ label: "Select All Type", value: "" }, ...BodyType]}
-            value={
-              BodyType.find((o) => o.value === filters.vehicleType) || {
-                label: "Select All Type",
-                value: "",
-              }
-            }
+            options={[...BodyType]}
+            value={BodyType.find((o) => o.value === filters.vehicleType)}
             onChange={(s) => handleChange("vehicleType", s.value)}
             placeholder="Select Body Style"
             isSearchable
@@ -282,18 +277,13 @@ const VehicleFinderSection = () => {
 
         {/* Year Range */}
         <div className="flex w-full gap-2">
-          <div className="relative w-48 max-w-sm">
+          <div className="relative w-[186px] max-w-sm">
             <label className="block text-sm font-medium text-gray-700">
               From Year
             </label>
             <CustomDropdown
-              options={[{ label: "Select From Year", value: "" }, ...years]}
-              value={
-                years.find((y) => y.value === filters.fromYear) || {
-                  label: "Select From Year",
-                  value: "",
-                }
-              }
+              options={[...years]}
+              value={years.find((y) => y.value === filters.fromYear)}
               onChange={(s) => handleChange("fromYear", s.value)}
               placeholder="Select Year"
               isSearchable
@@ -311,13 +301,8 @@ const VehicleFinderSection = () => {
               To Year
             </label>
             <CustomDropdown
-              options={[{ label: "Select To Year", value: "" }, ...years]}
-              value={
-                years.find((y) => y.value === filters.toYear) || {
-                  label: "Select To Year",
-                  value: "",
-                }
-              }
+              options={[...years]}
+              value={years.find((y) => y.value === filters.toYear)}
               onChange={(s) => handleChange("toYear", s.value)}
               placeholder="To Year"
               isSearchable
@@ -338,16 +323,8 @@ const VehicleFinderSection = () => {
             Select Make
           </label>
           <CustomDropdown
-            options={[
-              { label: "Select Vehicle Make", value: "" },
-              ...totalMakes,
-            ]}
-            value={
-              totalMakes.find((o) => o.value === vehicleData.make) || {
-                label: "Select Vehicle Make",
-                value: "",
-              }
-            }
+            options={[...totalMakes]}
+            value={totalMakes.find((o) => o.value === vehicleData.make)}
             onChange={(s) => {
               dispatch(addMake(s.value));
               dispatch(addModel(""));
@@ -370,16 +347,8 @@ const VehicleFinderSection = () => {
             Select Model
           </label>
           <CustomDropdown
-            options={[
-              { label: "Select Vehicle Model", value: "" },
-              ...totalModels,
-            ]}
-            value={
-              totalModels.find((o) => o.value === vehicleData.model) || {
-                label: "Select Vehicle Model",
-                value: "",
-              }
-            }
+            options={[...totalModels]}
+            value={totalModels.find((o) => o.value === vehicleData.model)}
             onChange={(s) => dispatch(addModel(s.value))}
             placeholder="Select Model"
             isSearchable
@@ -399,16 +368,8 @@ const VehicleFinderSection = () => {
             Select Location
           </label>
           <CustomDropdown
-            options={[
-              { label: "Select Vehicle Location", value: "" },
-              ...cityOptions,
-            ]}
-            value={
-              cityOptions.find((o) => o.value === filters.location) || {
-                label: "Select Vehicle Location",
-                value: "",
-              }
-            }
+            options={[...cityOptions]}
+            value={cityOptions.find((o) => o.value === filters.location)}
             onChange={(s) => handleChange("location", s.value)}
             placeholder="Select Location"
             isSearchable

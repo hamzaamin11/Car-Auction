@@ -277,7 +277,7 @@ const FilterPriceCars = () => {
       updatedFilterData.allModels = "";
     }
     setFilterData(updatedFilterData);
-        navigate(buildFilterUrl(updatedFilterData));
+    navigate(buildFilterUrl(updatedFilterData));
   };
 
   useEffect(() => {
@@ -306,7 +306,8 @@ const FilterPriceCars = () => {
     const remainder = num % 1000;
 
     let result = [];
-    if (crore > 0) result.push(`${toWords(crore)} crore${crore > 1 ? "s" : ""}`);
+    if (crore > 0)
+      result.push(`${toWords(crore)} crore${crore > 1 ? "s" : ""}`);
     if (lakh > 0) result.push(`${toWords(lakh)} lakh${lakh > 1 ? "s" : ""}`);
     if (thousand > 0) result.push(`${toWords(thousand)} thousand`);
     if (remainder > 0) result.push(toWords(remainder));
@@ -343,10 +344,10 @@ const FilterPriceCars = () => {
             Select Body Style
           </label>
           <CustomDropdown
-            options={[{ label: "Select All Type ", value: "" }, ...BodyType]}
-            value={
-              BodyType.find((option) => option.value === filterData.vehicleType) || { label: "Select All Type", value: "" }
-            }
+            options={[...BodyType]}
+            value={BodyType.find(
+              (option) => option.value === filterData.vehicleType
+            )}
             onChange={(selected) => handleChange("vehicleType", selected.value)}
             placeholder="Select Body Style"
             isSearchable
@@ -362,21 +363,31 @@ const FilterPriceCars = () => {
 
         <div className="flex w-full gap-2">
           <div className="relative w-48 max-w-sm">
-            <label className="block text-sm font-medium text-gray-700">From Year</label>
+            <label className="block text-sm font-medium text-gray-700">
+              From Year
+            </label>
             <CustomDropdown
-              options={[{ label: "Select Model Year", value: "" }, ...currentYear]}
-              value={currentYear.find((option) => option.value === filterData.selectYear) || { label: "Select From Year", value: "" }}
-              onChange={(selected) => handleChange("selectYear", selected.value)}
+              options={[...currentYear]}
+              value={currentYear.find(
+                (option) => option.value === filterData.selectYear
+              )}
+              onChange={(selected) =>
+                handleChange("selectYear", selected.value)
+              }
               placeholder="Select Year"
               isSearchable
               className="w-full"
             />
           </div>
           <div className="relative w-48 max-w-sm">
-            <label className="block text-sm font-medium text-gray-700">To Year</label>
+            <label className="block text-sm font-medium text-gray-700">
+              To Year
+            </label>
             <CustomDropdown
-              options={[{ label: "Select To Year", value: "" }, ...currentYear]}
-              value={currentYear.find((option) => option.value === filterData.toYear) || { label: "Select To Year", value: "" }}
+              options={[...currentYear]}
+              value={currentYear.find(
+                (option) => option.value === filterData.toYear
+              )}
               onChange={(selected) => handleChange("toYear", selected.value)}
               placeholder="To Year"
               isSearchable
@@ -386,10 +397,14 @@ const FilterPriceCars = () => {
         </div>
 
         <div className="relative w-full max-w-sm">
-          <label className="block text-sm font-medium text-gray-700">Select Make</label>
+          <label className="block text-sm font-medium text-gray-700">
+            Select Make
+          </label>
           <CustomDropdown
-            options={[{ label: "Select Vehicle Make", value: "" }, ...allMakes]}
-            value={allMakes.find((option) => option.value === filterData.allMakes) || { label: "Select Vehicle Make", value: "" }}
+            options={[...allMakes]}
+            value={allMakes.find(
+              (option) => option.value === filterData.allMakes
+            )}
             onChange={(selected) => handleChange("allMakes", selected.value)}
             placeholder="Select Make"
             isSearchable
@@ -398,10 +413,14 @@ const FilterPriceCars = () => {
         </div>
 
         <div className="relative w-full max-w-sm">
-          <label className="block text-sm font-medium text-gray-700">Select Model</label>
+          <label className="block text-sm font-medium text-gray-700">
+            Select Model
+          </label>
           <CustomDropdown
-            options={[{ label: "Select Vehicle Model", value: "" }, ...allModels]}
-            value={allModels.find((option) => option.value === filterData.allModels) || { label: "Select Vehicle Model", value: "" }}
+            options={[...allModels]}
+            value={allModels.find(
+              (option) => option.value === filterData.allModels
+            )}
             onChange={(selected) => handleChange("allModels", selected.value)}
             placeholder="Select Model"
             isSearchable
@@ -410,10 +429,14 @@ const FilterPriceCars = () => {
         </div>
 
         <div className="relative w-full max-w-sm">
-          <label className="block text-sm font-medium text-gray-700">Select Location</label>
+          <label className="block text-sm font-medium text-gray-700">
+            Select Location
+          </label>
           <CustomDropdown
-            options={[{ label: "Select Vehicle Location", value: "" }, ...cityOptions]}
-            value={cityOptions.find((option) => option.value === filterData.location) || { label: "Select Vehicle Location", value: "" }}
+            options={[...cityOptions]}
+            value={cityOptions.find(
+              (option) => option.value === filterData.location
+            )}
             onChange={(selected) => handleChange("location", selected.value)}
             placeholder="Select Location"
             isSearchable
@@ -422,7 +445,9 @@ const FilterPriceCars = () => {
         </div>
 
         <div className="relative w-full max-w-sm">
-          <label className="block text-sm font-medium text-gray-700 mb-1">Filter Price</label>
+          <label className="block text-sm font-medium text-gray-700 mb-1">
+            Filter Price
+          </label>
           <div className="flex flex-col md:flex-col lg:flex-row w-full gap-2">
             <div className="w-full">
               <input
@@ -480,7 +505,9 @@ const FilterPriceCars = () => {
           <h1 className="text-black font-bold text-lg sm:text-xl">
             {allFilterCars.length}{" "}
             {filterData.allMakes
-              ? allMakes.find((m) => m.value === filterData.allMakes)?.label.split(" (")[0]
+              ? allMakes
+                  .find((m) => m.value === filterData.allMakes)
+                  ?.label.split(" (")[0]
               : "Cars"}{" "}
             Vehicles For Sale
           </h1>
@@ -528,25 +555,44 @@ const FilterPriceCars = () => {
                   <div className="flex flex-col sm:flex-row justify-between sm:items-center">
                     <h3
                       className={`font-semibold text-sm sm:text-base ${
-                        car.certifyStatus === "Certified" ? "text-green-700" : "text-gray-800"
+                        car.certifyStatus === "Certified"
+                          ? "text-green-700"
+                          : "text-gray-800"
                       }`}
                     >
-                      {car.make} {car.model} {car.series || ""} {car.engine || ""} for sale
+                      {car.make} {car.model} {car.series || ""}{" "}
+                      {car.engine || ""} for sale
                     </h3>
                     <span className="text-lg font-bold text-gray-800 mt-2 sm:mt-0">
                       PKR {car.buyNowPrice}
                     </span>
                   </div>
-                  <p className="text-sm text-gray-600 mt-1">Lot # {car.lot_number}</p>
+                  <p className="text-sm text-gray-600 mt-1">
+                    Lot # {car.lot_number}
+                  </p>
                   <p className="text-sm text-gray-600 mt-1">{car.cityName}</p>
                   <div className="flex flex-wrap gap-2 mt-2">
-                    <span className="px-3 py-1 bg-gray-100 text-xs font-medium rounded-full shadow-sm">{car.year}</span>
-                    <span className="px-3 py-1 bg-gray-100 text-xs font-medium rounded-full shadow-sm">{car.mileage} km</span>
-                    <span className="px-3 py-1 bg-gray-100 text-xs font-medium rounded-full shadow-sm">{car.fuelType}</span>
-                    <span className="px-3 py-1 bg-gray-100 text-xs font-medium rounded-full shadow-sm">{car.bodyStyle}</span>
-                    <span className="px-3 py-1 bg-gray-100 text-xs font-medium rounded-full shadow-sm">{car.color}</span>
-                    <span className="px-3 py-1 bg-gray-100 text-xs font-medium rounded-full shadow-sm">{car.transmission}</span>
-                    <span className="px-3 py-1 bg-gray-100 text-xs font-medium rounded-full shadow-sm">{car.cityName}</span>
+                    <span className="px-3 py-1 bg-gray-100 text-xs font-medium rounded-full shadow-sm">
+                      {car.year}
+                    </span>
+                    <span className="px-3 py-1 bg-gray-100 text-xs font-medium rounded-full shadow-sm">
+                      {car.mileage} km
+                    </span>
+                    <span className="px-3 py-1 bg-gray-100 text-xs font-medium rounded-full shadow-sm">
+                      {car.fuelType}
+                    </span>
+                    <span className="px-3 py-1 bg-gray-100 text-xs font-medium rounded-full shadow-sm">
+                      {car.bodyStyle}
+                    </span>
+                    <span className="px-3 py-1 bg-gray-100 text-xs font-medium rounded-full shadow-sm">
+                      {car.color}
+                    </span>
+                    <span className="px-3 py-1 bg-gray-100 text-xs font-medium rounded-full shadow-sm">
+                      {car.transmission}
+                    </span>
+                    <span className="px-3 py-1 bg-gray-100 text-xs font-medium rounded-full shadow-sm">
+                      {car.cityName}
+                    </span>
                   </div>
                 </div>
               </div>
@@ -559,12 +605,14 @@ const FilterPriceCars = () => {
           {allFilterCars.length > 0 && (
             <div className="bg-white rounded-lg shadow-sm p-4 mt-6">
               <div className="flex flex-col sm:flex-row justify-between items-center gap-4 text-sm text-gray-700">
-
                 {/* Showing X to Y of Z */}
                 <div className="text-gray-600">
                   Showing{" "}
-                  <span className="font-medium">{startIndex + 1} to {endIndex}</span>{" "}
-                  of <span className="font-medium">{sortedCars.length}</span> entries
+                  <span className="font-medium">
+                    {startIndex + 1} to {endIndex}
+                  </span>{" "}
+                  of <span className="font-medium">{sortedCars.length}</span>{" "}
+                  entries
                 </div>
 
                 {/* Page Buttons */}
@@ -572,7 +620,11 @@ const FilterPriceCars = () => {
                   <button
                     onClick={() => goToPage(1)}
                     disabled={currentPage === 1}
-                    className={`px-3 py-1 rounded border ${currentPage === 1 ? "bg-gray-100 text-gray-400 cursor-not-allowed" : "bg-white text-gray-700 hover:bg-gray-50"}`}
+                    className={`px-3 py-1 rounded border ${
+                      currentPage === 1
+                        ? "bg-gray-100 text-gray-400 cursor-not-allowed"
+                        : "bg-white text-gray-700 hover:bg-gray-50"
+                    }`}
                   >
                     {"<<"}
                   </button>
@@ -580,7 +632,11 @@ const FilterPriceCars = () => {
                   <button
                     onClick={goToPrevPage}
                     disabled={currentPage === 1}
-                    className={`px-3 py-1 rounded border ${currentPage === 1 ? "bg-gray-100 text-gray-400 cursor-not-allowed" : "bg-white text-gray-700 hover:bg-gray-50"}`}
+                    className={`px-3 py-1 rounded border ${
+                      currentPage === 1
+                        ? "bg-gray-100 text-gray-400 cursor-not-allowed"
+                        : "bg-white text-gray-700 hover:bg-gray-50"
+                    }`}
                   >
                     {"<"}
                   </button>
@@ -589,17 +645,21 @@ const FilterPriceCars = () => {
                     let pageNum;
                     if (totalPages <= 5) pageNum = i + 1;
                     else if (currentPage <= 3) pageNum = i + 1;
-                    else if (currentPage >= totalPages - 2) pageNum = totalPages - 4 + i;
+                    else if (currentPage >= totalPages - 2)
+                      pageNum = totalPages - 4 + i;
                     else pageNum = currentPage - 2 + i;
 
                     return (
                       <button
                         key={pageNum}
                         onClick={() => goToPage(pageNum)}
-                        className={`px-3 py-1 rounded border ${currentPage === pageNum ? "bg-blue-950 text-white" : "bg-white text-gray-700 hover:bg-gray-50"}`}
+                        className={`px-3 py-1 rounded border ${
+                          currentPage === pageNum
+                            ? "bg-blue-950 text-white"
+                            : "bg-white text-gray-700 hover:bg-gray-50"
+                        }`}
                       >
                         {pageNum}
-
                       </button>
                     );
                   })}
@@ -607,7 +667,11 @@ const FilterPriceCars = () => {
                   <button
                     onClick={goToNextPage}
                     disabled={currentPage === totalPages}
-                    className={`px-3 py-1 rounded border ${currentPage === totalPages ? "bg-gray-100 text-gray-400 cursor-not-allowed" : "bg-white text-gray-700 hover:bg-gray-50"}`}
+                    className={`px-3 py-1 rounded border ${
+                      currentPage === totalPages
+                        ? "bg-gray-100 text-gray-400 cursor-not-allowed"
+                        : "bg-white text-gray-700 hover:bg-gray-50"
+                    }`}
                   >
                     {">"}
                   </button>
@@ -615,7 +679,11 @@ const FilterPriceCars = () => {
                   <button
                     onClick={() => goToPage(totalPages)}
                     disabled={currentPage === totalPages}
-                    className={`px-3 py-1 rounded border ${currentPage === totalPages ? "bg-gray-100 text-gray-400 cursor-not-allowed" : "bg-white text-gray-700 hover:bg-gray-50"}`}
+                    className={`px-3 py-1 rounded border ${
+                      currentPage === totalPages
+                        ? "bg-gray-100 text-gray-400 cursor-not-allowed"
+                        : "bg-white text-gray-700 hover:bg-gray-50"
+                    }`}
                   >
                     {">>"}
                   </button>
@@ -633,7 +701,9 @@ const FilterPriceCars = () => {
                     className="border rounded px-2 py-1 text-sm focus:outline-none focus:ring-2 focus:ring-blue-900"
                   >
                     {[10, 20, 50, 100].map((size) => (
-                      <option key={size} value={size}>{size}</option>
+                      <option key={size} value={size}>
+                        {size}
+                      </option>
                     ))}
                   </select>
                   <span className="text-gray-600">entries</span>
