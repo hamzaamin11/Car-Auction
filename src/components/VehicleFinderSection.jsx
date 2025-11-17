@@ -55,10 +55,9 @@ const VehicleFinderSection = () => {
   const [sorting, setSorting] = useState("low");
   const [years, setYears] = useState([]);
   const [activeTab, setActiveTab] = useState("all");
-const [carsPerPage, setCarsPerPage] = useState(10);
+  const [carsPerPage, setCarsPerPage] = useState(10);
   // Pagination
   const [currentPage, setCurrentPage] = useState(1);
-
 
   const vehicleData = useSelector((state) => state.carSelector);
 
@@ -131,7 +130,9 @@ const [carsPerPage, setCarsPerPage] = useState(10);
       return;
     }
     try {
-      const res = await axios.get(`${BASE_URL}/getModelById/${vehicleData.make}`);
+      const res = await axios.get(
+        `${BASE_URL}/getModelById/${vehicleData.make}`
+      );
       setAllModels(res.data || []);
     } catch (err) {
       console.log(err);
@@ -146,7 +147,7 @@ const [carsPerPage, setCarsPerPage] = useState(10);
   const cityOptions = useMemo(
     () =>
       allCities.map((city) => ({
-        label: city.cityName,
+        label: city.cityName.charAt(0).toUpperCase() + city.cityName.slice(1),
         value: city.id,
       })),
     [allCities]
@@ -164,7 +165,8 @@ const [carsPerPage, setCarsPerPage] = useState(10);
     const remainder = num % 1000;
 
     let result = [];
-    if (crore > 0) result.push(`${toWords(crore)} crore${crore > 1 ? "s" : ""}`);
+    if (crore > 0)
+      result.push(`${toWords(crore)} crore${crore > 1 ? "s" : ""}`);
     if (lakh > 0) result.push(`${toWords(lakh)} lakh${lakh > 1 ? "s" : ""}`);
     if (thousand > 0) result.push(`${toWords(thousand)} thousand`);
     if (remainder > 0) result.push(toWords(remainder));
@@ -208,10 +210,10 @@ const [carsPerPage, setCarsPerPage] = useState(10);
   }));
 
   // === Pagination Logic ===
-const totalPages = Math.ceil(allCars.length / carsPerPage);
-const startIndex = (currentPage - 1) * carsPerPage;
-const endIndex = Math.min(startIndex + carsPerPage, allCars.length);
-const currentCars = allCars.slice(startIndex, endIndex);
+  const totalPages = Math.ceil(allCars.length / carsPerPage);
+  const startIndex = (currentPage - 1) * carsPerPage;
+  const endIndex = Math.min(startIndex + carsPerPage, allCars.length);
+  const currentCars = allCars.slice(startIndex, endIndex);
 
   const goToNextPage = () => {
     if (currentPage < totalPages) {
@@ -336,7 +338,10 @@ const currentCars = allCars.slice(startIndex, endIndex);
             Select Make
           </label>
           <CustomDropdown
-            options={[{ label: "Select Vehicle Make", value: "" }, ...totalMakes]}
+            options={[
+              { label: "Select Vehicle Make", value: "" },
+              ...totalMakes,
+            ]}
             value={
               totalMakes.find((o) => o.value === vehicleData.make) || {
                 label: "Select Vehicle Make",
@@ -365,7 +370,10 @@ const currentCars = allCars.slice(startIndex, endIndex);
             Select Model
           </label>
           <CustomDropdown
-            options={[{ label: "Select Vehicle Model", value: "" }, ...totalModels]}
+            options={[
+              { label: "Select Vehicle Model", value: "" },
+              ...totalModels,
+            ]}
             value={
               totalModels.find((o) => o.value === vehicleData.model) || {
                 label: "Select Vehicle Model",
@@ -391,7 +399,10 @@ const currentCars = allCars.slice(startIndex, endIndex);
             Select Location
           </label>
           <CustomDropdown
-            options={[{ label: "Select Vehicle Location", value: "" }, ...cityOptions]}
+            options={[
+              { label: "Select Vehicle Location", value: "" },
+              ...cityOptions,
+            ]}
             value={
               cityOptions.find((o) => o.value === filters.location) || {
                 label: "Select Vehicle Location",
@@ -525,7 +536,8 @@ const currentCars = allCars.slice(startIndex, endIndex);
                           : "text-gray-800"
                       }`}
                     >
-                      {car.make} {car.model} {car.series || ""} {car.engine || ""} for sale
+                      {car.make} {car.model} {car.series || ""}{" "}
+                      {car.engine || ""} for sale
                     </h3>
 
                     <span className="text-lg font-bold text-gray-800 mt-2 sm:mt-0">
@@ -563,89 +575,134 @@ const currentCars = allCars.slice(startIndex, endIndex);
               </div>
             ))
           ) : (
-            <div className="text-center text-gray-600 mt-10">No vehicles found.</div>
+            <div className="text-center text-gray-600 mt-10">
+              No vehicles found.
+            </div>
           )}
 
           {/* Pagination */}
-        {allCars.length > 0 && (
-  <div className="bg-white rounded-lg shadow-sm p-4 mt-6">
-    <div className="flex flex-col sm:flex-row justify-between items-center gap-4 text-sm text-gray-700">
+          {allCars.length > 0 && (
+            <div className="bg-white rounded-lg shadow-sm p-4 mt-6">
+              <div className="flex flex-col sm:flex-row justify-between items-center gap-4 text-sm text-gray-700">
+                {/* Showing X to Y of Z */}
+                <div className="text-gray-600">
+                  Showing{" "}
+                  <span className="font-medium">
+                    {startIndex + 1} to {endIndex}
+                  </span>{" "}
+                  of <span className="font-medium">{allCars.length}</span>{" "}
+                  entries
+                </div>
 
-      {/* Showing X to Y of Z */}
-      <div className="text-gray-600">
-        Showing{" "}
-        <span className="font-medium">
-          {startIndex + 1} to {endIndex}
-        </span>{" "}
-        of <span className="font-medium">{allCars.length}</span> entries
-      </div>
+                {/* Page Buttons */}
+                <div className="flex items-center gap-1">
+                  <button
+                    onClick={() => {
+                      setCurrentPage(1);
+                      window.scrollTo({ top: 0, behavior: "smooth" });
+                    }}
+                    disabled={currentPage === 1}
+                    className={`px-3 py-1 rounded border ${
+                      currentPage === 1
+                        ? "bg-gray-100 text-gray-400 cursor-not-allowed"
+                        : "bg-white text-gray-700 hover:bg-gray-50"
+                    }`}
+                  >
+                    {"<<"}
+                  </button>
 
-      {/* Page Buttons */}
-      <div className="flex items-center gap-1">
-        <button
-          onClick={() => { setCurrentPage(1); window.scrollTo({ top: 0, behavior: "smooth" }); }}
-          disabled={currentPage === 1}
-          className={`px-3 py-1 rounded border ${currentPage === 1 ? "bg-gray-100 text-gray-400 cursor-not-allowed" : "bg-white text-gray-700 hover:bg-gray-50"}`}
-        >{"<<"}</button>
+                  <button
+                    onClick={goToPrevPage}
+                    disabled={currentPage === 1}
+                    className={`px-3 py-1 rounded border ${
+                      currentPage === 1
+                        ? "bg-gray-100 text-gray-400 cursor-not-allowed"
+                        : "bg-white text-gray-700 hover:bg-gray-50"
+                    }`}
+                  >
+                    {"<"}
+                  </button>
 
-        <button
-          onClick={goToPrevPage}
-          disabled={currentPage === 1}
-          className={`px-3 py-1 rounded border ${currentPage === 1 ? "bg-gray-100 text-gray-400 cursor-not-allowed" : "bg-white text-gray-700 hover:bg-gray-50"}`}
-        >{"<"}</button>
+                  {Array.from({ length: Math.min(5, totalPages) }, (_, i) => {
+                    let pageNum;
+                    if (totalPages <= 5) pageNum = i + 1;
+                    else if (currentPage <= 3) pageNum = i + 1;
+                    else if (currentPage >= totalPages - 2)
+                      pageNum = totalPages - 4 + i;
+                    else pageNum = currentPage - 2 + i;
 
-        {Array.from({ length: Math.min(5, totalPages) }, (_, i) => {
-          let pageNum;
-          if (totalPages <= 5) pageNum = i + 1;
-          else if (currentPage <= 3) pageNum = i + 1;
-          else if (currentPage >= totalPages - 2) pageNum = totalPages - 4 + i;
-          else pageNum = currentPage - 2 + i;
+                    return (
+                      <button
+                        key={pageNum}
+                        onClick={() => {
+                          setCurrentPage(pageNum);
+                          window.scrollTo({ top: 0, behavior: "smooth" });
+                        }}
+                        className={`px-3 py-1 rounded border ${
+                          currentPage === pageNum
+                            ? "bg-blue-950 text-white"
+                            : "bg-white text-gray-700 hover:bg-gray-50"
+                        }`}
+                      >
+                        {pageNum}
+                      </button>
+                    );
+                  })}
 
-          return (
-            <button
-              key={pageNum}
-              onClick={() => { setCurrentPage(pageNum); window.scrollTo({ top: 0, behavior: "smooth" }); }}
-              className={`px-3 py-1 rounded border ${currentPage === pageNum ? "bg-blue-950 text-white" : "bg-white text-gray-700 hover:bg-gray-50"}`}
-            >
-              {pageNum}
-            </button>
-          );
-        })}
+                  <button
+                    onClick={goToNextPage}
+                    disabled={currentPage === totalPages}
+                    className={`px-3 py-1 rounded border ${
+                      currentPage === totalPages
+                        ? "bg-gray-100 text-gray-400 cursor-not-allowed"
+                        : "bg-white text-gray-700 hover:bg-gray-50"
+                    }`}
+                  >
+                    {">"}
+                  </button>
 
-        <button
-          onClick={goToNextPage}
-          disabled={currentPage === totalPages}
-          className={`px-3 py-1 rounded border ${currentPage === totalPages ? "bg-gray-100 text-gray-400 cursor-not-allowed" : "bg-white text-gray-700 hover:bg-gray-50"}`}
-        >{">"}</button>
+                  <button
+                    onClick={() => {
+                      setCurrentPage(totalPages);
+                      window.scrollTo({ top: 0, behavior: "smooth" });
+                    }}
+                    disabled={currentPage === totalPages}
+                    className={`px-3 py-1 rounded border ${
+                      currentPage === totalPages
+                        ? "bg-gray-100 text-gray-400 cursor-not-allowed"
+                        : "bg-white text-gray-700 hover:bg-gray-50"
+                    }`}
+                  >
+                    {">>"}
+                  </button>
+                </div>
 
-        <button
-          onClick={() => { setCurrentPage(totalPages); window.scrollTo({ top: 0, behavior: "smooth" }); }}
-          disabled={currentPage === totalPages}
-          className={`px-3 py-1 rounded border ${currentPage === totalPages ? "bg-gray-100 text-gray-400 cursor-not-allowed" : "bg-white text-gray-700 hover:bg-gray-50"}`}
-        >{">>"}</button>
-      </div>
-
-      {/* Show entries */}
-      <div className="flex items-center gap-2">
-        <span className="text-gray-600">Show</span>
-        <select
-          value={carsPerPage}
-          onChange={(e) => { setCarsPerPage(Number(e.target.value)); setCurrentPage(1); }}
-          className="border rounded px-2 py-1 text-sm focus:outline-none focus:ring-2 focus:ring-blue-900"
-        >
-          {[10, 20, 50, 100].map(size => (
-            <option key={size} value={size}>{size}</option>
-          ))}
-        </select>
-        <span className="text-gray-600">entries</span>
-      </div>
-    </div>
-  </div>
-)}
+                {/* Show entries */}
+                <div className="flex items-center gap-2">
+                  <span className="text-gray-600">Show</span>
+                  <select
+                    value={carsPerPage}
+                    onChange={(e) => {
+                      setCarsPerPage(Number(e.target.value));
+                      setCurrentPage(1);
+                    }}
+                    className="border rounded px-2 py-1 text-sm focus:outline-none focus:ring-2 focus:ring-blue-900"
+                  >
+                    {[10, 20, 50, 100].map((size) => (
+                      <option key={size} value={size}>
+                        {size}
+                      </option>
+                    ))}
+                  </select>
+                  <span className="text-gray-600">entries</span>
+                </div>
+              </div>
+            </div>
+          )}
         </div>
       </div>
     </div>
   );
 };
 
-export default VehicleFinderSection; 
+export default VehicleFinderSection;
