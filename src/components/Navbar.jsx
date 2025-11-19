@@ -516,7 +516,7 @@ const Navbar = () => {
           <li>
             <Link
               to="/"
-              className={`px-4 text-[14px] hover:text-red-600 ${
+              className={`px-5 text-[14px] hover:text-red-600 ${
                 isActive("/") ? "text-red-600 font-semibold" : ""
               }`}
             >
@@ -564,7 +564,7 @@ const Navbar = () => {
           ))}
 
           {/* Partner / Work / Contact */}
-          <li className="flex items-center gap-3 ml-2">
+          <li className="flex items-center gap-3 ml-1">
             <Link
               to="/partner"
               className={`text-[14px] hover:text-red-600 ${
