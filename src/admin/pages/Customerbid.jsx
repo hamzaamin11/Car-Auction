@@ -311,18 +311,18 @@ END:VCALENDAR`.trim();
 
       <div className="mb-4">
         {/* Breadcrumb Section */}
-        <nav className="flex items-center text-sm text-gray-600 mb-3 mx-4">
+        <nav className="flex flex-nowrap items-center whitespace-nowrap text-sm text-gray-600 mb-3 lg:mx-4 mx-1 ">
           <Link to="/" className="hover:underline text-blue-950">
             Home
           </Link>
 
-          <ChevronRight className="mx-2 w-4 h-4 text-gray-400" />
+          <ChevronRight className="lg:mx-2 mx-1 w-4  h-4  text-gray-600" />
 
           <Link to="/finder" className="hover:underline text-blue-950">
             Find Vehicle
           </Link>
 
-          <ChevronRight className="mx-2 w-4 h-4 text-gray-400" />
+          <ChevronRight className="lg:mx-2 mx-1 w-4  h-4  text-gray-600" />
 
           <span
             onClick={() => navigate(`/filterprice/make/${selectedPrice?.make}`)}
@@ -331,7 +331,7 @@ END:VCALENDAR`.trim();
             {selectedPrice?.make || "N/A"}
           </span>
 
-          <ChevronRight className="mx-2 w-4 h-4 text-gray-400" />
+          <ChevronRight className="mx-1 lg:mx-2 w-4  h-4  text-gray-600" />
 
           <span className="text-blue-950 capitalize">
             {selectedPrice?.model} {selectedPrice?.series} {selectedPrice?.year}
@@ -884,18 +884,19 @@ END:VCALENDAR`.trim();
                       <span className="text-green-600 font-semibold">Yes</span>
                     </div>
                   ) : (
-                    <div className="flex items-center gap-2">
-                      <span className="w-3 h-3 bg-red-600 rounded-full"></span>
-                      <p className="text-red-600 text-sm">
-                        Not eligible to bid{" "}
-                        <span
-                          onClick={() => handleIsOpenModal("warning")}
-                          className="text-blue-950 underline text-xs hover:cursor-pointer font-semibold"
-                        >
-                          Check Why
-                        </span>
-                      </p>
-                    </div>
+                  <div className="flex items-start gap-0">
+  <span className="w-4 h-3 bg-red-600 rounded-full mt-1  "></span>
+  <p className="text-red-600 text-sm">
+    Not eligible to bid{" "}
+    <span
+      onClick={() => handleIsOpenModal("warning")}
+      className="text-blue-950 underline text-xs hover:cursor-pointer font-semibold"
+    >
+      Check Why
+    </span>
+  </p>
+</div>
+
                   )}
                 </td>
               </tr>
@@ -909,11 +910,11 @@ END:VCALENDAR`.trim();
                 <th className="text-left p-2 font-medium ">Time Left:</th>
 
                 <td className="p-2 font-semibold justify-end text-red-600 flex flex-col items-end gap-1">
-                  <div className="flex items-center gap-1">
+                  <div className="flex items-center gap-2">
                     {(() => {
                       if (remainingTime <= 0) {
                         return (
-                          <span className="text-gray-800">
+                          <span className="text-gray-800 text-right">
                             The bidding for this vehicle has ended
                           </span>
                         );
