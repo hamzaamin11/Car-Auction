@@ -1,5 +1,7 @@
 import React, { useEffect, useRef, useState } from "react";
 import { Link, useNavigate, useLocation } from "react-router-dom";
+import { Settings, User, Lock } from "lucide-react";
+
 import {
   FaBars,
   FaTimes,
@@ -35,6 +37,7 @@ const getInitialProfileForm = (user) => ({
 const Navbar = () => {
   const { isAuthenticated, logout } = useAuth();
   const { currentUser } = useSelector((state) => state.auth);
+const [accountSettingsOpen, setAccountSettingsOpen] = useState(false);
 
   const [menuOpen, setMenuOpen] = useState(false);
   const [activeDropdown, setActiveDropdown] = useState(null);
@@ -667,26 +670,48 @@ const Navbar = () => {
                   </div>
 
                   {/* Change password */}
-                  <div
-                    onClick={() => {
-                      setPasswordModalOpen(true);
-                      setDropdownOpen(false);
-                    }}
-                    className="px-4 py-1 text-gray-600 hover:bg-gray-100 cursor-pointer transition"
-                  >
-                    Change Password
-                  </div>
+              {/* Account Settings Parent */}
+{/* Account Settings Parent */}
+<div
+  onClick={() => setAccountSettingsOpen(!accountSettingsOpen)}
+  className="px-4 py-1 flex items-center gap-2 text-gray-700 hover:bg-gray-100 cursor-pointer transition font-base"
+>
+  <Settings size={16} className="text-gray-500" />
+  Account Settings
+</div>
 
-                  {/* Manage Profile */}
-                  <div
-                    onClick={() => {
-                      setProfileModalOpen(true);
-                      setDropdownOpen(false);
-                    }}
-                    className="px-4 py-1 text-gray-600 hover:bg-gray-100 cursor-pointer transition"
-                  >
-                    Manage Profile
-                  </div>
+{/* Dropdown Options */}
+{accountSettingsOpen && (
+  <div className="ml-4">
+    {/* Manage Profile */}
+    <div
+      onClick={() => {
+        setProfileModalOpen(true);
+        setDropdownOpen(false);
+        setAccountSettingsOpen(false);
+      }}
+      className="px-4 py-1 flex items-center gap-2 text-gray-600 hover:bg-gray-100 cursor-pointer transition"
+    >
+
+      Manage Profile
+    </div>
+
+    {/* Change Password */}
+    <div
+      onClick={() => {
+        setPasswordModalOpen(true);
+        setDropdownOpen(false);
+        setAccountSettingsOpen(false);
+      }}
+      className="px-4 py-1 flex items-center gap-2 text-gray-600 hover:bg-gray-100 cursor-pointer transition"
+    >
+      
+      Change Password
+    </div>
+  </div>
+)}
+
+
 
               
 
@@ -854,24 +879,45 @@ const Navbar = () => {
                   {currentUser?.name || "--"}
                 </span>
               </div>
-              <button
-                onClick={() => {
-                  setPasswordModalOpen(true);
-                  setMenuOpen(false);
-                }}
-                className="block w-full text-left py-0 text-white hover:underline"
-              >
-                Change Password
-              </button>
-              <button
-                onClick={() => {
-                  setProfileModalOpen(true);
-                  setMenuOpen(false);
-                }}
-                className="block w-full text-left py-0 text-white hover:underline"
-              >
-                Manage Profile
-              </button>
+          {/* Account Settings Parent */}
+<button
+  onClick={() => setAccountSettingsOpen(!accountSettingsOpen)}
+  className="block w-full text-left py-0 text-white font-base hover:underline"
+  
+>
+  
+  Account Settings
+</button>
+
+{/* Nested Options */}
+{accountSettingsOpen && (
+  <div className="ml-4 mt-1">
+    {/* Manage Profile */}
+    <button
+      onClick={() => {
+        setProfileModalOpen(true);
+        setMenuOpen(false);
+        setAccountSettingsOpen(false);
+      }}
+      className="block w-full text-left py-0 text-white hover:underline"
+    >
+      Manage Profile
+    </button>
+
+    {/* Change Password */}
+    <button
+      onClick={() => {
+        setPasswordModalOpen(true);
+        setMenuOpen(false);
+        setAccountSettingsOpen(false);
+      }}
+      className="block w-full text-left py-0 text-white hover:underline"
+    >
+      Change Password
+    </button>
+  </div>
+)}
+
           
               <button className="block w-full text-left py-1 text-white hover:underline">
                 {" "}
@@ -911,7 +957,7 @@ const Navbar = () => {
 
       {/* Change Password Modal */}
       {passwordModalOpen && (
-        <div className="fixed inset-0 bg-blur backdrop-blur-md flex items-center justify-center z-50">
+        <div className="fixed inset-0 bg-blur backdrop-blur-xs flex items-center justify-center z-50">
           <div className="bg-white rounded-lg p-6 w-full max-w-md shadow-xl">
             <h2 className="text-xl font-semibold mb-4">Change Password</h2>
             <div>
@@ -962,7 +1008,7 @@ const Navbar = () => {
 
       {/* Manage Profile Modal */}
       {profileModalOpen && (
-        <div className="fixed inset-0 bg-blur backdrop-blur-md flex items-center justify-center z-50">
+        <div className="fixed inset-0 bg-blur backdrop-blur-xs flex items-center justify-center z-50">
           <div className="bg-white rounded-lg p-8 w-full max-w-2xl shadow-xl max-h-[90vh] overflow-y-auto">
             <h2 className="text-2xl font-semibold mb-6 text-center">
               My Profile

@@ -429,7 +429,7 @@ END:VCALENDAR`.trim();
 
             <div className="overflow-x-auto mt-3">
               <table className="w-full text-sm text-gray-700   border-collapse">
-                <tbody className="border  border-gray-100 ">
+                <tbody className=" ">
                   <tr className="border-b border-gray-100   ">
                     <td className=" py-2 px-2 w-1/2">Lot Number:</td>
                     <td className="py-2 font-semibold">

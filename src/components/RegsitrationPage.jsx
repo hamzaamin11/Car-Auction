@@ -28,18 +28,8 @@ const RegistrationPage = () => {
     const { name, value } = e.target;
     setFormData((prev) => ({ ...prev, [name]: value }));
 
-    const validDomains = ["@gmail.com", "@outlook.com", "@yahoo.com"];
+  setError("");
 
-    // ✅ Check if email contains any of the valid domains
-    const isValidDomain = validDomains.some((domain) => value.endsWith(domain));
-
-    if (value && !isValidDomain) {
-      setError(
-        "Please enter a valid email with @gmail.com, @outlook.com, or @yahoo.com"
-      );
-    } else {
-      setError("");
-    }
   };
 
   const handlePhoneChange = (value) => {
@@ -49,20 +39,13 @@ const RegistrationPage = () => {
   const handleRegister = async (e) => {
     e.preventDefault();
 
-    // ✅ Allowed domains
-    const validDomains = ["@gmail.com", "@outlook.com", "@yahoo.com"];
+ const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 
-    // ✅ Check if email has a valid domain
-    const isValidEmail = validDomains.some((domain) =>
-      formData.email.endsWith(domain)
-    );
+if (!emailRegex.test(formData.email)) {
+  toast.error("Please enter a valid email address");
+  return;
+}
 
-    if (!isValidEmail) {
-      toast.error(
-        "Please enter a valid email (only @gmail.com, @outlook.com, or @yahoo.com allowed)"
-      );
-      return; // 🚫 Stop the function here if invalid email
-    }
     if (!formData.contact || formData.contact.trim() === "") {
       toast.error("Please enter your contact number");
       return;

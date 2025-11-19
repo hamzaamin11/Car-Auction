@@ -422,7 +422,7 @@ const VehicleFinderSection = () => {
           <div className="flex flex-col md:flex-col lg:flex-row w-full gap-2">
             <div className="w-full">
               <input
-                className="border p-2 rounded w-full"
+                className="border p-2 rounded w-full focus:outline-none focus:ring-1 focus:ring-blue-900"
                 name="formCash"
                 value={filters.formCash}
                 onChange={(e) => {
@@ -441,7 +441,7 @@ const VehicleFinderSection = () => {
             </div>
             <div className="w-full">
               <input
-                className="border p-2 rounded w-full"
+                className="border p-2 rounded w-full focus:outline-none focus:ring-1 focus:ring-blue-900"
                 name="toCash"
                 value={filters.toCash}
                 onChange={(e) => {
