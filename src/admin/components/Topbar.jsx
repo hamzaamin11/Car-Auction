@@ -7,6 +7,8 @@ import { authSuccess, logOut } from "../../components/Redux/UserSlice";
 import logo from "../../assets/wheellogo.png";
 import axios from "axios";
 import { BASE_URL } from "../../components/Contant/URL";
+import { Settings, User, Lock } from "lucide-react";
+
 import Swal from "sweetalert2";
 const getInitialProfileForm = (user) => ({
   name: user?.name || "",
@@ -23,6 +25,7 @@ const getInitialProfileForm = (user) => ({
 
 export default function Topbar() {
   const { currentUser } = useSelector((state) => state?.auth);
+   const [accountSettingsOpen, setAccountSettingsOpen] = useState(false);
   const [dropdownOpen, setDropdownOpen] = useState(false);
   const [passwordModalOpen, setPasswordModalOpen] = useState(false);
   const [profileModalOpen, setProfileModalOpen] = useState(false);
@@ -425,7 +428,7 @@ export default function Topbar() {
           }`}
         >
           <div className="px-4 py-3 border-b border-gray-200">
-            <p className="text-sm text-black">Signed in as</p>
+         
             <p className="text-sm font-normal text-gray-700 truncate">
               <div className="text-gray-500 text-xs ">
                 {currentUser?.role || "--"}
@@ -433,18 +436,45 @@ export default function Topbar() {
               {currentUser?.name || "--"}{" "}
             </p>
           </div>
-          <div
-            onClick={() => setPasswordModalOpen(true)}
-            className="flex items-center gap-2 px-4 py-1 text-gray-600 hover:bg-gray-100 cursor-pointer transition-colors duration-200 "
-          >
-            <span className="text-sm font-normal">Change Password</span>
-          </div>
-          <div
-            onClick={() => setProfileModalOpen(true)}
-            className="flex items-center gap-2 px-4 py-1 text-gray-600 hover:bg-gray-100 cursor-pointer transition-colors duration-200"
-          >
-            <span className="text-sm font-normal">Manage Profile </span>
-          </div>
+       {/* Account Settings Parent */}
+<div
+  onClick={() => setAccountSettingsOpen(!accountSettingsOpen)}
+  className="flex items-center gap-2 px-4 py-1 text-gray-700 hover:bg-gray-100 cursor-pointer transition-colors duration-200"
+>
+  <Settings size={16} className="text-gray-500" />
+  <span className="text-sm font-normal">Account Settings</span>
+</div>
+
+{/* Dropdown children */}
+{accountSettingsOpen && (
+  <div className="ml-6">
+
+    {/* Change Password */}
+    <div
+      onClick={() => {
+        setPasswordModalOpen(true);
+        setAccountSettingsOpen(false);
+      }}
+      className="flex items-center gap-2 px-4 py-1 text-gray-600 hover:bg-gray-100 cursor-pointer transition-colors duration-200"
+    >
+      
+      <span className="text-sm font-normal">Change Password</span>
+    </div>
+
+    {/* Manage Profile */}
+    <div
+      onClick={() => {
+        setProfileModalOpen(true);
+        setAccountSettingsOpen(false);
+      }}
+      className="flex items-center gap-2 px-4 py-1 text-gray-600 hover:bg-gray-100 cursor-pointer transition-colors duration-200"
+    >
+     
+      <span className="text-sm font-normal">Manage Profile</span>
+    </div>
+  </div>
+)}
+
           <div
             onClick={handleLogout}
             className="flex items-center gap-2 px-4 py-2 text-red-600 hover:bg-gray-100 cursor-pointer transition-colors duration-200"
