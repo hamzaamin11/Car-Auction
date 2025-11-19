@@ -325,7 +325,7 @@ END:VCALENDAR`.trim();
           <ChevronRight className="mx-2 w-4 h-4 text-gray-400" />
 
           <span
-            onClick={() => window.history.back()}
+            onClick={() => navigate(`/filterprice/make/${selectedPrice?.make}`)}
             className="text-blue-950 capitalize hover:cursor-pointer hover:underline"
           >
             {selectedPrice?.make || "N/A"}
@@ -423,7 +423,7 @@ END:VCALENDAR`.trim();
         <div className="hidden lg:block space-y-6">
           {/* Vehicle Details Card */}
           <div className="bg-white rounded-xl shadow-md p-6 h-full">
-            <h2 className="text-xl font-bold text-gray-800  border-b border-gray-100 pb-2">
+            <h2 className="text-1rem font-bold text-gray-800  border-b border-gray-100 pb-2">
               Vehicle Details
             </h2>
 
@@ -530,7 +530,7 @@ END:VCALENDAR`.trim();
 
         {/* RIGHT: BID INFORMATION (DESKTOP) */}
         <div className="bg-white rounded-xl shadow-md p-6 hidden lg:block">
-          <h2 className="text-xl font-bold text-gray-800 mb-3 border-b pb-2 border-gray-100">
+          <h2 className="text-1rem font-bold text-gray-800 mb-3 border-b pb-2 border-gray-100">
             Bid Information
           </h2>
 
@@ -763,7 +763,7 @@ END:VCALENDAR`.trim();
       <div className="col-span-1 space-y-6 lg:hidden block">
         {/* Vehicle Details Card */}
         <div className="bg-white rounded-xl shadow-md p-6 mt-4">
-          <h2 className="text-xl font-bold text-black mb-3 border-b border-gray-100 pb-2">
+          <h2 className="text-1rem font-bold text-black mb-3 border-b border-gray-100 pb-2">
             Vehicle Details
           </h2>
           <div className="overflow-x-auto">
@@ -854,7 +854,7 @@ END:VCALENDAR`.trim();
 
         {/* Bid Section */}
         <div className="bg-white rounded-xl shadow-md p-6">
-          <h2 className="text-xl font-bold text-black mb-3 border-b border-gray-100 pb-2">
+          <h2 className="text-1rem font-bold text-black mb-3 border-b border-gray-100 pb-2">
             Bid Information
           </h2>
 

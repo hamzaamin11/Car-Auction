@@ -656,7 +656,7 @@ const Navbar = () => {
                 >
                   {/* User Info */}
                   <div className="px-4 py-3 border-b border-gray-200">
-                    <p className="text-sm text-gray-800">Signed in as</p>
+                   
                     <p className="text-sm text-gray-600 truncate">
                       <span className="text-gray-500 text-xs">
                         {currentUser?.role || "--"}
@@ -688,16 +688,7 @@ const Navbar = () => {
                     Manage Profile
                   </div>
 
-                  {/* Sold Vehicles */}
-                  <div
-                    onClick={() => {
-                      navigate("/soldVehicles");
-                      setDropdownOpen(false);
-                    }}
-                    className="px-4 py-1 text-gray-600 hover:bg-gray-100 cursor-pointer transition"
-                  >
-                    Sold Vehicles
-                  </div>
+              
 
                   {/* Logout */}
                   <div
@@ -856,7 +847,7 @@ const Navbar = () => {
                   <FaUserCircle size={32} className="text-white" />
                 )}
                 <span>
-                  Signed in as{" "}
+                {" "}
                   <div className="text-white text-xs">
                     {currentUser?.role || "--"}
                   </div>
@@ -881,14 +872,7 @@ const Navbar = () => {
               >
                 Manage Profile
               </button>
-              <button
-                onClick={() => {
-                  navigate("/soldVehicles");
-                }}
-                className="block w-full text-left py-0 text-white hover:underline"
-              >
-                <span className="text-sm font-semibold">Sold Vehicles</span>
-              </button>
+          
               <button className="block w-full text-left py-1 text-white hover:underline">
                 {" "}
               </button>
