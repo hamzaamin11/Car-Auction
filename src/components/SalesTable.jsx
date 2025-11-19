@@ -173,10 +173,16 @@ const carBrands = [
     type: "Proton",
   },
   {
-    name: "Seres  ",
+    name: "Seres",
     image: "/images/seres.png",
     link: "/details",
     type: "Seres",
+  },
+  {
+    name: "Suzuki ",
+    image: "/Public/images/suzuki.png",
+    link: "/details",
+    type: "Suzuki",
   },
   {
     name: "TANK  ",
@@ -198,42 +204,129 @@ const carBrands = [
   },
 ];
 
+const papularBrands = [
+  {
+    name: "Changan  ",
+    image: "/images/changan.png",
+    link: "/details",
+    type: "Changan",
+  },
+  {
+    name: "Honda  ",
+    image: "/images/Honda.png",
+    link: "/details",
+    type: "Honda",
+  },
+  {
+    name: "Hyundai  ",
+    image: "/images/hyundai.png",
+    link: "/details",
+    type: "Hyundai",
+  },
+  {
+    name: "KIA ",
+    image: "/images/kia.png",
+    link: "/details",
+    type: "KIA",
+  },
+  {
+    name: "MG ",
+    image: "/images/MG.png",
+    link: "/details",
+    type: "MG",
+  },
+  {
+    name: "Suzuki ",
+    image: "/Public/images/suzuki.png",
+    link: "/details",
+    type: "Suzuki",
+  },
+  {
+    name: "TOYOTA ",
+    image: "/images/Tyota.png",
+    link: "/details",
+    type: "Toyota",
+  },
+  {
+    name: "Proton ",
+    image: "/images/proton.png",
+    link: "/details",
+    type: "Proton",
+  },
+];
+
 const SalesTable = () => {
   const navigate = useNavigate();
 
   return (
     <div className="w-full bg-gradient-to-b from-[#f9f9f9] to-[#ededed] p-6">
       <h2 className="text-black text-3xl font-bold font-sans mb-6 text-center">
-        Explore Car Makes in Pakistan 
+        Explore Car Makes in Pakistan
       </h2>
-
-      <div className="grid grid-cols-1 sm:grid-cols-3 md:grid-cols-4 gap-6">
-        {carBrands.map((brand, index) => (
-          <div
-            key={index}
-            onClick={() => navigate(`/carPrice/${brand.type}`)}
-            className="group bg-white rounded-xl shadow-md hover:shadow-xl 
+      <div className="bg-gray-300 p-4">
+        <h1 className="text-xl p-2 font-bold text-blue-950">
+          Search by Popular Makes
+        </h1>
+        <div className="grid grid-cols-1 sm:grid-cols-3 md:grid-cols-4 gap-6">
+          {papularBrands?.map((brand, index) => (
+            <div
+              key={index}
+              onClick={() => navigate(`/carPrice/${brand.type}`)}
+              className="group bg-white rounded-xl shadow-md hover:shadow-xl 
                        transition-all duration-300 cursor-pointer border border-gray-100 
                        hover:border-blue-950 flex flex-col items-center p-5"
-          >
-            <img
-              src={brand.image}
-              alt={brand.name}
-              className="w-24 h-20 object-contain transition-transform duration-300 group-hover:scale-110"
-            />
+            >
+              <img
+                src={brand.image}
+                alt={brand.name}
+                className="w-24 h-20 object-contain transition-transform duration-300 group-hover:scale-110"
+              />
 
-            <div className="mt-3 w-full text-center">
-              <span
-                className="inline-block text-black font-bold group-hover:text-white 
+              <div className="mt-3 w-full text-center">
+                <span
+                  className="inline-block text-black font-bold group-hover:text-white 
                            text-sm  px-3 py-1 rounded-md 
                            transition-all duration-300 
                            group-hover:bg-red-600"
-              >
-                {brand.name.toUpperCase()}
-              </span>
+                >
+                  {brand.name.toUpperCase()}
+                </span>
+              </div>
             </div>
-          </div>
-        ))}
+          ))}
+        </div>
+      </div>
+
+      <div className="bg-gray-300 p-4 my-5">
+        <h1 className="text-xl p-2 font-bold text-blue-950">All other Makes</h1>
+        <div className="grid grid-cols-1 sm:grid-cols-3 md:grid-cols-4 gap-4">
+          {carBrands?.map((brand, index) => (
+            <div
+              key={index}
+              onClick={() => navigate(`/carPrice/${brand.type}`)}
+              className=" bg-white rounded shadow-md hover:shadow-xl 
+                       transition-all duration-300 cursor-pointer border border-gray-100 
+                       hover:border-blue-950 flex items-center justify-center px-10"
+            >
+              <img
+                src={brand.image}
+                alt={brand.name}
+                className="w-8 h-8 object-contain transition-transform duration-300 group-hover:scale-110"
+              />
+
+              <div className="py-2 w-full text-center">
+                <span
+                  className="inline-block text-blue-950 font-bold group-hover:text-white 
+                           text-sm  px-3 py-1 rounded-md 
+                           transition-all duration-300 
+                           group-hover:bg-red-600"
+                >
+                  {brand.name.toUpperCase()}
+                </span>
+              </div>
+            </div>
+          ))}
+        </div>
       </div>
     </div>
   );
