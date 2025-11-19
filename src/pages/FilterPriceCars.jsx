@@ -52,6 +52,7 @@ const FilterPriceCars = () => {
     allMakes: "",
     allModels: name === "model" ? decodeURIComponent(value || "") : "",
     location: "",
+    lot: "",
     formCash:
       name === "budget"
         ? decodeURIComponent(value || "").split("-")[0] || ""
@@ -61,6 +62,8 @@ const FilterPriceCars = () => {
         ? decodeURIComponent(value || "").split("-")[1] || ""
         : "",
   });
+
+  console.log("lot =>", filterData.lot);
 
   const [allFilterCars, setAllFilterCars] = useState([]);
 
@@ -253,6 +256,7 @@ const FilterPriceCars = () => {
           yearStart: filterData.selectYear || "",
           yearEnd: filterData.toYear || "",
           vehicleCondition: activeTab !== "all" ? activeTab : undefined,
+          lot_number: filterData.lot,
         },
       });
       setAllFilterCars(res.data);
@@ -326,7 +330,7 @@ const FilterPriceCars = () => {
 
   useEffect(() => {
     handleGetFilterByVehicle();
-  }, [activeTab, sorting, filterData,filterPrice]);
+  }, [activeTab, sorting, filterData, filterPrice]);
 
   useEffect(() => {
     handleGetFilterModel();
@@ -386,7 +390,7 @@ const FilterPriceCars = () => {
             value={BodyType.find(
               (option) => option.value === filterData.vehicleType
             )}
-           onChange={(s) => handleChange("vehicleType", s ? s.value : "")}
+            onChange={(s) => handleChange("vehicleType", s ? s.value : "")}
             placeholder="Select Body Style"
             isSearchable
             className="w-full"
@@ -409,7 +413,7 @@ const FilterPriceCars = () => {
               value={currentYear.find(
                 (option) => option.value === filterData.selectYear
               )}
-            onChange={(s) => handleChange("selectYear", s ? s.value : "")}
+              onChange={(s) => handleChange("selectYear", s ? s.value : "")}
               placeholder="Select Year"
               isSearchable
               className="w-full"
@@ -424,7 +428,7 @@ const FilterPriceCars = () => {
               value={currentYear.find(
                 (option) => option.value === filterData.toYear
               )}
-             onChange={(s) => handleChange("toYear", s ? s.value : "")}
+              onChange={(s) => handleChange("toYear", s ? s.value : "")}
               placeholder="To Year"
               isSearchable
               className="w-full"
@@ -441,7 +445,7 @@ const FilterPriceCars = () => {
             value={allMakes.find(
               (option) => option.value === filterData.allMakes
             )}
-       onChange={(s) => handleChange("allMakes", s ? s.value : "")}
+            onChange={(s) => handleChange("allMakes", s ? s.value : "")}
             placeholder="Select Make"
             isSearchable
             className="w-full"
@@ -524,7 +528,37 @@ const FilterPriceCars = () => {
           </div>
         </div>
 
-        <div className="flex items-center justify-center">
+        <div className="flex items-center  w-full">
+          <div className="flex-1 border-t border-gray-300"></div>
+
+          <span className="px-3 text-sm font-medium text-gray-700">OR</span>
+
+          <div className="flex-1 border-t border-gray-300"></div>
+        </div>
+
+        <div className="relative w-full max-w-sm">
+          <label className="block text-sm font-medium text-gray-700 mb-1">
+            Lot #
+          </label>
+          <div className="flex flex-col md:flex-col lg:flex-row w-full gap-2">
+            <div className="w-full">
+              <input
+                className="border p-2 rounded w-full"
+                value={filterData.lot}
+                onChange={(e) => {
+                  const val = e.target.value;
+                  if (/^\d*$/.test(val) && val.length <= 4) {
+                    handleChange("lot", val);
+                  }
+                }}
+                placeholder="Lookup by Lot Number"
+                max={4}
+              />
+            </div>
+          </div>
+        </div>
+
+        <div className="flex items-center justify-center relative w-full max-w-sm">
           <button
             disabled={loading}
             onClick={handleGetFilterByVehicle}
@@ -548,9 +582,9 @@ const FilterPriceCars = () => {
             Vehicles For Sale
           </h1>
           <div className="flex items-center gap-1">
-          <div className="font-semibold" >Sort By</div>
-          <div className="flex gap-2">
-          <div className="w-full">
+            <div className="font-semibold">Sort By</div>
+            <div className="flex gap-2">
+              <div className="w-full">
                 <CustomDropdown
                   datas={budgetData.map((b) => ({
                     label: b.label,

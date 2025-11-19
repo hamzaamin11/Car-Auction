@@ -40,6 +40,7 @@ const initialState = {
   toCash: "",
   location: "",
   vehicleType: "",
+  lot: "",
   condition: "all",
 };
 
@@ -63,6 +64,7 @@ const VehicleFinderSection = () => {
   const dispatch = useDispatch();
 
   const [filters, setFilters] = useState(initialState);
+
   const [allCars, setAllCars] = useState([]);
   const [allMakes, setAllMakes] = useState([]);
   const [allModels, setAllModels] = useState([]);
@@ -95,6 +97,7 @@ const VehicleFinderSection = () => {
         toYear,
         vehicleType,
         location,
+        lot,
       } = filters;
 
       toCash = filterPrice.budget.max ?? "";
@@ -104,7 +107,7 @@ const VehicleFinderSection = () => {
       const model = vehicleData.model || "";
 
       const res = await axios.get(
-        `${BASE_URL}/getApprovedVehicles?vehicleCondition=${condition}&make=${make}&model=${model}&minPrice=${formCash}&maxPrice=${toCash}&sortType=${sorting}&yearStart=${fromYear}&yearEnd=${toYear}&bodyStyle=${vehicleType}&locationId=${location}`
+        `${BASE_URL}/getApprovedVehicles?vehicleCondition=${condition}&make=${make}&model=${model}&minPrice=${formCash}&maxPrice=${toCash}&sortType=${sorting}&yearStart=${fromYear}&yearEnd=${toYear}&bodyStyle=${vehicleType}&locationId=${location}&lot_number=${lot}`
       );
 
       setAllCars(res.data || []);
@@ -461,7 +464,37 @@ const VehicleFinderSection = () => {
           </div>
         </div>
 
-        <div className="flex items-center justify-center">
+        <div className="flex items-center  w-full">
+          <div className="flex-1 border-t border-gray-300"></div>
+
+          <span className="px-3 text-sm font-medium text-gray-700">OR</span>
+
+          <div className="flex-1 border-t border-gray-300"></div>
+        </div>
+
+        <div className="relative w-full max-w-sm">
+          <label className="block text-sm font-medium text-gray-700 mb-1">
+            Lot #
+          </label>
+          <div className="flex flex-col md:flex-col lg:flex-row w-full gap-2">
+            <div className="w-full">
+              <input
+                className="border p-2 rounded w-full"
+                value={filters.lot}
+                onChange={(e) => {
+                  const val = e.target.value;
+                  if (/^\d*$/.test(val) && val.length <= 4) {
+                    handleChange("lot", val);
+                  }
+                }}
+                placeholder="Lookup by Lot Number"
+                max={4}
+              />
+            </div>
+          </div>
+        </div>
+
+        <div className="flex items-center justify-center relative w-full max-w-sm">
           <button
             onClick={handleGetCars}
             className="bg-blue-950 w-full p-2 px-10 text-white rounded hover:cursor-pointer"
