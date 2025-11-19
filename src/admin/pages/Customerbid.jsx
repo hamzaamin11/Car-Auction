@@ -376,8 +376,8 @@ END:VCALENDAR`.trim();
           {/* Image container */}
           <div className="relative w-full h-[350px] sm:h-[400px] md:h-[450px] lg:h-[500px] rounded-lg overflow-hidden">
             <img
-              src={viewImage || "/images/AudiQ2.jpg"}
-              alt="Vehicle"
+              src={viewImage}
+              alt="No image found"
               className="w-full h-full object-cover transition-all duration-500 hover:scale-105"
             />
 
@@ -534,7 +534,7 @@ END:VCALENDAR`.trim();
             Bid Information
           </h2>
 
-          <table className="w-full text-sm border border-gray-100 text-gray-700 rounded-lg overflow-hidden">
+          <table className="w-full text-sm  border-gray-100 text-gray-700 rounded-lg overflow-hidden">
             <tbody>
               <tr className="border-b border-gray-100">
                 <th className="text-left p-2  font-medium w-1/2">
@@ -768,7 +768,7 @@ END:VCALENDAR`.trim();
           </h2>
           <div className="overflow-x-auto">
             <table className="w-full text-sm text-gray-700 border-collapse">
-              <tbody className="border border-gray-100">
+              <tbody className=" border-gray-100">
                 <tr className="border-b border-gray-100">
                   <td className=" py-2 px-2 w-1/3">Lot Number:</td>
                   <td className="py-2 font-semibold text-right">
@@ -858,7 +858,7 @@ END:VCALENDAR`.trim();
             Bid Information
           </h2>
 
-          <table className="w-full text-sm border border-gray-100 rounded-lg overflow-hidden">
+          <table className="w-full text-sm  border-gray-100 rounded-lg overflow-hidden">
             <tbody className="text-gray-800">
               <tr className="border-b border-gray-100">
                 <th className="text-left p-2  w-1/2 font-medium">

@@ -263,7 +263,7 @@ const SalesTable = () => {
       <h2 className="text-black text-3xl font-bold font-sans mb-6 text-center">
         Explore Car Makes in Pakistan
       </h2>
-      <div className="bg-gray-300 p-4">
+      <div className="bg-gray-200/50 p-4">
         <h1 className="text-xl p-2 font-bold text-blue-950">
           Search by Popular Makes
         </h1>
@@ -297,7 +297,7 @@ const SalesTable = () => {
         </div>
       </div>
 
-      <div className="bg-gray-300 p-4 my-5">
+      <div className="bg-gray-200/50 p-4 my-5">
         <h1 className="text-xl p-2 font-bold text-blue-950">All other Makes</h1>
         <div className="grid grid-cols-1 sm:grid-cols-3 md:grid-cols-4 gap-4">
           {carBrands?.map((brand, index) => (
