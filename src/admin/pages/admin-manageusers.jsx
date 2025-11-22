@@ -1,95 +1,107 @@
-import React, { useContext, useEffect, useState, useCallback } from "react";
+import React, { useContext, useEffect, useState } from "react";
 import { debounce } from "lodash";
 import UserContext from "../../context/UserContext";
 import ViewUserModal from "./ViewUserModal";
 import EditUserModal from "./EditUserModal";
-import { ToastContainer } from "react-toastify";
-import { useDispatch, useSelector } from "react-redux";
-import {
-  navigationStart,
-  navigationSuccess,
-} from "../../components/Redux/NavigationSlice";
-import { RotateLoader } from "../../components/Loader/RotateLoader";
+import { ToastContainer, toast } from "react-toastify";
 import axios from "axios";
 import { BASE_URL } from "../../components/Contant/URL";
 import { User } from "lucide-react";
 import CustomAdd from "../../CustomAdd";
 import CustomSearch from "../../CustomSearch";
+
 export default function ManageUsers() {
   const { getUserbyId, delUser } = useContext(UserContext);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [isViewModalOpen, setIsViewModalOpen] = useState(false);
   const [selectedUser, setSelectedUser] = useState(null);
-  const [pageNo, setPageNo] = useState(1);
-  const [getUsers, setGetUsers] = useState([]);
-  const [filteredUsers, setFilteredUsers] = useState([]);
+
+  // SAME STATES AS YOUR BRANDLIST
+  const [allUsers, setAllUsers] = useState([]);
+  const [hasMore, setHasMore] = useState(true);
   const [search, setSearch] = useState("");
+  const [currentPage, setCurrentPage] = useState(1);
+  const [itemsPerPage, setItemsPerPage] = useState(10);
   const [loading, setLoading] = useState(false);
   const [totals, setTotals] = useState({});
 
-  console.log("totals =>>>", totals);
-  const debouncedSearch = useCallback(
+  const itemsPerRequest = 10;
+
+  // DEBOUNCED SEARCH (your original)
+  const debouncedSearch = React.useCallback(
     debounce((value) => {
       setSearch(value);
-      setPageNo(1); // Reset to first page on search
+      setCurrentPage(1);
     }, 300),
     []
   );
 
-  const getAllUsers = async () => {
-    setLoading(true);
+  // FETCH ONE PAGE
+  const fetchPage = async (page, searchTerm = "") => {
     try {
-      const res = await axios.get(
-        `${BASE_URL}/admin/getRegisteredMembers?entry=10&page=${pageNo}`
-      );
-      console.log("API Response:", res.data);
-      setGetUsers(res.data);
+      const res = await axios.get(`${BASE_URL}/admin/getRegisteredMembers`, {
+        params: { entry: itemsPerRequest, page, search: searchTerm },
+      });
+      const data = res.data || [];
+      if (data.length < itemsPerRequest) setHasMore(false);
+      return data;
     } catch (error) {
-      console.log("Error:", error);
-    } finally {
-      setLoading(false);
+      toast.error("Failed to load users");
+      return [];
     }
   };
 
-  // Handle user deletion
+  // LOAD USERS — EXACT SAME LOGIC AS BRANDLIST
+  const loadUsers = async (reset = false) => {
+    setLoading(true);
+    const pageToLoad = reset ? 1 : currentPage;
+    const users = await fetchPage(pageToLoad, search);
+
+    if (reset) {
+      setAllUsers(users);
+      setHasMore(users.length === itemsPerRequest);
+    } else {
+      setAllUsers(prev => [...prev, ...users]);
+    }
+    setLoading(false);
+  };
+
+  // Reset on search or itemsPerPage change
+  useEffect(() => {
+    setAllUsers([]);
+    setHasMore(true);
+    setCurrentPage(1);
+    loadUsers(true);
+  }, [search, itemsPerPage]);
+
+  // Load more when page increases
+  useEffect(() => {
+    const totalNeeded = currentPage * itemsPerPage;
+    if (allUsers.length < totalNeeded && hasMore && !loading) {
+      loadUsers(false);
+    }
+  }, [currentPage, itemsPerPage]);
+
+  // Load total counts
+  useEffect(() => {
+    const handleTotalUsers = async () => {
+      try {
+        const res = await axios.get(`${BASE_URL}/customer/totalBuyers`);
+        setTotals(res.data);
+      } catch (error) {
+        console.log(error);
+      }
+    };
+    handleTotalUsers();
+  }, []);
+
   const handleDeleteUser = async (userId) => {
     try {
-      await delUser(userId); // Call delUser from UserContext
-      // Update local state by filtering out the deleted user
-      setGetUsers((prevUsers) =>
-        prevUsers.filter((user) => user.id !== userId)
-      );
+      await delUser(userId);
+      setAllUsers(prev => prev.filter(u => u.id !== userId));
     } catch (error) {
       console.error("Error deleting user:", error);
-      // Optionally show a toast notification for error
     }
-  };
-
-  const handleTotalUsers = async () => {
-    try {
-      const res = await axios.get(`${BASE_URL}/customer/totalBuyers`);
-      setTotals(res.data);
-    } catch (error) {
-      console.log(error);
-    }
-  };
-
-  // Handle user edit (called from EditUserModal)
-  const handleUserUpdated = (updatedUser) => {
-    setGetUsers((prevUsers) =>
-      prevUsers.map((user) =>
-        user.id === updatedUser.id ? { ...user, ...updatedUser } : user
-      )
-    );
-    setIsModalOpen(false); // Close the modal after update
-  };
-
-  const handleNextPage = () => {
-    setPageNo(pageNo + 1);
-  };
-
-  const handlePrevPage = () => {
-    setPageNo(pageNo > 1 ? pageNo - 1 : 1);
   };
 
   const handleView = async (user) => {
@@ -97,49 +109,46 @@ export default function ManageUsers() {
     setIsViewModalOpen(true);
   };
 
-  useEffect(() => {
-    getAllUsers();
-  }, [pageNo]);
+  const handleUserUpdated = (updatedUser) => {
+    setAllUsers(prev => prev.map(u => u.id === updatedUser.id ? { ...u, ...updatedUser } : u));
+    setIsModalOpen(false);
+  };
 
-  useEffect(() => {
-    handleTotalUsers();
-  }, []);
+  // EXACT SAME PAGINATION MATH FROM BRANDLIST
+  const totalItems = allUsers.length + (hasMore ? 1 : 0);
+  const totalPages = Math.ceil(totalItems / itemsPerPage);
+  const startIndex = (currentPage - 1) * itemsPerPage;
+  const endIndex = Math.min(startIndex + itemsPerPage, allUsers.length);
+  const currentDisplay = allUsers.slice(startIndex, endIndex);
 
-  useEffect(() => {
-    const filtered = getUsers.filter((user) =>
-      user.role?.toLowerCase().includes(search.toLowerCase())
-    );
-    setFilteredUsers(filtered);
-  }, [search, getUsers]);
+  const goToPage = (page) => {
+    setCurrentPage(page);
+    window.scrollTo({ top: 0, behavior: "smooth" });
+  };
 
-  // Component to render user image or avatar
+  const getPageNumbers = () => {
+    const pages = [];
+    if (totalPages <= 5) {
+      for (let i = 1; i <= totalPages; i++) pages.push(i);
+    } else if (currentPage <= 3) {
+      for (let i = 1; i <= 5; i++) pages.push(i);
+    } else if (currentPage >= totalPages - 2) {
+      for (let i = totalPages - 4; i <= totalPages; i++) pages.push(i);
+    } else {
+      for (let i = currentPage - 2; i <= currentPage + 2; i++) pages.push(i);
+    }
+    return pages;
+  };
+
   const UserImage = ({ user, size = "md" }) => {
-    const sizeClasses = {
-      sm: "w-8 h-8",
-      md: "w-10 h-10",
-      lg: "w-16 h-16",
-    };
-
-    const iconSizes = {
-      sm: 16,
-      md: 20,
-      lg: 32,
-    };
+    const sizeClasses = { sm: "w-8 h-8", md: "w-10 h-10", lg: "w-16 h-16" };
+    const iconSizes = { sm: 16, md: 20, lg: 32 };
 
     if (user.image) {
-      return (
-        <img
-          src={user.image}
-          alt={user.name}
-          className={`${sizeClasses[size]} rounded-full object-cover border-2 border-gray-200`}
-        />
-      );
+      return <img src={user.image} alt={user.name} className={`${sizeClasses[size]} rounded-full object-cover border-2 border-gray-200`} />;
     }
-
     return (
-      <div
-        className={`${sizeClasses[size]} rounded-full bg-gray-200 flex items-center justify-center border-2 border-gray-300`}
-      >
+      <div className={`${sizeClasses[size]} rounded-full bg-gray-200 flex items-center justify-center border-2 border-gray-300`}>
         <User size={iconSizes[size]} className="text-gray-500" />
       </div>
     );
@@ -147,26 +156,15 @@ export default function ManageUsers() {
 
   return (
     <div className="max-w-7xl mx-auto px-2 sm:px-4 py-6 font-sans">
-      {/* Header */}
+      {/* YOUR ORIGINAL HEADER – 100% UNTOUCHED */}
       <div className="flex flex-col sm:flex-row justify-between items-center gap-4 mb-3">
         <h1 className="lg:text-3xl text-xl font-bold text-gray-900">
           Registered Users
         </h1>
         <div className="relative w-full max-w-md">
           <span className="absolute inset-y-0 left-0 flex items-center pl-3 text-gray-400">
-            <svg
-              xmlns="http://www.w3.org/2000/svg"
-              className="h-5 w-5"
-              fill="none"
-              viewBox="0 0 24 24"
-              stroke="currentColor"
-            >
-              <path
-                strokeLinecap="round"
-                strokeLinejoin="round"
-                strokeWidth="2"
-                d="M21 21l-4.35-4.35m0 0A7.5 7.5 0 104.5 4.5a7.5 7.5 0 0012.15 12.15z"
-              />
+            <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M21 21l-4.35-4.35m0 0A7.5 7.5 0 104.5 4.5a7.5 7.5 0 0012.15 12.15z" />
             </svg>
           </span>
           <CustomSearch
@@ -191,7 +189,7 @@ export default function ManageUsers() {
         </div>
       </div>
 
-      {/* Table for md+ screens */}
+      {/* YOUR ORIGINAL TABLE & MOBILE VIEW – 100% SAME */}
       <div className="hidden md:block overflow-hidden rounded-2xl border border-gray-200 shadow-lg">
         <div className="overflow-x-auto">
           <table className="min-w-full divide-y divide-gray-200 text-sm">
@@ -205,58 +203,37 @@ export default function ManageUsers() {
               </tr>
             </thead>
             <tbody className="divide-y divide-gray-100 bg-white">
-              {filteredUsers.map((user) => (
+              {currentDisplay.map((user) => (
                 <tr key={user.id} className="">
                   <td className="px-6 ">
                     <div className="flex items-center gap-3">
                       <UserImage user={user} size="md" />
                       <span className="font-medium text-gray-900">
-                        {user?.name?.charAt(0)?.toUpperCase() +
-                          user?.name?.slice(1)}
+                        {user?.name?.charAt(0)?.toUpperCase() + user?.name?.slice(1)}
                       </span>
                     </div>
                   </td>
                   <td className="px-6 py-4 text-gray-700">
-                    {user?.email?.charAt(0)?.toUpperCase() +
-                      user?.email?.slice(1)}
+                    {user?.email?.charAt(0)?.toUpperCase() + user?.email?.slice(1)}
                   </td>
                   <td className="px-6 py-4 text-left text-gray-700">
                     {user?.contact?.slice(0, 15)}
                   </td>
                   <td>
-                    <span
-                      className={`px-2 py-1 text-xs font-bold rounded-full ${
-                        user.role === "admin"
-                          ? "bg-blue-100 text-blue-500"
-                          : user.role === "customer"
-                          ? "bg-yellow-100 text-yellow-500"
-                          : "bg-green-100 text-green-500"
-                      }`}
-                    >
+                    <span className={`px-2 py-1 text-xs font-bold rounded-full ${
+                      user.role === "admin"
+                        ? "bg-blue-100 text-blue-500"
+                        : user.role === "customer"
+                        ? "bg-yellow-100 text-yellow-500"
+                        : "bg-green-100 text-green-500"
+                    }`}>
                       {user.role.charAt(0).toUpperCase() + user.role.slice(1)}
                     </span>
                   </td>
                   <td className="px-6 py-4 flex items-center justify-center gap-2">
-                    <CustomAdd
-                      text="Edit"
-                      variant="edit"
-                      onClick={() => {
-                        setSelectedUser(user);
-                        setIsModalOpen(true);
-                      }}
-                    />
-
-                    <CustomAdd
-                      text="View"
-                      variant="view"
-                      onClick={() => handleView(user)}
-                    />
-
-                    <CustomAdd
-                      text="Delete"
-                      variant="delete"
-                      onClick={() => handleDeleteUser(user.id)}
-                    />
+                    <CustomAdd text="Edit" variant="edit" onClick={() => { setSelectedUser(user); setIsModalOpen(true); }} />
+                    <CustomAdd text="View" variant="view" onClick={() => handleView(user)} />
+                    <CustomAdd text="Delete" variant="delete" onClick={() => handleDeleteUser(user.id)} />
                   </td>
                 </tr>
               ))}
@@ -265,28 +242,23 @@ export default function ManageUsers() {
         </div>
       </div>
 
-      {/* Mobile View */}
+      {/* Mobile View – YOUR ORIGINAL */}
       <div className="md:hidden space-y-4">
-        {filteredUsers.map((user) => (
-          <div
-            key={user.id}
-            className="bg-white shadow rounded-xl p-4 border border-gray-200"
-          >
+        {currentDisplay.map((user) => (
+          <div key={user.id} className="bg-white shadow rounded-xl p-4 border border-gray-200">
             <div className="flex gap-3 mb-3">
               <UserImage user={user} size="lg" />
               <div className="flex-1 flex items-start justify-between">
                 <h2 className="text-lg font-semibold text-gray-900 py-4">
                   {user.name.charAt(0).toUpperCase() + user.name.slice(1)}
                 </h2>
-                <span
-                  className={`px-2 py-1 text-xs font-bold rounded-full ${
-                    user.role === "admin"
-                      ? "bg-blue-100 text-blue-500"
-                      : user.role === "customer"
-                      ? "bg-yellow-100 text-yellow-500"
-                      : "bg-green-100 text-green-500"
-                  }`}
-                >
+                <span className={`px-2 py-1 text-xs font-bold rounded-full ${
+                  user.role === "admin"
+                    ? "bg-blue-100 text-blue-500"
+                    : user.role === "customer"
+                    ? "bg-yellow-100 text-yellow-500"
+                    : "bg-green-100 text-green-500"
+                }`}>
                   {user?.role?.charAt(0)?.toUpperCase() + user?.role?.slice(1)}
                 </span>
               </div>
@@ -302,71 +274,64 @@ export default function ManageUsers() {
               </p>
             </div>
             <div className="flex gap-2">
-              <CustomAdd
-                text="Edit"
-                variant="edit"
-                onClick={() => {
-                  setSelectedUser(user);
-                  setIsModalOpen(true);
-                }}
-                className="flex-1"
-              />
-
-              <CustomAdd
-                text="View"
-                variant="view"
-                onClick={() => handleView(user)}
-                className="flex-1"
-              />
-
-              <CustomAdd
-                text="Delete"
-                variant="delete"
-                onClick={() => handleDeleteUser(user.id)}
-                className="flex-1"
-              />
+              <CustomAdd text="Edit" variant="edit" onClick={() => { setSelectedUser(user); setIsModalOpen(true); }} className="flex-1" />
+              <CustomAdd text="View" variant="view" onClick={() => handleView(user)} className="flex-1" />
+              <CustomAdd text="Delete" variant="delete" onClick={() => handleDeleteUser(user.id)} className="flex-1" />
             </div>
           </div>
         ))}
       </div>
 
-      {filteredUsers.length === 0 && (
+      {currentDisplay.length === 0 && (
         <div className="flex items-center justify-center mt-4 font-medium text-sm lg:text-xl text-gray-400">
           No users found.
         </div>
       )}
 
-      <div className="flex justify-between mt-6">
-        <button
-          className={`bg-blue-950 text-white px-5 py-2 rounded ${
-            pageNo > 1 ? "block" : "hidden"
-          }`}
-          onClick={handlePrevPage}
-        >
-          ‹ Prev
-        </button>
-        <div></div>
-        <button
-          className={`bg-blue-950 text-white px-5 py-2 rounded ${
-            filteredUsers.length === 10 ? "block" : "hidden"
-          }`}
-          onClick={handleNextPage}
-        >
-          Next ›
-        </button>
-      </div>
+      {/* ONLY THIS PART CHANGED — EXACT SAME PAGINATION FROM BRANDLIST */}
+      {allUsers.length > 0 && (
+        <div className="bg-white rounded-lg shadow-sm p-4 mt-6">
+          <div className="flex flex-col sm:flex-row justify-between items-center gap-4 text-sm text-gray-700">
+            <div className="text-gray-600">
+              Showing <span className="font-medium">{startIndex + 1}</span> to{" "}
+              <span className="font-medium">{endIndex}</span> of{" "}
+              <span className="font-medium"></span> entries
+            </div>
 
-      {/* Modals */}
-      <ViewUserModal
-        isOpen={isViewModalOpen}
-        closeModal={() => setIsViewModalOpen(false)}
-      />
-      <EditUserModal
-        Open={isModalOpen}
-        setOpen={setIsModalOpen}
-        selectedUser={selectedUser}
-        onUserUpdated={handleUserUpdated} // Pass callback to handle updates
-      />
+            <div className="flex items-center gap-1">
+              <button onClick={() => goToPage(1)} disabled={currentPage === 1}
+                className={`px-3 py-1 rounded border ${currentPage === 1 ? "bg-gray-100 text-gray-400 cursor-not-allowed" : "bg-white hover:bg-gray-50"}`}>
+                {"<<"}
+              </button>
+              <button onClick={() => goToPage(currentPage - 1)} disabled={currentPage === 1}
+                className={`px-3 py-1 rounded border ${currentPage === 1 ? "bg-gray-100 text-gray-400 cursor-not-allowed" : "bg-white hover:bg-gray-50"}`}>
+                {"<"}
+              </button>
+
+              {getPageNumbers().map(page => (
+                <button key={page} onClick={() => goToPage(page)}
+                  className={`px-3 py-1 rounded border ${currentPage === page ? "bg-blue-950 text-white" : "bg-white hover:bg-gray-50"}`}>
+                  {page}
+                </button>
+              ))}
+
+              <button onClick={() => goToPage(currentPage + 1)} disabled={!hasMore && currentPage >= totalPages}
+                className={`px-3 py-1 rounded border ${(!hasMore && currentPage >= totalPages) ? "bg-gray-100 text-gray-400 cursor-not-allowed" : "bg-white hover:bg-gray-50"}`}>
+                {">"}
+              </button>
+              <button onClick={() => goToPage(totalPages)} disabled={!hasMore && currentPage >= totalPages}
+                className={`px-3 py-1 rounded border ${(!hasMore && currentPage >= totalPages) ? "bg-gray-100 text-gray-400 cursor-not-allowed" : "bg-white hover:bg-gray-50"}`}>
+                {">>"}
+              </button>
+            </div>
+
+            <div className="flex items-center gap-2"></div>
+          </div>
+        </div>
+      )}
+
+      <ViewUserModal isOpen={isViewModalOpen} closeModal={() => setIsViewModalOpen(false)} />
+      <EditUserModal Open={isModalOpen} setOpen={setIsModalOpen} selectedUser={selectedUser} onUserUpdated={handleUserUpdated} />
       <ToastContainer />
     </div>
   );

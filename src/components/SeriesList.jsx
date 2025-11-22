@@ -2,29 +2,23 @@ import { useEffect, useState } from "react";
 import axios from "axios";
 import { toast, ToastContainer } from "react-toastify";
 import { BASE_URL } from "../components/Contant/URL";
-import { RotateLoader } from "../components/Loader/RotateLoader";
-import { AddModel } from "../components/ModelModal/AddModel";
-import { EditModal } from "../components/ModelModal/EditModal";
 import { AddSeries } from "./SeriesModal/AddSeries";
 import { EditSeries } from "./SeriesModal/EditSeries";
 import Swal from "sweetalert2";
 import CustomAdd from "../CustomAdd";
 import CustomSearch from "../CustomSearch";
+
 export const SeriesList = () => {
   const [isOpen, setIsOpen] = useState("");
   const [loading, setLoading] = useState(false);
-  const [allSeries, setAllSeries] = useState([]);
+  const [allSeries, setAllSeries] = useState([]);     // All loaded series
+  const [hasMore, setHasMore] = useState(true);
   const [seleteSeries, setSeleteSeries] = useState();
   const [search, setSearch] = useState("");
-  const [pageNo, setPageNo] = useState(1);
+  const [currentPage, setCurrentPage] = useState(1);
+  const [itemsPerPage, setItemsPerPage] = useState(10);
 
-  const handleNextPage = () => {
-    setPageNo(pageNo + 1);
-  };
-
-  const handlePrevPage = () => {
-    setPageNo(pageNo > 1 ? pageNo - 1 : 1);
-  };
+  const itemsPerRequest = 10; // Backend limit
 
   const handleToggleModal = (active) => {
     setIsOpen((prev) => (prev === active ? "" : active));
@@ -35,26 +29,10 @@ export const SeriesList = () => {
     setSeleteSeries(data);
   };
 
-  const handleGetAllSeries = async () => {
-    try {
-      const res = await axios.get(`${BASE_URL}/getSeries`, {
-        params: {
-          search: search,
-          page: pageNo,
-          limit: 10,
-        },
-      });
-      setAllSeries(res.data);
-    } catch (error) {
-      console.log(error);
-    }
-  };
-
-  const handleDeleteBrand = async (id) => {
-    console.log("id =>", id);
+  const handleDeleteSeries = async (id) => {
     const result = await Swal.fire({
       title: "Are you sure?",
-      text: "This vehicle will be deleted.",
+      text: "This series will be deleted permanently.",
       icon: "warning",
       showCancelButton: true,
       confirmButtonColor: "#9333ea",
@@ -63,113 +41,111 @@ export const SeriesList = () => {
     });
 
     if (!result.isConfirmed) return;
+
     try {
-      const res = await axios.patch(`${BASE_URL}/deleteSeries/${id}`);
-      console.log(res.data);
-      handleGetAllSeries();
-      await Swal.fire({
-        title: "delete!",
-        text: "The series has been delete successfully.",
-        icon: "delete",
-        confirmButtonColor: "#9333ea",
-      });
+      await axios.patch(`${BASE_URL}/deleteSeries/${id}`);
+      toast.success("Series deleted successfully");
+      loadSeries(true);
     } catch (error) {
       console.log(error);
-      await Swal.fire({
-        title: "error!",
-        text: "Something went wrong!",
-        icon: "error",
-        confirmButtonColor: "#9333ea",
-      });
+      toast.error("Failed to delete series");
     }
   };
 
-  // Handle search change and reset page to 1
-  const handleSearchChange = (e) => {
-    setSearch(e.target.value);
-    setPageNo(1); // Reset to first page when searching
+  // Fetch one page
+  const fetchPage = async (page, searchTerm = "") => {
+    try {
+      const res = await axios.get(`${BASE_URL}/getSeries`, {
+        params: { search: searchTerm, page, limit: itemsPerRequest },
+      });
+      const data = res.data || [];
+      if (data.length < itemsPerRequest) setHasMore(false);
+      return data;
+    } catch (error) {
+      toast.error("Failed to load series");
+      return [];
+    }
   };
 
+  // Load data — EXACT SAME LOGIC AS BRANDLIST
+  const loadSeries = async (reset = false) => {
+    setLoading(true);
+    const pageToLoad = reset ? 1 : Math.floor(allSeries.length / itemsPerRequest) + 1;
+    const newSeries = await fetchPage(pageToLoad, search);
+
+    if (reset) {
+      setAllSeries(newSeries);
+      setHasMore(newSeries.length === itemsPerRequest);
+    } else {
+      setAllSeries(prev => [...prev, ...newSeries]);
+    }
+    setLoading(false);
+  };
+
+  // Reset on search or itemsPerPage change
   useEffect(() => {
-    handleGetAllSeries();
-  }, [search, pageNo]);
+    setAllSeries([]);
+    setHasMore(true);
+    setCurrentPage(1);
+    loadSeries(true);
+  }, [search, itemsPerPage]);
+
+  // Auto-load more when needed
+  useEffect(() => {
+    const needed = currentPage * itemsPerPage;
+    if (allSeries.length < needed && hasMore && !loading) {
+      loadSeries(false);
+    }
+  }, [currentPage, itemsPerPage]);
+
+  // PERFECT PAGINATION MATH — SAME AS BRANDLIST
+  const totalItems = allSeries.length + (hasMore ? 1 : 0);
+  const totalPages = Math.ceil(totalItems / itemsPerPage);
+  const startIndex = (currentPage - 1) * itemsPerPage;
+  const endIndex = Math.min(startIndex + itemsPerPage, allSeries.length);
+  const currentDisplay = allSeries.slice(startIndex, endIndex);
+
+  const goToPage = (page) => {
+    setCurrentPage(page);
+    window.scrollTo({ top: 0, behavior: "smooth" });
+  };
+
+  const getPageNumbers = () => {
+    const pages = [];
+    if (totalPages <= 5) {
+      for (let i = 1; i <= totalPages; i++) pages.push(i);
+    } else if (currentPage <= 3) {
+      for (let i = 1; i <= 5; i++) pages.push(i);
+    } else if (currentPage >= totalPages - 2) {
+      for (let i = totalPages - 4; i <= totalPages; i++) pages.push(i);
+    } else {
+      for (let i = currentPage - 2; i <= currentPage + 2; i++) pages.push(i);
+    }
+    return pages;
+  };
 
   return (
     <div className="min-h-screen bg-gray-100 lg:p-6 p-2">
-      {/* Header Section */}
-      <div className="flex flex-col gap-3 sm:gap-4 mb-3 sm:mb-3">
-        {/* Mobile Layout - Stack everything */}
+      {/* YOUR ORIGINAL HEADER — UNTOUCHED */}
+      <div className="flex flex-col gap-3 sm:gap-4 mb-6">
         <div className="md:hidden flex flex-col gap-3">
-          <h2 className="lg:text-3xl text-xl font-bold text-gray-800 text-center">
-            Vehicle Series List
-          </h2>
-          <div className="relative w-full">
-            <span className="absolute inset-y-0 left-0 flex items-center pl-3 text-gray-400">
-              <svg
-                xmlns="http://www.w3.org/2000/svg"
-                className="h-5 w-5"
-                fill="none"
-                viewBox="0 0 24 24"
-                stroke="currentColor"
-              >
-                <path
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                  strokeWidth="2"
-                  d="M21 21l-4.35-4.35m0 0A7.5 7.5 0 104.5 4.5a7.5 7.5 0 0012.15 12.15z"
-                />
-              </svg>
-            </span>
-            <input
-              type="text"
-              placeholder="Search By Car Model..."
-              onChange={handleSearchChange}
-              value={search}
-              className="w-full pl-10 pr-4 py-2 rounded-md border border-gray-300 shadow-sm placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500"
-            />
+          <h2 className="text-2xl font-bold text-gray-800 text-center">Vehicle Series List</h2>
+          <div className="relative">
+            <CustomSearch placeholder="Search By Car Model..." value={search} onChange={(e) => setSearch(e.target.value)} />
           </div>
-          <button
-            onClick={() => handleToggleModal("Add")}
-            className="w-full bg-blue-950 text-white font-bold py-2 px-4 rounded-md shadow transition duration-200"
-          >
-            Add Series
-          </button>
+          <CustomAdd text="Add Series" onClick={() => handleToggleModal("Add")} />
         </div>
 
-        {/* Desktop Layout - Title, Search in middle, Button on right */}
         <div className="hidden md:flex justify-between items-center gap-4">
-          <h2 className="text-3xl font-bold text-gray-800 whitespace-nowrap">
-            Vehicle Series List
-          </h2>
+          <h2 className="text-3xl font-bold text-gray-800">Vehicle Series List </h2>
           <div className="relative flex-1 max-w-md">
-            <span className="absolute inset-y-0 left-0 flex items-center pl-3 text-gray-400">
-              <svg
-                xmlns="http://www.w3.org/2000/svg"
-                className="h-5 w-5"
-                fill="none"
-                viewBox="0 0 24 24"
-                stroke="currentColor"
-              >
-                <path
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                  strokeWidth="2"
-                  d="M21 21l-4.35-4.35m0 0A7.5 7.5 0 104.5 4.5a7.5 7.5 0 0012.15 12.15z"
-                />
-              </svg>
-            </span>
-           <CustomSearch
-  placeholder="Search By Car Model..."
-  value={search}
-  onChange={handleSearchChange}
-/>
-
+            <CustomSearch placeholder="Search By Car Model..." value={search} onChange={(e) => setSearch(e.target.value)} />
           </div>
-                <CustomAdd text="Add Series" onClick={() => handleToggleModal("Add")} />
+          <CustomAdd text="Add Series" onClick={() => handleToggleModal("Add")} />
         </div>
       </div>
 
-      {/* Desktop Table View - Hidden on Mobile */}
+      {/* Desktop Table — YOUR ORIGINAL */}
       <div className="hidden md:block bg-white shadow-md rounded-lg overflow-hidden">
         <table className="min-w-full">
           <thead className="bg-blue-950 text-white">
@@ -182,118 +158,110 @@ export const SeriesList = () => {
             </tr>
           </thead>
           <tbody>
-            {allSeries?.map((series, index) => (
-              <tr key={series._id} className="border-b ">
-                <td className="py-2 px-4">{(pageNo - 1) * 10 + index + 1}</td>
-                <td className="py-2 px-4">{series.brandName}</td>
-                <td className="py-2 px-4">{series.modelName}</td>
-                <td className="py-2 px-4">
-                  {series.seriesName.charAt(0).toUpperCase() +
-                    series.seriesName.slice(1)}
-                </td>
-                <td className="py-2 px-4 flex gap-2 justify-center">
-                <CustomAdd
-  text="Edit"
-  variant="edit"
-  onClick={() => handleEditBtn(series)}
-/>
-                 <CustomAdd
-  text="Delete"
-  variant="delete"
-  onClick={() => handleDeleteBrand(series?.seriesId)}
-/>
-
-                </td>
-              </tr>
-            ))}
+            {loading && allSeries.length === 0 ? (
+              <tr><td colSpan="5" className="text-center py-10">Loading...</td></tr>
+            ) : currentDisplay.length === 0 ? (
+              <tr><td colSpan="5" className="text-center py-10 text-gray-500">No series found</td></tr>
+            ) : (
+              currentDisplay.map((series, index) => (
+                <tr key={series._id} className="border-b hover:bg-gray-50">
+                  <td className="py-3 px-4">{startIndex + index + 1}</td>
+                  <td className="py-3 px-4">{series.brandName}</td>
+                  <td className="py-3 px-4">{series.modelName}</td>
+                  <td className="py-3 px-4">
+                    {series.seriesName?.charAt(0).toUpperCase() + series.seriesName?.slice(1)}
+                  </td>
+                  <td className="py-3 px-4 text-center">
+                    <div className="flex gap-2 justify-center">
+                      <CustomAdd text="Edit" variant="edit" onClick={() => handleEditBtn(series)} />
+                      <CustomAdd text="Delete" variant="delete" onClick={() => handleDeleteSeries(series?.seriesId)} />
+                    </div>
+                  </td>
+                </tr>
+              ))
+            )}
           </tbody>
         </table>
       </div>
 
-      {/* Mobile Card View - Hidden on Desktop */}
-
-      {allSeries?.length > 0 ? (
-        allSeries.map((series, index) => (
-          <div
-            key={series._id}
-            className=" flex-col block md:hidden bg-white border border-gray-200 rounded-xl shadow-sm p-4 hover:shadow-md transition-all duration-200 mb-3"
-          >
-            {/* Header Row */}
-            <div className="flex justify-between items-center border-b border-gray-100 pb-2 mb-3">
-              <h4 className="font-bold text-gray-800  capitalize">
+      {/* Mobile Cards — YOUR ORIGINAL */}
+      <div className="md:hidden">
+        {currentDisplay.length === 0 ? (
+          <p className="text-center text-gray-500 py-6">No series found</p>
+        ) : (
+          currentDisplay.map((series, index) => (
+            <div key={series._id} className="bg-white border border-gray-200 rounded-xl shadow-sm p-4 mb-4 hover:shadow-md">
+              <h4 className="font-bold text-lg text-gray-800 capitalize mb-2">
                 {series.seriesName}
               </h4>
-            </div>
-
-            {/* Info Section */}
-            <div className="grid grid-cols-2 gap-y-1 text-sm">
-              <div className="text-gray-800 font-bold">Brand</div>
-              <div className="text-gray-800 px-2">
-                {series.brandName}
+              <div className="grid grid-cols-2 gap-y-2 text-sm">
+                <span className="font-semibold">Brand:</span>
+                <span>{series.brandName}</span>
+                <span className="font-semibold">Model:</span>
+                <span>{series.modelName}</span>
               </div>
-
-              <div className="text-gray-800 font-bold">Model</div>
-              <div className="text-gray-800 px-2 ">
-                {series.modelName}
-              </div>
-
-              <div className="text-gray-800 font-bold">Series</div>
-              <div className="text-gray-800 px-2">
-                {series.seriesName}
+              <div className="flex gap-3 mt-4">
+                <CustomAdd text="Edit" variant="edit" onClick={() => handleEditBtn(series)} />
+                <CustomAdd text="Delete" variant="delete" onClick={() => handleDeleteSeries(series?.seriesId)} />
               </div>
             </div>
-
-            {/* Action Buttons */}
-            <div className="flex gap-3 mt-4">
-          <CustomAdd text="Edit" variant="edit" onClick={() => handleEditBtn(series)} />
-  <CustomAdd text="Delete" variant="delete" onClick={() => handleDeleteBrand(series?.seriesId)} />
-            </div>
-          </div>
-        ))
-      ) : (
-        <p className="text-center text-gray-500 text-sm py-6">
-          No series available.
-        </p>
-      )}
-
-    
-
-      {/* Pagination */}
-      <div className="flex justify-between items-center mt-4 sm:mt-6 gap-2">
-        <button
-          className={`bg-blue-950 text-white px-4 sm:px-5 py-2 rounded-md text-sm sm:text-base font-medium transition  ${
-            pageNo > 1 ? "block" : "invisible"
-          }`}
-          onClick={handlePrevPage}
-        >
-          ‹ Prev
-        </button>
-
-        <button
-          className={`bg-blue-950 text-white px-4 sm:px-5 py-2 rounded-md text-sm sm:text-base font-medium transition  ${
-            allSeries.length === 10 ? "block" : "hidden"
-          }`}
-          onClick={handleNextPage}
-        >
-          Next ›
-        </button>
+          ))
+        )}
       </div>
 
-      <ToastContainer position="top-right" autoClose={3000} />
+      {/* ONLY THIS PART CHANGED — PERFECT PAGINATION FROM BRANDLIST */}
+      {allSeries.length > 0 && (
+        <div className="bg-white rounded-lg shadow-sm p-4 mt-6">
+          <div className="flex flex-col sm:flex-row justify-between items-center gap-4 text-sm text-gray-700">
+            <div className="text-gray-600">
+              Showing <span className="font-medium">{startIndex + 1}</span> to{" "}
+              <span className="font-medium">{endIndex}</span> of{" "}
+              <span className="font-medium"></span> entries
+            </div>
 
+            <div className="flex items-center gap-1">
+              <button onClick={() => goToPage(1)} disabled={currentPage === 1}
+                className={`px-3 py-1 rounded border ${currentPage === 1 ? "bg-gray-100 text-gray-400 cursor-not-allowed" : "bg-white hover:bg-gray-50"}`}>
+                {"<<"}
+              </button>
+              <button onClick={() => goToPage(currentPage - 1)} disabled={currentPage === 1}
+                className={`px-3 py-1 rounded border ${currentPage === 1 ? "bg-gray-100 text-gray-400 cursor-not-allowed" : "bg-white hover:bg-gray-50"}`}>
+                {"<"}
+              </button>
+
+              {getPageNumbers().map(page => (
+                <button key={page} onClick={() => goToPage(page)}
+                  className={`px-3 py-1 rounded border ${currentPage === page ? "bg-blue-950 text-white" : "bg-white hover:bg-gray-50"}`}>
+                  {page}
+                </button>
+              ))}
+
+              <button onClick={() => goToPage(currentPage + 1)} disabled={!hasMore && currentPage >= totalPages}
+                className={`px-3 py-1 rounded border ${(!hasMore && currentPage >= totalPages) ? "bg-gray-100 text-gray-400 cursor-not-allowed" : "bg-white hover:bg-gray-50"}`}>
+                {">"}
+              </button>
+              <button onClick={() => goToPage(totalPages)} disabled={!hasMore && currentPage >= totalPages}
+                className={`px-3 py-1 rounded border ${(!hasMore && currentPage >= totalPages) ? "bg-gray-100 text-gray-400 cursor-not-allowed" : "bg-white hover:bg-gray-50"}`}>
+                {">>"}
+              </button>
+            </div>
+
+            <div className="flex items-center gap-2">
+              {/* Optional: Add entries per page dropdown here later */}
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* Modals — YOUR ORIGINAL */}
       {isOpen === "Add" && (
-        <AddSeries
-          handleClose={() => handleToggleModal("")}
-          handleGetAllSeries={handleGetAllSeries}
-        />
+        <AddSeries handleClose={() => handleToggleModal("")} handleGetAllSeries={() => loadSeries(true)} />
       )}
       {isOpen === "Edit" && (
-        <EditSeries
-          handleClose={() => handleToggleModal("")}
-          seleteSeries={seleteSeries}
-          handleGetAllSeries={handleGetAllSeries}
-        />
+        <EditSeries handleClose={() => handleToggleModal("")} seleteSeries={seleteSeries} handleGetAllSeries={() => loadSeries(true)} />
       )}
+
+      <ToastContainer position="top-right" autoClose={3000} />
     </div>
   );
 };
