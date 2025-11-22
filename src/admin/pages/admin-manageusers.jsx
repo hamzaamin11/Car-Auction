@@ -25,7 +25,9 @@ export default function ManageUsers() {
   const [filteredUsers, setFilteredUsers] = useState([]);
   const [search, setSearch] = useState("");
   const [loading, setLoading] = useState(false);
+  const [totals, setTotals] = useState({});
 
+  console.log("totals =>>>", totals);
   const debouncedSearch = useCallback(
     debounce((value) => {
       setSearch(value);
@@ -63,6 +65,15 @@ export default function ManageUsers() {
     }
   };
 
+  const handleTotalUsers = async () => {
+    try {
+      const res = await axios.get(`${BASE_URL}/customer/totalBuyers`);
+      setTotals(res.data);
+    } catch (error) {
+      console.log(error);
+    }
+  };
+
   // Handle user edit (called from EditUserModal)
   const handleUserUpdated = (updatedUser) => {
     setGetUsers((prevUsers) =>
@@ -89,6 +100,10 @@ export default function ManageUsers() {
   useEffect(() => {
     getAllUsers();
   }, [pageNo]);
+
+  useEffect(() => {
+    handleTotalUsers();
+  }, []);
 
   useEffect(() => {
     const filtered = getUsers.filter((user) =>
@@ -154,14 +169,25 @@ export default function ManageUsers() {
               />
             </svg>
           </span>
-             <CustomSearch
-  placeholder="Search by Role..."
-  value={search}
-  onChange={(e) => {
-    setSearch(e.target.value);
-    debouncedSearch(e.target.value);
-  }}
-/>
+          <CustomSearch
+            placeholder="Search by Role..."
+            value={search}
+            onChange={(e) => {
+              setSearch(e.target.value);
+              debouncedSearch(e.target.value);
+            }}
+          />
+        </div>
+      </div>
+
+      <div className="flex gap-2 text-2xl text-gray-800 font-semibold">
+        <div>
+          Total Customers:
+          <span>{totals?.totalCustomers}</span>
+        </div> |
+        <div>
+          Total Seller:
+          <span>{totals?.totalSellers}</span>
         </div>
       </div>
 
@@ -180,10 +206,7 @@ export default function ManageUsers() {
             </thead>
             <tbody className="divide-y divide-gray-100 bg-white">
               {filteredUsers.map((user) => (
-                <tr
-                  key={user.id}
-                  className=""
-                >
+                <tr key={user.id} className="">
                   <td className="px-6 ">
                     <div className="flex items-center gap-3">
                       <UserImage user={user} size="md" />
@@ -214,27 +237,26 @@ export default function ManageUsers() {
                     </span>
                   </td>
                   <td className="px-6 py-4 flex items-center justify-center gap-2">
-                  <CustomAdd
-  text="Edit"
-  variant="edit"
-  onClick={() => {
-    setSelectedUser(user);
-    setIsModalOpen(true);
-  }}
-/>
+                    <CustomAdd
+                      text="Edit"
+                      variant="edit"
+                      onClick={() => {
+                        setSelectedUser(user);
+                        setIsModalOpen(true);
+                      }}
+                    />
 
-<CustomAdd
-  text="View"
-  variant="view"
-  onClick={() => handleView(user)}
-/>
+                    <CustomAdd
+                      text="View"
+                      variant="view"
+                      onClick={() => handleView(user)}
+                    />
 
-<CustomAdd
-  text="Delete"
-  variant="delete"
-  onClick={() => handleDeleteUser(user.id)}
-/>
-
+                    <CustomAdd
+                      text="Delete"
+                      variant="delete"
+                      onClick={() => handleDeleteUser(user.id)}
+                    />
                   </td>
                 </tr>
               ))}
@@ -280,29 +302,29 @@ export default function ManageUsers() {
               </p>
             </div>
             <div className="flex gap-2">
-            <CustomAdd
-    text="Edit"
-    variant="edit"
-    onClick={() => {
-      setSelectedUser(user);
-      setIsModalOpen(true);
-    }}
-    className="flex-1"
-  />
+              <CustomAdd
+                text="Edit"
+                variant="edit"
+                onClick={() => {
+                  setSelectedUser(user);
+                  setIsModalOpen(true);
+                }}
+                className="flex-1"
+              />
 
-  <CustomAdd
-    text="View"
-    variant="view"
-    onClick={() => handleView(user)}
-    className="flex-1"
-  />
+              <CustomAdd
+                text="View"
+                variant="view"
+                onClick={() => handleView(user)}
+                className="flex-1"
+              />
 
-  <CustomAdd
-    text="Delete"
-    variant="delete"
-    onClick={() => handleDeleteUser(user.id)}
-    className="flex-1"
-  />
+              <CustomAdd
+                text="Delete"
+                variant="delete"
+                onClick={() => handleDeleteUser(user.id)}
+                className="flex-1"
+              />
             </div>
           </div>
         ))}

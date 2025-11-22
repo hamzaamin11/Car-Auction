@@ -167,7 +167,7 @@ const MyBids = () => {
 
           {/* Pagination */}
           {allBiders.length > 0 && (
-            <div className="flex justify-center items-center gap-4 p-4 border-t border-gray-200">
+            <div className="flex justify-center items-center gap-4 p-4 border-t border-gray-200 my-10">
               {currentPage > 1 && (
                 <button
                   onClick={handlePrevPage}

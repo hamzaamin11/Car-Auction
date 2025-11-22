@@ -98,6 +98,7 @@ function AddAdminVehicle({ open, setOpen, onVehicleUpdated }) {
   const [selectedCount, setSelectedCount] = useState(0);
   const [price, setPrice] = useState("");
   const [showModal, setShowModal] = useState(false);
+  const [totalVehicles, setTotalVehicles] = useState([]);
 
   const dispatch = useDispatch();
 
@@ -219,6 +220,16 @@ function AddAdminVehicle({ open, setOpen, onVehicleUpdated }) {
     } catch (error) {
       console.log(error);
       setLoading(false);
+    }
+  };
+
+  const handleTotalVehicles = async () => {
+    try {
+      const res = await axios.get(`${BASE_URL}/getApprovedVehicles`);
+      console.log(res.data);
+      setTotalVehicles(res.data);
+    } catch (error) {
+      console.log(error);
     }
   };
 
@@ -415,6 +426,7 @@ function AddAdminVehicle({ open, setOpen, onVehicleUpdated }) {
 
   useEffect(() => {
     handleGetAllCities();
+    handleTotalVehicles();
   }, []);
 
   useEffect(() => {
@@ -427,6 +439,7 @@ function AddAdminVehicle({ open, setOpen, onVehicleUpdated }) {
         <h2 className="lg:text-3xl text-xl font-bold text-gray-800 ">
           Vehicle List
         </h2>
+
         <div className="relative w-full max-w-md">
           <span className="absolute inset-y-0 left-0 flex items-center pl-3 text-gray-400">
             <svg
@@ -463,6 +476,9 @@ function AddAdminVehicle({ open, setOpen, onVehicleUpdated }) {
             setSelectedCount(0);
           }}
         />
+      </div>
+      <div className="text-gray-800 mb-2 font-semibold text-2xl">
+        Total Approval Vehicles:{totalVehicles.length}
       </div>
 
       {showModal && (
@@ -813,7 +829,7 @@ function AddAdminVehicle({ open, setOpen, onVehicleUpdated }) {
       )}
 
       {/* Vehicle List */}
-      <div className="max-w-7xl mx-auto space-y-4 px-2 sm:px-4">
+      <div className="max-w-7xl mx-auto space-y-4 px-2 lg:px-0">
         {filteredVehicles?.length > 0 ? (
           filteredVehicles.map((vehicle, index) => (
             <div

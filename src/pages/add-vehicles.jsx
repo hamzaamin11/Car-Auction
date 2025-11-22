@@ -55,31 +55,22 @@ const carColors = [
 
 /* ---------- Dropdown Option Arrays ---------- */
 const driveTypeOptions = [
-  
   { label: "FWD (Front-Wheel Drive)", value: "fwd" },
   { label: "RWD (Rear-Wheel Drive)", value: "rwd" },
   { label: "AWD (All-Wheel Drive)", value: "awd" },
   { label: "4WD (Four-Wheel Drive)", value: "4wd" },
 ];
 
-const bodyStyleOptions = [
-  
-  ...bodyStyles.map((b) => ({ label: b, value: b })),
-];
+const bodyStyleOptions = [...bodyStyles.map((b) => ({ label: b, value: b }))];
 
 const transmissionOptions = [
- 
   { label: "Automatic", value: "Automatic" },
   { label: "Manual", value: "Manual" },
 ];
 
-const colorOptions = [
- 
-  ...carColors.map((c) => ({ label: c, value: c })),
-];
+const colorOptions = [...carColors.map((c) => ({ label: c, value: c }))];
 
 const fuelTypeOptions = [
-  
   { label: "Petrol", value: "petrol" },
   { label: "Diesel", value: "diesel" },
   { label: "CNG (Compressed Natural Gas)", value: "cng" },
@@ -89,13 +80,11 @@ const fuelTypeOptions = [
 ];
 
 const conditionOptions = [
- 
   { label: "New", value: "new" },
   { label: "Used", value: "used" },
 ];
 
 const certifyOptions = [
- 
   { label: "Certified", value: "Certified" },
   { label: "Non-Certified", value: "Non-Certified" },
 ];
@@ -171,6 +160,8 @@ const AddVehicles = () => {
   const [errorMsg, setErrorMsg] = useState("");
   const [successMsg, setSuccessMsg] = useState("");
   const [pageNo, setPageNo] = useState(1);
+  const [currentPage, setCurrentPage] = useState(1);
+  const [carsPerPage, setCarsPerPage] = useState(10);
   const [allCities, setAllCities] = useState([]);
   const dispatch = useDispatch();
   const [selectedCount, setSelectedCount] = useState(0);
@@ -321,6 +312,25 @@ const AddVehicles = () => {
     setPageNo(pageNo + 1);
   };
 
+  const totalPages = Math.ceil(allVehicles.length / carsPerPage);
+  const startIndex = (currentPage - 1) * carsPerPage;
+  const endIndex = Math.min(startIndex + carsPerPage, allVehicles.length);
+  const currentCars = allVehicles.slice(startIndex, endIndex);
+
+  const goToNextPage = () => {
+    if (currentPage < totalPages) {
+      setCurrentPage((prev) => prev + 1);
+      window.scrollTo({ top: 0, behavior: "smooth" });
+    }
+  };
+
+  const goToPrevPage = () => {
+    if (currentPage > 1) {
+      setCurrentPage((prev) => prev - 1);
+      window.scrollTo({ top: 0, behavior: "smooth" });
+    }
+  };
+
   const handlePrevPage = () => {
     setPageNo(pageNo > 1 ? pageNo - 1 : 0);
   };
@@ -338,7 +348,9 @@ const AddVehicles = () => {
   const handleGetAllVehicleById = async () => {
     try {
       const res = await axios.get(
-        `${BASE_URL}/getVehiclesByUser/${currentUser?.id}?search=${search}&Entry=${10}&page=${pageNo}`
+        `${BASE_URL}/getVehiclesByUser/${
+          currentUser?.id
+        }?search=${search}&Entry=${10}&page=${pageNo}`
       );
       setAllVehicles(res.data);
     } catch (error) {
@@ -587,7 +599,6 @@ const AddVehicles = () => {
   };
 
   const cityData = [
-  
     ...(allCities?.map((city) => ({
       label: city.cityName,
       value: city.id,
@@ -731,15 +742,19 @@ const AddVehicles = () => {
                   <label className="block text-sm font-medium text-gray-700 mb-1">
                     City <span className="text-red-500">*</span>
                   </label>
-                <Dropdown
-  options={cityData}
-  value={cityData.find(
-    (option) => String(option.value) === String(vehicleData?.locationId)
-  ) || null}
-  onChange={(option) => handleSearchable(option)}
-  placeholder="Select City...."
-  className="w-full"
-/>
+                  <Dropdown
+                    options={cityData}
+                    value={
+                      cityData.find(
+                        (option) =>
+                          String(option.value) ===
+                          String(vehicleData?.locationId)
+                      ) || null
+                    }
+                    onChange={(option) => handleSearchable(option)}
+                    placeholder="Select City...."
+                    className="w-full"
+                  />
                   <div>
                     <label className="block text-sm font-medium text-gray-700 my-1">
                       Car Info <span className="text-red-500">*</span>
@@ -775,10 +790,23 @@ const AddVehicles = () => {
                     </label>
                     <Dropdown
                       options={driveTypeOptions}
-                      value={driveTypeOptions.find(o => o.value === vehicleData.driveType) || null}
-                      onChange={(opt) => setVehicleData(p => ({ ...p, driveType: opt?.value || "" }))}
+                      value={
+                        driveTypeOptions.find(
+                          (o) => o.value === vehicleData.driveType
+                        ) || null
+                      }
+                      onChange={(opt) =>
+                        setVehicleData((p) => ({
+                          ...p,
+                          driveType: opt?.value || "",
+                        }))
+                      }
                       placeholder="Select Drive Type"
-                      className={vehicleData.driveType ? "text-gray-900" : "text-gray-400"}
+                      className={
+                        vehicleData.driveType
+                          ? "text-gray-900"
+                          : "text-gray-400"
+                      }
                     />
                   </div>
                   <div>
@@ -787,10 +815,23 @@ const AddVehicles = () => {
                     </label>
                     <Dropdown
                       options={bodyStyleOptions}
-                      value={bodyStyleOptions.find(o => o.value === vehicleData.bodyStyle) || null}
-                      onChange={(opt) => setVehicleData(p => ({ ...p, bodyStyle: opt?.value || "" }))}
+                      value={
+                        bodyStyleOptions.find(
+                          (o) => o.value === vehicleData.bodyStyle
+                        ) || null
+                      }
+                      onChange={(opt) =>
+                        setVehicleData((p) => ({
+                          ...p,
+                          bodyStyle: opt?.value || "",
+                        }))
+                      }
                       placeholder="Please Select BodyStyle"
-                      className={vehicleData.bodyStyle ? "text-gray-900" : "text-gray-400"}
+                      className={
+                        vehicleData.bodyStyle
+                          ? "text-gray-900"
+                          : "text-gray-400"
+                      }
                     />
                   </div>
                   <div>
@@ -800,10 +841,23 @@ const AddVehicles = () => {
                     </label>
                     <Dropdown
                       options={transmissionOptions}
-                      value={transmissionOptions.find(o => o.value === vehicleData.transmission) || null}
-                      onChange={(opt) => setVehicleData(p => ({ ...p, transmission: opt?.value || "" }))}
+                      value={
+                        transmissionOptions.find(
+                          (o) => o.value === vehicleData.transmission
+                        ) || null
+                      }
+                      onChange={(opt) =>
+                        setVehicleData((p) => ({
+                          ...p,
+                          transmission: opt?.value || "",
+                        }))
+                      }
                       placeholder="Please Select Transmission Type"
-                      className={vehicleData.transmission ? "text-gray-900" : "text-gray-400"}
+                      className={
+                        vehicleData.transmission
+                          ? "text-gray-900"
+                          : "text-gray-400"
+                      }
                     />
                   </div>
                   <div>
@@ -830,10 +884,21 @@ const AddVehicles = () => {
                     </label>
                     <Dropdown
                       options={colorOptions}
-                      value={colorOptions.find(o => o.value === vehicleData.color) || null}
-                      onChange={(opt) => setVehicleData(p => ({ ...p, color: opt?.value || "" }))}
+                      value={
+                        colorOptions.find(
+                          (o) => o.value === vehicleData.color
+                        ) || null
+                      }
+                      onChange={(opt) =>
+                        setVehicleData((p) => ({
+                          ...p,
+                          color: opt?.value || "",
+                        }))
+                      }
                       placeholder="Please Select Color"
-                      className={vehicleData.color ? "text-gray-900" : "text-gray-400"}
+                      className={
+                        vehicleData.color ? "text-gray-900" : "text-gray-400"
+                      }
                     />
                   </div>
                   <div>
@@ -842,10 +907,21 @@ const AddVehicles = () => {
                     </label>
                     <Dropdown
                       options={fuelTypeOptions}
-                      value={fuelTypeOptions.find(o => o.value === vehicleData.fuelType) || null}
-                      onChange={(opt) => setVehicleData(p => ({ ...p, fuelType: opt?.value || "" }))}
+                      value={
+                        fuelTypeOptions.find(
+                          (o) => o.value === vehicleData.fuelType
+                        ) || null
+                      }
+                      onChange={(opt) =>
+                        setVehicleData((p) => ({
+                          ...p,
+                          fuelType: opt?.value || "",
+                        }))
+                      }
                       placeholder="Select Fuel Type"
-                      className={vehicleData.fuelType ? "text-gray-900" : "text-gray-400"}
+                      className={
+                        vehicleData.fuelType ? "text-gray-900" : "text-gray-400"
+                      }
                     />
                   </div>
                   <div>
@@ -854,10 +930,23 @@ const AddVehicles = () => {
                     </label>
                     <Dropdown
                       options={conditionOptions}
-                      value={conditionOptions.find(o => o.value === vehicleData.vehicleCondition) || null}
-                      onChange={(opt) => setVehicleData(p => ({ ...p, vehicleCondition: opt?.value || "" }))}
+                      value={
+                        conditionOptions.find(
+                          (o) => o.value === vehicleData.vehicleCondition
+                        ) || null
+                      }
+                      onChange={(opt) =>
+                        setVehicleData((p) => ({
+                          ...p,
+                          vehicleCondition: opt?.value || "",
+                        }))
+                      }
                       placeholder="Select Vehicle Condition"
-                      className={vehicleData.vehicleCondition ? "text-gray-900" : "text-gray-400"}
+                      className={
+                        vehicleData.vehicleCondition
+                          ? "text-gray-900"
+                          : "text-gray-400"
+                      }
                     />
                   </div>
                   <div>
@@ -885,10 +974,23 @@ const AddVehicles = () => {
                   </label>
                   <Dropdown
                     options={certifyOptions}
-                    value={certifyOptions.find(o => o.value === vehicleData.certifyStatus) || null}
-                    onChange={(opt) => setVehicleData(p => ({ ...p, certifyStatus: opt?.value || "" }))}
+                    value={
+                      certifyOptions.find(
+                        (o) => o.value === vehicleData.certifyStatus
+                      ) || null
+                    }
+                    onChange={(opt) =>
+                      setVehicleData((p) => ({
+                        ...p,
+                        certifyStatus: opt?.value || "",
+                      }))
+                    }
                     placeholder="Please Select Certification Status"
-                    className={vehicleData.certifyStatus ? "text-gray-900" : "text-gray-400"}
+                    className={
+                      vehicleData.certifyStatus
+                        ? "text-gray-900"
+                        : "text-gray-400"
+                    }
                   />
                 </div>
                 <div className="col-span-1 sm:col-span-2 mt-4">
@@ -944,7 +1046,6 @@ const AddVehicles = () => {
                         />
                       </label>
                     </div>
-                 
                   </div>
                   <div className="flex justify-center">
                     <button
@@ -974,10 +1075,10 @@ const AddVehicles = () => {
             <p className="text-center text-indigo-600 font-semibold">
               Loading vehicles...
             </p>
-          ) : allVehicles.length === 0 ? (
+          ) : currentCars.length === 0 ? (
             <p className="text-center text-gray-600">No vehicles found.</p>
           ) : (
-            allVehicles?.map((vehicle) => (
+            currentCars?.map((vehicle) => (
               <div
                 key={vehicle.newVehicleId}
                 className="bg-white border rounded-xl shadow-sm hover:shadow-md transition p-2 flex items-center justify-between gap-4"
@@ -1096,6 +1197,140 @@ const AddVehicles = () => {
               </div>
             ))
           )}
+          {currentCars.length > 0 && (
+            <div className="bg-white rounded-lg shadow-sm p-4 mt-6">
+              <div className="flex flex-col sm:flex-row justify-between items-center gap-4 text-sm text-gray-700">
+                {/* Page Buttons */}
+                <div className="flex items-center gap-1 flex-wrap justify-center">
+                  {/* First Page */}
+                  <button
+                    onClick={() => {
+                      setCurrentPage(1);
+                      window.scrollTo({ top: 0, behavior: "smooth" });
+                    }}
+                    disabled={currentPage === 1}
+                    className={`px-2 py-1 rounded border text-xs sm:text-sm ${
+                      currentPage === 1
+                        ? "bg-gray-100 text-gray-400 cursor-not-allowed"
+                        : "bg-white text-gray-700 hover:bg-gray-50"
+                    }`}
+                  >
+                    {"<<"}
+                  </button>
+
+                  {/* Prev */}
+                  <button
+                    onClick={goToPrevPage}
+                    disabled={currentPage === 1}
+                    className={`px-2 py-1 rounded border text-xs sm:text-sm ${
+                      currentPage === 1
+                        ? "bg-gray-100 text-gray-400 cursor-not-allowed"
+                        : "bg-white text-gray-700 hover:bg-gray-50"
+                    }`}
+                  >
+                    {"<"}
+                  </button>
+
+                  {/* Page Numbers */}
+                  {Array.from(
+                    {
+                      length: Math.min(
+                        window.innerWidth < 640 ? 3 : 5,
+                        totalPages
+                      ),
+                    },
+                    (_, i) => {
+                      let pageNum;
+
+                      if (totalPages <= 5) pageNum = i + 1;
+                      else if (currentPage <= 2) pageNum = i + 1;
+                      else if (currentPage >= totalPages - 1)
+                        pageNum =
+                          totalPages - (window.innerWidth < 640 ? 2 : 4) + i;
+                      else pageNum = currentPage - 1 + i;
+
+                      return (
+                        <button
+                          key={pageNum}
+                          onClick={() => {
+                            setCurrentPage(pageNum);
+                            window.scrollTo({ top: 0, behavior: "smooth" });
+                          }}
+                          className={`px-2 py-1 rounded border text-xs sm:text-sm ${
+                            currentPage === pageNum
+                              ? "bg-blue-950 text-white"
+                              : "bg-white text-gray-700 hover:bg-gray-50"
+                          }`}
+                        >
+                          {pageNum}
+                        </button>
+                      );
+                    }
+                  )}
+
+                  {/* Next */}
+                  <button
+                    onClick={goToNextPage}
+                    disabled={currentPage === totalPages}
+                    className={`px-2 py-1 rounded border text-xs sm:text-sm ${
+                      currentPage === totalPages
+                        ? "bg-gray-100 text-gray-400 cursor-not-allowed"
+                        : "bg-white text-gray-700 hover:bg-gray-50"
+                    }`}
+                  >
+                    {">"}
+                  </button>
+
+                  {/* Last Page */}
+                  <button
+                    onClick={() => {
+                      setCurrentPage(totalPages);
+                      window.scrollTo({ top: 0, behavior: "smooth" });
+                    }}
+                    disabled={currentPage === totalPages}
+                    className={`px-2 py-1 rounded border text-xs sm:text-sm ${
+                      currentPage === totalPages
+                        ? "bg-gray-100 text-gray-400 cursor-not-allowed"
+                        : "bg-white text-gray-700 hover:bg-gray-50"
+                    }`}
+                  >
+                    {">>"}
+                  </button>
+                </div>
+
+                {/* Show entries */}
+                <div className="flex items-center gap-2 text-xs sm:text-sm">
+                  <span className="text-gray-600">Show</span>
+
+                  <select
+                    value={carsPerPage}
+                    onChange={(e) => {
+                      setCarsPerPage(Number(e.target.value));
+                      setCurrentPage(1);
+                    }}
+                    className="border rounded px-2 py-1 text-xs sm:text-sm focus:outline-none focus:ring-2 focus:ring-blue-900"
+                  >
+                    {[10, 20, 50, 100].map((size) => (
+                      <option key={size} value={size}>
+                        {size}
+                      </option>
+                    ))}
+                  </select>
+
+                  <span className="text-gray-600">entries</span>
+                </div>
+                {/* Showing X to Y of Z */}
+                <div className="text-gray-600 text-center sm:text-left">
+                  Showing{" "}
+                  <span className="font-medium">
+                    {startIndex + 1} to {endIndex}
+                  </span>{" "}
+                  of <span className="font-medium">{allVehicles.length}</span>{" "}
+                  entries
+                </div>
+              </div>
+            </div>
+          )}
         </section>
 
         <section
@@ -1106,10 +1341,10 @@ const AddVehicles = () => {
             <p className="text-center text-indigo-600 font-semibold">
               Loading vehicles...
             </p>
-          ) : allVehicles.length === 0 ? (
+          ) : currentCars.length === 0 ? (
             <p className="text-center text-gray-600">No vehicles found.</p>
           ) : (
-            allVehicles?.map((vehicle) => (
+            currentCars?.map((vehicle) => (
               <div
                 key={vehicle.newVehicleId}
                 className="bg-white border rounded-xl shadow-sm hover:shadow-md transition p-4 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4"
@@ -1232,25 +1467,125 @@ const AddVehicles = () => {
               </div>
             ))
           )}
-          <div className="flex justify-between mt-6 px-2 sm:px-4">
-            <button
-              className={`bg-blue-950 text-white px-5 py-2 rounded ${
-                pageNo > 1 ? "block" : "hidden"
-              }`}
-              onClick={handlePrevPage}
-            >
-              Prev
-            </button>
-            <div></div>
-            <button
-              className={`bg-blue-950 text-white px-5 py-2 rounded ${
-                allVehicles.length === 10 ? "block" : "hidden"
-              }`}
-              onClick={handleNextPage}
-            >
-              Next
-            </button>
-          </div>
+          {/* ✅ Pagination OUTSIDE the map */}
+          {currentCars.length > 0 && (
+            <div className="bg-white rounded-lg shadow-sm p-4 mt-6">
+              <div className="flex flex-col sm:flex-row justify-between items-center gap-4 text-sm text-gray-700">
+                {/* Showing X to Y of Z */}
+                <div className="text-gray-600">
+                  Showing{" "}
+                  <span className="font-medium">
+                    {startIndex + 1} to {endIndex}
+                  </span>{" "}
+                  of <span className="font-medium">{allVehicles.length}</span>{" "}
+                  entries
+                </div>
+
+                {/* Page Buttons */}
+                <div className="flex items-center gap-1">
+                  <button
+                    onClick={() => {
+                      setCurrentPage(1);
+                      window.scrollTo({ top: 0, behavior: "smooth" });
+                    }}
+                    disabled={currentPage === 1}
+                    className={`px-3 py-1 rounded border ${
+                      currentPage === 1
+                        ? "bg-gray-100 text-gray-400 cursor-not-allowed"
+                        : "bg-white text-gray-700 hover:bg-gray-50"
+                    }`}
+                  >
+                    {"<<"}
+                  </button>
+
+                  <button
+                    onClick={goToPrevPage}
+                    disabled={currentPage === 1}
+                    className={`px-3 py-1 rounded border ${
+                      currentPage === 1
+                        ? "bg-gray-100 text-gray-400 cursor-not-allowed"
+                        : "bg-white text-gray-700 hover:bg-gray-50"
+                    }`}
+                  >
+                    {"<"}
+                  </button>
+
+                  {Array.from({ length: Math.min(5, totalPages) }, (_, i) => {
+                    let pageNum;
+                    if (totalPages <= 5) pageNum = i + 1;
+                    else if (currentPage <= 3) pageNum = i + 1;
+                    else if (currentPage >= totalPages - 2)
+                      pageNum = totalPages - 4 + i;
+                    else pageNum = currentPage - 2 + i;
+
+                    return (
+                      <button
+                        key={pageNum}
+                        onClick={() => {
+                          setCurrentPage(pageNum);
+                          window.scrollTo({ top: 0, behavior: "smooth" });
+                        }}
+                        className={`px-3 py-1 rounded border ${
+                          currentPage === pageNum
+                            ? "bg-blue-950 text-white"
+                            : "bg-white text-gray-700 hover:bg-gray-50"
+                        }`}
+                      >
+                        {pageNum}
+                      </button>
+                    );
+                  })}
+
+                  <button
+                    onClick={goToNextPage}
+                    disabled={currentPage === totalPages}
+                    className={`px-3 py-1 rounded border ${
+                      currentPage === totalPages
+                        ? "bg-gray-100 text-gray-400 cursor-not-allowed"
+                        : "bg-white text-gray-700 hover:bg-gray-50"
+                    }`}
+                  >
+                    {">"}
+                  </button>
+
+                  <button
+                    onClick={() => {
+                      setCurrentPage(totalPages);
+                      window.scrollTo({ top: 0, behavior: "smooth" });
+                    }}
+                    disabled={currentPage === totalPages}
+                    className={`px-3 py-1 rounded border ${
+                      currentPage === totalPages
+                        ? "bg-gray-100 text-gray-400 cursor-not-allowed"
+                        : "bg-white text-gray-700 hover:bg-gray-50"
+                    }`}
+                  >
+                    {">>"}
+                  </button>
+                </div>
+
+                {/* Show entries */}
+                <div className="flex items-center gap-2">
+                  <span className="text-gray-600">Show</span>
+                  <select
+                    value={carsPerPage}
+                    onChange={(e) => {
+                      setCarsPerPage(Number(e.target.value));
+                      setCurrentPage(1);
+                    }}
+                    className="border rounded px-2 py-1 text-sm focus:outline-none focus:ring-2 focus:ring-blue-900"
+                  >
+                    {[10, 20, 50, 100].map((size) => (
+                      <option key={size} value={size}>
+                        {size}
+                      </option>
+                    ))}
+                  </select>
+                  <span className="text-gray-600">entries</span>
+                </div>
+              </div>
+            </div>
+          )}
         </section>
       </div>
       {isOpen === "View" && (
