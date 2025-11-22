@@ -601,12 +601,7 @@ export default function Topbar() {
               </div>
             </div>
 
-            <div className="bg-red-50 border border-red-200 rounded-md p-3 mb-2">
-              <p className="text-sm text-red-600">
-                Picture can be changed. Select an image to update your profile
-                picture
-              </p>
-            </div>
+           
 
             <div>
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">

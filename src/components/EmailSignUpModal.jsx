@@ -31,34 +31,50 @@ export const EmailSignUpModal = ({ handleModal }) => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    const result = await Swal.fire({
-      title: "Alert?",
-      text: "Please Check your Email for verification.",
-      icon: "warning",
-      showCancelButton: true,
-      confirmButtonColor: "#9333ea",
-      cancelButtonColor: "#d33",
-      confirmButtonText: "Okay!",
-    });
 
-    if (!result.isConfirmed) return;
+    const gmailRegex = /^[a-zA-Z0-9](\.?[a-zA-Z0-9]){5,}@gmail\.com$/;
+
+    if (!gmailRegex.test(formData.email)) {
+      Swal.fire({
+        title: "Invalid Email",
+        text: "Please enter a valid Email address.",
+        icon: "error",
+        confirmButtonColor: "#9333ea",
+      });
+      return;
+    }
+
     setLoading(true);
+
     try {
       const res = await axios.post(
         `${BASE_URL}/customer/registerEmailVerification`,
         formData
       );
+
       console.log(res.data);
       setFormData(initialState);
       dispatch(validationUser(res.data));
+      const result = await Swal.fire({
+        title: "Success",
+        text: "Please Check your Email for verification.",
+        icon: "success",
+        confirmButtonColor: "#9333ea",
+        confirmButtonText: "Okay",
+      });
 
+      if (!result.isConfirmed) return;
+    } catch (err) {
+      console.log(err);
       setLoading(false);
-    } catch (error) {
-      console.log(error);
-      setLoading(false);
+      Swal.fire({
+        title: "Error",
+        text: err.response.data.message,
+        icon: "error",
+        confirmButtonColor: "#9333ea",
+      });
     }
   };
-
   useEffect(() => {
     document.body.style.overflow = "hidden";
     return () => {
@@ -93,6 +109,7 @@ export const EmailSignUpModal = ({ handleModal }) => {
                 checked={formData.role === "seller"}
                 onChange={handleChange}
                 className="h-4 w-4 accent-blue-950"
+                required
               />
               <span>Seller</span>
             </label>
@@ -104,6 +121,7 @@ export const EmailSignUpModal = ({ handleModal }) => {
                 checked={formData.role === "customer"}
                 onChange={handleChange}
                 className="h-4 w-4 accent-blue-950"
+                required
               />
               <span>Customer</span>
             </label>
@@ -121,6 +139,7 @@ export const EmailSignUpModal = ({ handleModal }) => {
               onChange={handleChange}
               placeholder="Enter your Full Name"
               className="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 outline-none"
+              required
             />
           </div>
 
@@ -136,6 +155,7 @@ export const EmailSignUpModal = ({ handleModal }) => {
               onChange={handleChange}
               placeholder="Enter Your Email"
               className="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 outline-none"
+              required
             />
           </div>
 
@@ -151,6 +171,7 @@ export const EmailSignUpModal = ({ handleModal }) => {
               onChange={handleChange}
               placeholder="Enter Your Password"
               className="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 outline-none"
+              required
             />
           </div>
 

@@ -37,7 +37,7 @@ const getInitialProfileForm = (user) => ({
 const Navbar = () => {
   const { isAuthenticated, logout } = useAuth();
   const { currentUser } = useSelector((state) => state.auth);
-const [accountSettingsOpen, setAccountSettingsOpen] = useState(false);
+  const [accountSettingsOpen, setAccountSettingsOpen] = useState(false);
 
   const [menuOpen, setMenuOpen] = useState(false);
   const [activeDropdown, setActiveDropdown] = useState(null);
@@ -659,7 +659,6 @@ const [accountSettingsOpen, setAccountSettingsOpen] = useState(false);
                 >
                   {/* User Info */}
                   <div className="px-4 py-3 border-b border-gray-200">
-                   
                     <p className="text-sm text-gray-600 truncate">
                       <span className="text-gray-500 text-xs">
                         {currentUser?.role || "--"}
@@ -670,50 +669,44 @@ const [accountSettingsOpen, setAccountSettingsOpen] = useState(false);
                   </div>
 
                   {/* Change password */}
-              {/* Account Settings Parent */}
-{/* Account Settings Parent */}
-<div
-  onClick={() => setAccountSettingsOpen(!accountSettingsOpen)}
-  className="px-4 py-1 flex items-center gap-2 text-gray-700 hover:bg-gray-100 cursor-pointer transition font-base"
->
-  <Settings size={16} className="text-gray-500" />
-  Account Settings
-</div>
+                  {/* Account Settings Parent */}
+                  {/* Account Settings Parent */}
+                  <div
+                    onClick={() => setAccountSettingsOpen(!accountSettingsOpen)}
+                    className="px-4 py-1 flex items-center gap-2 text-gray-700 hover:bg-gray-100 cursor-pointer transition font-base"
+                  >
+                    <Settings size={16} className="text-gray-500" />
+                    Account Settings
+                  </div>
 
-{/* Dropdown Options */}
-{accountSettingsOpen && (
-  <div className="ml-4">
-    {/* Manage Profile */}
-    <div
-      onClick={() => {
-        setProfileModalOpen(true);
-        setDropdownOpen(false);
-        setAccountSettingsOpen(false);
-      }}
-      className="px-4 py-1 flex items-center gap-2 text-gray-600 hover:bg-gray-100 cursor-pointer transition"
-    >
+                  {/* Dropdown Options */}
+                  {accountSettingsOpen && (
+                    <div className="ml-4">
+                      {/* Manage Profile */}
+                      <div
+                        onClick={() => {
+                          setProfileModalOpen(true);
+                          setDropdownOpen(false);
+                          setAccountSettingsOpen(false);
+                        }}
+                        className="px-4 py-1 flex items-center gap-2 text-gray-600 hover:bg-gray-100 cursor-pointer transition"
+                      >
+                        Manage Profile
+                      </div>
 
-      Manage Profile
-    </div>
-
-    {/* Change Password */}
-    <div
-      onClick={() => {
-        setPasswordModalOpen(true);
-        setDropdownOpen(false);
-        setAccountSettingsOpen(false);
-      }}
-      className="px-4 py-1 flex items-center gap-2 text-gray-600 hover:bg-gray-100 cursor-pointer transition"
-    >
-      
-      Change Password
-    </div>
-  </div>
-)}
-
-
-
-              
+                      {/* Change Password */}
+                      <div
+                        onClick={() => {
+                          setPasswordModalOpen(true);
+                          setDropdownOpen(false);
+                          setAccountSettingsOpen(false);
+                        }}
+                        className="px-4 py-1 flex items-center gap-2 text-gray-600 hover:bg-gray-100 cursor-pointer transition"
+                      >
+                        Change Password
+                      </div>
+                    </div>
+                  )}
 
                   {/* Logout */}
                   <div
@@ -872,53 +865,50 @@ const [accountSettingsOpen, setAccountSettingsOpen] = useState(false);
                   <FaUserCircle size={32} className="text-white" />
                 )}
                 <span>
-                {" "}
+                  {" "}
                   <div className="text-white text-xs">
                     {currentUser?.role || "--"}
                   </div>
                   {currentUser?.name || "--"}
                 </span>
               </div>
-          {/* Account Settings Parent */}
-<button
-  onClick={() => setAccountSettingsOpen(!accountSettingsOpen)}
-  className="block w-full text-left py-0 text-white font-base hover:underline"
-  
->
-  
-  Account Settings
-</button>
+              {/* Account Settings Parent */}
+              <button
+                onClick={() => setAccountSettingsOpen(!accountSettingsOpen)}
+                className="block w-full text-left py-0 text-white font-base hover:underline"
+              >
+                Account Settings
+              </button>
 
-{/* Nested Options */}
-{accountSettingsOpen && (
-  <div className="ml-4 mt-1">
-    {/* Manage Profile */}
-    <button
-      onClick={() => {
-        setProfileModalOpen(true);
-        setMenuOpen(false);
-        setAccountSettingsOpen(false);
-      }}
-      className="block w-full text-left py-0 text-white hover:underline"
-    >
-      Manage Profile
-    </button>
+              {/* Nested Options */}
+              {accountSettingsOpen && (
+                <div className="ml-4 mt-1">
+                  {/* Manage Profile */}
+                  <button
+                    onClick={() => {
+                      setProfileModalOpen(true);
+                      setMenuOpen(false);
+                      setAccountSettingsOpen(false);
+                    }}
+                    className="block w-full text-left py-0 text-white hover:underline"
+                  >
+                    Manage Profile
+                  </button>
 
-    {/* Change Password */}
-    <button
-      onClick={() => {
-        setPasswordModalOpen(true);
-        setMenuOpen(false);
-        setAccountSettingsOpen(false);
-      }}
-      className="block w-full text-left py-0 text-white hover:underline"
-    >
-      Change Password
-    </button>
-  </div>
-)}
+                  {/* Change Password */}
+                  <button
+                    onClick={() => {
+                      setPasswordModalOpen(true);
+                      setMenuOpen(false);
+                      setAccountSettingsOpen(false);
+                    }}
+                    className="block w-full text-left py-0 text-white hover:underline"
+                  >
+                    Change Password
+                  </button>
+                </div>
+              )}
 
-          
               <button className="block w-full text-left py-1 text-white hover:underline">
                 {" "}
               </button>
@@ -1056,12 +1046,6 @@ const [accountSettingsOpen, setAccountSettingsOpen] = useState(false);
               <div className="text-center mt-1 text-lg font-bold text-gray-800">
                 {currentUser.name}
               </div>
-            </div>
-            <div className="bg-red-50 border border-red-200 rounded-md p-3 mb-6">
-              <p className="text-sm text-red-600">
-                Picture can be changed. Select an image to update your profile
-                picture
-              </p>
             </div>
 
             <div>

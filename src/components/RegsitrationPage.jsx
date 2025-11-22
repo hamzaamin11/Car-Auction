@@ -9,6 +9,7 @@ import axios from "axios";
 import { BASE_URL } from "./Contant/URL";
 import LoginImage from "../../src/assets/copart3.jpg";
 import CustomButton from "../../src/CustomButton";
+import Swal from "sweetalert2";
 
 const RegistrationPage = () => {
   const navigate = useNavigate();
@@ -64,8 +65,13 @@ if (!emailRegex.test(formData.email)) {
       toast.success("Registered successfully!");
       setTimeout(() => navigate("/login"), 2000);
     } catch (error) {
-      console.error("Registration error:", error);
-      toast.error("Registration failed.");
+        Swal.fire({
+              title: "Error",
+              text: error.response.data.message,
+              icon: "error",
+              confirmButtonColor: "#9333ea",
+            });
+     
     }
   };
 
