@@ -16,6 +16,7 @@ import moment from "moment/moment";
 import axios from "axios";
 import { BASE_URL } from "../../components/Contant/URL";
 import CustomSearch from "../../CustomSearch";
+
 export default function LiveAuctions() {
   const { getLiveAuctions, AllLiveAuctions, AuctionById } =
     useContext(AuctionsContext);
@@ -32,33 +33,34 @@ export default function LiveAuctions() {
 
   const id = currentUser?.id;
   const [pageNo, setPageNo] = useState(1);
+  const [totalItems, setTotalItems] = useState(0); // Total count from API
+
+  const itemsPerPage = 10;
 
   const debouncedSearch = useCallback(
     debounce((value) => {
       setSearch(value);
-      setPageNo(1); // Reset to first page on search
+      setPageNo(1);
     }, 300),
     []
   );
-
-  const handleNextPage = () => {
-    setPageNo(pageNo + 1);
-  };
-
-  const handlePrevPage = () => {
-    setPageNo(pageNo > 1 ? pageNo - 1 : 1);
-  };
 
   const handleGetAllLive = async () => {
     setLoading(true);
     try {
       const res = await axios.get(
-        `${BASE_URL}/admin/liveAuctionsForAdmin?entry=10&page=${pageNo}`
+        `${BASE_URL}/admin/liveAuctionsForAdmin?entry=${itemsPerPage}&page=${pageNo}`
       );
       console.log("API Response (Admin):", res.data);
-      setAllLiveAuction(res.data);
+      // Handle both { data: [], total: X } and direct array response
+      const auctions = res.data?.data || res.data || [];
+      const total = res.data?.total || res.data?.length || auctions.length || 0;
+      setAllLiveAuction(auctions);
+      setTotalItems(total);
     } catch (error) {
       console.log(error);
+      setAllLiveAuction([]);
+      setTotalItems(0);
     } finally {
       setLoading(false);
     }
@@ -69,32 +71,62 @@ export default function LiveAuctions() {
     try {
       const res = await axios.get(`${BASE_URL}/liveAuctions/${id}`);
       console.log("API Response (Seller):", res.data);
-      setAllLiveAuction(res.data);
+      const auctions = Array.isArray(res.data) ? res.data : [];
+      setAllLiveAuction(auctions);
+      setTotalItems(auctions.length);
     } catch (error) {
       console.log(error);
+      setAllLiveAuction([]);
+      setTotalItems(0);
     } finally {
       setLoading(false);
     }
   };
 
   useEffect(() => {
-    if (currentUser.role === "admin") {
+    if (currentUser?.role === "admin") {
       handleGetAllLive();
     }
-    if (currentUser.role === "seller") {
+    if (currentUser?.role === "seller") {
       handleGetAllLivebySeller();
     }
-  }, [pageNo]);
+  }, [pageNo, currentUser?.role, currentUser?.id]);
 
+  // Client-side search filter
   useEffect(() => {
     const filtered = allLiveAuction.filter(
       (auction) =>
-        auction.make?.toLowerCase().includes(search.toLowerCase()) ||
-        auction.model?.toLowerCase().includes(search.toLowerCase()) ||
-        auction.vehicleCondition?.toLowerCase().includes(search.toLowerCase())
+        (auction.make || "").toLowerCase().includes(search.toLowerCase()) ||
+        (auction.model || "").toLowerCase().includes(search.toLowerCase()) ||
+        (auction.vehicleCondition || "").toLowerCase().includes(search.toLowerCase())
     );
     setFilteredAuctions(filtered);
   }, [search, allLiveAuction]);
+
+  const totalPages = Math.ceil(totalItems / itemsPerPage);
+  const startIndex = (pageNo - 1) * itemsPerPage;
+  const endIndex = Math.min(startIndex + itemsPerPage, totalItems);
+
+  const goToPage = (page) => {
+    if (page >= 1 && page <= totalPages) {
+      setPageNo(page);
+      window.scrollTo({ top: 0, behavior: "smooth" });
+    }
+  };
+
+  const getPageNumbers = () => {
+    const pages = [];
+    if (totalPages <= 5) {
+      for (let i = 1; i <= totalPages; i++) pages.push(i);
+    } else if (pageNo <= 3) {
+      for (let i = 1; i <= 5; i++) pages.push(i);
+    } else if (pageNo >= totalPages - 2) {
+      for (let i = totalPages - 4; i <= totalPages; i++) pages.push(i);
+    } else {
+      for (let i = pageNo - 2; i <= pageNo + 2; i++) pages.push(i);
+    }
+    return pages;
+  };
 
   return (
     <>
@@ -120,16 +152,19 @@ export default function LiveAuctions() {
                 />
               </svg>
             </span>
-         <CustomSearch
-  placeholder="Search by Make, Model, or Condition..."
-  value={search}
-  onChange={(e) => {
-    setSearch(e.target.value);
-    debouncedSearch(e.target.value);
-  }}
-/>
-
+            <CustomSearch
+              placeholder="Search by Make, Model, or Condition..."
+              value={search}
+              onChange={(e) => {
+                setSearch(e.target.value);
+                debouncedSearch(e.target.value);
+              }}
+            />
           </div>
+        </div>
+
+        <div className="text-gray-800 mb-4 font-semibold text-xl">
+          Total Live Auctions: {totalItems}
         </div>
 
         <div className="overflow-x-auto rounded-lg">
@@ -150,7 +185,7 @@ export default function LiveAuctions() {
                   </th>
                   <th className="px-4 py-3 text-left text-sm font-semibold">
                     Model
-                  </th>
+                    </th>
                   <th className="px-4 py-3 text-left text-sm font-semibold">
                     Condition
                   </th>
@@ -166,134 +201,177 @@ export default function LiveAuctions() {
                 </tr>
               </thead>
               <tbody className="bg-white divide-y divide-gray-100">
-                {filteredAuctions?.map((user, idx) => (
-                  <tr
-                    key={user.id}
-                    onClick={() => setselectedVehicle(user)}
-                    className={`${
-                      idx % 2 === 0 ? "bg-gray-50" : ""
-                    } cursor-pointer hover:bg-gray-100`}
-                  >
-                    {currentUser.role === "admin" && (
-                      <td className="px-4 py-3 font-medium text-gray-900">
-                        {user?.name}
+                {filteredAuctions?.length > 0 ? (
+                  filteredAuctions.map((user, idx) => (
+                    <tr
+                      key={user.id}
+                      onClick={() => setselectedVehicle(user)}
+                      className={`${
+                        idx % 2 === 0 ? "bg-gray-50" : ""
+                      } cursor-pointer hover:bg-gray-100`}
+                    >
+                      {currentUser.role === "admin" && (
+                        <td className="px-4 py-3 font-medium text-gray-900">
+                          {user?.name || "--"}
+                        </td>
+                      )}
+                      <td className="px-4 py-3">
+                        <img
+                          src={user?.images?.[0] || "/placeholder.jpg"}
+                          alt={user?.make || "Vehicle"}
+                          className="w-16 h-16 object-cover rounded"
+                        />
                       </td>
-                    )}
-                    <td className="px-4 py-3">
-                      <img
-                        src={user?.images[0]}
-                        alt={user?.name || "Vehicle"}
-                        className="w-16 h-16 object-cover rounded"
-                      />
+                      <td className="px-4 py-3 text-gray-700">{user?.make || "--"}</td>
+                      <td className="px-4 py-3 text-gray-700">{user?.model || "--"}</td>
+                      <td className="px-4 py-3 text-gray-700">
+                        {user?.vehicleCondition || "--"}
+                      </td>
+                      <td className="px-4 py-3 text-gray-700">
+                        {user?.sellerOffer || "--"}
+                      </td>
+                      <td className="px-4 py-3 text-gray-700">
+                        {user.endTime
+                          ? moment(user.endTime).local().format("hh:mm A")
+                          : "--"}
+                      </td>
+                      <td className="px-4 py-3 text-gray-700">
+                        {user?.endTime
+                          ? new Date(user.endTime).toLocaleDateString("en-GB")
+                          : "N/A"}
+                      </td>
+                    </tr>
+                  ))
+                ) : (
+                  <tr>
+                    <td colSpan="8" className="text-center py-10 text-gray-500">
+                      No live auctions found.
                     </td>
-                    <td className="px-4 py-3 text-gray-700">{user?.make}</td>
-                    <td className="px-4 py-3 text-gray-700">{user?.model}</td>
-                    <td className="px-4 py-3 text-gray-700">
-                      {user?.vehicleCondition}
-                    </td>
-                    <td className="px-4 py-3 text-gray-700">
-                      {user?.sellerOffer}
-                    </td>
-                    <td className="px-4 py-3 text-gray-700">
-                     {user.endTime
-                        ? moment(user.endTime).local().format("hh:mm A")
-                        : "--"}
-                    </td>
-<td className="px-4 py-3 text-gray-700">
-  {user?.endTime
-    ? new Date(user.endTime).toLocaleDateString("en-GB")
-    : "N/A"}
-</td>
-
-
                   </tr>
-                ))}
+                )}
               </tbody>
             </table>
           </div>
 
           <div className="block md:hidden space-y-2">
-            {filteredAuctions?.map((user) => (
-              <div
-                key={user.id}
-                onClick={() => setselectedVehicle(user)}
-                className="bg-white rounded shadow-md border border-gray-200 p-4 cursor-pointer hover:shadow-lg hover:border-indigo-300 hover:bg-indigo-50/30 transition-all duration-300"
-              >
-                <div className="space-y-2 text-sm">
-                  <p className="flex justify-between items-center">
-                    <p className="text-gray-900 font-bold">Owner Name</p>
-                    <span className="text-gray-500">{user?.name}</span>
-                  </p>
-                  <p className="flex justify-between">
-                    <span className="text-gray-900 font-bold">
-                      Vehicle Model
-                    </span>
-                    <span className="text-gray-500">
-                      {user?.make} / {user?.model}
-                    </span>
-                  </p>
-                  <p className="flex justify-between">
-                    <span className="text-gray-900 font-bold">Condition</span>
-                    <span className="text-gray-500">
-                      {user?.vehicleCondition}
-                    </span>
-                  </p>
-                  <p className="flex justify-between">
-                    <span className="text-gray-900 font-bold">
-                      Current Bid
-                    </span>
-                    <span className="text-gray-500">{user?.sellerOffer}</span>
-                  </p>
-                  <p className="flex justify-between">
-                    <span className="text-gray-900 font-bold">End Time</span>
-                    <span className="text-gray-500">
-                      {user.endTime
-                        ? moment(user.endTime).local().format("hh:mm A")
-                        : "--"}
-                    </span>
-                  </p>
-                  <p className="flex justify-between">
-                    <span className="text-gray-900 font-bold">Date</span>
-                    <span className="text-gray-500">
-                     <td className="px-0 py-0 text-gray-700">
- {user?.endTime
-    ? new Date(user.endTime).toLocaleDateString("en-GB")
-    : "N/A"}
-</td>
-
-                    </span>
-                  </p>
+            {filteredAuctions?.length > 0 ? (
+              filteredAuctions.map((user) => (
+                <div
+                  key={user.id}
+                  onClick={() => setselectedVehicle(user)}
+                  className="bg-white rounded shadow-md border border-gray-200 p-4 cursor-pointer hover:shadow-lg hover:border-indigo-300 hover:bg-indigo-50/30 transition-all duration-300"
+                >
+                  <div className="space-y-2 text-sm">
+                    {currentUser.role === "admin" && (
+                      <p className="flex justify-between items-center">
+                        <p className="text-gray-900 font-bold">Owner Name</p>
+                        <span className="text-gray-500">{user?.name || "--"}</span>
+                      </p>
+                    )}
+                    <p className="flex justify-between">
+                      <span className="text-gray-900 font-bold">
+                        Vehicle Model
+                      </span>
+                      <span className="text-gray-500">
+                        {user?.make || "--"} / {user?.model || "--"}
+                      </span>
+                    </p>
+                    <p className="flex justify-between">
+                      <span className="text-gray-900 font-bold">Condition</span>
+                      <span className="text-gray-500">
+                        {user?.vehicleCondition || "--"}
+                      </span>
+                    </p>
+                    <p className="flex justify-between">
+                      <span className="text-gray-900 font-bold">
+                        Current Bid
+                      </span>
+                      <span className="text-gray-500">{user?.sellerOffer || "--"}</span>
+                    </p>
+                    <p className="flex justify-between">
+                      <span className="text-gray-900 font-bold">End Time</span>
+                      <span className="text-gray-500">
+                        {user.endTime
+                          ? moment(user.endTime).local().format("hh:mm A")
+                          : "--"}
+                      </span>
+                    </p>
+                    <p className="flex justify-between">
+                      <span className="text-gray-900 font-bold">Date</span>
+                      <span className="text-gray-500">
+                        {user?.endTime
+                          ? new Date(user.endTime).toLocaleDateString("en-GB")
+                          : "N/A"}
+                      </span>
+                    </p>
+                  </div>
                 </div>
+              ))
+            ) : (
+              <div className="text-center py-10 text-gray-500">
+                No live auctions found.
               </div>
-            ))}
+            )}
           </div>
         </div>
 
-        {filteredAuctions?.length === 0 && (
-          <div className="flex items-center justify-center mt-1 font-medium lg:text-xl text-sm">
-            No Live Bid yet!
+        {/* CLEAN ARROW PAGINATION */}
+        {totalItems > 0 && (
+          <div className="bg-white rounded-lg shadow-sm p-4 mt-6">
+            <div className="flex flex-col sm:flex-row justify-between items-center gap-4 text-sm text-gray-700">
+              <div className="text-gray-600">
+                Showing <span className="font-medium">{startIndex + 1}</span> to{" "}
+                <span className="font-medium">
+                  {filteredAuctions.length > 0 ? endIndex : 0}
+                </span>{" "}
+                of <span className="font-medium">{totalItems}</span> entries
+              </div>
+
+              <div className="flex items-center gap-1">
+                <button
+                  onClick={() => goToPage(1)}
+                  disabled={pageNo === 1}
+                  className={`px-3 py-1 rounded border ${pageNo === 1 ? "bg-gray-100 text-gray-400 cursor-not-allowed" : "bg-white hover:bg-gray-50"}`}
+                >
+                  {"<<"}
+                </button>
+                <button
+                  onClick={() => goToPage(pageNo - 1)}
+                  disabled={pageNo === 1}
+                  className={`px-3 py-1 rounded border ${pageNo === 1 ? "bg-gray-100 text-gray-400 cursor-not-allowed" : "bg-white hover:bg-gray-50"}`}
+                >
+                  {"<"}
+                </button>
+
+                {getPageNumbers().map((page) => (
+                  <button
+                    key={page}
+                    onClick={() => goToPage(page)}
+                    className={`px-3 py-1 rounded border ${pageNo === page ? "bg-blue-950 text-white" : "bg-white hover:bg-gray-50"}`}
+                  >
+                    {page}
+                  </button>
+                ))}
+
+                <button
+                  onClick={() => goToPage(pageNo + 1)}
+                  disabled={pageNo >= totalPages}
+                  className={`px-3 py-1 rounded border ${pageNo >= totalPages ? "bg-gray-100 text-gray-400 cursor-not-allowed" : "bg-white hover:bg-gray-50"}`}
+                >
+                  {">"}
+                </button>
+                <button
+                  onClick={() => goToPage(totalPages)}
+                  disabled={pageNo >= totalPages}
+                  className={`px-3 py-1 rounded border ${pageNo >= totalPages ? "bg-gray-100 text-gray-400 cursor-not-allowed" : "bg-white hover:bg-gray-50"}`}
+                >
+                  {">>"}
+                </button>
+              </div>
+            </div>
           </div>
         )}
 
-        <div className="flex justify-between mt-6">
-          <button
-            className={`bg-blue-950 text-white px-5 py-2 rounded ${
-              pageNo > 1 ? "block" : "hidden"
-            }`}
-            onClick={handlePrevPage}
-          >
-            ‹ Prev
-          </button>
-          <div></div>
-          <button
-            className={`bg-blue-950 text-white px-5 py-2 rounded ${
-              filteredAuctions.length === 10 ? "block" : "hidden"
-            }`}
-            onClick={handleNextPage}
-          >
-            Next ›
-          </button>
-        </div>
         {selectedAuctionId && (
           <ViewAuctionModal
             auctionId={selectedAuctionId}

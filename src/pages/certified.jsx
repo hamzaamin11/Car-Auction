@@ -54,21 +54,31 @@ const CertifiedCarsPage = () => {
 
   // Pagination Logic
   const vehiclesPerPage = 12;
-  const totalPages = Math.ceil(getCertified.length / vehiclesPerPage);
+  const totalItems = getCertified.length;
+  const totalPages = Math.ceil(totalItems / vehiclesPerPage);
   const startIndex = (currentPage - 1) * vehiclesPerPage;
-  const endIndex = startIndex + vehiclesPerPage;
+  const endIndex = Math.min(startIndex + vehiclesPerPage, totalItems);
   const currentVehicles = getCertified.slice(startIndex, endIndex);
 
-  const goToNextPage = () => {
-    if (currentPage < totalPages) {
-      setCurrentPage((prev) => prev + 1);
+  const goToPage = (page) => {
+    if (page >= 1 && page <= totalPages) {
+      setCurrentPage(page);
+      window.scrollTo({ top: 0, behavior: "smooth" });
     }
   };
 
-  const goToPrevPage = () => {
-    if (currentPage > 1) {
-      setCurrentPage((prev) => prev - 1);
+  const getPageNumbers = () => {
+    const pages = [];
+    if (totalPages <= 5) {
+      for (let i = 1; i <= totalPages; i++) pages.push(i);
+    } else if (currentPage <= 3) {
+      for (let i = 1; i <= 5; i++) pages.push(i);
+    } else if (currentPage >= totalPages - 2) {
+      for (let i = totalPages - 4; i <= totalPages; i++) pages.push(i);
+    } else {
+      for (let i = currentPage - 2; i <= currentPage + 2; i++) pages.push(i);
     }
+    return pages;
   };
 
   return (
@@ -104,10 +114,16 @@ const CertifiedCarsPage = () => {
       </div>
 
       {/* Loading State */}
-     
+      {isLoading ? (
+        <div className="flex justify-center items-center h-64">
+         
+        </div>
+      ) : error ? (
+        <div className="text-center text-red-600 font-medium">{error}</div>
+      ) : (
         <>
           {/* Vehicle Grid */}
-          <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 max-w-5xl mx-auto">
+          <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 max-w-7xl mx-auto">
             {currentVehicles.map((car) => (
               <div
                 key={car.id}
@@ -141,11 +157,11 @@ const CertifiedCarsPage = () => {
                   <h3 className="text-lg font-semibold text-black truncate text-[15px]">
                     {car.make} {car.model} {car.series}
                   </h3>
-                     <p>
-                      <span className="text-sm font-base text-[13px]"> Model Year:</span> {car.year}
-                    </p>
-                      <p className="mt-1 text-sm font-base text-black text-[13px]">
-                     Current Bid: {""} <b>PKR{" "}{car.buyNowPrice.toLocaleString()}</b>
+                  <p>
+                    <span className="text-sm font-base text-[13px]"> Model Year:</span> {car.year}
+                  </p>
+                  <p className="mt-1 text-sm font-base text-black text-[13px]">
+                    Current Bid: <b>PKR {car.buyNowPrice.toLocaleString()}</b>
                   </p>
 
                   <div className="mt-1 text-sm text-black space-y-2">
@@ -153,84 +169,91 @@ const CertifiedCarsPage = () => {
                       <span className="font-base text-[13px]">Location:</span>{" "}
                       {car.locationId}
                     </p>
-                    {/* <p>
-                      <span className="font-medium">Mileage:</span> {car.mileage}{" "}
-                      Km
-                    </p> */}
-                 
                   </div>
-                
                 </div>
               </div>
             ))}
           </div>
 
-          {/* Pagination Controls – Prev left, Page center, Next right */}
-      {/* Pagination Controls – Prev left, Page center, Next right */}
-{totalPages > 1 && (
-  <div className="flex justify-between items-center mt-10 max-w-5xl mx-auto px-4">
-    {/* Prev Button – aligned left with cards */}
-    <button
-      onClick={goToPrevPage}
-      disabled={currentPage === 1}
-      className={`flex items-center gap-2 px-5 py-2.5 rounded-lg font-medium text-white transition-all ${
-        currentPage === 1
-          ? "bg-gray-400 cursor-not-allowed"
-          : "bg-blue-950"
-      }`}
-      aria-label="Previous page"
-    >
-      <svg
-        xmlns="http://www.w3.org/2000/svg"
-        className="h-5 w-5"
-        fill="none"
-        viewBox="0 0 24 24"
-        stroke="currentColor"
-      >
-        <path
-          strokeLinecap="round"
-          strokeLinejoin="round"
-          strokeWidth={2}
-          d="M15 19l-7-7 7-7"
-        />
-      </svg>
-      Prev
-    </button>
+          {/* PROFESSIONAL ARROW PAGINATION */}
+          {totalItems > 0 && totalPages > 1 && (
+            <div className="mt-12 bg-white rounded-lg shadow-sm border border-gray-200">
+              <div className="p-4">
+                <div className="flex flex-col sm:flex-row justify-between items-center gap-4 text-sm text-gray-700">
+                  <div className="text-gray-600">
+                    Showing <span className="font-medium">{startIndex + 1}</span> to{" "}
+                    <span className="font-medium">{endIndex}</span> of{" "}
+                    <span className="font-medium">{totalItems}</span> vehicles
+                  </div>
 
- 
+                  <div className="flex items-center gap-2">
+                 
+                <button
+                      onClick={() => goToPage(1)}
+                      disabled={currentPage === 1}
+                      className={`w-10 h-10 flex items-center justify-center rounded border font-bold ${
+                        currentPage === 1
+                          ? "bg-gray-100 text-gray-400 cursor-not-allowed"
+                          : "bg-white hover:bg-gray-50 text-gray-700"
+                      }`}
+                    >
+                      {"<<"}
+                    </button>
+                    <button
+                      onClick={() => goToPage(currentPage - 1)}
+                      disabled={currentPage === 1}
+                      className={`w-10 h-10 flex items-center justify-center rounded border font-bold ${
+                        currentPage === 1
+                          ? "bg-gray-100 text-gray-400 cursor-not-allowed"
+                          : "bg-white hover:bg-gray-50 text-gray-700"
+                      }`}
+                    >
+                      {"<"}
+                    </button>
 
-    {/* Next Button – aligned right with cards */}
-    <button
-      onClick={goToNextPage}
-      disabled={currentPage === totalPages}
-      className={`flex items-center gap-2 px-5 py-2.5 rounded-lg font-medium text-white transition-all ${
-        currentPage === totalPages
-          ? "bg-gray-400 cursor-not-allowed"
-          : "bg-blue-950"
-      }`}
-      aria-label="Next page"
-    >
-      Next
-      <svg
-        xmlns="http://www.w3.org/2000/svg"
-        className="h-5 w-5"
-        fill="none"
-        viewBox="0 0 24 24"
-        stroke="currentColor"
-      >
-        <path
-          strokeLinecap="round"
-          strokeLinejoin="round"
-          strokeWidth={2}
-          d="M9 5l7 7-7 7"
-        />
-      </svg>
-    </button>
-  </div>
-)}
+                    {getPageNumbers().map((page) => (
+                      <button
+                        key={page}
+                        onClick={() => goToPage(page)}
+                        className={`w-10 h-10 flex items-center justify-center rounded border font-medium ${
+                          currentPage === page
+                            ? "bg-blue-950 text-white"
+                            : "bg-white hover:bg-gray-50 text-gray-700"
+                        }`}
+                      >
+                        {page}
+                      </button>
+                    ))}
 
+                    <button
+                      onClick={() => goToPage(currentPage + 1)}
+                      disabled={currentPage >= totalPages}
+                      className={`w-10 h-10 flex items-center justify-center rounded border font-bold ${
+                        currentPage >= totalPages
+                          ? "bg-gray-100 text-gray-400 cursor-not-allowed"
+                          : "bg-white hover:bg-gray-50 text-gray-700"
+                      }`}
+                    >
+                      {">"}
+                    </button>
+                    <button
+                      onClick={() => goToPage(totalPages)}
+                      disabled={currentPage >= totalPages}
+                      className={`w-10 h-10 flex items-center justify-center rounded border font-bold ${
+                        currentPage >= totalPages
+                          ? "bg-gray-100 text-gray-400 cursor-not-allowed"
+                          : "bg-white hover:bg-gray-50 text-gray-700"
+                      }`}
+                    >
+                      {">>"}
+                    </button>
+                  </div>
+                </div>
+              </div>
+            </div>
+          )}
         </>
-      {""}
+      )}
 
       {/* Empty State */}
       {!isLoading && !error && getCertified?.length === 0 && (

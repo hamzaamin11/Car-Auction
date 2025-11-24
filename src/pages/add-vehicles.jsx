@@ -1590,8 +1590,8 @@ const AddVehicles = () => {
 
                 {/* Show entries */}
                 <div className="flex items-center gap-2">
-                  <span className="text-gray-600">Show</span>
-                  <select
+                
+                  {/* <select
                     value={carsPerPage}
                     onChange={(e) => {
                       setCarsPerPage(Number(e.target.value));
@@ -1605,7 +1605,7 @@ const AddVehicles = () => {
                       </option>
                     ))}
                   </select>
-                  <span className="text-gray-600">entries</span>
+                  <span className="text-gray-600">entries</span> */}
                 </div>
               </div>
             </div>
