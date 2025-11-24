@@ -20,6 +20,8 @@ export const EmailSignUpModal = ({ handleModal }) => {
 
   const [loading, setLoading] = useState(false);
 
+  const [error, setError] = useState("");
+
   const navigate = useNavigate();
 
   const dispatch = useDispatch();
@@ -32,7 +34,10 @@ export const EmailSignUpModal = ({ handleModal }) => {
   const handleSubmit = async (e) => {
     e.preventDefault();
 
-    const gmailRegex = /^[a-zA-Z0-9](\.?[a-zA-Z0-9]){5,}@gmail\.com$/;
+    const gmailRegex = /^[a-zA-Z0-9](\.?[a-zA-Z0-9]){0,}@gmail\.com$/;
+
+    const passwordRegex =
+      /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$/;
 
     if (!gmailRegex.test(formData.email)) {
       Swal.fire({
@@ -44,6 +49,13 @@ export const EmailSignUpModal = ({ handleModal }) => {
       return;
     }
 
+    if (!passwordRegex.test(formData.password)) {
+      setError(
+        "Password must be at least 8 characters long and include uppercase, lowercase, numbers, and a special character."
+      );
+      return;
+    }
+
     setLoading(true);
 
     try {
@@ -52,9 +64,10 @@ export const EmailSignUpModal = ({ handleModal }) => {
         formData
       );
 
-      console.log(res.data);
       setFormData(initialState);
       dispatch(validationUser(res.data));
+      setLoading(false);
+      setError("");
       const result = await Swal.fire({
         title: "Success",
         text: "Please Check your Email for verification.",
@@ -101,18 +114,7 @@ export const EmailSignUpModal = ({ handleModal }) => {
             <label className="block mb-2 text-gray-700 font-semibold">
               Select Role
             </label>
-            <label className="flex items-center gap-2">
-              <input
-                type="radio"
-                name="role"
-                value="seller"
-                checked={formData.role === "seller"}
-                onChange={handleChange}
-                className="h-4 w-4 accent-blue-950"
-                required
-              />
-              <span>Seller</span>
-            </label>
+
             <label className="flex items-center gap-2">
               <input
                 type="radio"
@@ -124,6 +126,18 @@ export const EmailSignUpModal = ({ handleModal }) => {
                 required
               />
               <span>Customer</span>
+            </label>
+            <label className="flex items-center gap-2">
+              <input
+                type="radio"
+                name="role"
+                value="seller"
+                checked={formData.role === "seller"}
+                onChange={handleChange}
+                className="h-4 w-4 accent-blue-950"
+                required
+              />
+              <span>Seller</span>
             </label>
           </div>
 
@@ -170,9 +184,14 @@ export const EmailSignUpModal = ({ handleModal }) => {
               value={formData.password}
               onChange={handleChange}
               placeholder="Enter Your Password"
-              className="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 outline-none"
+              className={`w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 outline-none  ${
+                error
+                  ? "border-red-500 focus:ring-red-400"
+                  : "border-gray-300 focus:ring-blue-900"
+              }`}
               required
             />
+            {error && <p className="text-red-500 text-xs mt-1">{error}</p>}
           </div>
 
           {/* Sign Up Button */}

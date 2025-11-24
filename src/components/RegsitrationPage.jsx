@@ -29,8 +29,7 @@ const RegistrationPage = () => {
     const { name, value } = e.target;
     setFormData((prev) => ({ ...prev, [name]: value }));
 
-  setError("");
-
+    setError("");
   };
 
   const handlePhoneChange = (value) => {
@@ -40,17 +39,28 @@ const RegistrationPage = () => {
   const handleRegister = async (e) => {
     e.preventDefault();
 
- const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 
-if (!emailRegex.test(formData.email)) {
-  toast.error("Please enter a valid email address");
-  return;
-}
+    const passwordRegex =
+      /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{0,}$/;
+
+    if (!emailRegex.test(formData.email)) {
+      setError("Please enter a valid email address");
+      return;
+    }
 
     if (!formData.contact || formData.contact.trim() === "") {
       toast.error("Please enter your contact number");
       return;
     }
+
+    if (!passwordRegex.test(formData.password)) {
+      setError(
+        "Password must be at least 8 characters long and include uppercase, lowercase, numbers, and a special character."
+      );
+      return;
+    }
+
     const data = new FormData();
     data.append("name", formData.name);
     data.append("email", formData.email);
@@ -65,13 +75,12 @@ if (!emailRegex.test(formData.email)) {
       toast.success("Registered successfully!");
       setTimeout(() => navigate("/login"), 2000);
     } catch (error) {
-        Swal.fire({
-              title: "Error",
-              text: error.response.data.message,
-              icon: "error",
-              confirmButtonColor: "#9333ea",
-            });
-     
+      Swal.fire({
+        title: "Error",
+        text: error.response.data.message,
+        icon: "error",
+        confirmButtonColor: "#9333ea",
+      });
     }
   };
 
@@ -148,13 +157,8 @@ if (!emailRegex.test(formData.email)) {
               placeholder="PLease Enter Your Email"
               required
               className={`w-full px-3 py-3 border rounded-lg focus:ring-2 focus:outline-none text-sm 
-          ${
-            error
-              ? "border-red-500 focus:ring-red-400"
-              : "border-gray-300 focus:ring-blue-900"
-          }`}
+        `}
             />
-            {error && <p className="text-red-500 text-xs mt-1">{error}</p>}
           </div>
 
           {/* Contact */}
@@ -188,8 +192,13 @@ if (!emailRegex.test(formData.email)) {
               onChange={handleChange}
               placeholder="Please Enter Your Password"
               required
-              className="w-full px-3 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-900 focus:outline-none text-sm"
+              className={`w-full px-3 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-900 focus:outline-none text-sm   ${
+                error
+                  ? "border-red-500 focus:ring-red-400"
+                  : "border-gray-300 focus:ring-blue-900"
+              }`}
             />
+            {error && <p className="text-red-500 text-xs mt-1">{error}</p>}
           </div>
 
           {/* Submit */}
