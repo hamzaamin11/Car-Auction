@@ -20,6 +20,7 @@ import { AdminAddBid } from "../../components/AdminAddBidComponent/AdminAddBid";
 import { AdminUpdatebid } from "../AdminUpdatebid";
 import { X, ChevronLeft, ChevronRight } from "lucide-react";
 import CustomSearch from "../../CustomSearch";
+
 export default function UpcomingAuctions() {
   const { currentUser } = useSelector((state) => state?.auth);
 
@@ -37,6 +38,10 @@ export default function UpcomingAuctions() {
   const [isViewModalOpen, setIsViewModalOpen] = useState(false);
   const [currentImageIndex, setCurrentImageIndex] = useState(0);
 
+  // PAGINATION: Total count
+  const [totalItems, setTotalItems] = useState(0);
+  const itemsPerPage = 10;
+
   const id = currentUser?.id;
 
   const debouncedSearch = useCallback(
@@ -47,24 +52,21 @@ export default function UpcomingAuctions() {
     []
   );
 
-  const handleNextPage = () => {
-    setPageNo(pageNo + 1);
-  };
-
-  const handlePrevPage = () => {
-    setPageNo(pageNo > 1 ? pageNo - 1 : 1);
-  };
-
   const handleGetAllUpcomingAuctions = async () => {
     setLoading(true);
     try {
       const res = await axios.get(
-        `${BASE_URL}/admin/upcomingAuctionsForAdmin?entry=10&page=${pageNo}`
+        `${BASE_URL}/admin/upcomingAuctionsForAdmin?entry=${itemsPerPage}&page=${pageNo}`
       );
       console.log("API Response (Admin):", res.data);
-      setAllUpcoming(res.data);
+      const auctions = res.data?.data || res.data || [];
+      const total = res.data?.total || res.data?.length || auctions.length || 0;
+      setAllUpcoming(auctions);
+      setTotalItems(total);
     } catch (error) {
       console.log("Error (Admin):", error);
+      setAllUpcoming([]);
+      setTotalItems(0);
     } finally {
       setLoading(false);
     }
@@ -75,9 +77,13 @@ export default function UpcomingAuctions() {
     try {
       const res = await axios.get(`${BASE_URL}/seller/upcomingAuctions/${id}`);
       console.log("API Response (Seller):", res.data);
-      setAllUpcoming(res.data);
+      const auctions = Array.isArray(res.data) ? res.data : [];
+      setAllUpcoming(auctions);
+      setTotalItems(auctions.length);
     } catch (error) {
       console.log("Error (Seller):", error);
+      setAllUpcoming([]);
+      setTotalItems(0);
     } finally {
       setLoading(false);
     }
@@ -137,7 +143,7 @@ export default function UpcomingAuctions() {
     } else if (currentUser?.role === "seller") {
       handleGetAllUpcomingAuctionsbySeller();
     }
-  }, [pageNo]);
+  }, [pageNo, currentUser?.role]);
 
   useEffect(() => {
     const filtered = allUpcoming.filter(
@@ -148,6 +154,31 @@ export default function UpcomingAuctions() {
     );
     setFilteredAuctions(filtered);
   }, [search, allUpcoming]);
+
+  const totalPages = Math.ceil(totalItems / itemsPerPage);
+  const startIndex = (pageNo - 1) * itemsPerPage;
+  const endIndex = Math.min(startIndex + itemsPerPage, totalItems);
+
+  const goToPage = (page) => {
+    if (page >= 1 && page <= totalPages) {
+      setPageNo(page);
+      window.scrollTo({ top: 0, behavior: "smooth" });
+    }
+  };
+
+  const getPageNumbers = () => {
+    const pages = [];
+    if (totalPages <= 5) {
+      for (let i = 1; i <= totalPages; i++) pages.push(i);
+    } else if (pageNo <= 3) {
+      for (let i = 1; i <= 5; i++) pages.push(i);
+    } else if (pageNo >= totalPages - 2) {
+      for (let i = totalPages - 4; i <= totalPages; i++) pages.push(i);
+    } else {
+      for (let i = pageNo - 2; i <= pageNo + 2; i++) pages.push(i);
+    }
+    return pages;
+  };
 
   return (
     <>
@@ -173,16 +204,19 @@ export default function UpcomingAuctions() {
                 />
               </svg>
             </span>
-          <CustomSearch
-  placeholder="Search by Make, Model, or Condition..."
-  value={search}
-  onChange={(e) => {
-    setSearch(e.target.value);
-    debouncedSearch(e.target.value);
-  }}
-/>
-
+            <CustomSearch
+              placeholder="Search by Make, Model, or Condition..."
+              value={search}
+              onChange={(e) => {
+                setSearch(e.target.value);
+                debouncedSearch(e.target.value);
+              }}
+            />
           </div>
+        </div>
+
+        <div className="text-gray-800 mb-4 font-semibold text-xl">
+          Total Upcoming: {totalItems}
         </div>
 
         <>
@@ -263,29 +297,28 @@ export default function UpcomingAuctions() {
                           : "--"}
                       </td>
                       <td className="px-4 py-3 text-gray-700">
-  {user?.startTime
-    ? new Date(user.startTime).toLocaleDateString("en-GB")
-    : "N/A"}
-</td>
+                        {user?.startTime
+                          ? new Date(user.startTime).toLocaleDateString("en-GB")
+                          : "N/A"}
+                      </td>
 
-                     {currentUser?.role === "seller" ? null : (
-  <td
-    className="px-4 py-3"
-    onClick={(e) => {
-      e.stopPropagation();
-    }}
-  >
-    <CustomAdd
-      text="Edit"
-      variant="edit"
-      onClick={() => {
-        handleToggleModel("update");
-        setselectedVehicle(user);
-      }}
-    />
-  </td>
-)}
-
+                      {currentUser?.role === "seller" ? null : (
+                        <td
+                          className="px-4 py-3"
+                          onClick={(e) => {
+                            e.stopPropagation();
+                          }}
+                        >
+                          <CustomAdd
+                            text="Edit"
+                            variant="edit"
+                            onClick={() => {
+                              handleToggleModel("update");
+                              setselectedVehicle(user);
+                            }}
+                          />
+                        </td>
+                      )}
                     </tr>
                   ))}
                 </tbody>
@@ -336,23 +369,23 @@ export default function UpcomingAuctions() {
                       <span className="text-gray-900 font-bold">Date</span>
                       <span className="text-gray-500">
                         {user?.startTime
-    ? new Date(user.startTime).toLocaleDateString("en-GB")
-    : "N/A"}
+                          ? new Date(user.startTime).toLocaleDateString("en-GB")
+                          : "N/A"}
                       </span>
                     </p>
                   </div>
                   {currentUser?.role !== "seller" && (
                     <div className="mt-4">
-                    <CustomAdd
-  text="Edit"
-  variant="edit"
-  onClick={(e) => {
-    e.stopPropagation();
-    handleToggleModel("update");
-    setselectedVehicle(user);
-  }}
-  className="w-full py-2.5"
-/>
+                      <CustomAdd
+                        text="Edit"
+                        variant="edit"
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          handleToggleModel("update");
+                          setselectedVehicle(user);
+                        }}
+                        className="w-full py-2.5"
+                      />
                     </div>
                   )}
                 </div>
@@ -361,30 +394,65 @@ export default function UpcomingAuctions() {
           </div>
 
           {filteredAuctions?.length === 0 && (
-            <div className="flex items-center justify-center font-medium lg:text-xl text-sm mt-1">
+            <div className="flex items-center justify-center font-medium lg:text-xl text-sm mt-10">
               No Upcoming Bid yet!
             </div>
           )}
 
-          <div className="flex justify-between mt-6">
-            <button
-              className={`bg-blue-950 text-white px-5 py-2 rounded ${
-                pageNo > 1 ? "block" : "hidden"
-              }`}
-              onClick={handlePrevPage}
-            >
-              ‹ Prev
-            </button>
-            <div></div>
-            <button
-              className={`bg-blue-950 text-white px-5 py-2 rounded ${
-                filteredAuctions.length === 10 ? "block" : "hidden"
-              }`}
-              onClick={handleNextPage}
-            >
-              Next ›
-            </button>
-          </div>
+          {/* PROFESSIONAL PAGINATION WITH ARROWS */}
+          {totalItems > 0 && (
+            <div className="bg-white rounded-lg shadow-sm p-4 mt-6">
+              <div className="flex flex-col sm:flex-row justify-between items-center gap-4 text-sm text-gray-700">
+                <div className="text-gray-600">
+                  Showing <span className="font-medium">{startIndex + 1}</span> to{" "}
+                  <span className="font-medium">{endIndex}</span> of{" "}
+                  <span className="font-medium">{totalItems}</span> entries
+                </div>
+
+                <div className="flex items-center gap-1">
+                  <button
+                    onClick={() => goToPage(1)}
+                    disabled={pageNo === 1}
+                    className={`px-3 py-1 rounded border ${pageNo === 1 ? "bg-gray-100 text-gray-400 cursor-not-allowed" : "bg-white hover:bg-gray-50"}`}
+                  >
+                    {"<<"}
+                  </button>
+                  <button
+                    onClick={() => goToPage(pageNo - 1)}
+                    disabled={pageNo === 1}
+                    className={`px-3 py-1 rounded border ${pageNo === 1 ? "bg-gray-100 text-gray-400 cursor-not-allowed" : "bg-white hover:bg-gray-50"}`}
+                  >
+                    {"<"}
+                  </button>
+
+                  {getPageNumbers().map((page) => (
+                    <button
+                      key={page}
+                      onClick={() => goToPage(page)}
+                      className={`px-3 py-1 rounded border ${pageNo === page ? "bg-blue-950 text-white" : "bg-white hover:bg-gray-50"}`}
+                    >
+                      {page}
+                    </button>
+                  ))}
+
+                  <button
+                    onClick={() => goToPage(pageNo + 1)}
+                    disabled={pageNo >= totalPages}
+                    className={`px-3 py-1 rounded border ${pageNo >= totalPages ? "bg-gray-100 text-gray-400 cursor-not-allowed" : "bg-white hover:bg-gray-50"}`}
+                  >
+                    {">"}
+                  </button>
+                  <button
+                    onClick={() => goToPage(totalPages)}
+                    disabled={pageNo >= totalPages}
+                    className={`px-3 py-1 rounded border ${pageNo >= totalPages ? "bg-gray-100 text-gray-400 cursor-not-allowed" : "bg-white hover:bg-gray-50"}`}
+                  >
+                    {">>"}
+                  </button>
+                </div>
+              </div>
+            </div>
+          )}
         </>
 
         {selectedAuctionId && (
@@ -403,7 +471,7 @@ export default function UpcomingAuctions() {
         )}
 
         {/* ============================================ */}
-        {/* VIEW VEHICLE MODAL -  */}
+        {/* VIEW VEHICLE MODAL */}
         {/* ============================================ */}
         {isViewModalOpen && (document.body.style.overflow = "hidden")}
         {isViewModalOpen && selectedVehicle && (

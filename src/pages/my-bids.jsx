@@ -25,23 +25,37 @@ const MyBids = () => {
     handleGetBidersHistory();
   }, []);
 
-  // Calculate pagination
-  const indexOfLastItem = currentPage * itemsPerPage;
-  const indexOfFirstItem = indexOfLastItem - itemsPerPage;
-  const currentItems = allBiders.slice(indexOfFirstItem, indexOfLastItem);
-  const totalPages = Math.ceil(allBiders.length / itemsPerPage);
+  // Pagination Logic
+  const totalItems = allBiders.length;
+  const totalPages = Math.ceil(totalItems / itemsPerPage);
+  const startIndex = (currentPage - 1) * itemsPerPage;
+  const endIndex = Math.min(startIndex + itemsPerPage, totalItems);
+  const currentItems = allBiders.slice(startIndex, endIndex);
 
-  const handleNextPage = () => {
-    if (currentPage < totalPages) {
-      setCurrentPage(currentPage + 1);
+  const goToPage = (page) => {
+    if (page >= 1 && page <= totalPages) {
+      setCurrentPage(page);
+      window.scrollTo({ top: 0, behavior: "smooth" });
     }
   };
 
-  const handlePrevPage = () => {
-    if (currentPage > 1) {
-      setCurrentPage(currentPage - 1);
+  const getPageNumbers = () => {
+    const pages = [];
+    if (totalPages <= 5) {
+      for (let i = 1; i <= totalPages; i++) pages.push(i);
+    } else if (currentPage <= 3) {
+      for (let i = 1; i <= 5; i++) pages.push(i);
+    } else if (currentPage >= totalPages - 2) {
+      for (let i = totalPages - 4; i <= totalPages; i++) pages.push(i);
+    } else {
+      for (let i = currentPage - 2; i <= currentPage + 2; i++) pages.push(i);
     }
+  
+    return pages;
   };
+  console.log('totalPages:', totalPages);
+console.log('currentPage:', currentPage);
+console.log('pageNumbers:', getPageNumbers());
 
   return (
     <div className="min-h-screen bg-gray-100 p-4 md:p-6">
@@ -51,8 +65,8 @@ const MyBids = () => {
         </h1>
 
         <div className="w-full bg-white rounded-2xl shadow-md border border-gray-200">
-          {/* Desktop Table View */}
-          <div className="hidden md:block w-full pb-12">
+          {/* Desktop Table View  */}
+          <div className="hidden md:block overflow-x-auto">
             <table className="min-w-full text-sm table-fixed">
               <thead className="bg-blue-950 text-white">
                 <tr>
@@ -65,7 +79,7 @@ const MyBids = () => {
                     Bid Amount
                   </th>
                   <th className="px-6 py-3 text-left font-semibold">Date</th>
-                  <th className="px-6 py-3 text-center font-semibold ">
+                  <th className="px-6 py-3 text-center font-semibold">
                     Status
                   </th>
                 </tr>
@@ -73,11 +87,8 @@ const MyBids = () => {
               <tbody className="divide-y divide-gray-100">
                 {currentItems && currentItems.length > 0 ? (
                   currentItems.map((bid, index) => (
-                    <tr
-                      key={index}
-                      className=" transition duration-200"
-                    >
-                      <td className="px-6 py-4">{indexOfFirstItem + index + 1}</td>
+                    <tr key={index} className="transition duration-200">
+                      <td className="px-6 py-4">{startIndex + index + 1}</td>
                       <td className="px-6 py-4 text-gray-700">
                         {bid?.buyerDetails?.name}
                       </td>
@@ -165,35 +176,93 @@ const MyBids = () => {
             )}
           </div>
 
-          {/* Pagination */}
-          {allBiders.length > 0 && (
-            <div className="flex justify-center items-center gap-4 p-4 border-t border-gray-200 my-10">
-              {currentPage > 1 && (
-                <button
-                  onClick={handlePrevPage}
-                  className="flex items-center gap-2 px-4 py-2 bg-blue-950 text-white rounded-lg hover:bg-blue-900 transition"
-                >
-                  <ChevronLeft size={20} />
-                  Previous
-                </button>
-              )}
-              
-         
+    
+       {/* IMPROVED PAGINATION – RESPONSIVE ON BOTH MOBILE & DESKTOP */}
+{totalItems > 0 && (
+  <div className="border-t border-gray-200">
+    <div className="p-4">
+      {/* Info Text - Full Width on Mobile */}
+      <div className="text-center sm:text-left text-sm text-gray-600 mb-3 sm:mb-4">
+        Showing <span className="font-medium">{startIndex + 1}</span> to{" "}
+        <span className="font-medium">{endIndex}</span> of{" "}
+        <span className="font-medium">{totalItems}</span> entries
+      </div>
 
-              {currentPage < totalPages && (
-                <button
-                  onClick={handleNextPage}
-                  className="flex items-center gap-2 px-4 py-2 bg-blue-950 text-white rounded-lg hover:bg-blue-900 transition"
-                >
-                  Next
-                  <ChevronRight size={20} />
-                </button>
-              )}
-            </div>
-          )}
+      {/* Pagination Controls - Centered and Wrapped */}
+      <div className="flex justify-center">
+        <div className="inline-flex flex-wrap items-center justify-center gap-1 sm:gap-2">
+          {/* First Page Button */}
+      {/* First Page Button */}
+<button
+  onClick={() => goToPage(1)}
+  disabled={currentPage === 1}
+  className={`px-2 sm:px-3 py-1.5 rounded border border-gray-300 text-sm sm:text-base font-medium transition-colors ${
+    currentPage === 1
+      ? "bg-gray-100 text-gray-400 cursor-not-allowed"
+      : "bg-white hover:bg-gray-50 text-gray-700"
+  }`}
+>
+  {"<<"}
+</button>
+
+<button
+  onClick={() => goToPage(currentPage - 1)}
+  disabled={currentPage === 1}
+  className={`px-2 sm:px-3 py-1.5 rounded border border-gray-300 text-sm sm:text-base font-medium transition-colors ${
+    currentPage === 1
+      ? "bg-gray-100 text-gray-400 cursor-not-allowed"
+      : "bg-white hover:bg-gray-50 text-gray-700"
+  }`}
+>
+  {"<"}
+</button>
+
+{getPageNumbers().map((page) => (
+  <button
+    key={page}
+    onClick={() => goToPage(page)}
+    className={`px-2.5 sm:px-3.5 py-1.5 rounded border border-gray-300 text-sm sm:text-base font-medium transition-colors ${
+      currentPage === page
+        ? "bg-blue-950 text-white border-blue-950"
+        : "bg-white hover:bg-gray-50 text-gray-700"
+    }`}
+  >
+    {page}
+  </button>
+))}
+
+<button
+  onClick={() => goToPage(currentPage + 1)}
+  disabled={currentPage >= totalPages}
+  className={`px-2 sm:px-3 py-1.5 rounded border border-gray-300 text-sm sm:text-base font-medium transition-colors ${
+    currentPage >= totalPages
+      ? "bg-gray-100 text-gray-400 cursor-not-allowed"
+      : "bg-white hover:bg-gray-50 text-gray-700"
+  }`}
+>
+  {">"}
+</button>
+
+<button
+  onClick={() => goToPage(totalPages)}
+  disabled={currentPage >= totalPages}
+  className={`px-2 sm:px-3 py-1.5 rounded border border-gray-300 text-sm sm:text-base font-medium transition-colors ${
+    currentPage >= totalPages
+      ? "bg-gray-100 text-gray-400 cursor-not-allowed"
+      : "bg-white hover:bg-gray-50 text-gray-700"
+  }`}
+>
+  {">>"}
+</button>
+        </div>
+      </div>
+    </div>
+  </div>
+)}
         </div>
       </div>
     </div>
   );
 };
+
 export default MyBids;

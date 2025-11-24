@@ -54,7 +54,7 @@ const AdminBidHistory = () => {
     setFilteredBiders(filtered);
   }, [search, allBiders]);
 
-  // PERFECT PAGINATION LOGIC (same as BrandList)
+  //  PAGINATION 
   const totalItems = filteredBiders.length;
   const totalPages = Math.ceil(totalItems / itemsPerPage);
   const startIndex = (currentPage - 1) * itemsPerPage;
