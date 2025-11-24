@@ -167,7 +167,7 @@ export const BrandList = () => {
           <div className="flex flex-col sm:flex-row justify-between items-center gap-4 text-sm text-gray-700">
             <div className="text-gray-600">
               Showing <span className="font-medium">{startIndex + 1}</span> to{" "}
-              <span className="font-medium">{endIndex}</span> of{" "}
+              <span className="font-medium">{endIndex}</span>{" "}
               <span className="font-medium"></span> entries
             </div>
 

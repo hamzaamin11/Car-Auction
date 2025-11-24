@@ -201,11 +201,9 @@ function AddAdminVehicle({ open, setOpen, onVehicleUpdated }) {
 
   const handleGetVehicles = async () => {
     try {
-      const res = await axios.get(
-        `${BASE_URL}/getApprovedVehicles?page=${pageNo}&entry=10&search=${search}`
-      );
-      setAllVehicles(res.data);
-      setFilteredVehicles(res.data);
+      const res = await axios.get(`${BASE_URL}/getApprovedVehicles`);
+      setAllVehicles(res.data || []);
+      setTotalVehicles(res.data || []);
     } catch (error) {
       console.log(error);
     }
@@ -303,7 +301,7 @@ function AddAdminVehicle({ open, setOpen, onVehicleUpdated }) {
       await axios.patch(`${BASE_URL}/seller/deleteVehicle/${id}`);
       handleGetVehicles();
       await Swal.fire({
-        title: "Deleted!",
+        title: " Deleted!",
         text: "The vehicle has been deleted successfully.",
         icon: "success",
         confirmButtonColor: "#9333ea",
@@ -343,7 +341,7 @@ function AddAdminVehicle({ open, setOpen, onVehicleUpdated }) {
     formData.append("userId", currentUser?.id);
 
     Object.entries(vehicle).forEach(([key, value]) => {
-      if (key === "image" && Array.isArray(value)) {
+      if (key === "image" && Role.isArray(value)) {
         value.forEach((file) => {
           formData.append("image", file);
         });
@@ -414,6 +412,45 @@ function AddAdminVehicle({ open, setOpen, onVehicleUpdated }) {
     }
   };
 
+  //  CLIENT-SIDE PAGINATION + SEARCH
+  useEffect(() => {
+    let filtered = allVehicles;
+
+    if (search) {
+      filtered = allVehicles.filter((v) =>
+        `${v.make} ${v.model} ${v.year} ${v.series}`.toLowerCase().includes(search.toLowerCase())
+      );
+    }
+
+    const start = (pageNo - 1) * 10;
+    const end = start + 10;
+    setFilteredVehicles(filtered.slice(start, end));
+  }, [allVehicles, search, pageNo]);
+
+  const totalItems = search ? filteredVehicles.length : allVehicles.length;
+  const totalPages = Math.ceil(allVehicles.filter(v =>
+    !search || `${v.make} ${v.model} ${v.year} ${v.series}`.toLowerCase().includes(search.toLowerCase())
+  ).length / 10);
+
+  const goToPage = (page) => {
+    setPageNo(page);
+    window.scrollTo({ top: 0, behavior: "smooth" });
+  };
+
+  const getPageNumbers = () => {
+    const pages = [];
+    if (totalPages <= 5) {
+      for (let i = 1; i <= totalPages; i++) pages.push(i);
+    } else if (pageNo <= 3) {
+      for (let i = 1; i <= 5; i++) pages.push(i);
+    } else if (pageNo >= totalPages - 2) {
+      for (let i = totalPages - 4; i <= totalPages; i++) pages.push(i);
+    } else {
+      for (let i = pageNo - 2; i <= pageNo + 2; i++) pages.push(i);
+    }
+    return pages;
+  };
+
   useEffect(() => {
     setVehicle((prev) => ({
       ...prev,
@@ -431,7 +468,7 @@ function AddAdminVehicle({ open, setOpen, onVehicleUpdated }) {
 
   useEffect(() => {
     handleGetVehicles();
-  }, [pageNo, search]);
+  }, []);
 
   return (
     <div className="min-h-screen bg-white p-4 sm:p-6">
@@ -478,7 +515,7 @@ function AddAdminVehicle({ open, setOpen, onVehicleUpdated }) {
         />
       </div>
       <div className="text-gray-800 mb-2 font-semibold text-2xl">
-        Total Approval Vehicles:{totalVehicles.length}
+        Total Approval Vehicles: {allVehicles.length}
       </div>
 
       {showModal && (
@@ -554,7 +591,7 @@ function AddAdminVehicle({ open, setOpen, onVehicleUpdated }) {
                         driveType: opt?.value || "",
                       }))
                     }
-                    placeholder="Select Drive Type" // Now this shows in gray
+                    placeholder="Select Drive Type"
                   />
                 </div>
 
@@ -1055,25 +1092,53 @@ function AddAdminVehicle({ open, setOpen, onVehicleUpdated }) {
         )}
       </div>
 
-      <div className="flex justify-between mt-6 px-2 sm:px-4">
-        <button
-          className={`bg-blue-950 text-white px-5 py-2 rounded ${
-            pageNo > 1 ? "block" : "hidden"
-          }`}
-          onClick={handlePrevPage}
-        >
-          Prev
-        </button>
-        <div></div>
-        <button
-          className={`bg-blue-950 text-white px-5 py-2 rounded ${
-            allVehicles.length === 10 ? "block" : "hidden"
-          }`}
-          onClick={handleNextPage}
-        >
-          Next
-        </button>
-      </div>
+      {/*  PAGINATION  */}
+      {allVehicles.length > 0 && (
+        <div className="bg-white rounded-lg shadow-sm p-4 mt-6">
+          <div className="flex flex-col sm:flex-row justify-between items-center gap-4 text-sm text-gray-700">
+            <div className="text-gray-600">
+              Showing <span className="font-medium">{(pageNo - 1) * 10 + 1}</span> to{" "}
+              <span className="font-medium">
+                {Math.min(pageNo * 10, allVehicles.filter(v =>
+                  !search || `${v.make} ${v.model} ${v.year} ${v.series}`.toLowerCase().includes(search.toLowerCase())
+                ).length)}
+              </span>{" "}
+              of <span className="font-medium">
+                {allVehicles.filter(v =>
+                  !search || `${v.make} ${v.model} ${v.year} ${v.series}`.toLowerCase().includes(search.toLowerCase())
+                ).length}
+              </span> entries
+            </div>
+
+            <div className="flex items-center gap-1">
+              <button onClick={() => goToPage(1)} disabled={pageNo === 1}
+                className={`px-3 py-1 rounded border ${pageNo === 1 ? "bg-gray-100 text-gray-400 cursor-not-allowed" : "bg-white hover:bg-gray-50"}`}>
+                {"<<"}
+              </button>
+              <button onClick={() => goToPage(pageNo - 1)} disabled={pageNo === 1}
+                className={`px-3 py-1 rounded border ${pageNo === 1 ? "bg-gray-100 text-gray-400 cursor-not-allowed" : "bg-white hover:bg-gray-50"}`}>
+                {"<"}
+              </button>
+
+              {getPageNumbers().map((page) => (
+                <button key={page} onClick={() => goToPage(page)}
+                  className={`px-3 py-1 rounded border ${pageNo === page ? "bg-blue-950 text-white" : "bg-white hover:bg-gray-50"}`}>
+                  {page}
+                </button>
+              ))}
+
+              <button onClick={() => goToPage(pageNo + 1)} disabled={pageNo >= totalPages}
+                className={`px-3 py-1 rounded border ${pageNo >= totalPages ? "bg-gray-100 text-gray-400 cursor-not-allowed" : "bg-white hover:bg-gray-50"}`}>
+                {">"}
+              </button>
+              <button onClick={() => goToPage(totalPages)} disabled={pageNo >= totalPages}
+                className={`px-3 py-1 rounded border ${pageNo >= totalPages ? "bg-gray-100 text-gray-400 cursor-not-allowed" : "bg-white hover:bg-gray-50"}`}>
+                {">>"}
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
 
       <EditAdminVehicle
         open={editModalOpen}

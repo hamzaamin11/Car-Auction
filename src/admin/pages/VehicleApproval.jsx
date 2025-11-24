@@ -1,5 +1,5 @@
 import React, { useEffect, useState, useRef } from "react";
-import { MoreVertical, X, ChevronLeft, ChevronRight,Search } from "lucide-react";
+import { MoreVertical, X, ChevronLeft, ChevronRight, Search } from "lucide-react";
 import axios from "axios";
 import { BASE_URL } from "../../components/Contant/URL";
 import Swal from "sweetalert2";
@@ -12,8 +12,10 @@ export const VehicleApproval = () => {
   const [selectedVehicle, setSelectedVehicle] = useState(null);
   const [isViewModalOpen, setIsViewModalOpen] = useState(false);
   const [currentImageIndex, setCurrentImageIndex] = useState(0);
-  
+  const [pageNo, setPageNo] = useState(1);
+
   const menuRef = useRef(null);
+  const itemsPerPage = 10;
 
   const handleGetAllUnapprovalVehicles = async () => {
     try {
@@ -52,7 +54,7 @@ export const VehicleApproval = () => {
     }
   };
 
- const handleReject = async (vehicle) => {
+  const handleReject = async (vehicle) => {
     try {
       const result = await Swal.fire({
         title: "Are you sure?",
@@ -66,9 +68,6 @@ export const VehicleApproval = () => {
       });
 
       if (result.isConfirmed) {
-        // Add your API call here to reject the vehicle
-        // const res = await axios.put(`${BASE_URL}/RejectVehicles/${vehicle.id}`);
-        
         setActionMenuOpen(null);
         handleGetAllUnapprovalVehicles();
         
@@ -139,33 +138,64 @@ export const VehicleApproval = () => {
       .includes(search.toLowerCase())
   );
 
+  const totalItems = filteredVehicles.length;
+  const totalPages = Math.ceil(totalItems / itemsPerPage);
+  const startIndex = (pageNo - 1) * itemsPerPage;
+  const endIndex = Math.min(startIndex + itemsPerPage, totalItems);
+  const currentPageVehicles = filteredVehicles.slice(startIndex, endIndex);
+
+  const goToPage = (page) => {
+    setPageNo(page);
+    window.scrollTo({ top: 0, behavior: "smooth" });
+  };
+
+  const getPageNumbers = () => {
+    const pages = [];
+    if (totalPages <= 5) {
+      for (let i = 1; i <= totalPages; i++) pages.push(i);
+    } else if (pageNo <= 3) {
+      for (let i = 1; i <= 5; i++) pages.push(i);
+    } else if (pageNo >= totalPages - 2) {
+      for (let i = totalPages - 4; i <= totalPages; i++) pages.push(i);
+    } else {
+      for (let i = pageNo - 2; i <= pageNo + 2; i++) pages.push(i);
+    }
+    return pages;
+  };
+
   useEffect(() => {
     handleGetAllUnapprovalVehicles();
   }, []);
 
   return (
-   <div className="min-h-screen bg-gray-100 p-6">
+    <div className="min-h-screen bg-gray-100 p-6">
       <div className="flex flex-col sm:flex-row justify-between items-center mb-6">
         <h2 className="lg:text-3xl text-xl font-bold text-gray-800 text-center">
           Pending Vehicle Approvals
         </h2>
 
         <div className="relative w-full sm:w-80 mt-4 sm:mt-0">
-         <CustomSearch
-  placeholder="Search by Car Name..."
-  value={search}
-  onChange={(e) => setSearch(e.target.value)}
-/>
-
+          <CustomSearch
+            placeholder="Search by Car Name..."
+            value={search}
+            onChange={(e) => {
+              setSearch(e.target.value);
+              setPageNo(1);
+            }}
+          />
           <span className="absolute inset-y-0 left-0 flex items-center pl-3 text-gray-400">
-            <Search className="h-5 w-5" /> {/* Replaced 🔍 with Search icon */}
+            <Search className="h-5 w-5" />
           </span>
         </div>
       </div>
 
-      {filteredVehicles.length > 0 ? (
+      <div className="text-gray-800 mb-4 font-semibold text-xl">
+        Total Pending: {totalItems}
+      </div>
+
+      {currentPageVehicles.length > 0 ? (
         <div className="space-y-4">
-          {filteredVehicles.map((vehicle) => (
+          {currentPageVehicles.map((vehicle) => (
             <div key={vehicle.id}>
               <div className="hidden lg:flex flex-col md:flex-row items-start md:items-center justify-between border rounded-lg bg-white hover:shadow-md transition-all duration-200 p-4 gap-4 relative">
                 <div className="w-full md:w-48 h-32 flex-shrink-0 rounded-md overflow-hidden bg-gray-100">
@@ -186,14 +216,13 @@ export const VehicleApproval = () => {
                   <h2 className="text-lg font-bold text-gray-800">
                     {vehicle.make} {vehicle.model} {vehicle.series}
                   </h2>
-                  <p className="text-md font-bold  text-black mt-1">
+                  <p className="text-md font-bold text-black mt-1">
                     PKR {vehicle.buyNowPrice}
                   </p>
                   <p className="text-sm text-gray-600">
                     {vehicle.year} | {vehicle.fuelType} | {vehicle.transmission} |{" "}
                     {vehicle.mileage} KM | {vehicle.color} | {vehicle?.cityName ?? "--"}
                   </p>
-                  
                 </div>
 
                 <div className="relative">
@@ -299,6 +328,62 @@ export const VehicleApproval = () => {
         </p>
       )}
 
+      {/* PAGINATION WITH ARROWS ONLY (<< < > >>) */}
+      {totalItems > 0 && (
+        <div className="bg-white rounded-lg shadow-sm p-4 mt-6">
+          <div className="flex flex-col sm:flex-row justify-between items-center gap-4 text-sm text-gray-700">
+            <div className="text-gray-600">
+              Showing <span className="font-medium">{startIndex + 1}</span> to{" "}
+              <span className="font-medium">{endIndex}</span> of{" "}
+              <span className="font-medium">{totalItems}</span> entries
+            </div>
+
+            <div className="flex items-center gap-1">
+              <button
+                onClick={() => goToPage(1)}
+                disabled={pageNo === 1}
+                className={`px-3 py-1 rounded border ${pageNo === 1 ? "bg-gray-100 text-gray-400 cursor-not-allowed" : "bg-white hover:bg-gray-50"}`}
+              >
+                {"<<"}
+              </button>
+              <button
+                onClick={() => goToPage(pageNo - 1)}
+                disabled={pageNo === 1}
+                className={`px-3 py-1 rounded border ${pageNo === 1 ? "bg-gray-100 text-gray-400 cursor-not-allowed" : "bg-white hover:bg-gray-50"}`}
+              >
+                {"<"}
+              </button>
+
+              {getPageNumbers().map((page) => (
+                <button
+                  key={page}
+                  onClick={() => goToPage(page)}
+                  className={`px-3 py-1 rounded border ${pageNo === page ? "bg-blue-950 text-white" : "bg-white hover:bg-gray-50"}`}
+                >
+                  {page}
+                </button>
+              ))}
+
+              <button
+                onClick={() => goToPage(pageNo + 1)}
+                disabled={pageNo >= totalPages}
+                className={`px-3 py-1 rounded border ${pageNo >= totalPages ? "bg-gray-100 text-gray-400 cursor-not-allowed" : "bg-white hover:bg-gray-50"}`}
+              >
+                {">"}
+              </button>
+              <button
+                onClick={() => goToPage(totalPages)}
+                disabled={pageNo >= totalPages}
+                className={`px-3 py-1 rounded border ${pageNo >= totalPages ? "bg-gray-100 text-gray-400 cursor-not-allowed" : "bg-white hover:bg-gray-50"}`}
+              >
+                {">>"}
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* View Modal - 100% unchanged */}
       {isViewModalOpen && selectedVehicle && (
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-blur-md backdrop-blur-md p-4">
           <div className="bg-white rounded-lg shadow-2xl w-full max-w-4xl max-h-[90vh] overflow-y-auto relative">
