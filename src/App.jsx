@@ -95,6 +95,7 @@ import { VehicleApproval } from "./admin/pages/VehicleApproval";
 import { addMake, addModel } from "./components/Redux/SelectorCarSlice";
 import { WishList } from "./pages/WishList";
 import { SubcribeUserList } from "./admin/pages/SubcribeUserList";
+import { AwaitingApproval } from "./admin/pages/AwaitingApprovel";
 
 function Layout() {
   const location = useLocation();
@@ -134,7 +135,9 @@ function Layout() {
       {!hideNavbarFooter && location.pathname === "/"}
       <ScrollToTop />
 
-{!hideNavbarFooter && (location.pathname === "/" || (role !== "admin" && role !== "seller")) && <Navbar />}
+      {!hideNavbarFooter &&
+        (location.pathname === "/" ||
+          (role !== "admin" && role !== "seller")) && <Navbar />}
       <Routes>
         {/* Main Routes */}
         <Route path="/" element={<Home />} />
@@ -239,6 +242,7 @@ function Layout() {
           <Route path="/admin/addmodel" element={<ModelList />} />
           <Route path="/admin/addseries" element={<SeriesList />} />
           <Route path="/admin/approval" element={<VehicleApproval />} />
+          <Route path="/admin/awaiting" element={<AwaitingApproval />} />
           <Route path="/admin/city" element={<CitiesList />} />
 
           <Route path="/admin/suggestionlist" element={<SuggestionList />} />

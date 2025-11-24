@@ -519,8 +519,8 @@ const Navbar = () => {
           <li>
             <Link
               to="/"
-              className={`px-5 text-[14px] hover:text-red-600 ${
-                isActive("/") ? "text-red-600 font-semibold" : ""
+              className={`px-5 text-[14px] hover:text-blue-900 ${
+                isActive("/") ? "text-blue-950 font-semibold" : ""
               }`}
             >
               Home
@@ -539,8 +539,8 @@ const Navbar = () => {
               onMouseLeave={() => setActiveDropdown(null)}
             >
               <button
-                className={`flex items-center mr-4 font-medium text-[14px] hover:text-red-600 ${
-                  activeDropdown === dropdown.id ? "text-red-600" : ""
+                className={`flex items-center mr-4 font-medium text-[14px] hover:text-blue-900 ${
+                  activeDropdown === dropdown.id ? "text-blue-950" : ""
                 }`}
               >
                 {dropdown.label}
@@ -556,7 +556,7 @@ const Navbar = () => {
                   <li key={idx}>
                     <Link
                       to={item.to}
-                      className="block px-4 py-1 text-[14px] hover:bg-red-50 hover:text-red-600 transition"
+                      className="block px-4 py-1 text-[14px] hover:bg-blue-50 hover:text-blue-950 transition"
                     >
                       {item.label}
                     </Link>
@@ -570,8 +570,8 @@ const Navbar = () => {
           <li className="flex items-center gap-3 ml-1">
             <Link
               to="/partner"
-              className={`text-[14px] hover:text-red-600 ${
-                isActive("/partner") ? "text-red-600 font-semibold" : ""
+              className={`text-[14px] hover:text-blue-900 ${
+                isActive("/partner") ? "text-red-950 font-semibold" : ""
               }`}
             >
               Become a Partner
@@ -579,8 +579,8 @@ const Navbar = () => {
 
             <Link
               to="/work"
-              className={`text-[14px] mx-2 hover:text-red-600 ${
-                isActive("/work") ? "text-red-600 font-semibold" : ""
+              className={`text-[14px] mx-2 hover:text-blue-900 ${
+                isActive("/work") ? "text-blue-950 font-semibold" : ""
               }`}
             >
               How it works
@@ -588,8 +588,8 @@ const Navbar = () => {
 
             <Link
               to="/contact"
-              className={`text-[14px]  hover:text-red-600 ${
-                isActive("/contact") ? "text-red-600 font-semibold" : ""
+              className={`text-[14px]  hover:text-blue-900 ${
+                isActive("/contact") ? "text-blue-950 font-semibold" : ""
               }`}
             >
               Contact Us

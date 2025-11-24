@@ -151,7 +151,8 @@ const AddVehicles = () => {
   const [allVehicles, setAllVehicles] = useState([]);
   const [selectVehicle, setSelectVehicle] = useState();
   const [image, setImage] = useState(null);
-  const [imagePreview, setImagePreview] = useState(null);
+  const [imagePreview, setImagePreview] = useState([]);
+  const [preview, setPreview] = useState([]);
   const [isOpen, setIsOpen] = useState("");
   const [search, setSearch] = useState("");
   const [formOpen, setFormOpen] = useState(false);
@@ -167,7 +168,7 @@ const AddVehicles = () => {
   const [selectedCount, setSelectedCount] = useState(0);
   const [price, setPrice] = useState("");
   const [isDropdownOpen, setIsDropdownOpen] = useState(null);
-  console.log("vehicleData:", vehicleData);
+  console.log("vehicleData =>>:", imagePreview);
 
   // Convert numerical price to Indian format (e.g., 2800000 -> "28 Lac")
   const formatPriceToIndian = (num) => {
@@ -294,6 +295,10 @@ const AddVehicles = () => {
       }));
       setSelectedCount(currentImageCount + files.length);
     }
+
+    const Newpreviews = files.map((file) => URL.createObjectURL(file));
+
+    setPreview([...preview, Newpreviews]);
 
     // Reset the file input to prevent accumulation
     e.target.value = null;
@@ -1046,6 +1051,25 @@ const AddVehicles = () => {
                         />
                       </label>
                     </div>
+                    {preview?.length > 0 && (
+                      <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-5 gap-4 mt-4">
+                        {preview?.map((src, index) => (
+                          <div
+                            key={index}
+                            className="relative border rounded-xl shadow-sm overflow-hidden"
+                          >
+                            <img
+                              src={src}
+                              alt="preview"
+                              className="h-28 w-full object-cover"
+                            />
+                            <div className="absolute top-1 right-1 bg-white rounded-full shadow p-1 cursor-pointer hover:bg-gray-100">
+                              <span className="text-xs text-gray-600">×</span>
+                            </div>
+                          </div>
+                        ))}
+                      </div>
+                    )}
                   </div>
                   <div className="flex justify-center">
                     <button

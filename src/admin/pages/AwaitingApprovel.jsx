@@ -11,7 +11,7 @@ import { BASE_URL } from "../../components/Contant/URL";
 import Swal from "sweetalert2";
 import CustomSearch from "../../CustomSearch";
 
-export const VehicleApproval = () => {
+export const AwaitingApproval = () => {
   const [actionMenuOpen, setActionMenuOpen] = useState(null);
   const [search, setSearch] = useState("");
   const [vehicles, setVehicles] = useState([]);
@@ -25,7 +25,7 @@ export const VehicleApproval = () => {
 
   const handleGetAllUnapprovalVehicles = async () => {
     try {
-      const res = await axios.get(`${BASE_URL}/getUnApprovedVehicles`);
+      const res = await axios.get(`${BASE_URL}/getawatingApprovedVehicles`);
       console.log(res.data);
       setVehicles(res.data);
     } catch (error) {
@@ -40,31 +40,6 @@ export const VehicleApproval = () => {
   const handleApprove = async (vehicle) => {
     try {
       const res = await axios.put(`${BASE_URL}/ApprovedVehicles/${vehicle.id}`);
-      setActionMenuOpen(null);
-      console.log(res.data);
-      handleGetAllUnapprovalVehicles();
-      await Swal.fire({
-        title: "Success!",
-        text: "This vehicle has been approved successfully.",
-        icon: "success",
-        confirmButtonColor: "#9333ea",
-      });
-    } catch (error) {
-      console.error(error);
-      await Swal.fire({
-        title: "Error!",
-        text: "Something went wrong.",
-        icon: "error",
-        confirmButtonColor: "#9333ea",
-      });
-    }
-  };
-
-  const handleAwaiting = async (vehicle) => {
-    try {
-      const res = await axios.put(
-        `${BASE_URL}/AwaitingApprovedVehicles/${vehicle.id}`
-      );
       setActionMenuOpen(null);
       console.log(res.data);
       handleGetAllUnapprovalVehicles();
@@ -202,7 +177,7 @@ export const VehicleApproval = () => {
     <div className="min-h-screen bg-gray-100 p-6">
       <div className="flex flex-col sm:flex-row justify-between items-center mb-6">
         <h2 className="lg:text-3xl text-xl font-bold text-gray-800 text-center">
-          Pending Vehicle Approvals
+          Awaiting Approval Vehicles
         </h2>
 
         <div className="relative w-full sm:w-80 mt-4 sm:mt-0">
@@ -272,13 +247,6 @@ export const VehicleApproval = () => {
                         className="w-full px-4 py-2 text-sm text-green-600 hover:bg-green-100 text-left rounded-t-lg"
                       >
                         Approve
-                      </button>
-
-                      <button
-                        onClick={() => handleAwaiting(vehicle)}
-                        className="w-full px-4 py-2 text-sm text-yellow-600 hover:bg-yellow-100 text-left rounded-t-lg"
-                      >
-                        Awaiting
                       </button>
 
                       <button

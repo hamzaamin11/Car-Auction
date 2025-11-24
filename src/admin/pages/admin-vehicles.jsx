@@ -83,6 +83,8 @@ function AddAdminVehicle({ open, setOpen, onVehicleUpdated }) {
   const [allCities, setAllCities] = useState([]);
   const [allVehicles, setAllVehicles] = useState([]);
   const [filteredVehicles, setFilteredVehicles] = useState([]);
+  const [previewImages, setPreviewImages] = useState([]);
+
   const [isOpenBid, setIsOpenBid] = useState(false);
   const [isOpen, setIsOpen] = useState("");
   const [viewBider, setViewBider] = useState(false);
@@ -174,10 +176,16 @@ function AddAdminVehicle({ open, setOpen, onVehicleUpdated }) {
       toast.error("You can add a maximum of 5 images");
       return;
     }
+
     setVehicle((prev) => ({
       ...prev,
       image: [...prev.image, ...files],
     }));
+
+    const previews = files.map((file) => URL.createObjectURL(file));
+
+    setPreviewImages([...previewImages, previews]);
+
     setSelectedCount(vehicle.image.length + files.length);
     e.target.value = null;
   };
@@ -418,7 +426,9 @@ function AddAdminVehicle({ open, setOpen, onVehicleUpdated }) {
 
     if (search) {
       filtered = allVehicles.filter((v) =>
-        `${v.make} ${v.model} ${v.year} ${v.series}`.toLowerCase().includes(search.toLowerCase())
+        `${v.make} ${v.model} ${v.year} ${v.series}`
+          .toLowerCase()
+          .includes(search.toLowerCase())
       );
     }
 
@@ -428,9 +438,15 @@ function AddAdminVehicle({ open, setOpen, onVehicleUpdated }) {
   }, [allVehicles, search, pageNo]);
 
   const totalItems = search ? filteredVehicles.length : allVehicles.length;
-  const totalPages = Math.ceil(allVehicles.filter(v =>
-    !search || `${v.make} ${v.model} ${v.year} ${v.series}`.toLowerCase().includes(search.toLowerCase())
-  ).length / 10);
+  const totalPages = Math.ceil(
+    allVehicles.filter(
+      (v) =>
+        !search ||
+        `${v.make} ${v.model} ${v.year} ${v.series}`
+          .toLowerCase()
+          .includes(search.toLowerCase())
+    ).length / 10
+  );
 
   const goToPage = (page) => {
     setPageNo(page);
@@ -791,14 +807,16 @@ function AddAdminVehicle({ open, setOpen, onVehicleUpdated }) {
                   <label className="block text-sm font-medium text-gray-700 mb-2">
                     Vehicle Images <span className="text-red-500">*</span>
                   </label>
+
+                  {/* Upload Box */}
                   <div className="flex items-center justify-center w-full">
                     <label
                       htmlFor="vehicleImage"
-                      className="flex flex-col items-center justify-center w-full h-40 border-2 border-dashed border-gray-300 rounded-lg cursor-pointer bg-gray-50 hover:bg-gray-100 transition"
+                      className="flex flex-col items-center justify-center w-full h-48 border-2 border-dashed border-gray-300 rounded-xl cursor-pointer bg-gray-50 hover:bg-gray-100 transition shadow-sm"
                     >
-                      <div className="flex flex-col items-center justify-center pt-5 pb-6">
+                      <div className="flex flex-col items-center justify-center pt-4 pb-4">
                         <svg
-                          className="w-10 h-10 mb-3 text-gray-400"
+                          className="w-12 h-12 mb-3 text-gray-400"
                           fill="none"
                           stroke="currentColor"
                           strokeWidth="2"
@@ -810,18 +828,21 @@ function AddAdminVehicle({ open, setOpen, onVehicleUpdated }) {
                             d="M7 16a4 4 0 01-.88-7.903A5.002 5.002 0 0115.9 6H16a5 5 0 010 10h-1m-4 4v-8m0 0l-3 3m3-3l3 3"
                           />
                         </svg>
+
                         <p className="text-sm text-gray-600">
-                          <span className="font-medium text-indigo-600">
+                          <span className="font-semibold text-indigo-600">
                             Click to upload
                           </span>
                         </p>
-                        <p className="text-xs text-gray-400">
-                          PNG, JPG (Max 5MB each)
+
+                        <p className="text-xs text-gray-400 mt-1">
+                          PNG, JPG (Max 5MB)
                         </p>
-                        <p className="text-xs text-gray-400 px-2">
-                          You can add maximum 5 images and first image will be
-                          used as front on the card
+                        <p className="text-xs text-gray-400 px-4 text-center">
+                          Maximum 5 images — first image will be used as the
+                          cover
                         </p>
+
                         {selectedCount > 0 && (
                           <p className="text-sm text-green-600 font-medium mt-2">
                             {selectedCount} image{selectedCount > 1 ? "s" : ""}{" "}
@@ -829,6 +850,7 @@ function AddAdminVehicle({ open, setOpen, onVehicleUpdated }) {
                           </p>
                         )}
                       </div>
+
                       <input
                         id="vehicleImage"
                         type="file"
@@ -839,12 +861,35 @@ function AddAdminVehicle({ open, setOpen, onVehicleUpdated }) {
                       />
                     </label>
                   </div>
+
+                  {/* Preview Images */}
+                  {previewImages.length > 0 && (
+                    <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-5 gap-4 mt-4">
+                      {previewImages.map((src, index) => (
+                        <div
+                          key={index}
+                          className="relative border rounded-xl shadow-sm overflow-hidden"
+                        >
+                          <img
+                            src={src}
+                            alt="preview"
+                            className="h-28 w-full object-cover"
+                          />
+                          <div className="absolute top-1 right-1 bg-white rounded-full shadow p-1 cursor-pointer hover:bg-gray-100">
+                            <span className="text-xs text-gray-600">×</span>
+                          </div>
+                        </div>
+                      ))}
+                    </div>
+                  )}
                 </div>
-                <div className="flex justify-center">
+
+                {/* Submit Button */}
+                <div className="flex justify-center mt-2">
                   <button
                     type="submit"
                     disabled={loading}
-                    className="bg-blue-950 text-white px-5 py-2 rounded-lg shadow-md "
+                    className="bg-blue-950 text-white px-6 py-2.5 rounded-lg shadow-md hover:bg-blue-900 transition"
                   >
                     {loading ? "loading..." : "Submit Vehicle"}
                   </button>
@@ -1097,42 +1142,93 @@ function AddAdminVehicle({ open, setOpen, onVehicleUpdated }) {
         <div className="bg-white rounded-lg shadow-sm p-4 mt-6">
           <div className="flex flex-col sm:flex-row justify-between items-center gap-4 text-sm text-gray-700">
             <div className="text-gray-600">
-              Showing <span className="font-medium">{(pageNo - 1) * 10 + 1}</span> to{" "}
+              Showing{" "}
+              <span className="font-medium">{(pageNo - 1) * 10 + 1}</span> to{" "}
               <span className="font-medium">
-                {Math.min(pageNo * 10, allVehicles.filter(v =>
-                  !search || `${v.make} ${v.model} ${v.year} ${v.series}`.toLowerCase().includes(search.toLowerCase())
-                ).length)}
+                {Math.min(
+                  pageNo * 10,
+                  allVehicles.filter(
+                    (v) =>
+                      !search ||
+                      `${v.make} ${v.model} ${v.year} ${v.series}`
+                        .toLowerCase()
+                        .includes(search.toLowerCase())
+                  ).length
+                )}
               </span>{" "}
-              of <span className="font-medium">
-                {allVehicles.filter(v =>
-                  !search || `${v.make} ${v.model} ${v.year} ${v.series}`.toLowerCase().includes(search.toLowerCase())
-                ).length}
-              </span> entries
+              of{" "}
+              <span className="font-medium">
+                {
+                  allVehicles.filter(
+                    (v) =>
+                      !search ||
+                      `${v.make} ${v.model} ${v.year} ${v.series}`
+                        .toLowerCase()
+                        .includes(search.toLowerCase())
+                  ).length
+                }
+              </span>{" "}
+              entries
             </div>
 
             <div className="flex items-center gap-1">
-              <button onClick={() => goToPage(1)} disabled={pageNo === 1}
-                className={`px-3 py-1 rounded border ${pageNo === 1 ? "bg-gray-100 text-gray-400 cursor-not-allowed" : "bg-white hover:bg-gray-50"}`}>
+              <button
+                onClick={() => goToPage(1)}
+                disabled={pageNo === 1}
+                className={`px-3 py-1 rounded border ${
+                  pageNo === 1
+                    ? "bg-gray-100 text-gray-400 cursor-not-allowed"
+                    : "bg-white hover:bg-gray-50"
+                }`}
+              >
                 {"<<"}
               </button>
-              <button onClick={() => goToPage(pageNo - 1)} disabled={pageNo === 1}
-                className={`px-3 py-1 rounded border ${pageNo === 1 ? "bg-gray-100 text-gray-400 cursor-not-allowed" : "bg-white hover:bg-gray-50"}`}>
+              <button
+                onClick={() => goToPage(pageNo - 1)}
+                disabled={pageNo === 1}
+                className={`px-3 py-1 rounded border ${
+                  pageNo === 1
+                    ? "bg-gray-100 text-gray-400 cursor-not-allowed"
+                    : "bg-white hover:bg-gray-50"
+                }`}
+              >
                 {"<"}
               </button>
 
               {getPageNumbers().map((page) => (
-                <button key={page} onClick={() => goToPage(page)}
-                  className={`px-3 py-1 rounded border ${pageNo === page ? "bg-blue-950 text-white" : "bg-white hover:bg-gray-50"}`}>
+                <button
+                  key={page}
+                  onClick={() => goToPage(page)}
+                  className={`px-3 py-1 rounded border ${
+                    pageNo === page
+                      ? "bg-blue-950 text-white"
+                      : "bg-white hover:bg-gray-50"
+                  }`}
+                >
                   {page}
                 </button>
               ))}
 
-              <button onClick={() => goToPage(pageNo + 1)} disabled={pageNo >= totalPages}
-                className={`px-3 py-1 rounded border ${pageNo >= totalPages ? "bg-gray-100 text-gray-400 cursor-not-allowed" : "bg-white hover:bg-gray-50"}`}>
+              <button
+                onClick={() => goToPage(pageNo + 1)}
+                disabled={pageNo >= totalPages}
+                className={`px-3 py-1 rounded border ${
+                  pageNo >= totalPages
+                    ? "bg-gray-100 text-gray-400 cursor-not-allowed"
+                    : "bg-white hover:bg-gray-50"
+                }`}
+              >
                 {">"}
               </button>
-              <button onClick={() => goToPage(totalPages)} disabled={pageNo >= totalPages}
-                className={`px-3 py-1 rounded border ${pageNo >= totalPages ? "bg-gray-100 text-gray-400 cursor-not-allowed" : "bg-white hover:bg-gray-50"}`}>
+              <button
+                onClick={() => goToPage(totalPages)}
+                disabled={pageNo >= totalPages}
+                className={`px-3 py-1 rounded border ${
+                  pageNo >= totalPages
+                    ? "bg-gray-100 text-gray-400 cursor-not-allowed"
+                    : "bg-white hover:bg-gray-50"
+                }`}
+              >
                 {">>"}
               </button>
             </div>
