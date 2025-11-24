@@ -326,7 +326,7 @@ const AdminBidHistory = () => {
           )}
         </div>
 
-        {/* ONLY THIS PART CHANGED – PERFECT PAGINATION */}
+        {/* PAGINATION */}
         {totalItems > 0 && (
           <div className="bg-white rounded-lg shadow-sm p-4 mt-6">
             <div className="flex flex-col sm:flex-row justify-between items-center gap-4 text-sm text-gray-700">
