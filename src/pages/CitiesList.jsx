@@ -6,6 +6,7 @@ import { AddCityModal } from "../components/CityModal/AddCity";
 import { EditCityModal } from "../components/CityModal/EditCity";
 import CustomAdd from "../CustomAdd";
 import CustomSearch from "../CustomSearch";
+import Swal from "sweetalert2";
 
 export const CitiesList = () => {
   const [isOpen, setIsOpen] = useState("");
@@ -19,7 +20,8 @@ export const CitiesList = () => {
 
   const itemsPerRequest = 10;
 
-  const handleToggleModal = (active) => setIsOpen((prev) => (prev === active ? "" : active));
+  const handleToggleModal = (active) =>
+    setIsOpen((prev) => (prev === active ? "" : active));
   const handleEditBtn = (city) => {
     handleToggleModal("Edit");
     setSeleteCity(city);
@@ -43,16 +45,53 @@ export const CitiesList = () => {
   // Load cities — EXACT SAME LOGIC AS BRANDLIST (simple & perfect)
   const loadCities = async (reset = false) => {
     setLoading(true);
-    const pageToLoad = reset ? 1 : Math.floor(allCities.length / itemsPerRequest) + 1;
+    const pageToLoad = reset
+      ? 1
+      : Math.floor(allCities.length / itemsPerRequest) + 1;
     const newCities = await fetchPage(pageToLoad, search);
 
     if (reset) {
       setAllCities(newCities);
       setHasMore(newCities.length === itemsPerRequest);
     } else {
-      setAllCities(prev => [...prev, ...newCities]);
+      setAllCities((prev) => [...prev, ...newCities]);
     }
     setLoading(false);
+  };
+
+  const handleDeleteCity = async (id) => {
+    try {
+      const result = await Swal.fire({
+        title: "Are you sure?",
+        text: "This City will be deleted permanently.",
+        icon: "warning",
+        showCancelButton: true,
+        confirmButtonColor: "#9333ea",
+        cancelButtonColor: "#d33",
+        confirmButtonText: "Yes, delete it!",
+      });
+
+      if (!result.isConfirmed) return;
+
+      const res = await axios.patch(`${BASE_URL}/deleteCity/${id}`);
+
+      await Swal.fire({
+        title: "Success",
+        text: res.data.message,
+        icon: "success",
+        confirmButtonText: "okay",
+      });
+
+      // ⭐ REFRESH CITIES AFTER DELETE
+      await loadCities(true);
+    } catch (error) {
+      await Swal.fire({
+        title: "Error",
+        text: error.response?.data?.message || "Something went wrong",
+        icon: "error",
+        confirmButtonText: "okay",
+      });
+    }
   };
 
   // Reset on search or itemsPerPage change
@@ -102,7 +141,7 @@ export const CitiesList = () => {
       {/* YOUR ORIGINAL HEADER */}
       <div className="flex flex-col sm:flex-row justify-between items-center gap-4 mb-6">
         <h2 className="lg:text-3xl text-xl font-bold text-gray-800">
-          Cities List 
+          Cities List
         </h2>
         <div className="relative w-full max-w-md">
           <CustomSearch
@@ -126,22 +165,45 @@ export const CitiesList = () => {
           </thead>
           <tbody>
             {loading && allCities.length === 0 ? (
-              <tr><td colSpan="3" className="text-center py-10">Loading...</td></tr>
+              <tr>
+                <td colSpan="3" className="text-center py-10">
+                  Loading...
+                </td>
+              </tr>
             ) : currentDisplay.length === 0 ? (
-              <tr><td colSpan="3" className="text-center py-10 text-gray-500">No cities found</td></tr>
+              <tr>
+                <td colSpan="3" className="text-center py-10 text-gray-500">
+                  No cities found
+                </td>
+              </tr>
             ) : (
               currentDisplay.map((city, idx) => (
                 <tr key={city.id} className="border-b hover:bg-gray-50">
                   <td className="py-3 px-6">{startIndex + idx + 1}</td>
-                  <td className="py-3 px-6 text-center capitalize">{city.cityName}</td>
-                  <td className="py-3 px-6 text-center">
-                    <CustomAdd text="Edit" variant="edit" onClick={() => handleEditBtn(city)} />
+                  <td className="py-3 px-6 text-center capitalize">
+                    {city.cityName}
+                  </td>
+                  <td className="py-3 px-6 text-center space-x-2">
+                    <CustomAdd
+                      text="Edit"
+                      variant="edit"
+                      onClick={() => handleEditBtn(city)}
+                    />
+                    <CustomAdd
+                      text="Delete"
+                      variant="delete"
+                      onClick={() => handleDeleteCity(city.id)}
+                    />
                   </td>
                 </tr>
               ))
             )}
             {loading && allCities.length > 0 && (
-              <tr><td colSpan="3" className="text-center py-4 text-blue-600">Loading more...</td></tr>
+              <tr>
+                <td colSpan="3" className="text-center py-4 text-blue-600">
+                  Loading more...
+                </td>
+              </tr>
             )}
           </tbody>
         </table>
@@ -158,28 +220,63 @@ export const CitiesList = () => {
             </div>
 
             <div className="flex items-center gap-1">
-              <button onClick={() => goToPage(1)} disabled={currentPage === 1}
-                className={`px-3 py-1 rounded border ${currentPage === 1 ? "bg-gray-100 text-gray-400 cursor-not-allowed" : "bg-white hover:bg-gray-50"}`}>
+              <button
+                onClick={() => goToPage(1)}
+                disabled={currentPage === 1}
+                className={`px-3 py-1 rounded border ${
+                  currentPage === 1
+                    ? "bg-gray-100 text-gray-400 cursor-not-allowed"
+                    : "bg-white hover:bg-gray-50"
+                }`}
+              >
                 {"<<"}
               </button>
-              <button onClick={() => goToPage(currentPage - 1)} disabled={currentPage === 1}
-                className={`px-3 py-1 rounded border ${currentPage === 1 ? "bg-gray-100 text-gray-400 cursor-not-allowed" : "bg-white hover:bg-gray-50"}`}>
+              <button
+                onClick={() => goToPage(currentPage - 1)}
+                disabled={currentPage === 1}
+                className={`px-3 py-1 rounded border ${
+                  currentPage === 1
+                    ? "bg-gray-100 text-gray-400 cursor-not-allowed"
+                    : "bg-white hover:bg-gray-50"
+                }`}
+              >
                 {"<"}
               </button>
 
-              {getPageNumbers().map(p => (
-                <button key={p} onClick={() => goToPage(p)}
-                  className={`px-3 py-1 rounded border ${currentPage === p ? "bg-blue-950 text-white" : "bg-white hover:bg-gray-50"}`}>
+              {getPageNumbers().map((p) => (
+                <button
+                  key={p}
+                  onClick={() => goToPage(p)}
+                  className={`px-3 py-1 rounded border ${
+                    currentPage === p
+                      ? "bg-blue-950 text-white"
+                      : "bg-white hover:bg-gray-50"
+                  }`}
+                >
                   {p}
                 </button>
               ))}
 
-              <button onClick={() => goToPage(currentPage + 1)} disabled={!hasMore && currentPage >= totalPages}
-                className={`px-3 py-1 rounded border ${(!hasMore && currentPage >= totalPages) ? "bg-gray-100 text-gray-400 cursor-not-allowed" : "bg-white hover:bg-gray-50"}`}>
+              <button
+                onClick={() => goToPage(currentPage + 1)}
+                disabled={!hasMore && currentPage >= totalPages}
+                className={`px-3 py-1 rounded border ${
+                  !hasMore && currentPage >= totalPages
+                    ? "bg-gray-100 text-gray-400 cursor-not-allowed"
+                    : "bg-white hover:bg-gray-50"
+                }`}
+              >
                 {">"}
               </button>
-              <button onClick={() => goToPage(totalPages)} disabled={!hasMore && currentPage >= totalPages}
-                className={`px-3 py-1 rounded border ${(!hasMore && currentPage >= totalPages) ? "bg-gray-100 text-gray-400 cursor-not-allowed" : "bg-white hover:bg-gray-50"}`}>
+              <button
+                onClick={() => goToPage(totalPages)}
+                disabled={!hasMore && currentPage >= totalPages}
+                className={`px-3 py-1 rounded border ${
+                  !hasMore && currentPage >= totalPages
+                    ? "bg-gray-100 text-gray-400 cursor-not-allowed"
+                    : "bg-white hover:bg-gray-50"
+                }`}
+              >
                 {">>"}
               </button>
             </div>
@@ -191,8 +288,19 @@ export const CitiesList = () => {
         </div>
       )}
 
-      {isOpen === "Add" && <AddCityModal handleClose={() => handleToggleModal("")} handleGetAllCities={() => loadCities(true)} />}
-      {isOpen === "Edit" && <EditCityModal handleClose={() => handleToggleModal("")} seleteCity={seleteCity} handleGetAllCities={() => loadCities(true)} />}
+      {isOpen === "Add" && (
+        <AddCityModal
+          handleClose={() => handleToggleModal("")}
+          handleGetAllCities={() => loadCities(true)}
+        />
+      )}
+      {isOpen === "Edit" && (
+        <EditCityModal
+          handleClose={() => handleToggleModal("")}
+          seleteCity={seleteCity}
+          handleGetAllCities={() => loadCities(true)}
+        />
+      )}
     </div>
   );
 };

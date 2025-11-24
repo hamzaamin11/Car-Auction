@@ -14,7 +14,9 @@ const CarCard = ({ car }) => {
   const dispatch = useDispatch();
 
   const currentUser = useSelector((state) => state?.auth?.currentUser);
-  const wishlistByUser = useSelector((state) => state?.wishList?.wishlistByUser);
+  const wishlistByUser = useSelector(
+    (state) => state?.wishList?.wishlistByUser
+  );
 
   const isInWishlist =
     currentUser?.id &&
@@ -48,10 +50,7 @@ const CarCard = ({ car }) => {
   const goToDetail = () => navigate(`/detailbid/${car.id}`);
 
   return (
-    <div
-      className="relative bg-white rounded-xl shadow-lg hover:shadow-2xl transition-all duration-300 overflow-hidden w-full h-full flex flex-col cursor-pointer"
-      onClick={goToDetail} // whole card clickable except heart
-    >
+    <div className="relative bg-white rounded-xl shadow-lg hover:shadow-2xl transition-all duration-300 overflow-hidden w-full h-full flex flex-col cursor-pointer">
       {/* Image */}
       <div className="relative w-full">
         <img
@@ -64,12 +63,12 @@ const CarCard = ({ car }) => {
       {/* Content */}
       <div className="p-4 space-y-1 flex-grow flex flex-col">
         {/* Desktop: Heart at top-right */}
-        <div className="hidden sm:flex justify-end -mt-2">
+        <div className="flex justify-end -mt-2 relative z-20">
           <button
             onClick={handleWishlist}
             className={`p-2 rounded-full transition-all duration-300 ${
               isInWishlist
-                ? "text-red-600 cursor-default"
+                ? "text-red-600"
                 : "text-gray-400 hover:text-red-600 hover:bg-red-50"
             }`}
           >
@@ -78,7 +77,7 @@ const CarCard = ({ car }) => {
         </div>
 
         {/* Mobile: Title + Heart */}
-        <div className="flex sm:hidden justify-between items-center">
+        <div className="flex sm:hidden justify-between items-center relative z-20">
           <h3 className="text-[15px] font-bold text-gray-800 line-clamp-1">
             {car?.make} {car?.model}
           </h3>
@@ -86,7 +85,7 @@ const CarCard = ({ car }) => {
             onClick={handleWishlist}
             className={`p-2 rounded-full transition-all duration-300 ${
               isInWishlist
-                ? "text-red-600 cursor-default"
+                ? "text-red-600"
                 : "text-gray-400 hover:text-red-600 hover:bg-red-50"
             }`}
           >
@@ -95,7 +94,7 @@ const CarCard = ({ car }) => {
         </div>
 
         {/* Desktop Title (below heart) */}
-        <h3 className="hidden sm:block text-[15px] font-bold text-gray-800 -mt-6">
+        <h3 className="hidden sm:block text-[15px] font-bold text-gray-800 -mt-6 relative z-10">
           {car?.make} {car?.model}
         </h3>
 

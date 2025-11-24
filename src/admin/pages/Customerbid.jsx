@@ -682,7 +682,11 @@ END:VCALENDAR`.trim();
           <div className="mt-4">
             {currentUser && (
               <button
-                disabled={!hasStarted}
+                disabled={
+                  !hasStarted ||
+                  selectedPrice.auctionStatus === "upcoming" ||
+                  selectedPrice.auctionStatus === "end"
+                }
                 onClick={() => {
                   if (!currentUser.cnic) {
                     Swal.fire({
@@ -745,10 +749,14 @@ END:VCALENDAR`.trim();
 
             {!currentUser && (
               <button
+                disabled={
+                  selectedPrice?.auctionStatus === "upcoming" ||
+                  selectedPrice?.auctionStatus === "end"
+                }
                 onClick={() => {
                   navigate("/login");
                 }}
-                className="w-full py-3 rounded-lg font-semibold transition-all text-white bg-blue-950 hover:cursor-pointer"
+                className="w-full py-3 rounded-lg font-semibold transition-all text-white bg-blue-950 disabled:opacity-70"
               >
                 {currentUser ? "Join Auction" : "Bid Now"}
               </button>
@@ -884,19 +892,18 @@ END:VCALENDAR`.trim();
                       <span className="text-green-600 font-semibold">Yes</span>
                     </div>
                   ) : (
-                  <div className="flex items-start gap-0">
-  <span className="w-4 h-3 bg-red-600 rounded-full mt-1  "></span>
-  <p className="text-red-600 text-sm">
-    Not eligible to bid{" "}
-    <span
-      onClick={() => handleIsOpenModal("warning")}
-      className="text-blue-950 underline text-xs hover:cursor-pointer font-semibold"
-    >
-      Check Why
-    </span>
-  </p>
-</div>
-
+                    <div className="flex items-start gap-0">
+                      <span className="w-4 h-3 bg-red-600 rounded-full mt-1  "></span>
+                      <p className="text-red-600 text-sm">
+                        Not eligible to bid{" "}
+                        <span
+                          onClick={() => handleIsOpenModal("warning")}
+                          className="text-blue-950 underline text-xs hover:cursor-pointer font-semibold"
+                        >
+                          Check Why
+                        </span>
+                      </p>
+                    </div>
                   )}
                 </td>
               </tr>
