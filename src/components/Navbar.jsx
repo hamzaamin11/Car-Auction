@@ -645,7 +645,7 @@ const Navbar = () => {
                   ) : (
                     <FaUserCircle
                       size={40}
-                      className="text-gray-700 group-hover:text-red-600 transition"
+                      className="text-gray-700 group-hover:text-blue-950 transition"
                     />
                   )}
                 </button>
