@@ -121,7 +121,7 @@ const CarCard = ({ car }) => {
 
         <button
           onClick={goToDetail}
-          className="mt-3 block bg-blue-950 text-center text-sm text-[13px] font-semibold text-white py-2 rounded transition-all duration-300"
+          className="mt-3 block bg-blue-950  hover:bg-blue-900 text-center text-sm text-[13px] font-semibold text-white py-2 rounded transition-all duration-300"
         >
           View Details
         </button>
@@ -205,7 +205,7 @@ const CarCardSlider = () => {
           <button
             onClick={prevCards}
             disabled={currentIndex === 0}
-            className="absolute left-0 top-1/2 -translate-y-1/2 md:-left-12 bg-white p-2 rounded-full shadow-lg text-gray-700 z-20 hover:bg-red-600 hover:text-white disabled:opacity-50 disabled:cursor-not-allowed transition-all duration-300 hover:scale-110"
+            className="absolute left-0 top-1/2 -translate-y-1/2 md:-left-12 bg-white p-2 rounded-full shadow-lg text-gray-700 z-20 hover:bg-blue-950 hover:text-white disabled:opacity-50 disabled:cursor-not-allowed transition-all duration-300 hover:scale-110"
           >
             <ChevronLeft size={28} />
           </button>
@@ -223,7 +223,7 @@ const CarCardSlider = () => {
           <button
             onClick={nextCards}
             disabled={currentIndex + visibleCards >= allCars.length}
-            className="absolute right-0 top-1/2 -translate-y-1/2 md:-right-12 bg-white p-2 rounded-full shadow-lg text-gray-700 z-20 hover:bg-red-600 hover:text-white disabled:opacity-50 disabled:cursor-not-allowed transition-all duration-300 hover:scale-110"
+            className="absolute right-0 top-1/2 -translate-y-1/2 md:-right-12 bg-white p-2 rounded-full shadow-lg text-gray-700 z-20 hover:bg-blue-950 hover:text-white disabled:opacity-50 disabled:cursor-not-allowed transition-all duration-300 hover:scale-110"
           >
             <ChevronRight size={28} />
           </button>

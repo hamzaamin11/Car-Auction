@@ -65,9 +65,9 @@ function AddAdminVehicle({ open, setOpen, onVehicleUpdated }) {
     model: "",
     series: "",
     bodyStyle: "",
-    transmission: "",
+    transmission: "Automatic",
     driveType: "fwd",
-    fuelType: "",
+    fuelType: "petrol",
     color: "",
     mileage: "",
     vehicleCondition: "new",
@@ -863,25 +863,37 @@ function AddAdminVehicle({ open, setOpen, onVehicleUpdated }) {
                   </div>
 
                   {/* Preview Images */}
-                  {previewImages.length > 0 && (
-                    <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-5 gap-4 mt-4">
-                      {previewImages.map((src, index) => (
-                        <div
-                          key={index}
-                          className="relative border rounded-xl shadow-sm overflow-hidden"
-                        >
-                          <img
-                            src={src}
-                            alt="preview"
-                            className="h-28 w-full object-cover"
-                          />
-                          <div className="absolute top-1 right-1 bg-white rounded-full shadow p-1 cursor-pointer hover:bg-gray-100">
-                            <span className="text-xs text-gray-600">×</span>
-                          </div>
-                        </div>
-                      ))}
-                    </div>
-                  )}
+{previewImages.length > 0 && (
+  <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-5 gap-4 mt-4">
+    {previewImages.map((src, index) => (
+      <div
+        key={index}
+        className="relative border rounded-xl shadow-sm overflow-hidden"
+      >
+        <img
+          src={src}
+          alt="preview"
+          className="h-28 w-full object-cover"
+        />
+
+        {/* Remove Image Button */}
+        <div
+          onClick={() => {
+            const updatedPreviews = previewImages.filter((_, i) => i !== index);
+            const updatedImages = vehicle.image.filter((_, i) => i !== index);
+            setPreviewImages(updatedPreviews);
+            setVehicle((prev) => ({ ...prev, image: updatedImages }));
+            setSelectedCount(updatedImages.length);
+          }}
+          className="absolute top-1 right-1 bg-white rounded-full shadow p-1 cursor-pointer hover:bg-gray-100"
+        >
+          <span className="text-xs text-gray-600">×</span>
+        </div>
+      </div>
+    ))}
+  </div>
+)}
+
                 </div>
 
                 {/* Submit Button */}

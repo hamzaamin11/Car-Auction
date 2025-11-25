@@ -58,13 +58,13 @@ console.log('currentPage:', currentPage);
 console.log('pageNumbers:', getPageNumbers());
 
   return (
-    <div className="min-h-screen bg-gray-100 p-4 md:p-6">
-      <div className="max-w-7xl mx-auto">
+    <div className="min-h-screen bg-gray-100 p-4 md:p-6 pb-20">
+      <div className="max-w-7xl mx-auto mb-20">
         <h1 className="lg:text-3xl text-xl font-bold mb-2 text-gray-800 lg:text-start text-center">
           Auction History
         </h1>
 
-        <div className="w-full bg-white rounded-2xl shadow-md border border-gray-200">
+        <div className="w-full bg-white rounded-2xl shadow-md border border-gray-200 mb-8">
           {/* Desktop Table View  */}
           <div className="hidden md:block overflow-x-auto">
             <table className="min-w-full text-sm table-fixed">
@@ -177,83 +177,86 @@ console.log('pageNumbers:', getPageNumbers());
           </div>
 
     
-       {/* IMPROVED PAGINATION – RESPONSIVE ON BOTH MOBILE & DESKTOP */}
+       {/* PAGINATION –  */}
 {totalItems > 0 && (
   <div className="border-t border-gray-200">
     <div className="p-4">
-      {/* Info Text - Full Width on Mobile */}
-      <div className="text-center sm:text-left text-sm text-gray-600 mb-3 sm:mb-4">
-        Showing <span className="font-medium">{startIndex + 1}</span> to{" "}
-        <span className="font-medium">{endIndex}</span> of{" "}
-        <span className="font-medium">{totalItems}</span> entries
-      </div>
+      {/* Responsive Flex Container */}
+      <div className="flex flex-col lg:flex-row lg:justify-between lg:items-center gap-3">
+        {/* Info Text - Left Side on Desktop, Centered on Mobile */}
+        <div className="text-center lg:text-left text-sm text-gray-600 order-2 lg:order-1">
+          Showing <span className="font-medium">{startIndex + 1}</span> to{" "}
+          <span className="font-medium">{endIndex}</span> of{" "}
+          <span className="font-medium">{totalItems}</span> entries
+        </div>
 
-      {/* Pagination Controls - Centered and Wrapped */}
-      <div className="flex justify-center">
-        <div className="inline-flex flex-wrap items-center justify-center gap-1 sm:gap-2">
-          {/* First Page Button */}
-      {/* First Page Button */}
-<button
-  onClick={() => goToPage(1)}
-  disabled={currentPage === 1}
-  className={`px-2 sm:px-3 py-1.5 rounded border border-gray-300 text-sm sm:text-base font-medium transition-colors ${
-    currentPage === 1
-      ? "bg-gray-100 text-gray-400 cursor-not-allowed"
-      : "bg-white hover:bg-gray-50 text-gray-700"
-  }`}
->
-  {"<<"}
-</button>
+        {/* Pagination Controls - Right Side on Desktop, Top on Mobile */}
+        <div className="flex justify-center lg:justify-end order-1 lg:order-2 overflow-x-auto">
+          <div className="inline-flex items-center gap-1">
+       
+            {/* First Page Button */}
+            <button
+              onClick={() => goToPage(1)}
+              disabled={currentPage === 1}
+              className={`px-2 py-1.5 rounded border border-gray-300 text-sm font-medium transition-colors ${
+                currentPage === 1
+                  ? "bg-gray-100 text-gray-400 cursor-not-allowed"
+                  : "bg-white hover:bg-gray-50 text-gray-700"
+              }`}
+            >
+              {"<<"}
+            </button>
 
-<button
-  onClick={() => goToPage(currentPage - 1)}
-  disabled={currentPage === 1}
-  className={`px-2 sm:px-3 py-1.5 rounded border border-gray-300 text-sm sm:text-base font-medium transition-colors ${
-    currentPage === 1
-      ? "bg-gray-100 text-gray-400 cursor-not-allowed"
-      : "bg-white hover:bg-gray-50 text-gray-700"
-  }`}
->
-  {"<"}
-</button>
+            <button
+              onClick={() => goToPage(currentPage - 1)}
+              disabled={currentPage === 1}
+              className={`px-2 py-1.5 rounded border border-gray-300 text-sm font-medium transition-colors ${
+                currentPage === 1
+                  ? "bg-gray-100 text-gray-400 cursor-not-allowed"
+                  : "bg-white hover:bg-gray-50 text-gray-700"
+              }`}
+            >
+              {"<"}
+            </button>
 
-{getPageNumbers().map((page) => (
-  <button
-    key={page}
-    onClick={() => goToPage(page)}
-    className={`px-2.5 sm:px-3.5 py-1.5 rounded border border-gray-300 text-sm sm:text-base font-medium transition-colors ${
-      currentPage === page
-        ? "bg-blue-950 text-white border-blue-950"
-        : "bg-white hover:bg-gray-50 text-gray-700"
-    }`}
-  >
-    {page}
-  </button>
-))}
+            {getPageNumbers().map((page) => (
+              <button
+                key={page}
+                onClick={() => goToPage(page)}
+                className={`px-2.5 py-1.5 rounded border border-gray-300 text-sm font-medium transition-colors ${
+                  currentPage === page
+                    ? "bg-blue-950 text-white border-blue-950"
+                    : "bg-white hover:bg-gray-50 text-gray-700"
+                }`}
+              >
+                {page}
+              </button>
+            ))}
 
-<button
-  onClick={() => goToPage(currentPage + 1)}
-  disabled={currentPage >= totalPages}
-  className={`px-2 sm:px-3 py-1.5 rounded border border-gray-300 text-sm sm:text-base font-medium transition-colors ${
-    currentPage >= totalPages
-      ? "bg-gray-100 text-gray-400 cursor-not-allowed"
-      : "bg-white hover:bg-gray-50 text-gray-700"
-  }`}
->
-  {">"}
-</button>
+            <button
+              onClick={() => goToPage(currentPage + 1)}
+              disabled={currentPage >= totalPages}
+              className={`px-2 py-1.5 rounded border border-gray-300 text-sm font-medium transition-colors ${
+                currentPage >= totalPages
+                  ? "bg-gray-100 text-gray-400 cursor-not-allowed"
+                  : "bg-white hover:bg-gray-50 text-gray-700"
+              }`}
+            >
+              {">"}
+            </button>
 
-<button
-  onClick={() => goToPage(totalPages)}
-  disabled={currentPage >= totalPages}
-  className={`px-2 sm:px-3 py-1.5 rounded border border-gray-300 text-sm sm:text-base font-medium transition-colors ${
-    currentPage >= totalPages
-      ? "bg-gray-100 text-gray-400 cursor-not-allowed"
-      : "bg-white hover:bg-gray-50 text-gray-700"
-  }`}
->
-  {">>"}
-</button>
+            <button
+              onClick={() => goToPage(totalPages)}
+              disabled={currentPage >= totalPages}
+              className={`px-2 py-1.5 rounded border border-gray-300 text-sm font-medium transition-colors ${
+                currentPage >= totalPages
+                  ? "bg-gray-100 text-gray-400 cursor-not-allowed"
+                  : "bg-white hover:bg-gray-50 text-gray-700"
+              }`}
+            >
+              {">>"}
+            </button>
+          </div>
         </div>
       </div>
     </div>

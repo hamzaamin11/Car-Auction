@@ -20,7 +20,7 @@ const CustomAdd: React.FC<CustomButtonProps> = ({
   // Styles depending on variant type
   const variantClasses =
     variant === "add"
-      ? "bg-blue-950 text-white w-full lg:w-36 py-2 px-6 "
+      ? "bg-blue-950  hover:bg-blue-900 text-white w-full lg:w-36 py-2 px-6 "
       : variant === "edit"
       ? "border border-yellow-500 text-yellow-500 hover:bg-yellow-500 hover:text-white px-3 py-2 sm:py-1 text-xs sm:text-sm w-full sm:w-auto"
       : variant === "delete"

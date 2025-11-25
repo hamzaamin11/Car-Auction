@@ -616,7 +616,7 @@ END:VCALENDAR`.trim();
                   {selectedPrice?.startTime && (
                     <button
                       onClick={generateICS}
-                      className="flex items-center gap-1 text-xs text-blue-950  underline mt-1"
+                      className="flex items-center gap-1 text-xs text-blue-950 hover:text-blue-900 underline mt-1"
                     >
                       <FaCalendarPlus size={12} />
                       Add to Calendar
@@ -751,7 +751,7 @@ END:VCALENDAR`.trim();
                 onClick={() => {
                   navigate("/login");
                 }}
-                className="w-full py-3 rounded-lg font-semibold transition-all text-white bg-blue-950 disabled:opacity-70"
+                className="w-full py-3 rounded-lg font-semibold transition-all text-white bg-blue-950  hover:bg-blue-900 disabled:opacity-70"
               >
                 {currentUser ? "Join Auction" : "Bid Now"}
               </button>
@@ -1079,7 +1079,7 @@ END:VCALENDAR`.trim();
                     confirmButtonColor: "#233D7B",
                   });
                 }}
-                className="w-full py-3 rounded-lg font-semibold transition-all text-white bg-blue-950 hover:cursor-pointer"
+                className="w-full py-3 rounded-lg font-semibold transition-all text-white bg-blue-950 hover:bg-blue-900 hover:cursor-pointer"
               >
                 Join Auction
               </button>

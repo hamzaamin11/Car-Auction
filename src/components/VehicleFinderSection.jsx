@@ -497,7 +497,7 @@ const VehicleFinderSection = () => {
         <div className="flex items-center justify-center relative w-full max-w-sm">
           <button
             onClick={handleGetCars}
-            className="bg-blue-950 w-full p-2 px-10 text-white rounded hover:cursor-pointer"
+            className="bg-blue-950 hover:bg-blue-900 w-full p-2 px-10 text-white rounded hover:cursor-pointer"
           >
             Search Vehicle
           </button>

@@ -50,7 +50,7 @@ const IntroSection = () => {
             <div className="pt-4">
               <Link
                 to="/"
-                className="inline-block bg-blue-950 text-white font-semibold py-2.5 px-6 rounded-lg hover:bg-blue-800 transition duration-300 shadow"
+                className="inline-block bg-blue-950 hover:bg-blue-900 text-white font-semibold py-2.5 px-6 rounded-lg  transition duration-300 shadow"
               >
                 Search Stock
               </Link>

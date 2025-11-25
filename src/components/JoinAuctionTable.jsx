@@ -103,7 +103,7 @@ const JoinAuctionTable = ({ allLive, upComing }) => {
                       onClick={() =>
                         navigate(`/detailbid/${auction.vehicleId}`)
                       }
-                      className="px-4 py-1.5 bg-blue-950 text-white rounded text-xs font-semibold shadow-sm transition-all hover:cursor-pointer"
+                      className="px-4 py-1.5 bg-blue-950 hover:bg-blue-900 text-white rounded text-xs font-semibold shadow-sm transition-all hover:cursor-pointer"
                     >
                       Start Bidding
                     </button>
@@ -158,7 +158,7 @@ const JoinAuctionTable = ({ allLive, upComing }) => {
               </div>
               <button
                 onClick={() => navigate(`/detailbid/${auction.vehicleId}`)}
-                className="mt-3 w-full py-2 bg-blue-950 text-white  text-sm font-semibold transition"
+                className="mt-3 w-full py-2 bg-blue-950 hover:bg-blue-900 text-white  text-sm font-semibold transition"
               >
                 Start Bidding
               </button>

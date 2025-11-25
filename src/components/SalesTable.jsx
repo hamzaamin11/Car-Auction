@@ -287,7 +287,7 @@ const SalesTable = () => {
                   className="inline-block text-black font-bold group-hover:text-white 
                            text-sm  px-3 py-1 rounded-md 
                            transition-all duration-300 
-                           group-hover:bg-red-600"
+                           group-hover:bg-blue-950"
                 >
                   {brand.name.toUpperCase()}
                 </span>
@@ -319,7 +319,7 @@ const SalesTable = () => {
                   className="inline-block text-blue-950 font-bold group-hover:text-white 
                            text-sm  px-3 py-1 rounded-md 
                            transition-all duration-300 
-                           group-hover:bg-red-600"
+                           group-hover:bg-blue-950"
                 >
                   {brand.name.toUpperCase()}
                 </span>

@@ -162,7 +162,7 @@ export default function SearchPage() {
           >
          <Link
             to="/register"
-            className="inline-block bg-blue-950 text-white px-6 sm:px-8 py-3 rounded-lg text-base sm:text-lg font-semibold transition-all duration-200 shadow-md hover:shadow-lg hover:-translate-y-0.5 active:scale-95 focus:outline-none "
+            className="inline-block bg-blue-950 hover:bg-blue-900 text-white px-6 sm:px-8 py-3 rounded-lg text-base sm:text-lg font-semibold transition-all duration-200 shadow-md hover:shadow-lg hover:-translate-y-0.5 active:scale-95 focus:outline-none "
           >
             Register to Start Saving Searches
           </Link>

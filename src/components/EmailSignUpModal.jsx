@@ -197,7 +197,7 @@ export const EmailSignUpModal = ({ handleModal }) => {
           {/* Sign Up Button */}
           <button
             disabled={loading}
-            className="w-full bg-blue-950 text-white font-semibold py-3 rounded-lg "
+            className="w-full bg-blue-950 hover:bg-blue-900 text-white font-semibold py-3 rounded-lg "
           >
             {loading ? "Loading..." : "Sign Up"}
           </button>

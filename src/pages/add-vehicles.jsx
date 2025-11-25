@@ -110,12 +110,12 @@ const AddVehicles = () => {
     model: "",
     series: "",
     bodyStyle: "",
-    transmission: "",
-    driveType: "",
-    fuelType: "",
+    transmission: "Automatic",
+    driveType: "fwd",
+    fuelType: "petrol",
     color: "",
     mileage: "",
-    vehicleCondition: "",
+    vehicleCondition: "new",
     locationId: "",
     buyNowPrice: "",
     certifyStatus: "",
@@ -1051,25 +1051,34 @@ const AddVehicles = () => {
                         />
                       </label>
                     </div>
-                    {preview?.length > 0 && (
-                      <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-5 gap-4 mt-4">
-                        {preview?.map((src, index) => (
-                          <div
-                            key={index}
-                            className="relative border rounded-xl shadow-sm overflow-hidden"
-                          >
-                            <img
-                              src={src}
-                              alt="preview"
-                              className="h-28 w-full object-cover"
-                            />
-                            <div className="absolute top-1 right-1 bg-white rounded-full shadow p-1 cursor-pointer hover:bg-gray-100">
-                              <span className="text-xs text-gray-600">×</span>
-                            </div>
-                          </div>
-                        ))}
-                      </div>
-                    )}
+                  {preview?.length > 0 && (
+  <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-5 gap-4 mt-4">
+    {preview?.map((src, index) => (
+      <div
+        key={index}
+        className="relative border rounded-xl shadow-sm overflow-hidden"
+      >
+        <img
+          src={src}
+          alt="preview"
+          className="h-28 w-full object-cover"
+        />
+        <div 
+          onClick={() => {
+            const updatedPreviews = preview.filter((_, i) => i !== index);
+            const updatedImages = vehicleData.image.filter((_, i) => i !== index);
+            setPreview(updatedPreviews);
+            setVehicleData((prev) => ({ ...prev, image: updatedImages }));
+            setSelectedCount(updatedImages.length);
+          }}
+          className="absolute top-1 right-1 bg-white rounded-full shadow p-1 cursor-pointer hover:bg-gray-100"
+        >
+          <span className="text-xs text-gray-600">×</span>
+        </div>
+      </div>
+    ))}
+  </div>
+)}
                   </div>
                   <div className="flex justify-center">
                     <button

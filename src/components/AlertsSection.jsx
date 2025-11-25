@@ -273,7 +273,7 @@ const WheelBidzAlert = () => {
           <div className="w-full">
             <Link
               to="/register"
-              className="w-full block text-center bg-blue-950 text-white font-semibold py-2 px-4 rounded-md transition"
+              className="w-full block text-center bg-blue-950 hover:bg-blue-900 text-white font-semibold py-2 px-4 rounded-md transition"
             >
               Sign Up
             </Link>
