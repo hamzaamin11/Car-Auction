@@ -25,7 +25,7 @@ const getInitialProfileForm = (user) => ({
 
 export default function Topbar() {
   const { currentUser } = useSelector((state) => state?.auth);
-   const [accountSettingsOpen, setAccountSettingsOpen] = useState(false);
+  const [accountSettingsOpen, setAccountSettingsOpen] = useState(false);
   const [dropdownOpen, setDropdownOpen] = useState(false);
   const [passwordModalOpen, setPasswordModalOpen] = useState(false);
   const [profileModalOpen, setProfileModalOpen] = useState(false);
@@ -54,9 +54,10 @@ export default function Topbar() {
   });
 
   // Profile form state
-     // 2. State – initialise with the helper
-    const [profileForm, setProfileForm] = useState(getInitialProfileForm(currentUser));
- 
+  // 2. State – initialise with the helper
+  const [profileForm, setProfileForm] = useState(
+    getInitialProfileForm(currentUser)
+  );
 
   // Separate state for image file and preview
   const [imageFile, setImageFile] = useState(null);
@@ -321,28 +322,29 @@ export default function Topbar() {
   }, [currentUser]);
 
   // Initialize search fields and image preview when modal opens
-   // 3. Reset on modal open – always start from the real user data
-   useEffect(() => {
-     if (profileModalOpen) {
-       setProfileForm(getInitialProfileForm(currentUser));
- 
-       setCountrySearch(currentUser?.country || "Pakistan");
-       setCitySearch(currentUser?.city || "");
-       setGenderSearch(
-         currentUser?.gender
-           ? currentUser.gender.charAt(0).toUpperCase() + currentUser.gender.slice(1)
-           : ""
-       );
- 
-       setImagePreview(
-         currentUser?.image ||
-           currentUser?.imageUrl ||
-           currentUser?.profileImage ||
-           ""
-       );
-       setImageFile(null);
-     }
-   }, [profileModalOpen, currentUser]);
+  // 3. Reset on modal open – always start from the real user data
+  useEffect(() => {
+    if (profileModalOpen) {
+      setProfileForm(getInitialProfileForm(currentUser));
+
+      setCountrySearch(currentUser?.country || "Pakistan");
+      setCitySearch(currentUser?.city || "");
+      setGenderSearch(
+        currentUser?.gender
+          ? currentUser.gender.charAt(0).toUpperCase() +
+              currentUser.gender.slice(1)
+          : ""
+      );
+
+      setImagePreview(
+        currentUser?.image ||
+          currentUser?.imageUrl ||
+          currentUser?.profileImage ||
+          ""
+      );
+      setImageFile(null);
+    }
+  }, [profileModalOpen, currentUser]);
 
   // Outside click detection for all dropdowns
   useEffect(() => {
@@ -428,52 +430,51 @@ export default function Topbar() {
           }`}
         >
           <div className="px-4 py-3 border-b border-gray-200">
-         
             <p className="text-sm font-normal text-gray-700 truncate">
               <div className="text-gray-500 text-xs ">
-                {currentUser?.role || "--"}
+                {(currentUser?.role).toUpperCase() || "--"}
               </div>
-              {currentUser?.name || "--"}{" "}
+              {currentUser?.name
+                ? currentUser.name.charAt(0).toUpperCase() +
+                  currentUser.name.slice(1)
+                : "--"}
             </p>
           </div>
-       {/* Account Settings Parent */}
-<div
-  onClick={() => setAccountSettingsOpen(!accountSettingsOpen)}
-  className="flex items-center gap-2 px-4 py-1 text-gray-700 hover:bg-gray-100 cursor-pointer transition-colors duration-200"
->
-  <Settings size={16} className="text-gray-500" />
-  <span className="text-sm font-normal">Account Settings</span>
-</div>
+          {/* Account Settings Parent */}
+          <div
+            onClick={() => setAccountSettingsOpen(!accountSettingsOpen)}
+            className="flex items-center gap-2 px-4 py-1 text-gray-700 hover:bg-gray-100 cursor-pointer transition-colors duration-200"
+          >
+            <Settings size={16} className="text-gray-500" />
+            <span className="text-sm font-normal">Account Settings</span>
+          </div>
 
-{/* Dropdown children */}
-{accountSettingsOpen && (
-  <div className="ml-6">
+          {/* Dropdown children */}
+          {accountSettingsOpen && (
+            <div className="ml-6">
+              {/* Change Password */}
+              <div
+                onClick={() => {
+                  setPasswordModalOpen(true);
+                  setAccountSettingsOpen(false);
+                }}
+                className="flex items-center gap-2 px-4 py-1 text-gray-600 hover:bg-gray-100 cursor-pointer transition-colors duration-200"
+              >
+                <span className="text-sm font-normal">Change Password</span>
+              </div>
 
-    {/* Change Password */}
-    <div
-      onClick={() => {
-        setPasswordModalOpen(true);
-        setAccountSettingsOpen(false);
-      }}
-      className="flex items-center gap-2 px-4 py-1 text-gray-600 hover:bg-gray-100 cursor-pointer transition-colors duration-200"
-    >
-      
-      <span className="text-sm font-normal">Change Password</span>
-    </div>
-
-    {/* Manage Profile */}
-    <div
-      onClick={() => {
-        setProfileModalOpen(true);
-        setAccountSettingsOpen(false);
-      }}
-      className="flex items-center gap-2 px-4 py-1 text-gray-600 hover:bg-gray-100 cursor-pointer transition-colors duration-200"
-    >
-     
-      <span className="text-sm font-normal">Manage Profile</span>
-    </div>
-  </div>
-)}
+              {/* Manage Profile */}
+              <div
+                onClick={() => {
+                  setProfileModalOpen(true);
+                  setAccountSettingsOpen(false);
+                }}
+                className="flex items-center gap-2 px-4 py-1 text-gray-600 hover:bg-gray-100 cursor-pointer transition-colors duration-200"
+              >
+                <span className="text-sm font-normal">Manage Profile</span>
+              </div>
+            </div>
+          )}
 
           <div
             onClick={handleLogout}
@@ -600,8 +601,6 @@ export default function Topbar() {
                 {currentUser.name}
               </div>
             </div>
-
-           
 
             <div>
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">

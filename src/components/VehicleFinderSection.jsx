@@ -6,6 +6,9 @@ import { BASE_URL } from "./Contant/URL";
 import { addMake, addModel } from "./Redux/SelectorCarSlice";
 import CustomDropdown from "../CustomDropdown";
 import numberToWords from "number-to-words";
+import { FaHeart } from "react-icons/fa";
+import Swal from "sweetalert2";
+import { addInList } from "./Redux/WishlistSlice";
 
 const BodyType = [
   { label: "Mini Vehicles", value: "Mini Vehicles" },
@@ -60,6 +63,7 @@ const budgetData = [
 ];
 
 const VehicleFinderSection = () => {
+  const currentUser = useSelector((state) => state?.auth?.currentUser);
   const navigate = useNavigate();
   const dispatch = useDispatch();
 
@@ -81,6 +85,37 @@ const VehicleFinderSection = () => {
   const [filterPrice, setFilterPrice] = useState({
     budget: { min: "", max: "" },
   });
+
+  const wishlistByUser = useSelector(
+    (state) => state?.wishList?.wishlistByUser
+  );
+
+  const isInWishlist =
+    currentUser?.id &&
+    wishlistByUser?.[currentUser.id]?.some((v) => v.id === allCars.id);
+
+  const handleWishlist = (car) => {
+    if (!currentUser) {
+      Swal.fire({
+        title: "Login Required",
+        text: "Please login to add vehicles to your wishlist.",
+        icon: "warning",
+        confirmButtonColor: "#9333ea",
+        showCancelButton: true,
+        confirmButtonText: "Go to Login",
+        cancelButtonText: "Cancel",
+      }).then((result) => {
+        if (result.isConfirmed) {
+          navigate("/login");
+        }
+      });
+      return;
+    }
+
+    if (isInWishlist) return; // already in wishlist → do nothing
+
+    dispatch(addInList({ userId: currentUser.id, vehicle: car }));
+  };
 
   const handleChange = (name, val) => {
     setFilters((prev) => ({ ...prev, [name]: val }));
@@ -561,11 +596,9 @@ const VehicleFinderSection = () => {
             currentCars.map((car) => (
               <div
                 key={car.id}
-                onClick={() => navigate(`/detailbid/${car.id}`)}
-                className={`relative rounded-lg shadow p-4 mb-4 flex flex-col md:flex-row hover:shadow-lg transition-shadow hover:cursor-pointer ${
-                  car.certifyStatus === "Certified"
-                    ? "bg-gradient-to-r from-green-50 to-green-100 border border-green-400"
-                    : "bg-white"
+                // onClick={() => navigate(`/detailbid/${car.id}`)}
+                className={`relative rounded-lg shadow p-4 mb-4 flex flex-col md:flex-row hover:shadow-lg transition-shadow hover:cursor-pointer border border-gray-500
+
                 }`}
               >
                 {car.certifyStatus === "Certified" && (
@@ -597,6 +630,7 @@ const VehicleFinderSection = () => {
                       PKR {car.buyNowPrice}
                     </span>
                   </div>
+
                   <p className="text-sm text-gray-600 mt-1">
                     Lot # {car.lot_number}
                   </p>
@@ -623,6 +657,21 @@ const VehicleFinderSection = () => {
                     <span className="px-3 py-1 bg-gray-100 text-xs font-medium rounded-full shadow-sm">
                       {car.cityName}
                     </span>
+                  </div>
+                  <div className="flex justify-end">
+                    <button
+                      onClick={handleWishlist}
+                      className={`p-2 rounded-full transition-all duration-300 ${
+                        isInWishlist
+                          ? "text-red-600"
+                          : "text-gray-400 hover:text-red-600 hover:bg-red-50"
+                      }`}
+                    >
+                      <FaHeart
+                        size={20}
+                        className={isInWishlist ? "fill-current" : ""}
+                      />
+                    </button>
                   </div>
                 </div>
               </div>

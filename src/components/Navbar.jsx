@@ -466,29 +466,25 @@ const Navbar = () => {
             className="relative flex items-center gap-2 text-white hover:text-red-600 transition-all duration-300"
             title="View Wishlist"
           >
-            {/* Heart Icon */}
-            <FaHeart className="text-lg " />
-
             {/* Text */}
-            <span>Wishlist</span>
+            <span>Wishlist</span> |
           </Link>
 
           {currentUser ? null : (
-            <div className="lg:flex items-center gap-4 hidden ">
+            <div className="lg:flex items-center gap-3 hidden ">
               <Link
                 to="/register"
                 className="flex items-center gap-1 hover:text-red-600 font-semiboldbold"
               >
-                <UserPlus size={15} />
                 Register
               </Link>
+              |
               {/* <button
                 onClick={() => navigate("/register")}
                 className="bg-red-600 text-white font-bold px-2 py-1.5 rounded hover:cursor-pointer"
               >
                 Register
               </button> */}
-
               {/*
                <button
                 onClick={() => navigate("/login")}
@@ -500,7 +496,6 @@ const Navbar = () => {
                 to="/login"
                 className="flex items-center gap-1 hover:text-red-600 mr-2"
               >
-                <LogIn size={15} />
                 Sign In
               </Link>
             </div>
@@ -616,7 +611,7 @@ const Navbar = () => {
                 className="relative ml-2 flex items-center gap-2 px-4 py-1.5 bg-red-600 text-white font-bold rounded transition-all overflow-hidden"
               >
                 <span className="absolute inset-0 rounded-full bg-red-500/50"></span>
-                <FaCarSide className="relative text-lg" />
+
                 <span className="relative z-10">LIVE</span>
               </Link>
             )}
@@ -661,10 +656,13 @@ const Navbar = () => {
                   <div className="px-4 py-3 border-b border-gray-200">
                     <p className="text-sm text-gray-600 truncate">
                       <span className="text-gray-500 text-xs">
-                        {currentUser?.role || "--"}
+                        {(currentUser?.role).toUpperCase() || "--"}
                       </span>
                       <br />
-                      {currentUser?.name || "--"}
+                      {currentUser?.name
+                        ? currentUser.name.charAt(0).toUpperCase() +
+                          currentUser.name.slice(1)
+                        : "--"}
                     </p>
                   </div>
 
@@ -800,7 +798,7 @@ const Navbar = () => {
               <span className="absolute inset-0 rounded-full "></span>
 
               {/* Icon and Text */}
-              <FaCarSide className="relative text-white text-lg " />
+
               <span className="relative z-10">LIVE</span>
             </Link>
           )}
@@ -929,7 +927,6 @@ const Navbar = () => {
                 onClick={() => setMenuOpen(false)}
                 className="flex items-center"
               >
-                <UserPlus size={15} />
                 Register
               </Link>
               <Link
@@ -937,7 +934,6 @@ const Navbar = () => {
                 onClick={() => setMenuOpen(false)}
                 className="flex items-center"
               >
-                <LogIn size={15} />
                 Signin
               </Link>
             </div>
