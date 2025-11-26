@@ -10,6 +10,16 @@ export default function AuctionsTable() {
   const [searchTerm, setSearchTerm] = useState("");
   const [getAuctions, setGetAuctions] = useState([]);
 
+  const convertTo12Hour = (time) => {
+    let [hour, minute] = time.split(":");
+    hour = parseInt(hour);
+
+    const ampm = hour >= 12 ? "PM" : "AM";
+    hour = hour % 12 || 12;
+
+    return `${hour}:${minute} ${ampm}`;
+  };
+
   // Fetch all today's auctions initially
   const handleGetAuctions = async () => {
     try {
@@ -72,6 +82,7 @@ export default function AuctionsTable() {
                 Location
               </th>
               <th className="px-2 sm:px-4 py-3  text-white">Auction Date</th>
+              <th className="px-2 sm:px-4 py-3  text-white">Auction Start</th>
               <th className="px-2 sm:px-4 py-3 text-white">Status</th>
             </tr>
           </thead>
@@ -79,12 +90,6 @@ export default function AuctionsTable() {
             {getAuctions.length > 0 ? (
               getAuctions.map((sale, index) => {
                 //  You can log anything here
-                console.log(
-                  "Auction:",
-                  index + 1,
-                  "Start Time:",
-                  sale.startTime
-                );
 
                 return (
                   <tr
@@ -117,6 +122,10 @@ export default function AuctionsTable() {
                       {sale.startTime
                         ? new Date(sale.startTime).toLocaleDateString("en-GB") // 🇬🇧 gives dd/mm/yyyy
                         : "N/A"}
+                    </td>
+
+                    <td className="px-2 sm:px-4 py-2">
+                      {convertTo12Hour(sale.startTime.slice(10))}
                     </td>
 
                     {/* 🟢 Status */}

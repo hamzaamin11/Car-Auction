@@ -310,60 +310,62 @@ END:VCALENDAR`.trim();
       {/* Header */}
 
       <div className="mb-6">
-  {/* Top Bar: Breadcrumb on left, Back button on right */}
-  <div className="flex items-center justify-between">
-    {/* Breadcrumb - Left */}
-    <nav className="flex flex-nowrap items-center whitespace-nowrap text-sm text-gray-600">
-      <Link to="/" className="hover:underline text-blue-950">
-        Home
-      </Link>
-      <ChevronRight className="mx-2 w-4 h-4 text-gray-600" />
-      <Link to="/finder" className="hover:underline text-blue-950">
-        Find Vehicle
-      </Link>
-      <ChevronRight className="mx-2 w-4 h-4 text-gray-600" />
-      <span
-        onClick={() => navigate(`/filterprice/make/${selectedPrice?.make}`)}
-        className="text-blue-950 capitalize hover:cursor-pointer hover:underline"
-      >
-        {selectedPrice?.make || "N/A"}
-      </span>
-      <ChevronRight className="mx-2 w-4 h-4 text-gray-600" />
-      <span className="text-blue-950 capitalize">
-        {selectedPrice?.model} {selectedPrice?.series} {selectedPrice?.year}
-      </span>
-    </nav>
+        {/* Top Bar: Breadcrumb on left, Back button on right */}
+        <div className="flex items-center justify-between">
+          {/* Breadcrumb - Left */}
+          <nav className="flex flex-nowrap items-center whitespace-nowrap text-sm text-gray-600">
+            <Link to="/" className="hover:underline text-blue-950">
+              Home
+            </Link>
+            <ChevronRight className="mx-2 w-4 h-4 text-gray-600" />
+            <Link to="/finder" className="hover:underline text-blue-950">
+              Find Vehicle
+            </Link>
+            <ChevronRight className="mx-2 w-4 h-4 text-gray-600" />
+            <span
+              onClick={() =>
+                navigate(`/filterprice/make/${selectedPrice?.make}`)
+              }
+              className="text-blue-950 capitalize hover:cursor-pointer hover:underline"
+            >
+              {selectedPrice?.make || "N/A"}
+            </span>
+            <ChevronRight className="mx-2 w-4 h-4 text-gray-600" />
+            <span className="text-blue-950 capitalize">
+              {selectedPrice?.model} {selectedPrice?.series}{" "}
+              {selectedPrice?.year}
+            </span>
+          </nav>
 
-    {/* Back Button - Right */}
-    <button
-      onClick={() => window.history.back()}
-      className="flex items-center gap-2 text-gray-700 hover:text-black font-medium text-sm lg:text-base transition-all duration-200 group"
-    >
-          <svg
-        xmlns="http://www.w3.org/2000/svg"
-        className="h-5 w-5 text-black group-hover:translate-x-[-4px] transition-transform"
-        fill="none"
-        viewBox="0 0 24 24"
-        stroke="currentColor"
-        strokeWidth={2.5}
-      >
-        <path
-          strokeLinecap="round"
-          strokeLinejoin="round"
-          d="M10.5 19.5L3 12m0 0l7.5-7.5M3 12h18"
-        />
-      </svg>
-      <span className="hidden sm:inline">Back to Results</span>
-  
-    </button>
-  </div>
+          {/* Back Button - Right */}
+          <button
+            onClick={() => window.history.back()}
+            className="flex items-center gap-2 text-gray-700 hover:text-black font-medium text-sm lg:text-base transition-all duration-200 group"
+          >
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              className="h-5 w-5 text-black group-hover:translate-x-[-4px] transition-transform"
+              fill="none"
+              viewBox="0 0 24 24"
+              stroke="currentColor"
+              strokeWidth={2.5}
+            >
+              <path
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                d="M10.5 19.5L3 12m0 0l7.5-7.5M3 12h18"
+              />
+            </svg>
+            <span className="hidden sm:inline">Back to Results</span>
+          </button>
+        </div>
 
-  {/* Vehicle Title - Full width below */}
-  <h1 className="mt-4 text-2xl lg:text-3xl font-bold text-black">
-    {selectedPrice?.make} {selectedPrice?.model} {selectedPrice?.series}{" "}
-    {selectedPrice?.year}
-  </h1>
-</div>
+        {/* Vehicle Title - Full width below */}
+        <h1 className="mt-4 text-2xl lg:text-3xl font-bold text-black">
+          {selectedPrice?.make} {selectedPrice?.model} {selectedPrice?.series}{" "}
+          {selectedPrice?.year}
+        </h1>
+      </div>
 
       <div className="grid lg:grid-cols-3 gap-1">
         {/* LEFT: IMAGE SLIDER */}
@@ -371,7 +373,7 @@ END:VCALENDAR`.trim();
           {/* Image container */}
           <div className="relative w-full h-[350px] sm:h-[400px] md:h-[450px] lg:h-[500px] rounded-lg overflow-hidden">
             <img
-              src={viewImage}
+              src={viewImage || "default.png"}
               alt="No image found"
               className="w-full h-full object-cover transition-all duration-500 hover:scale-105"
             />
