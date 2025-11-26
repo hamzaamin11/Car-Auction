@@ -243,6 +243,15 @@ const FilterPriceCars = () => {
 
   const handleGetFilterByVehicle = async () => {
     setLoading(true);
+
+    // Agar lot number diya hai → directly navigate
+    if (filterData.lot.length === 4) {
+      navigate(`/detailbid/${filterData.lot}`);
+      setLoading(false); // Yaha loading off karein
+      return; // Exit here
+    }
+
+    // Agar lot nahi hai → fir API call chalegi
     try {
       const res = await axios.get(`${BASE_URL}/getApprovedVehicles`, {
         params: {
@@ -259,13 +268,14 @@ const FilterPriceCars = () => {
           lot_number: filterData.lot,
         },
       });
+
       setAllFilterCars(res.data);
       setCurrentPage(1);
-      setLoading(false);
     } catch (error) {
       console.log("Error fetching cars:", error);
       setAllFilterCars([]);
-      setLoading(false);
+    } finally {
+      setLoading(false); // Yeh hamesha chalega
     }
   };
 

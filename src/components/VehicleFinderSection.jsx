@@ -106,6 +106,12 @@ const VehicleFinderSection = () => {
       const make = vehicleData.make || "";
       const model = vehicleData.model || "";
 
+      if (lot.length === 4) {
+        navigate(`/detailbid/${lot}`);
+        setLoading(false); // Yaha loading off karein
+        return; // Ex
+      }
+
       const res = await axios.get(
         `${BASE_URL}/getApprovedVehicles?vehicleCondition=${condition}&make=${make}&model=${model}&minPrice=${formCash}&maxPrice=${toCash}&sortType=${sorting}&yearStart=${fromYear}&yearEnd=${toYear}&bodyStyle=${vehicleType}&locationId=${location}&lot_number=${lot}`
       );
