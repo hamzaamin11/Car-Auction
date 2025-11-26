@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import axios from "axios";
-import { toast, ToastContainer } from "react-toastify";
+import Swal from "sweetalert2"; // SweetAlert2 added
 import { BASE_URL } from "../components/Contant/URL";
 import { AddModel } from "../components/ModelModal/AddModel";
 import { EditModal } from "../components/ModelModal/EditModal";
@@ -31,11 +31,23 @@ export const ModelList = () => {
   const handleDeleteModel = async (id) => {
     try {
       await axios.patch(`${BASE_URL}/deleteModel/${id}`);
-      toast.success("Model deleted successfully");
+      Swal.fire({
+        title: "Deleted!",
+        text: "Model deleted successfully",
+        icon: "success",
+        confirmButtonColor: "#191970",
+        timer: 2000,
+        timerProgressBar: true,
+      });
       loadModels(true);
     } catch (error) {
       console.log(error);
-      toast.error("Failed to delete model");
+      Swal.fire({
+        title: "Error!",
+        text: "Failed to delete model",
+        icon: "error",
+        confirmButtonColor: "#ef4444",
+      });
     }
   };
 
@@ -49,7 +61,12 @@ export const ModelList = () => {
       if (data.length < itemsPerRequest) setHasMore(false);
       return data;
     } catch (error) {
-      toast.error("Failed to load models");
+      Swal.fire({
+        title: "Error!",
+        text: "Failed to load models",
+        icon: "error",
+        confirmButtonColor: "#ef4444",
+      });
       return [];
     }
   };
@@ -169,7 +186,7 @@ export const ModelList = () => {
         </table>
       </div>
 
-      {/* ONLY THIS PART CHANGED — EXACT SAME PERFECT PAGINATION FROM BRANDLIST */}
+      {/* PAGINATION — EXACT SAME AS BRANDLIST */}
       {allModels.length > 0 && (
         <div className="bg-white rounded-lg shadow-sm p-4 mt-6">
           <div className="flex flex-col sm:flex-row justify-between items-center gap-4 text-sm text-gray-700">
@@ -221,7 +238,7 @@ export const ModelList = () => {
         <EditModal handleClose={() => handleToggleModal("")} seleteModel={seleteModel} handleGetAllModels={() => loadModels(true)} />
       )}
 
-      <ToastContainer />
+      {/* ToastContainer removed — SweetAlert2 handles everything now */}
     </div>
   );
 };

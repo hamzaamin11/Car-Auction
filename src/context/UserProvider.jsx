@@ -1,10 +1,8 @@
 import React from "react";
 import UserContext from "./UserContext";
 import PropTypes from "prop-types";
-import { useState } from "react";
-import { useEffect } from "react";
+import { useState, useEffect } from "react";
 import Swal from "sweetalert2";
-import { toast } from "react-toastify";
 import { BASE_URL } from "../components/Contant/URL";
 
 function UserProvider({ children }) {
@@ -12,25 +10,33 @@ function UserProvider({ children }) {
   const [userbyId, setUserById] = useState(null);
 
   const getAllUsers = async () => {
-    const res = await fetch(`${BASE_URL}/admin/getRegisteredMembers`, {
-      method: "GET",
-      headers: {
-        "Content-Type": "application/json",
-      },
-    });
-    const data = await res.json();
-    setGetUsers(data);
+    try {
+      const res = await fetch(`${BASE_URL}/admin/getRegisteredMembers`, {
+        method: "GET",
+        headers: {
+          "Content-Type": "application/json",
+        },
+      });
+      const data = await res.json();
+      setGetUsers(data);
+    } catch (error) {
+      console.error("Failed to fetch users:", error);
+    }
   };
 
   const getUserbyId = async (id) => {
-    const res = await fetch(`${BASE_URL}/admin/getUsersById/${id}`, {
-      method: "GET",
-      headers: {
-        "Content-Type": "application/json",
-      },
-    });
-    const data = await res.json();
-    setUserById(data);
+    try {
+      const res = await fetch(`${BASE_URL}/admin/getUsersById/${id}`, {
+        method: "GET",
+        headers: {
+          "Content-Type": "application/json",
+        },
+      });
+      const data = await res.json();
+      setUserById(data);
+    } catch (error) {
+      console.error("Failed to fetch user by ID:", error);
+    }
   };
 
   const delUser = async (id) => {
@@ -39,7 +45,7 @@ function UserProvider({ children }) {
       text: "This user will be permanently deleted.",
       icon: "warning",
       showCancelButton: true,
-      confirmButtonColor: "#9333ea", // Purple
+      confirmButtonColor: "#9333ea",
       cancelButtonColor: "#d33",
       confirmButtonText: "Yes, delete it!",
     });
@@ -58,16 +64,31 @@ function UserProvider({ children }) {
       );
 
       if (res.ok) {
-        toast.success("User deleted successfully!", {
-          position: "top-right",
-          autoClose: 3000,
+        await Swal.fire({
+          title: "Deleted!",
+          text: "User deleted successfully!",
+          icon: "success",
+          confirmButtonColor: "#10b981",
+          timer: 2500,
+          timerProgressBar: true,
+          showConfirmButton: false,
         });
-        getAllUsers();
+        getAllUsers(); // Refresh list
       } else {
-        toast.error("Failed to delete the user.");
+        await Swal.fire({
+          title: "Failed!",
+          text: "Failed to delete the user.",
+          icon: "error",
+          confirmButtonColor: "#ef4444",
+        });
       }
     } catch (error) {
-      toast.error("An error occurred while deleting the user.");
+      await Swal.fire({
+        title: "Error!",
+        text: "An error occurred while deleting the user.",
+        icon: "error",
+        confirmButtonColor: "#ef4444",
+      });
       console.error(error);
     }
   };
@@ -85,8 +106,10 @@ function UserProvider({ children }) {
   );
 }
 
-export default UserProvider;
-
-UserProvider.prototype = {
+UserProvider.propTypes = {
   children: PropTypes.node.isRequired,
 };
+
+export default UserProvider;
+
+

@@ -1,7 +1,7 @@
 import axios from "axios";
 import React, { useState } from "react";
 import { BASE_URL } from "../Contant/URL";
-import { toast, ToastContainer } from "react-toastify";
+
 import Swal from "sweetalert2";
 
 export const AddBrandModal = ({ handleClose, handleGetAllBrands }) => {
@@ -96,7 +96,7 @@ export const AddBrandModal = ({ handleClose, handleGetAllBrands }) => {
             <button
               disabled={loading}
               type="submit"
-              className="bg-blue-950 text-white px-4 py-2 rounded align-items-center"
+              className="bg-blue-950 hover:bg-blue-900 text-white px-4 py-2 rounded align-items-center"
             >
               {loading ? "loading..." : "Add Makes"}
             </button>

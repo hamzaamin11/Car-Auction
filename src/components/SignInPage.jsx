@@ -5,14 +5,13 @@ import { BASE_URL } from "./Contant/URL";
 import { useDispatch, useSelector } from "react-redux";
 import { authSuccess } from "./Redux/UserSlice";
 import axios from "axios";
-import { toast, ToastContainer } from "react-toastify";
+import Swal from "sweetalert2"; // SweetAlert2 added
 import LoginImage from "../../src/assets/copart1.jpg";
-import { FaEnvelope, FaGoogle, FaPhoneAlt } from "react-icons/fa";
+import { FaEnvelope, FaGoogle } from "react-icons/fa";
 import googleIcon from "../../src/assets/google.png";
-import PhoneModal from "./PhoneModal";
-import { EmailLoginModal } from "./EmailLoginModal";
 import { EmailSignUpModal } from "./EmailSignUpModal";
 import CustomButton from "../CustomButton";
+
 const SignInPage = () => {
   const [formData, setFormData] = useState({ email: "", password: "" });
   const [loading, setLoading] = useState(false);
@@ -21,7 +20,7 @@ const SignInPage = () => {
   const navigate = useNavigate();
   const dispatch = useDispatch();
   const { currentUser } = useSelector((state) => state?.auth);
-  const { login } = useAuth(); // AuthContext
+  const { login } = useAuth();
 
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -35,14 +34,38 @@ const SignInPage = () => {
   const handleSubmit = async (e) => {
     e.preventDefault();
     setLoading(true);
+
     try {
       const res = await axios.post(`${BASE_URL}/login`, formData);
-      localStorage.setItem("user", JSON.stringify(res.data));
-      dispatch(authSuccess(res.data));
-      login(res.data);
-      toast.success("Login successful!");
+      const userData = res.data;
+
+      localStorage.setItem("user", JSON.stringify(userData));
+      dispatch(authSuccess(userData));
+      login(userData);
+
+      await Swal.fire({
+        title: "Welcome Back!",
+        text: "Login successful!",
+        icon: "success",
+        timer: 2000,
+        timerProgressBar: true,
+        showConfirmButton: false,
+      });
+
+      // Navigate based on role
+      if (userData.role === "seller") navigate("/seller/dashboard");
+      else if (userData.role === "admin") navigate("/admin");
+      else navigate("/");
+      
     } catch (error) {
-      toast.error(error?.response?.data?.message || "Login failed");
+      const errorMsg = error?.response?.data?.message || "Login failed. Please check your credentials.";
+      
+      Swal.fire({
+        title: "Login Failed",
+        text: errorMsg,
+        icon: "error",
+        confirmButtonColor: "#ef4444",
+      });
     } finally {
       setLoading(false);
       setFormData({ email: "", password: "" });
@@ -65,10 +88,10 @@ const SignInPage = () => {
     }
   }, [dispatch, login, navigate]);
 
-  if (currentUser?.role === "seller")
-    return <Navigate to={"/seller/dashboard"} />;
-  if (currentUser?.role === "admin") return <Navigate to={"/admin"} />;
-  if (currentUser?.role === "customer") return <Navigate to={"/"} />;
+  // Redirect if already logged in
+  if (currentUser?.role === "seller") return <Navigate to="/seller/dashboard" />;
+  if (currentUser?.role === "admin") return <Navigate to="/admin" />;
+  if (currentUser?.role === "customer") return <Navigate to="/" />;
 
   return (
     <div
@@ -82,7 +105,7 @@ const SignInPage = () => {
         </h2>
 
         {/* Login Form */}
-        <form onSubmit={handleSubmit} className="space-y-2">
+        <form onSubmit={handleSubmit} className="space-y-4">
           <div>
             <label className="block mb-1 font-semibold text-gray-800">
               Email / Phone Number
@@ -94,7 +117,7 @@ const SignInPage = () => {
               onChange={handleChange}
               required
               placeholder="Enter Email or Phone Number"
-              className="w-full p-3 rounded-lg border border-gray-300 bg-white text-gray-800 placeholder-gray-400 focus:ring-2 focus:ring-blue-900 outline-none"
+              className="w-full p-3 rounded-lg border border-gray-300 bg-white text-gray-800 placeholder-gray-400 focus:ring-2 focus:ring-blue-900 outline-none transition"
             />
           </div>
 
@@ -109,70 +132,58 @@ const SignInPage = () => {
               onChange={handleChange}
               required
               placeholder="Enter Password"
-              className="w-full p-3 rounded-lg border border-gray-300 bg-white text-gray-800 placeholder-gray-400 focus:ring-2 focus:ring-blue-900 outline-none"
+              className="w-full p-3 rounded-lg border border-gray-300 bg-white text-gray-800 placeholder-gray-400 focus:ring-2 focus:ring-blue-900 outline-none transition"
             />
           </div>
 
-          <CustomButton text="Sign In" />
+          <CustomButton 
+            text={loading ? "Signing In..." : "Sign In"} 
+            disabled={loading}
+          />
         </form>
 
         {/* Divider */}
-        <p className="text-gray-800 text-center my-2">or</p>
+        <p className="text-gray-800 text-center my-4 font-medium">or</p>
 
         {/* Auth Options */}
-        <div className="space-y-2">
+        <div className="space-y-3">
           {/* Google */}
           <button
             onClick={handleAuthGoogle}
-            className="w-full flex items-center gap-3 py-3 rounded-lg shadow-md transition border border-gray-500 text-gray-800 font-semibold hover:scale-105 duration-500 hover:cursor-pointer"
+            className="w-full flex items-center gap-3 py-3 rounded-lg shadow-md transition border border-gray-400 text-gray-800 font-semibold hover:scale-105 duration-300 hover:border-gray-600"
           >
-            {/* Google Icon */}
-            <img
-              src={googleIcon}
-              alt="google"
-              className="h-7 w-7 object-cover pl-3"
-            />
-
-            {/* Vertical Divider */}
-            <div className="w-px h-6 bg-gray-400"></div>
-
-            {/* Text */}
+            <img src={googleIcon} alt="Google" className="h-7 w-7 pl-3" />
+            <div className="w-px h-8 bg-gray-400"></div>
             <span className="flex-1 text-center">Continue with Google</span>
           </button>
 
           {/* Register with Email */}
           <button
             onClick={() => handleToggleModal("email")}
-            className="w-full flex items-center gap-3 py-3 rounded-lg shadow-md transition border border-gray-500 text-gray-800 font-semibold  hover:scale-105 duration-500 hover:cursor-pointer"
+            className="w-full flex items-center gap-3 py-3 rounded-lg shadow-md transition border border-gray-400 text-gray-800 font-semibold hover:scale-105 duration-300 hover:border-gray-600"
           >
-            {/* Email Icon */}
-            <FaEnvelope className="text-lg ml-3" />
-
-            {/* Vertical Divider */}
-            <div className="w-px h-6 bg-gray-400"></div>
-
-            {/* Text */}
+            <FaEnvelope className="text-xl ml-3 text-blue-600" />
+            <div className="w-px h-8 bg-gray-400"></div>
             <span className="flex-1 text-center">Register with Email</span>
           </button>
         </div>
 
         {/* Register Link */}
-        <p className="mt-6 text-center text-gray-700">
-          Don&apos;t have an account?{" "}
+        <p className="mt-8 text-center text-gray-700">
+          Don't have an account?{" "}
           <Link
             to="/register"
-            className="text-blue-950 hover:underline font-medium "
+            className="text-blue-950 hover:underline font-bold"
           >
             Register here
           </Link>
         </p>
       </div>
 
+      {/* Email Signup Modal */}
       {isOPen === "email" && (
         <EmailSignUpModal handleModal={() => handleToggleModal("")} />
       )}
-
-      <ToastContainer />
     </div>
   );
 };

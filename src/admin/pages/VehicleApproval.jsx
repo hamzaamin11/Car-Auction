@@ -70,7 +70,7 @@ export const VehicleApproval = () => {
       handleGetAllUnapprovalVehicles();
       await Swal.fire({
         title: "Success!",
-        text: "This vehicle has been approved successfully.",
+        text: "This vehicle has been added in awaiting approval.",
         icon: "success",
         confirmButtonColor: "#9333ea",
       });

@@ -1,10 +1,9 @@
 import { useEffect, useState } from "react";
 import axios from "axios";
-import { toast, ToastContainer } from "react-toastify";
+import Swal from "sweetalert2";
 import { BASE_URL } from "../components/Contant/URL";
 import { AddSeries } from "./SeriesModal/AddSeries";
 import { EditSeries } from "./SeriesModal/EditSeries";
-import Swal from "sweetalert2";
 import CustomAdd from "../CustomAdd";
 import CustomSearch from "../CustomSearch";
 
@@ -44,11 +43,25 @@ export const SeriesList = () => {
 
     try {
       await axios.patch(`${BASE_URL}/deleteSeries/${id}`);
-      toast.success("Series deleted successfully");
-      loadSeries(true);
+
+      await Swal.fire({
+        title: "Deleted!",
+        text: "Series deleted successfully",
+        icon: "success",
+        timer: 2500,
+        timerProgressBar: true,
+        showConfirmButton: false,
+      });
+
+      loadSeries(true); // Refresh list
     } catch (error) {
       console.log(error);
-      toast.error("Failed to delete series");
+      await Swal.fire({
+        title: "Error",
+        text: "Failed to delete series",
+        icon: "error",
+        confirmButtonColor: "#ef4444",
+      });
     }
   };
 
@@ -62,7 +75,12 @@ export const SeriesList = () => {
       if (data.length < itemsPerRequest) setHasMore(false);
       return data;
     } catch (error) {
-      toast.error("Failed to load series");
+      await Swal.fire({
+        title: "Error",
+        text: "Failed to load series",
+        icon: "error",
+        confirmButtonColor: "#ef4444",
+      });
       return [];
     }
   };
@@ -209,14 +227,13 @@ export const SeriesList = () => {
         )}
       </div>
 
-      {/* ONLY THIS PART CHANGED — PERFECT PAGINATION FROM BRANDLIST */}
+      {/* PERFECT PAGINATION — SAME AS BRANDLIST */}
       {allSeries.length > 0 && (
         <div className="bg-white rounded-lg shadow-sm p-4 mt-6">
           <div className="flex flex-col sm:flex-row justify-between items-center gap-4 text-sm text-gray-700">
             <div className="text-gray-600">
               Showing <span className="font-medium">{startIndex + 1}</span> to{" "}
-              <span className="font-medium">{endIndex}</span> {" "}
-              <span className="font-medium"></span> entries
+              <span className="font-medium">{endIndex}</span> entries
             </div>
 
             <div className="flex items-center gap-1">
@@ -245,23 +262,17 @@ export const SeriesList = () => {
                 {">>"}
               </button>
             </div>
-
-            <div className="flex items-center gap-2">
-              {/* Optional: Add entries per page dropdown here later */}
-            </div>
           </div>
         </div>
       )}
 
-      {/* Modals — YOUR ORIGINAL */}
+      {/* Modals */}
       {isOpen === "Add" && (
         <AddSeries handleClose={() => handleToggleModal("")} handleGetAllSeries={() => loadSeries(true)} />
       )}
       {isOpen === "Edit" && (
         <EditSeries handleClose={() => handleToggleModal("")} seleteSeries={seleteSeries} handleGetAllSeries={() => loadSeries(true)} />
       )}
-
-      <ToastContainer position="top-right" autoClose={3000} />
     </div>
   );
 };

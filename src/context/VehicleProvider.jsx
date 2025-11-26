@@ -26,7 +26,14 @@ function VehicleProvider({ children }) {
       setGetVehicles(data);
     } catch (err) {
       setError(err);
-      toast.error("Failed to load vehicles");
+    Swal.fire({
+  title: "Error",
+  text: "Failed to load vehicles",
+  icon: "error",
+  confirmButtonColor: "#ef4444",
+  timer: 4000,
+  timerProgressBar: true,
+});
     }
   };
 
@@ -72,7 +79,14 @@ function VehicleProvider({ children }) {
       setVehicleSpecs(specs);
     } catch (err) {
       console.error("Vehicle selection error:", err);
-      toast.error("Error loading vehicle details");
+     Swal.fire({
+  title: "Error",
+  text: "Error loading vehicles",
+  icon: "error",
+  confirmButtonColor: "#ef4444",
+  timer: 4000,
+  timerProgressBar: true,
+});
     } finally {
       setLoading(false);
     }
@@ -97,7 +111,14 @@ function VehicleProvider({ children }) {
       });
 
       if (res.ok) {
-        toast.success("Vehicle deleted successfully!");
+       Swal.fire({
+  icon: "success",
+  title: "Deleted!",
+  text: "Vehicle deleted successfully!",
+  timer: 2500,
+  timerProgressBar: true,
+  showConfirmButton: false
+});
         getAllVehicles();
       } else {
         throw new Error("Failed to delete the vehicle");

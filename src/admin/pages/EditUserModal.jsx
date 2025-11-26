@@ -1,8 +1,8 @@
 import { Dialog, Transition } from "@headlessui/react";
 import { Fragment, useEffect, useState } from "react";
 import { MdClose } from "react-icons/md";
-import { toast } from "react-toastify";
 import { BASE_URL } from "../../components/Contant/URL";
+import Swal from "sweetalert2"; // SweetAlert2 imported
 
 const EditUserModal = ({ Open, setOpen, selectedUser, onUserUpdated }) => {
   const [user, setUser] = useState({
@@ -43,7 +43,7 @@ const EditUserModal = ({ Open, setOpen, selectedUser, onUserUpdated }) => {
   };
 
   const handleMobileChange = (e) => {
-    let value = e.target.value.replace(/\D/g, ""); // Remove all non-digits
+    let value = e.target.value.replace(/\D/g, "");
     if (value.startsWith("92")) {
       value = "+" + value;
     } else if (!value.startsWith("+92")) {
@@ -108,14 +108,29 @@ const EditUserModal = ({ Open, setOpen, selectedUser, onUserUpdated }) => {
       }
 
       const updatedUser = await response.json();
-      toast.success("User updated successfully!", {
-        autoClose: 3000,
+
+      // SweetAlert2 Success
+      await Swal.fire({
+        title: "Success!",
+        text: "User updated successfully!",
+        icon: "success",
+        confirmButtonColor: "#9333ea",
+        timer: 2000,
+        timerProgressBar: true,
       });
-      onUserUpdated(updatedUser); // Call the callback with updated user data
+
+      onUserUpdated(updatedUser);
       setOpen(false);
     } catch (error) {
       console.error("Error updating user:", error);
-      toast.error("Failed to update user.");
+
+      // SweetAlert2 Error
+      Swal.fire({
+        title: "Error",
+        text: "Failed to update user.",
+        icon: "error",
+        confirmButtonColor: "#9333ea",
+      });
     }
   };
 

@@ -136,7 +136,7 @@ export const AddModel = ({ handleClose, handleGetAllModels }) => {
             <button
               disabled={loading}
               type="submit"
-              className="bg-blue-950 text-white px-4 py-2 rounded "
+              className="bg-blue-950 hover:bg-blue-900 text-white px-4 py-2 rounded "
             >
               {loading ? "Loading..." : "Add Model"}
             </button>

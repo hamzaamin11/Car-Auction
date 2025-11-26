@@ -6,6 +6,7 @@ import { toast, ToastContainer } from "react-toastify";
 import AuctionsContext from "../../context/AuctionsContext";
 import ViewAuctionModal from "./ViewAuctionModal";
 import { useDispatch, useSelector } from "react-redux";
+import Swal from "sweetalert2";
 import CustomAdd from "../../CustomAdd";
 import {
   navigationStart,
@@ -93,15 +94,28 @@ export default function UpcomingAuctions() {
     setIsOpen((prev) => (prev === active ? "" : active));
   };
 
-  const handleUpdateBid = async (id) => {
+ const handleUpdateBid = async (id) => {
     try {
       const res = await axios.put(
         `${BASE_URL}/admin/updateBidStatusAdmin/${id}`
       );
-      toast.success("Your bid has gone live successfully.");
+      Swal.fire({
+        title: "Success!",
+        text: "Your bid has gone live successfully.",
+        icon: "success",
+        confirmButtonColor: "#191970",
+        timer: 2500,
+        timerProgressBar: true,
+      });
       handleGetAllUpcomingAuctions();
     } catch (error) {
       console.log(error);
+      Swal.fire({
+        title: "Error",
+        text: "Failed to update bid status",
+        icon: "error",
+        confirmButtonColor: "#ef4444",
+      });
     }
   };
 

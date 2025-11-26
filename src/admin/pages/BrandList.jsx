@@ -3,7 +3,7 @@ import { AddBrandModal } from "../../components/BrandModal/AddBrandModal";
 import axios from "axios";
 import { BASE_URL } from "../../components/Contant/URL";
 import { EditBrandModal } from "../../components/BrandModal/EditBrandModal";
-import { toast, ToastContainer } from "react-toastify";
+import Swal from "sweetalert2"; // SweetAlert2 added
 import CustomAdd from "../../CustomAdd";
 import CustomSearch from "../../CustomSearch";
 
@@ -39,7 +39,12 @@ export const BrandList = () => {
       if (newBrands.length < itemsPerRequest) setHasMore(false);
       return newBrands;
     } catch (error) {
-      toast.error("Failed to load brands");
+      Swal.fire({
+        title: "Error",
+        text: "Failed to load brands",
+        icon: "error",
+        confirmButtonColor: "#9333ea",
+      });
       return [];
     }
   };
@@ -156,7 +161,6 @@ export const BrandList = () => {
                 </tr>
               ))
             )}
-          
           </tbody>
         </table>
       </div>
@@ -209,7 +213,6 @@ export const BrandList = () => {
       {isOpen === "Add" && <AddBrandModal handleClose={() => handleToggleModal("")} handleGetAllBrands={() => loadBrands(true)} />}
       {isOpen === "Edit" && <EditBrandModal handleClose={() => handleToggleModal("")} seleteBrand={seleteBrand} handleGetAllBrands={() => loadBrands(true)} />}
 
-      <ToastContainer />
     </div>
   );
 };

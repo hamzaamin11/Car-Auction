@@ -3,12 +3,12 @@ import { debounce } from "lodash";
 import UserContext from "../../context/UserContext";
 import ViewUserModal from "./ViewUserModal";
 import EditUserModal from "./EditUserModal";
-import { ToastContainer, toast } from "react-toastify";
 import axios from "axios";
 import { BASE_URL } from "../../components/Contant/URL";
 import { User } from "lucide-react";
 import CustomAdd from "../../CustomAdd";
 import CustomSearch from "../../CustomSearch";
+import Swal from "sweetalert2"; // SweetAlert2 imported
 
 export default function ManageUsers() {
   const { getUserbyId, delUser } = useContext(UserContext);
@@ -16,7 +16,6 @@ export default function ManageUsers() {
   const [isViewModalOpen, setIsViewModalOpen] = useState(false);
   const [selectedUser, setSelectedUser] = useState(null);
 
-  // SAME STATES AS YOUR BRANDLIST
   const [allUsers, setAllUsers] = useState([]);
   const [hasMore, setHasMore] = useState(true);
   const [search, setSearch] = useState("");
@@ -27,7 +26,6 @@ export default function ManageUsers() {
 
   const itemsPerRequest = 10;
 
-  // DEBOUNCED SEARCH (your original)
   const debouncedSearch = React.useCallback(
     debounce((value) => {
       setSearch(value);
@@ -36,7 +34,6 @@ export default function ManageUsers() {
     []
   );
 
-  // FETCH ONE PAGE
   const fetchPage = async (page, searchTerm = "") => {
     try {
       const res = await axios.get(`${BASE_URL}/admin/getRegisteredMembers`, {
@@ -46,12 +43,16 @@ export default function ManageUsers() {
       if (data.length < itemsPerRequest) setHasMore(false);
       return data;
     } catch (error) {
-      toast.error("Failed to load users");
+      Swal.fire({
+        title: "Error",
+        text: "Failed to load users",
+        icon: "error",
+        confirmButtonColor: "#9333ea",
+      });
       return [];
     }
   };
 
-  // LOAD USERS — EXACT SAME LOGIC AS BRANDLIST
   const loadUsers = async (reset = false) => {
     setLoading(true);
     const pageToLoad = reset ? 1 : currentPage;
@@ -66,7 +67,6 @@ export default function ManageUsers() {
     setLoading(false);
   };
 
-  // Reset on search or itemsPerPage change
   useEffect(() => {
     setAllUsers([]);
     setHasMore(true);
@@ -74,7 +74,6 @@ export default function ManageUsers() {
     loadUsers(true);
   }, [search, itemsPerPage]);
 
-  // Load more when page increases
   useEffect(() => {
     const totalNeeded = currentPage * itemsPerPage;
     if (allUsers.length < totalNeeded && hasMore && !loading) {
@@ -82,7 +81,6 @@ export default function ManageUsers() {
     }
   }, [currentPage, itemsPerPage]);
 
-  // Load total counts
   useEffect(() => {
     const handleTotalUsers = async () => {
       try {
@@ -96,11 +94,37 @@ export default function ManageUsers() {
   }, []);
 
   const handleDeleteUser = async (userId) => {
-    try {
-      await delUser(userId);
-      setAllUsers(prev => prev.filter(u => u.id !== userId));
-    } catch (error) {
-      console.error("Error deleting user:", error);
+    const result = await Swal.fire({
+      title: "Are you sure?",
+      text: "This user will be permanently deleted!",
+      icon: "warning",
+      showCancelButton: true,
+      confirmButtonColor: "#d33",
+      cancelButtonColor: "#9333ea",
+      confirmButtonText: "Yes, delete it!",
+      cancelButtonText: "Cancel",
+    });
+
+    if (result.isConfirmed) {
+      try {
+        await delUser(userId);
+        setAllUsers(prev => prev.filter(u => u.id !== userId));
+        Swal.fire({
+          title: "Deleted!",
+          text: "User has been deleted successfully.",
+          icon: "success",
+          confirmButtonColor: "#9333ea",
+          timer: 2000,
+          timerProgressBar: true,
+        });
+      } catch (error) {
+        Swal.fire({
+          title: "Error",
+          text: "Failed to delete user",
+          icon: "error",
+          confirmButtonColor: "#9333ea",
+        });
+      }
     }
   };
 
@@ -114,7 +138,6 @@ export default function ManageUsers() {
     setIsModalOpen(false);
   };
 
-  // EXACT SAME PAGINATION MATH FROM BRANDLIST
   const totalItems = allUsers.length + (hasMore ? 1 : 0);
   const totalPages = Math.ceil(totalItems / itemsPerPage);
   const startIndex = (currentPage - 1) * itemsPerPage;
@@ -156,7 +179,6 @@ export default function ManageUsers() {
 
   return (
     <div className="max-w-7xl mx-auto px-2 sm:px-4 py-6 font-sans">
-      {/* YOUR ORIGINAL HEADER – 100% UNTOUCHED */}
       <div className="flex flex-col sm:flex-row justify-between items-center gap-4 mb-3">
         <h1 className="lg:text-3xl text-xl font-bold text-gray-900">
           Registered Users
@@ -189,7 +211,6 @@ export default function ManageUsers() {
         </div>
       </div>
 
-      {/* YOUR ORIGINAL TABLE & MOBILE VIEW – 100% SAME */}
       <div className="hidden md:block overflow-hidden rounded-2xl border border-gray-200 shadow-lg">
         <div className="overflow-x-auto">
           <table className="min-w-full divide-y divide-gray-200 text-sm">
@@ -242,7 +263,6 @@ export default function ManageUsers() {
         </div>
       </div>
 
-      {/* Mobile View – YOUR ORIGINAL */}
       <div className="md:hidden space-y-4">
         {currentDisplay.map((user) => (
           <div key={user.id} className="bg-white shadow rounded-xl p-4 border border-gray-200">
@@ -288,7 +308,6 @@ export default function ManageUsers() {
         </div>
       )}
 
-      {/* ONLY THIS PART CHANGED — EXACT SAME PAGINATION FROM BRANDLIST */}
       {allUsers.length > 0 && (
         <div className="bg-white rounded-lg shadow-sm p-4 mt-6">
           <div className="flex flex-col sm:flex-row justify-between items-center gap-4 text-sm text-gray-700">
@@ -332,7 +351,7 @@ export default function ManageUsers() {
 
       <ViewUserModal isOpen={isViewModalOpen} closeModal={() => setIsViewModalOpen(false)} />
       <EditUserModal Open={isModalOpen} setOpen={setIsModalOpen} selectedUser={selectedUser} onUserUpdated={handleUserUpdated} />
-      <ToastContainer />
+      {/* ToastContainer completely removed */}
     </div>
   );
 }

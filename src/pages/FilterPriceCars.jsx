@@ -636,7 +636,7 @@ const FilterPriceCars = () => {
                 onClick={() => navigate(`/detailbid/${car.id}`)}
                 className={`relative rounded-lg shadow p-4 mb-4 flex flex-col md:flex-row hover:shadow-lg transition-shadow hover:cursor-pointer ${
                   car.certifyStatus === "Certified"
-                    ? "bg-gradient-to-r from-green-50 to-green-100 border border-green-400"
+                    ? ""
                     : "bg-white"
                 }`}
               >
@@ -657,7 +657,7 @@ const FilterPriceCars = () => {
                     <h3
                       className={`font-semibold text-sm sm:text-base ${
                         car.certifyStatus === "Certified"
-                          ? "text-green-700"
+                          ? "text-gray-800"
                           : "text-gray-800"
                       }`}
                     >

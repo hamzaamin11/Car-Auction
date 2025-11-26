@@ -1,8 +1,7 @@
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import axios from "axios";
-import { toast, ToastContainer } from "react-toastify";
-import "react-toastify/dist/ReactToastify.css";
+import Swal from "sweetalert2"; // SweetAlert2 added
 import { BASE_URL } from "../components/Contant/URL";
 import { useSelector } from "react-redux";
 
@@ -16,19 +15,36 @@ const ValidationEmail = () => {
   const navigate = useNavigate();
 
   const handleValidationEmail = async () => {
+    setLoadingCheck(true);
     try {
       const res = await axios.post(`${BASE_URL}/customer/verifyEmail/${id}`);
       console.log(res.data);
-      toast.success(res.data);
+
+      await Swal.fire({
+        title: "Success!",
+        text: res.data || "Your email has been verified successfully!",
+        icon: "success",
+        confirmButtonColor: "#1d4ed8",
+        timer: 3000,
+        timerProgressBar: true,
+      });
+
       navigate("/login");
     } catch (error) {
       console.log(error);
+      Swal.fire({
+        title: "Oops!",
+        text: error.response?.data || "Something went wrong. Please try again.",
+        icon: "error",
+        confirmButtonColor: "#ef4444",
+      });
+    } finally {
+      setLoadingCheck(false);
     }
   };
 
   return (
     <div className="min-h-screen flex items-center justify-center bg-gray-50 px-4">
-      <ToastContainer position="top-center" />
       <div className="bg-white rounded-2xl shadow-lg max-w-md w-full p-8">
         <h1 className="text-2xl font-semibold text-gray-800 text-center mb-4">
           Are you verified your email?

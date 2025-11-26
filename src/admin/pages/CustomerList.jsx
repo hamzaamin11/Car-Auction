@@ -3,7 +3,6 @@ import Topbar from "../components/Topbar";
 import Sidebar from "../components/Sidebar";
 import UserContext from "../../context/UserContext";
 import ViewUserModal from "./ViewUserModal";
-import { toast, ToastContainer } from "react-toastify";
 import EditUserModal from "./EditUserModal";
 import axios from "axios";
 import { BASE_URL } from "../../components/Contant/URL";
@@ -13,12 +12,11 @@ import {
   navigationSuccess,
 } from "../../components/Redux/NavigationSlice";
 import { RotateLoader } from "../../components/Loader/RotateLoader";
+import Swal from "sweetalert2"; // SweetAlert2 added
 
 export default function CustomerList() {
   const { loader } = useSelector((state) => state.navigateState);
-  // const [users, setUsers] = useState(initialUsers);
   const { getUsers, userbyId, getUserbyId, delUser } = useContext(UserContext);
-  // const [viewUser, setViewUser] = useState(null);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [isViewModalOpen, setIsViewModalOpen] = useState(false);
   const [selectedUser, setSelectedUser] = useState(null);
@@ -29,7 +27,7 @@ export default function CustomerList() {
   const [allNotification, setAllNotification] = useState([]);
 
   const handleView = async (user) => {
-    await getUserbyId(user.id); // ✅ correct function call
+    await getUserbyId(user.id);
     setIsViewModalOpen(true);
   };
 
@@ -50,9 +48,22 @@ export default function CustomerList() {
       );
       console.log(res.data);
       handleGetCustomersNotification();
-      toast.success("Notification has been deleted");
+      Swal.fire({
+        title: "Deleted!",
+        text: "Notification has been deleted",
+        icon: "success",
+        confirmButtonColor: "#9333ea",
+        timer: 2000,
+        timerProgressBar: true,
+      });
     } catch (error) {
       console.log(error);
+      Swal.fire({
+        title: "Error",
+        text: "Failed to delete notification",
+        icon: "error",
+        confirmButtonColor: "#9333ea",
+      });
     }
   };
 
@@ -71,8 +82,6 @@ export default function CustomerList() {
 
   return (
     <>
-      {/* <Topbar />
-      <Sidebar /> */}
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 font-sans">
         <h1 className="text-3xl sm:text-4xl font-bold mb-8 text-gray-900">
           Customer Car Import Requests(List)
@@ -144,7 +153,6 @@ export default function CustomerList() {
           setOpen={setIsModalOpen}
           selectedUser={selectedUser}
         />
-        <ToastContainer />
       </div>
     </>
   );

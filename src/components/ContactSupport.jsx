@@ -1,6 +1,5 @@
 import React, { useState } from 'react';
-import { ToastContainer, toast } from 'react-toastify';
-import 'react-toastify/dist/ReactToastify.css';
+import Swal from 'sweetalert2';
 
 const ContactSupport = () => {
   const [form, setForm] = useState({ name: '', email: '', message: '' });
@@ -9,20 +8,24 @@ const ContactSupport = () => {
     setForm({ ...form, [e.target.name]: e.target.value });
   };
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
 
-    // Optional: You can reset the form after submission
+    // Optional: Add real API call here later
+    // await axios.post('/api/support', form);
+
+    // Reset form
     setForm({ name: '', email: '', message: '' });
 
-    // Show success toast
-    toast.success('Submitted successfully!', {
-      position: 'top-right',
-      autoClose: 3000,
-      hideProgressBar: false,
-      pauseOnHover: true,
-      draggable: true,
-      theme: 'colored',
+    // Beautiful SweetAlert2 success popup
+    await Swal.fire({
+      icon: 'success',
+      title: 'Thank You!',
+      text: 'Your message has been submitted successfully. Our support team will contact you shortly.',
+      confirmButtonColor: '#233d7b',
+      timer: 5000,
+      timerProgressBar: true,
+      showConfirmButton: false,
     });
   };
 
@@ -53,7 +56,7 @@ const ContactSupport = () => {
             </label>
           </div>
 
-      
+          {/* Email Field */}
           <div className="relative">
             <input
               type="email"
@@ -68,6 +71,8 @@ const ContactSupport = () => {
               Your Email
             </label>
           </div>
+
+          {/* Message Field */}
           <div className="relative">
             <textarea
               name="message"
@@ -83,7 +88,7 @@ const ContactSupport = () => {
             </label>
           </div>
 
-       
+          {/* Submit Button */}
           <button
             type="submit"
             className="w-full mt-4 py-3 bg-[#233d7b] hover:bg-blue-900 text-white font-semibold rounded-lg shadow-md hover:shadow-xl transition duration-300"
@@ -92,9 +97,6 @@ const ContactSupport = () => {
           </button>
         </form>
       </div>
-
-     
-      <ToastContainer />
     </section>
   );
 };

@@ -1,6 +1,6 @@
 import axios from "axios";
 import React, { useEffect, useState } from "react";
-import { toast } from "react-toastify";
+
 import { BASE_URL } from "./Contant/URL";
 import { useDispatch } from "react-redux";
 import { authSuccess } from "./Redux/UserSlice";

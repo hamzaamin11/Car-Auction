@@ -3,9 +3,8 @@ import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import PhoneInput from "react-phone-input-2";
 import "react-phone-input-2/lib/style.css";
-import { ToastContainer, toast } from "react-toastify";
-import "react-toastify/dist/ReactToastify.css";
 import axios from "axios";
+import Swal from "sweetalert2"; // SweetAlert2 added
 import { BASE_URL } from "./Contant/URL";
 import LoginImage from "../../src/assets/copart3.jpg";
 
@@ -17,6 +16,7 @@ const RegistrationWithEmail = () => {
     email: "",
     password: "",
     role: "",
+    contact: "", // kept if you plan to add phone later
   });
 
   const handleChange = (e) => {
@@ -31,18 +31,34 @@ const RegistrationWithEmail = () => {
     data.append("name", formData.name);
     data.append("email", formData.email);
     data.append("password", formData.password);
-    data.append("contact", formData.contact);
+    data.append("contact", formData.contact || "");
     data.append("role", formData.role);
 
     try {
       await axios.post(`${BASE_URL}/register`, data, {
         headers: { "Content-Type": "multipart/form-data" },
       });
-      toast.success("Registered successfully!");
-      setTimeout(() => navigate("/login"), 2000);
+
+      await Swal.fire({
+        title: "Success!",
+        text: "Registered successfully!",
+        icon: "success",
+        confirmButtonColor: "#1d4ed8",
+        timer: 2000,
+        timerProgressBar: true,
+        showConfirmButton: false,
+      });
+
+      navigate("/login");
     } catch (error) {
       console.error("Registration error:", error);
-      toast.error("Registration failed.");
+
+      Swal.fire({
+        title: "Registration Failed",
+        text: error.response?.data?.message || "Please check your details and try again.",
+        icon: "error",
+        confirmButtonColor: "#ef4444",
+      });
     }
   };
 
@@ -51,10 +67,8 @@ const RegistrationWithEmail = () => {
       className="min-h-screen flex items-center justify-center bg-cover bg-center px-4"
       style={{ backgroundImage: `url(${LoginImage})` }}
     >
-      <ToastContainer position="top-right" autoClose={3000} />
-
       {/* Smaller Form */}
-      <div className="bg-white/90 backdrop-blur-md p-8 rounded-2xl shadow-2xl  w-full max-w-md">
+      <div className="bg-white/90 backdrop-blur-md p-8 rounded-2xl shadow-2xl w-full max-w-md">
         <h2 className="text-2xl font-extrabold text-[#222] text-center mb-6">
           Create Account
         </h2>
@@ -62,10 +76,8 @@ const RegistrationWithEmail = () => {
         <form onSubmit={handleRegister} className="space-y-2">
           {/* Role Selection */}
           <div className="md:col-span-2">
-            <div className="flex gap-4">
-              <label className="block text-sm font-bold text-gray-700 ">
-                Select Role
-              </label>
+            <div className="flex gap-4 flex-wrap">
+              <span className="block text-sm font-bold text-gray-700">Select Role</span>
               <label className="flex items-center">
                 <input
                   type="radio"
@@ -74,6 +86,7 @@ const RegistrationWithEmail = () => {
                   checked={formData.role === "customer"}
                   onChange={handleChange}
                   className="mr-2"
+                  required
                 />
                 Customer
               </label>
@@ -85,15 +98,17 @@ const RegistrationWithEmail = () => {
                   checked={formData.role === "seller"}
                   onChange={handleChange}
                   className="mr-2"
+                  required
                 />
                 Seller
               </label>
             </div>
           </div>
+
           {/* Full Name */}
           <div>
             <label className="block text-sm font-semibold text-gray-700 mb-1">
-              Full Name
+              Full Name <span className="text-red-500">*</span>
             </label>
             <input
               type="text"
@@ -101,6 +116,7 @@ const RegistrationWithEmail = () => {
               value={formData.name}
               onChange={handleChange}
               required
+              placeholder="John Doe"
               className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-900 focus:outline-none text-sm"
             />
           </div>
@@ -108,7 +124,7 @@ const RegistrationWithEmail = () => {
           {/* Email */}
           <div>
             <label className="block text-sm font-semibold text-gray-700 mb-1">
-              Email
+              Email <span className="text-red-500">*</span>
             </label>
             <input
               type="email"
@@ -116,6 +132,7 @@ const RegistrationWithEmail = () => {
               value={formData.email}
               onChange={handleChange}
               required
+              placeholder="you@example.com"
               className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-900 focus:outline-none text-sm"
             />
           </div>
@@ -123,7 +140,7 @@ const RegistrationWithEmail = () => {
           {/* Password */}
           <div>
             <label className="block text-sm font-semibold text-gray-700 mb-1">
-              Password
+              Password <span className="text-red-500">*</span>
             </label>
             <input
               type="password"
@@ -131,18 +148,29 @@ const RegistrationWithEmail = () => {
               value={formData.password}
               onChange={handleChange}
               required
+              placeholder="••••••••"
               className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-900 focus:outline-none text-sm"
             />
           </div>
 
-          {/* Submit */}
+          {/* Submit Button */}
           <button
             type="submit"
-            className="w-full bg-blue-950 text-white font-semibold py-2 rounded-lg shadow-md  transition text-sm"
+            className="w-full bg-blue-950 hover:bg-blue-900 text-white font-semibold py-3 rounded-lg shadow-md transition duration-200 text-sm"
           >
             Register
           </button>
         </form>
+
+        <p className="text-center text-xs text-gray-600 mt-6">
+          Already have an account?{" "}
+          <span
+            onClick={() => navigate("/login")}
+            className="text-blue-600 font-semibold cursor-pointer hover:underline"
+          >
+            Login here
+          </span>
+        </p>
       </div>
     </div>
   );

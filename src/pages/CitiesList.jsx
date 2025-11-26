@@ -1,12 +1,11 @@
 import { useEffect, useState } from "react";
 import { BASE_URL } from "../components/Contant/URL";
 import axios from "axios";
-import { toast } from "react-toastify";
+import Swal from "sweetalert2"; // SweetAlert2 kept & used
 import { AddCityModal } from "../components/CityModal/AddCity";
 import { EditCityModal } from "../components/CityModal/EditCity";
 import CustomAdd from "../CustomAdd";
 import CustomSearch from "../CustomSearch";
-import Swal from "sweetalert2";
 
 export const CitiesList = () => {
   const [isOpen, setIsOpen] = useState("");
@@ -37,7 +36,12 @@ export const CitiesList = () => {
       if (data.length < itemsPerRequest) setHasMore(false);
       return data;
     } catch (err) {
-      toast.error("Failed to load cities");
+      Swal.fire({
+        title: "Error!",
+        text: "Failed to load cities",
+        icon: "error",
+        confirmButtonColor: "#ef4444",
+      });
       return [];
     }
   };
@@ -76,20 +80,22 @@ export const CitiesList = () => {
       const res = await axios.patch(`${BASE_URL}/deleteCity/${id}`);
 
       await Swal.fire({
-        title: "Success",
-        text: res.data.message,
+        title: "Deleted!",
+        text: res.data.message || "City deleted successfully",
         icon: "success",
-        confirmButtonText: "okay",
+        confirmButtonColor: "#9333ea",
+        timer: 2000,
+        timerProgressBar: true,
       });
 
-      // ⭐ REFRESH CITIES AFTER DELETE
+      // Refresh cities after delete
       await loadCities(true);
     } catch (error) {
       await Swal.fire({
-        title: "Error",
+        title: "Error!",
         text: error.response?.data?.message || "Something went wrong",
         icon: "error",
-        confirmButtonText: "okay",
+        confirmButtonColor: "#ef4444",
       });
     }
   };
@@ -209,14 +215,13 @@ export const CitiesList = () => {
         </table>
       </div>
 
-      {/* ONLY THIS PART CHANGED — EXACT SAME PERFECT PAGINATION FROM BRANDLIST */}
+      {/* PERFECT PAGINATION — SAME AS BRANDLIST */}
       {allCities.length > 0 && (
         <div className="bg-white rounded-lg shadow-sm p-4 mt-6">
           <div className="flex flex-col sm:flex-row justify-between items-center gap-4 text-sm text-gray-700">
             <div className="text-gray-600">
               Showing <span className="font-medium">{startIndex + 1}</span> to{" "}
-              <span className="font-medium">{endIndex}</span>{" "}
-              <span className="font-medium"></span> entries
+              <span className="font-medium">{endIndex}</span> entries
             </div>
 
             <div className="flex items-center gap-1">
@@ -279,10 +284,6 @@ export const CitiesList = () => {
               >
                 {">>"}
               </button>
-            </div>
-
-            <div className="flex items-center gap-2">
-              {/* You can add entries selector here later */}
             </div>
           </div>
         </div>

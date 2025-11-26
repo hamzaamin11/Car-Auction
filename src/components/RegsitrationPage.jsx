@@ -3,8 +3,6 @@ import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import PhoneInput from "react-phone-input-2";
 import "react-phone-input-2/lib/style.css";
-import { ToastContainer, toast } from "react-toastify";
-import "react-toastify/dist/ReactToastify.css";
 import axios from "axios";
 import { BASE_URL } from "./Contant/URL";
 import LoginImage from "../../src/assets/copart3.jpg";
@@ -50,7 +48,12 @@ const RegistrationPage = () => {
     }
 
     if (!formData.contact || formData.contact.trim() === "") {
-      toast.error("Please enter your contact number");
+      Swal.fire({
+        title: "Error",
+        text: "Please enter your contact number",
+        icon: "error",
+        confirmButtonColor: "#9333ea",
+      });
       return;
     }
 
@@ -72,12 +75,19 @@ const RegistrationPage = () => {
       await axios.post(`${BASE_URL}/register`, data, {
         headers: { "Content-Type": "multipart/form-data" },
       });
-      toast.success("Registered successfully!");
-      setTimeout(() => navigate("/login"), 2000);
+      
+      await Swal.fire({
+        title: "Success!",
+        text: "Registered successfully!",
+        icon: "success",
+        confirmButtonColor: "#9333ea",
+      });
+      
+      setTimeout(() => navigate("/login"), 300);
     } catch (error) {
       Swal.fire({
         title: "Error",
-        text: error.response.data.message,
+        text: error.response?.data?.message || "Something went wrong!",
         icon: "error",
         confirmButtonColor: "#9333ea",
       });
@@ -89,10 +99,10 @@ const RegistrationPage = () => {
       className="min-h-screen flex items-center justify-center bg-cover bg-center px-4"
       style={{ backgroundImage: `url(${LoginImage})` }}
     >
-      <ToastContainer position="top-right" autoClose={3000} />
+      {/* Removed ToastContainer */}
 
       {/* Smaller Form */}
-      <div className="bg-white/90 backdrop-blur-md rounded-2xl shadow-2xl  max-w-md w-full h-[35rem] my-5 p-8">
+      <div className="bg-white/90 backdrop-blur-md rounded-2xl shadow-2xl max-w-md w-full h-[35rem] my-5 p-8">
         <h2 className="text-2xl font-bold text-gray-800 text-center mb-6">
           Create Account
         </h2>
@@ -101,7 +111,7 @@ const RegistrationPage = () => {
           {/* Role Selection */}
           <div className="md:col-span-2">
             <div className="flex gap-4">
-              <label className="block font-semibold text-gray-800  ">
+              <label className="block font-semibold text-gray-800">
                 Select Role
               </label>
               <label className="flex items-center">
@@ -122,7 +132,7 @@ const RegistrationPage = () => {
                   value="seller"
                   checked={formData.role === "seller"}
                   onChange={handleChange}
-                  className="mr-2 accent-blue-950  "
+                  className="mr-2 accent-blue-950"
                 />
                 Seller
               </label>
@@ -130,7 +140,7 @@ const RegistrationPage = () => {
           </div>
           {/* Full Name */}
           <div>
-            <label className="block  font-semibold text-gray-800 mb-1">
+            <label className="block font-semibold text-gray-800 mb-1">
               Full Name
             </label>
             <input
@@ -140,13 +150,13 @@ const RegistrationPage = () => {
               onChange={handleChange}
               placeholder="Please Enter Your Full Name"
               required
-              className="w-full px-3 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-900 focus:outline-none text-sm "
+              className="w-full px-3 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-900 focus:outline-none text-sm"
             />
           </div>
 
           {/* Email */}
           <div>
-            <label className="block  font-semibold text-gray-800 mb-1">
+            <label className="block font-semibold text-gray-800 mb-1">
               Email
             </label>
             <input
@@ -154,10 +164,9 @@ const RegistrationPage = () => {
               name="email"
               value={formData.email}
               onChange={handleChange}
-              placeholder="PLease Enter Your Email"
+              placeholder="Please Enter Your Email"
               required
-              className={`w-full px-3 py-3 border rounded-lg focus:ring-2 focus:outline-none text-sm 
-        `}
+              className="w-full px-3 py-3 border rounded-lg focus:ring-2 focus:outline-none text-sm"
             />
           </div>
 
@@ -192,7 +201,7 @@ const RegistrationPage = () => {
               onChange={handleChange}
               placeholder="Please Enter Your Password"
               required
-              className={`w-full px-3 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-900 focus:outline-none text-sm   ${
+              className={`w-full px-3 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-900 focus:outline-none text-sm ${
                 error
                   ? "border-red-500 focus:ring-red-400"
                   : "border-gray-300 focus:ring-blue-900"

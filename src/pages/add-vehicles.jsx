@@ -4,7 +4,6 @@ import { BASE_URL } from "../components/Contant/URL";
 import { useDispatch, useSelector } from "react-redux";
 import { BsThreeDotsVertical } from "react-icons/bs";
 import axios from "axios";
-import { toast, ToastContainer } from "react-toastify";
 import { ViewAdminCar } from "../components/ViewAdminCar";
 import Swal from "sweetalert2";
 import { AdminAddBid } from "../components/AdminAddBidComponent/AdminAddBid";
@@ -274,7 +273,13 @@ const AddVehicles = () => {
     if (editId) {
       // Edit mode: Allow up to 5 new images, ignore existing image count
       if (files.length > 5) {
-        toast.error("You can add a maximum of 5 new images in edit mode.");
+        Swal.fire({
+  title: "Limit Exceeded",
+  text: "You can add a maximum of 5 new images in edit mode.",
+  icon: "warning",
+  confirmButtonColor: "#9333ea",
+});
+return;
         return;
       }
       setVehicleData((prev) => ({
@@ -286,7 +291,13 @@ const AddVehicles = () => {
       // Add mode: Limit to 5 images total
       const currentImageCount = vehicleData.image.length;
       if (currentImageCount + files.length > 5) {
-        toast.error("You can add a maximum of 5 images.");
+      Swal.fire({
+  title: "Limit Exceeded",
+  text: "You can add a maximum of 5 images.",
+  icon: "warning",
+  confirmButtonColor: "#9333ea",
+});
+return;
         return;
       }
       setVehicleData((prev) => ({
@@ -474,7 +485,13 @@ const AddVehicles = () => {
         !vehicleData[field] ||
         (Array.isArray(vehicleData[field]) && vehicleData[field].length === 0)
       ) {
-        toast.error(`${requiredFields[field]} is required.`);
+        Swal.fire({
+  title: "Missing Field",
+  text: `${requiredFields[field]} is required.`,
+  icon: "error",
+  confirmButtonColor: "#ef4444",
+});
+return;
         return;
       }
     }
@@ -519,13 +536,23 @@ const AddVehicles = () => {
       setPrice("");
       setFormOpen(false);
       setEditId(null);
-      toast.success(
-        editId ? "Vehicle updated successfully" : "Vehicle added successfully"
-      );
+     Swal.fire({
+  title: "Success!",
+  text: editId ? "Vehicle updated successfully" : "Vehicle added successfully",
+  icon: "success",
+  confirmButtonColor: "#10b981",
+  timer: 3000,
+  timerProgressBar: true,
+});
       handleGetAllVehicleById();
     } catch (err) {
       setErrorMsg(err.message);
-      toast.error(err.message || "Something went wrong.");
+      Swal.fire({
+  title: "Error",
+  text: err.message || "Something went wrong.",
+  icon: "error",
+  confirmButtonColor: "#ef4444",
+});
     } finally {
       setLoading(false);
     }
@@ -1634,7 +1661,7 @@ const AddVehicles = () => {
           getAllVehicles={handleGetAllVehicleById}
         />
       )}
-      <ToastContainer />
+    
     </div>
   );
 };

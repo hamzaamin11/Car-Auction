@@ -173,7 +173,12 @@ function AddAdminVehicle({ open, setOpen, onVehicleUpdated }) {
   const handleFileChange = (e) => {
     const files = Array.from(e.target.files);
     if (vehicle.image.length + files.length > 5) {
-      toast.error("You can add a maximum of 5 images");
+      Swal.fire({
+        title: "Error",
+        text: "You can add a maximum of 5 images",
+        icon: "error",
+        confirmButtonColor: "#9333ea",
+      });
       return;
     }
 
@@ -309,7 +314,7 @@ function AddAdminVehicle({ open, setOpen, onVehicleUpdated }) {
       await axios.patch(`${BASE_URL}/seller/deleteVehicle/${id}`);
       handleGetVehicles();
       await Swal.fire({
-        title: " Deleted!",
+        title: "Deleted!",
         text: "The vehicle has been deleted successfully.",
         icon: "success",
         confirmButtonColor: "#9333ea",
@@ -334,12 +339,22 @@ function AddAdminVehicle({ open, setOpen, onVehicleUpdated }) {
     for (const [key, value] of Object.entries(vehicle)) {
       if (key === "image") {
         if (!value || value.length === 0) {
-          toast.error("Please upload at least one image");
+          Swal.fire({
+            title: "Error",
+            text: "Please upload at least one image",
+            icon: "error",
+            confirmButtonColor: "#9333ea",
+          });
           setLoading(false);
           return;
         }
       } else if (!value || value.toString().trim() === "") {
-        toast.error(`Please fill out the ${key} field`);
+        Swal.fire({
+          title: "Error",
+          text: `Please fill out the ${key} field`,
+          icon: "error",
+          confirmButtonColor: "#9333ea",
+        });
         setLoading(false);
         return;
       }
@@ -349,7 +364,7 @@ function AddAdminVehicle({ open, setOpen, onVehicleUpdated }) {
     formData.append("userId", currentUser?.id);
 
     Object.entries(vehicle).forEach(([key, value]) => {
-      if (key === "image" && Role.isArray(value)) {
+      if (key === "image" && Array.isArray(value)) {
         value.forEach((file) => {
           formData.append("image", file);
         });
@@ -375,6 +390,8 @@ function AddAdminVehicle({ open, setOpen, onVehicleUpdated }) {
         text: "Vehicle Added successfully.",
         icon: "success",
         confirmButtonColor: "#9333ea",
+        timer: 2000,
+        timerProgressBar: true,
       });
     } catch (error) {
       await Swal.fire({
@@ -863,37 +880,36 @@ function AddAdminVehicle({ open, setOpen, onVehicleUpdated }) {
                   </div>
 
                   {/* Preview Images */}
-{previewImages.length > 0 && (
-  <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-5 gap-4 mt-4">
-    {previewImages.map((src, index) => (
-      <div
-        key={index}
-        className="relative border rounded-xl shadow-sm overflow-hidden"
-      >
-        <img
-          src={src}
-          alt="preview"
-          className="h-28 w-full object-cover"
-        />
+                  {previewImages.length > 0 && (
+                    <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-5 gap-4 mt-4">
+                      {previewImages.map((src, index) => (
+                        <div
+                          key={index}
+                          className="relative border rounded-xl shadow-sm overflow-hidden"
+                        >
+                          <img
+                            src={src}
+                            alt="preview"
+                            className="h-28 w-full object-cover"
+                          />
 
-        {/* Remove Image Button */}
-        <div
-          onClick={() => {
-            const updatedPreviews = previewImages.filter((_, i) => i !== index);
-            const updatedImages = vehicle.image.filter((_, i) => i !== index);
-            setPreviewImages(updatedPreviews);
-            setVehicle((prev) => ({ ...prev, image: updatedImages }));
-            setSelectedCount(updatedImages.length);
-          }}
-          className="absolute top-1 right-1 bg-white rounded-full shadow p-1 cursor-pointer hover:bg-gray-100"
-        >
-          <span className="text-xs text-gray-600">×</span>
-        </div>
-      </div>
-    ))}
-  </div>
-)}
-
+                          {/* Remove Image Button */}
+                          <div
+                            onClick={() => {
+                              const updatedPreviews = previewImages.filter((_, i) => i !== index);
+                              const updatedImages = vehicle.image.filter((_, i) => i !== index);
+                              setPreviewImages(updatedPreviews);
+                              setVehicle((prev) => ({ ...prev, image: updatedImages }));
+                              setSelectedCount(updatedImages.length);
+                            }}
+                            className="absolute top-1 right-1 bg-white rounded-full shadow p-1 cursor-pointer hover:bg-gray-100"
+                          >
+                            <span className="text-xs text-gray-600">×</span>
+                          </div>
+                        </div>
+                      ))}
+                    </div>
+                  )}
                 </div>
 
                 {/* Submit Button */}
