@@ -34,10 +34,11 @@ export const EmailSignUpModal = ({ handleModal }) => {
   const handleSubmit = async (e) => {
     e.preventDefault();
 
-    const gmailRegex = /^[a-zA-Z0-9](\.?[a-zA-Z0-9]){0,}@gmail\.com$/;
-
     const passwordRegex =
       /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$/;
+      
+    const gmailRegex = /^[a-zA-Z0-9](\.?[a-zA-Z0-9]){0,}@gmail\.com$/;
+
 
     if (!gmailRegex.test(formData.email)) {
       Swal.fire({

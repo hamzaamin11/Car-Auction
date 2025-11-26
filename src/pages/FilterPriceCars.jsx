@@ -43,7 +43,6 @@ const FilterPriceCars = () => {
     budget: { min: "", max: "" },
   });
 
-  console.log("filter =>", filterPrice);
 
   const [filterData, setFilterData] = useState({
     vehicleType: name === "bodyStyle" ? decodeURIComponent(value || "") : "",

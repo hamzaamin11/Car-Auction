@@ -36,14 +36,18 @@ const RegistrationPage = () => {
 
   const handleRegister = async (e) => {
     e.preventDefault();
-
-    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-
     const passwordRegex =
       /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{0,}$/;
 
-    if (!emailRegex.test(formData.email)) {
-      setError("Please enter a valid email address");
+    const gmailRegex = /^[a-zA-Z0-9](\.?[a-zA-Z0-9]){0,}@gmail\.com$/;
+
+    if (!gmailRegex.test(formData.email)) {
+      Swal.fire({
+        title: "Invalid Email",
+        text: "Please enter a valid Email address.",
+        icon: "error",
+        confirmButtonColor: "#9333ea",
+      });
       return;
     }
 
@@ -75,14 +79,14 @@ const RegistrationPage = () => {
       await axios.post(`${BASE_URL}/register`, data, {
         headers: { "Content-Type": "multipart/form-data" },
       });
-      
+
       await Swal.fire({
         title: "Success!",
         text: "Registered successfully!",
         icon: "success",
         confirmButtonColor: "#9333ea",
       });
-      
+
       setTimeout(() => navigate("/login"), 300);
     } catch (error) {
       Swal.fire({
