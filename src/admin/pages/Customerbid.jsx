@@ -18,6 +18,7 @@ import Swal from "sweetalert2";
 import { IoMdArrowBack } from "react-icons/io";
 import { ChevronRight } from "lucide-react";
 import { WarningModal } from "../../components/ModelModal/WarningModel";
+import defaultImage from "../../../public/images/default.png";
 
 export const Customerbid = () => {
   const { currentUser } = useSelector((state) => state.auth);
@@ -373,7 +374,7 @@ END:VCALENDAR`.trim();
           {/* Image container */}
           <div className="relative w-full h-[350px] sm:h-[400px] md:h-[450px] lg:h-[500px] rounded-lg overflow-hidden">
             <img
-              src={viewImage || "default.png"}
+              src={viewImage || defaultImage}
               alt="No image found"
               className="w-full h-full object-cover transition-all duration-500 hover:scale-105"
             />
