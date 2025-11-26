@@ -4,6 +4,10 @@ import { useNavigate, useParams } from "react-router-dom";
 import CustomDropdown from "../CustomDropdown";
 import { BASE_URL } from "../components/Contant/URL";
 import numberToWords from "number-to-words";
+import { useDispatch, useSelector } from "react-redux";
+import { FaHeart } from "react-icons/fa";
+import Swal from "sweetalert2";
+import { addInList } from "../components/Redux/WishlistSlice";
 
 const BodyType = [
   { label: "Mini Vehicles", value: "Mini Vehicles" },
@@ -33,7 +37,14 @@ const BodyType = [
 const FilterPriceCars = () => {
   const { name, value } = useParams();
 
+  const currentUser = useSelector((state) => state?.auth?.currentUser);
+  const wishlistByUser = useSelector(
+    (state) => state?.wishList?.wishlistByUser || {}
+  );
+
   const navigate = useNavigate();
+
+  const dispatch = useDispatch();
 
   const [allMake, setAllMake] = useState([]);
 
@@ -42,7 +53,6 @@ const FilterPriceCars = () => {
   const [filterPrice, setFilterPrice] = useState({
     budget: { min: "", max: "" },
   });
-
 
   const [filterData, setFilterData] = useState({
     vehicleType: name === "bodyStyle" ? decodeURIComponent(value || "") : "",
@@ -105,6 +115,37 @@ const FilterPriceCars = () => {
     { label: "20 – 50 Crore", min: 200000000, max: 500000000 },
     { label: "50 – 99 Crore", min: 500000000, max: 990000000 },
   ];
+
+  const isCarInWishlist = (carId) => {
+    if (!currentUser?.id) return false;
+    const userWishlist = wishlistByUser[currentUser.id] || [];
+    return userWishlist.some((item) => item.id === carId);
+  };
+
+  const handleWishlist = (car) => {
+    if (!currentUser) {
+      Swal.fire({
+        title: "Login Required",
+        text: "Please login to add vehicles to your wishlist.",
+        icon: "warning",
+        confirmButtonColor: "#9333ea",
+        showCancelButton: true,
+        confirmButtonText: "Go to Login",
+        cancelButtonText: "Cancel",
+      }).then((result) => {
+        if (result.isConfirmed) {
+          navigate("/login");
+        }
+      });
+      return;
+    }
+
+    if (isCarInWishlist(car.id)) {
+      return; // Already added
+    }
+
+    dispatch(addInList({ userId: currentUser.id, vehicle: car }));
+  };
 
   // Transform makes
   const allMakes = useMemo(
@@ -629,74 +670,97 @@ const FilterPriceCars = () => {
 
         <div className="overflow-y-auto max-h-screen">
           {currentCars.length > 0 ? (
-            currentCars.map((car) => (
-              <div
-                key={car.id}
-                onClick={() => navigate(`/detailbid/${car.id}`)}
-                className={`relative rounded-lg shadow p-4 mb-4 flex flex-col md:flex-row hover:shadow-lg transition-shadow hover:cursor-pointer ${
-                  car.certifyStatus === "Certified"
-                    ? ""
-                    : "bg-white"
-                }`}
-              >
-                {car.certifyStatus === "Certified" && (
-                  <div className="absolute top-2 left-2 bg-green-600 text-white text-xs font-bold px-3 py-1 rounded-full shadow-md">
-                    Certified
+            currentCars.map((car) => {
+              const inWishlist = isCarInWishlist(car.id); // ✅ FIXED (now inside map)
+
+              return (
+                <div
+                  key={car.id}
+                  onClick={() => navigate(`/detailbid/${car.id}`)}
+                  className={`relative rounded-lg shadow p-4 mb-4 flex flex-col md:flex-row hover:shadow-lg transition-shadow hover:cursor-pointer ${
+                    car.certifyStatus === "Certified" ? "" : "bg-white"
+                  }`}
+                >
+                  {car.certifyStatus === "Certified" && (
+                    <div className="absolute top-2 left-2 bg-green-600 text-white text-xs font-bold px-3 py-1 rounded-full shadow-md">
+                      Certified
+                    </div>
+                  )}
+
+                  <div className="w-full md:w-40 h-48 md:h-28 overflow-hidden rounded-md mb-4 md:mb-0 md:mr-4">
+                    <img
+                      src={car.images?.[0] || "/placeholder.png"}
+                      alt={car.make}
+                      className="w-full h-full object-cover"
+                    />
                   </div>
-                )}
-                <div className="w-full md:w-40 h-48 md:h-28 overflow-hidden rounded-md mb-4 md:mb-0 md:mr-4">
-                  <img
-                    src={car.images?.[0] || "/placeholder.png"}
-                    alt={car.make}
-                    className="w-full h-full object-cover"
-                  />
+
+                  <div className="flex-grow">
+                    <div className="flex flex-col sm:flex-row justify-between sm:items-center">
+                      <h3
+                        className={`font-semibold text-sm sm:text-base text-gray-800`}
+                      >
+                        {car.make} {car.model} {car.series || ""}{" "}
+                        {car.engine || ""} for sale
+                      </h3>
+
+                      <span className="text-lg font-bold text-gray-800 mt-2 sm:mt-0">
+                        PKR {car.buyNowPrice}
+                      </span>
+                    </div>
+
+                    <p className="text-sm text-gray-600 mt-1">
+                      Lot # {car.lot_number}
+                    </p>
+                    <p className="text-sm text-gray-600 mt-1">{car.cityName}</p>
+
+                    <div className="flex flex-wrap gap-2 mt-2">
+                      <span className="px-3 py-1 bg-gray-100 text-xs font-medium rounded-full shadow-sm">
+                        {car.year}
+                      </span>
+                      <span className="px-3 py-1 bg-gray-100 text-xs font-medium rounded-full shadow-sm">
+                        {car.mileage} km
+                      </span>
+                      <span className="px-3 py-1 bg-gray-100 text-xs font-medium rounded-full shadow-sm">
+                        {car.fuelType}
+                      </span>
+                      <span className="px-3 py-1 bg-gray-100 text-xs font-medium rounded-full shadow-sm">
+                        {car.bodyStyle}
+                      </span>
+                      <span className="px-3 py-1 bg-gray-100 text-xs font-medium rounded-full shadow-sm">
+                        {car.color}
+                      </span>
+                      <span className="px-3 py-1 bg-gray-100 text-xs font-medium rounded-full shadow-sm">
+                        {car.transmission}
+                      </span>
+                      <span className="px-3 py-1 bg-gray-100 text-xs font-medium rounded-full shadow-sm">
+                        {car.cityName}
+                      </span>
+                    </div>
+
+                    {/* ❤️ Wishlist Button */}
+                    <div className="flex justify-end mt-4">
+                      <button
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          handleWishlist(car);
+                        }}
+                        className={`p-2 rounded-full transition-all duration-300 ${
+                          inWishlist
+                            ? "text-red-600"
+                            : "text-gray-400 hover:text-red-600 hover:bg-red-50"
+                        }`}
+                      >
+                        <FaHeart
+                          size={20}
+                          className={inWishlist ? "fill-current" : ""}
+                        />
+                      </button>
+                    </div>
+                  </div>
                 </div>
-                <div className="flex-grow">
-                  <div className="flex flex-col sm:flex-row justify-between sm:items-center">
-                    <h3
-                      className={`font-semibold text-sm sm:text-base ${
-                        car.certifyStatus === "Certified"
-                          ? "text-gray-800"
-                          : "text-gray-800"
-                      }`}
-                    >
-                      {car.make} {car.model} {car.series || ""}{" "}
-                      {car.engine || ""} for sale
-                    </h3>
-                    <span className="text-lg font-bold text-gray-800 mt-2 sm:mt-0">
-                      PKR {car.buyNowPrice}
-                    </span>
-                  </div>
-                  <p className="text-sm text-gray-600 mt-1">
-                    Lot # {car.lot_number}
-                  </p>
-                  <p className="text-sm text-gray-600 mt-1">{car.cityName}</p>
-                  <div className="flex flex-wrap gap-2 mt-2">
-                    <span className="px-3 py-1 bg-gray-100 text-xs font-medium rounded-full shadow-sm">
-                      {car.year}
-                    </span>
-                    <span className="px-3 py-1 bg-gray-100 text-xs font-medium rounded-full shadow-sm">
-                      {car.mileage} km
-                    </span>
-                    <span className="px-3 py-1 bg-gray-100 text-xs font-medium rounded-full shadow-sm">
-                      {car.fuelType}
-                    </span>
-                    <span className="px-3 py-1 bg-gray-100 text-xs font-medium rounded-full shadow-sm">
-                      {car.bodyStyle}
-                    </span>
-                    <span className="px-3 py-1 bg-gray-100 text-xs font-medium rounded-full shadow-sm">
-                      {car.color}
-                    </span>
-                    <span className="px-3 py-1 bg-gray-100 text-xs font-medium rounded-full shadow-sm">
-                      {car.transmission}
-                    </span>
-                    <span className="px-3 py-1 bg-gray-100 text-xs font-medium rounded-full shadow-sm">
-                      {car.cityName}
-                    </span>
-                  </div>
-                </div>
-              </div>
-            ))
+              );
+            })
           ) : (
             <div className="text-center text-gray-600 mt-10">No cars found</div>
           )}
