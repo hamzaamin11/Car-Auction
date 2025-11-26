@@ -377,6 +377,21 @@ return;
   useEffect(() => {
     handleGetAllVehicleById();
   }, [search, pageNo]);
+  // Auto-select the user's saved city when "Add Vehicle" form opens
+useEffect(() => {
+  if (formOpen && currentUser?.city && allCities.length > 0) {
+    const userCity = allCities.find(
+      (city) => city.cityName.toLowerCase() === currentUser.city.toLowerCase()
+    );
+
+    if (userCity) {
+      setVehicleData((prev) => ({
+        ...prev,
+        locationId: userCity.id.toString(),
+      }));
+    }
+  }
+}, [formOpen, currentUser?.city, allCities]);
 
   const fetchVehicles = async () => {
     setLoading(true);
