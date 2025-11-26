@@ -11,7 +11,8 @@ import { FaEnvelope, FaGoogle } from "react-icons/fa";
 import googleIcon from "../../src/assets/google.png";
 import { EmailSignUpModal } from "./EmailSignUpModal";
 import CustomButton from "../CustomButton";
-
+import PhoneModal from "./PhoneModal";
+import { EmailLoginModal } from "./EmailLoginModal";
 const SignInPage = () => {
   const [formData, setFormData] = useState({ email: "", password: "" });
   const [loading, setLoading] = useState(false);
@@ -105,7 +106,7 @@ const SignInPage = () => {
         </h2>
 
         {/* Login Form */}
-        <form onSubmit={handleSubmit} className="space-y-4">
+        <form onSubmit={handleSubmit} className="space-y-2">
           <div>
             <label className="block mb-1 font-semibold text-gray-800">
               Email / Phone Number
@@ -142,17 +143,17 @@ const SignInPage = () => {
           />
         </form>
 
-        {/* Divider */}
-        <p className="text-gray-800 text-center my-4 font-medium">or</p>
+     {/* Divider */}
+        <p className="text-gray-800 text-center my-2">or</p>
 
         {/* Auth Options */}
-        <div className="space-y-3">
+        <div className="space-y-2">
           {/* Google */}
           <button
             onClick={handleAuthGoogle}
             className="w-full flex items-center gap-3 py-3 rounded-lg shadow-md transition border border-gray-400 text-gray-800 font-semibold hover:scale-105 duration-300 hover:border-gray-600"
           >
-            <img src={googleIcon} alt="Google" className="h-7 w-7 pl-3" />
+            <img src={googleIcon} alt="Google" className="h-7 w-7 object-cover pl-3" />
             <div className="w-px h-8 bg-gray-400"></div>
             <span className="flex-1 text-center">Continue with Google</span>
           </button>
@@ -162,7 +163,7 @@ const SignInPage = () => {
             onClick={() => handleToggleModal("email")}
             className="w-full flex items-center gap-3 py-3 rounded-lg shadow-md transition border border-gray-400 text-gray-800 font-semibold hover:scale-105 duration-300 hover:border-gray-600"
           >
-            <FaEnvelope className="text-xl ml-3 text-blue-600" />
+            <FaEnvelope className="text-lg ml-3 " />
             <div className="w-px h-8 bg-gray-400"></div>
             <span className="flex-1 text-center">Register with Email</span>
           </button>
