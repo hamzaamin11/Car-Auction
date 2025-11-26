@@ -21,6 +21,7 @@ import logoImage from "../../src/assets/wheellogo.png";
 import axios from "axios";
 import { BASE_URL } from "./Contant/URL";
 import Swal from "sweetalert2";
+
 const getInitialProfileForm = (user) => ({
   name: user?.name || "",
   gender: user?.gender || "",
@@ -63,7 +64,7 @@ const Navbar = () => {
   const [showGenderDropdown, setShowGenderDropdown] = useState(false);
   const [showLive, setShowLive] = useState([]);
 
-  // ✅ FIXED: Separate states for image file and preview
+  // Separate states for image file and preview
   const [imageFile, setImageFile] = useState(null);
   const [imagePreview, setImagePreview] = useState("");
 
@@ -75,7 +76,6 @@ const Navbar = () => {
   });
 
   // Profile form state
-  // 2. State – initialise with the helper
   const [profileForm, setProfileForm] = useState(
     getInitialProfileForm(currentUser)
   );
@@ -106,15 +106,13 @@ const Navbar = () => {
     gender.toLowerCase().includes(genderSearch.toLowerCase())
   );
 
-  // ✅ FIXED: Handle image upload with separate file and preview
+  // Handle image upload with separate file and preview
   const handleImageChange = (e) => {
     const file = e.target.files?.[0];
     if (!file) return;
 
-    // Store the actual file for upload
     setImageFile(file);
 
-    // Create preview immediately
     const reader = new FileReader();
     reader.onloadend = () => {
       setImagePreview(reader.result);
@@ -123,9 +121,8 @@ const Navbar = () => {
   };
 
   const handleCNICChange = (e) => {
-    let value = e.target.value.replace(/\D/g, ""); // remove all non-numeric characters
+    let value = e.target.value.replace(/\D/g, "");
 
-    // Add dashes automatically
     if (value.length > 5 && value.length <= 12) {
       value = value.slice(0, 5) + "-" + value.slice(5);
     } else if (value.length > 12) {
@@ -141,16 +138,14 @@ const Navbar = () => {
   };
 
   const handleMobileChange = (e) => {
-    let value = e.target.value.replace(/\D/g, ""); // remove all non-digits
+    let value = e.target.value.replace(/\D/g, "");
 
-    // Ensure the number always starts with +92
     if (value.startsWith("92")) {
       value = "+" + value;
     } else if (!value.startsWith("+92")) {
       value = "+92" + value;
     }
 
-    // Format it like +92-300-1234567
     if (value.length > 3 && value.length <= 6) {
       value = value.slice(0, 3) + "-" + value.slice(3);
     } else if (value.length > 6 && value.length <= 10) {
@@ -164,26 +159,22 @@ const Navbar = () => {
     setProfileForm({ ...profileForm, mobileNumber: value });
   };
 
-  // Handle password form changes
   const handlePasswordChange = (e) => {
     const { name, value } = e.target;
     setPasswordForm((prev) => ({ ...prev, [name]: value }));
   };
 
-  // Handle profile form changes
   const handleProfileChange = (e) => {
     const { name, value } = e.target;
     setProfileForm((prev) => ({ ...prev, [name]: value }));
   };
 
-  // Handle country selection
   const handleCountrySelect = (country) => {
     setProfileForm((prev) => ({ ...prev, country }));
     setCountrySearch(country);
     setShowCountryDropdown(false);
   };
 
-  // Handle city selection
   const handleCitySelect = (city) => {
     setProfileForm((prev) => ({ ...prev, city: city.cityName }));
     setCitySearch(city.cityName);
@@ -200,14 +191,12 @@ const Navbar = () => {
     }
   };
 
-  // Handle gender selection
   const handleGenderSelect = (gender) => {
     setProfileForm((prev) => ({ ...prev, gender: gender.toLowerCase() }));
     setGenderSearch(gender);
     setShowGenderDropdown(false);
   };
 
-  // Handle password submission
   const handlePasswordSubmit = async (e) => {
     e.preventDefault();
     if (passwordForm.newPassword !== passwordForm.confirmPassword) {
@@ -249,13 +238,11 @@ const Navbar = () => {
     }
   };
 
-  // ✅ FIXED: Handle profile submission with actual file upload
   const handleProfileSubmit = async (e) => {
     e.preventDefault();
     try {
       const formData = new FormData();
 
-      // Append all text fields
       formData.append("name", profileForm.name);
       formData.append("gender", profileForm.gender);
       formData.append("dateOfBirth", profileForm.dateOfBirth);
@@ -267,12 +254,10 @@ const Navbar = () => {
       formData.append("role", profileForm.role);
       formData.append("cnic", profileForm.cnic);
 
-      // ✅ Append the actual file if user selected a new one
       if (imageFile) {
         formData.append("image", imageFile);
       }
 
-      // Send request
       const res = await axios.put(
         `${BASE_URL}/admin/updateRegisterUsers/${currentUser?.id}`,
         formData,
@@ -285,17 +270,14 @@ const Navbar = () => {
 
       console.log("Profile updated:", res.data);
 
-      // ✅ Update Redux state with new user data
       dispatch(authSuccess(res.data));
 
-      // ✅ Update image preview with new URL from backend
       if (res.data.image || res.data.imageUrl || res.data.profileImage) {
         setImagePreview(
           res.data.image || res.data.imageUrl || res.data.profileImage
         );
       }
 
-      // ✅ Clear the file state
       setImageFile(null);
 
       await Swal.fire({
@@ -327,7 +309,6 @@ const Navbar = () => {
     setDropdownOpen((prev) => !prev);
   };
 
-  // ✅ FIXED: Update imagePreview when currentUser changes (after login or profile update)
   useEffect(() => {
     if (
       currentUser?.image ||
@@ -340,9 +321,6 @@ const Navbar = () => {
     }
   }, [currentUser]);
 
-  // ✅ FIXED: Initialize search fields and image preview when modal opens
-  // Initialize search fields and image preview when modal opens
-  // 3. Reset on modal open – always start from the real user data
   useEffect(() => {
     if (profileModalOpen) {
       setProfileForm(getInitialProfileForm(currentUser));
@@ -374,7 +352,6 @@ const Navbar = () => {
     handleGetAllCity();
   }, []);
 
-  // Outside click detection for all dropdowns
   useEffect(() => {
     function handleClickOutside(event) {
       if (dropdownRef.current && !dropdownRef.current.contains(event.target)) {
@@ -403,14 +380,12 @@ const Navbar = () => {
     return () => document.removeEventListener("mousedown", handleClickOutside);
   }, []);
 
-  // Close dropdown on route change
   useEffect(() => {
     setDropdownOpen(false);
     setPasswordModalOpen(false);
     setProfileModalOpen(false);
   }, [location]);
 
-  // Prevent background scrolling when modals are open
   useEffect(() => {
     if (passwordModalOpen || profileModalOpen) {
       document.body.style.overflow = "hidden";
@@ -466,7 +441,6 @@ const Navbar = () => {
             className="relative flex items-center gap-2 text-white hover:text-red-600 transition-all duration-300"
             title="View Wishlist"
           >
-            {/* Text */}
             <span>Wishlist</span>
           </Link>
 
@@ -480,19 +454,6 @@ const Navbar = () => {
                 Register
               </Link>
               |
-              {/* <button
-                onClick={() => navigate("/register")}
-                className="bg-red-600 text-white font-bold px-2 py-1.5 rounded hover:cursor-pointer"
-              >
-                Register
-              </button> */}
-              {/*
-               <button
-                onClick={() => navigate("/login")}
-                className="bg-red-600 text-white font-bold px-2 py-1.5 rounded hover:cursor-pointer"
-              >
-                Sign In
-              </button> */}
               <Link
                 to="/login"
                 className="flex items-center gap-1 hover:text-red-600 mr-2"
@@ -618,13 +579,13 @@ const Navbar = () => {
             )}
           </li>
 
-          {/* Profile Dropdown */}
+          {/* UPDATED PROFILE DROPDOWN - Image on Left + Equal Height */}
           <div className="hidden md:flex pl-2 relative" ref={dropdownRef}>
             {currentUser && (
               <div className="relative">
                 <button
                   onClick={toggleDropdown}
-                  className="flex items-center gap-2 focus:outline-none group"
+                  className="flex items-center gap-3 focus:outline-none group"
                 >
                   {currentUser?.image ||
                   currentUser?.imageUrl ||
@@ -647,60 +608,73 @@ const Navbar = () => {
                 </button>
 
                 <div
-                  className={`absolute right-0 mt-2 w-44 bg-white rounded-md shadow-lg transition-all duration-200 ${
+                  className={`absolute right-0 mt-2 w-64 bg-white rounded-md shadow-lg transition-all duration-200 overflow-hidden ${
                     dropdownOpen
                       ? "opacity-100 scale-100 visible"
                       : "opacity-0 scale-95 invisible"
                   }`}
                 >
-                  {/* User Info */}
-                  <div className="px-4 py-3 border-b border-gray-200">
-                    <p className="text-sm text-gray-600 truncate">
-                      <span className="text-gray-500 text-xs">
-                        {(currentUser?.role).toUpperCase() || "--"}
-                      </span>
-                      <br />
-                      {currentUser?.name
-                        ? currentUser.name.charAt(0).toUpperCase() +
-                          currentUser.name.slice(1)
-                        : "--"}
-                    </p>
+                  {/* User Info - Image Left, Name & Role Right */}
+                  <div className="px-4 py-4 border-b border-gray-200 flex items-center gap-4">
+                    <div className="flex-shrink-0">
+                      {currentUser?.image ||
+                      currentUser?.imageUrl ||
+                      currentUser?.profileImage ? (
+                        <img
+                          src={
+                            currentUser?.image ||
+                            currentUser?.imageUrl ||
+                            currentUser?.profileImage
+                          }
+                          alt="Profile"
+                          className="w-14 h-14 rounded-full object-cover border-2 border-gray-300"
+                        />
+                      ) : (
+                        <FaUserCircle size={56} className="text-gray-400" />
+                      )}
+                    </div>
+                    <div className="flex-1 min-w-0 flex flex-col justify-center h-full">
+                      <p className="text-base font-semibold text-gray-900 truncate leading-tight">
+                        {currentUser?.name
+                          ? currentUser.name.charAt(0).toUpperCase() +
+                            currentUser.name.slice(1)
+                          : "--"}
+                      </p>
+                      <p className="text-xs text-gray-500 uppercase tracking-wider mt-1">
+                        {currentUser?.role || "--"}
+                      </p>
+                    </div>
                   </div>
 
-                  {/* Change password */}
-                  {/* Account Settings Parent */}
-                  {/* Account Settings Parent */}
+                  {/* Account Settings */}
                   <div
                     onClick={() => setAccountSettingsOpen(!accountSettingsOpen)}
-                    className="px-4 py-1 flex items-center gap-2 text-gray-700 hover:bg-gray-100 cursor-pointer transition font-base"
+                    className="px-4 py-3 flex items-center gap-2 text-gray-700 hover:bg-gray-100 cursor-pointer transition font-medium"
                   >
-                    <Settings size={16} className="text-gray-500" />
+                    <Settings size={18} className="text-gray-500" />
                     Account Settings
                   </div>
 
-                  {/* Dropdown Options */}
+                  {/* Nested Options */}
                   {accountSettingsOpen && (
-                    <div className="ml-4">
-                      {/* Manage Profile */}
+                    <div className="bg-gray-50 border-t border-gray-200">
                       <div
                         onClick={() => {
                           setProfileModalOpen(true);
                           setDropdownOpen(false);
                           setAccountSettingsOpen(false);
                         }}
-                        className="px-4 py-1 flex items-center gap-2 text-gray-600 hover:bg-gray-100 cursor-pointer transition"
+                        className="px-8 py-2 text-gray-600 hover:bg-gray-100 cursor-pointer text-sm"
                       >
                         Manage Profile
                       </div>
-
-                      {/* Change Password */}
                       <div
                         onClick={() => {
                           setPasswordModalOpen(true);
                           setDropdownOpen(false);
                           setAccountSettingsOpen(false);
                         }}
-                        className="px-4 py-1 flex items-center gap-2 text-gray-600 hover:bg-gray-100 cursor-pointer transition"
+                        className="px-8 py-2 text-gray-600 hover:bg-gray-100 cursor-pointer text-sm"
                       >
                         Change Password
                       </div>
@@ -710,7 +684,7 @@ const Navbar = () => {
                   {/* Logout */}
                   <div
                     onClick={handleLogout}
-                    className="flex items-center gap-2 px-4 py-1 pb-2 text-red-600 font-semibold hover:bg-gray-100 cursor-pointer transition"
+                    className="flex items-center gap-3 px-4 py-3 text-red-600 font-semibold hover:bg-gray-100 cursor-pointer transition border-t border-gray-200"
                   >
                     <AiOutlineLogout size={20} />
                     Logout
@@ -720,8 +694,6 @@ const Navbar = () => {
             )}
           </div>
         </ul>
-
-        {/* Profile Dropdown */}
 
         {/* Mobile Toggle */}
         <div className="md:hidden">
@@ -741,13 +713,6 @@ const Navbar = () => {
           >
             Home
           </Link>
-          {/* <Link
-            to="/about"
-            onClick={() => setMenuOpen(false)}
-            className="block font-medium"
-          >
-            About
-          </Link> */}
           <Link
             to="/contact"
             onClick={() => setMenuOpen(false)}
@@ -755,14 +720,6 @@ const Navbar = () => {
           >
             Contact Us
           </Link>
-
-          {/* <Link
-            to="/suggestion"
-            onClick={() => setMenuOpen(false)}
-            className="block font-medium"
-          >
-            Suggestion
-          </Link> */}
 
           <Link
             to="/partner"
@@ -792,14 +749,9 @@ const Navbar = () => {
           {showLive.some((item) => item.auctionStatus === "live") && (
             <Link
               to="/today"
-              className="relative flex items-center gap-2  text-white
-             rounded transition-all overflow-hidden"
+              className="relative flex items-center gap-2  text-white rounded transition-all overflow-hidden"
             >
-              {/* Pulsing background */}
               <span className="absolute inset-0 rounded-full "></span>
-
-              {/* Icon and Text */}
-
               <span className="relative z-10">LIVE</span>
             </Link>
           )}
@@ -847,7 +799,6 @@ const Navbar = () => {
           {currentUser ? (
             <div className="pt-2 border-t border-white text-sm">
               <div className="flex items-center gap-2 mb-4">
-                {/*  FIXED: Show profile image in mobile menu */}
                 {currentUser?.image ||
                 currentUser?.imageUrl ||
                 currentUser?.profileImage ? (
@@ -871,7 +822,6 @@ const Navbar = () => {
                   {currentUser?.name || "--"}
                 </span>
               </div>
-              {/* Account Settings Parent */}
               <button
                 onClick={() => setAccountSettingsOpen(!accountSettingsOpen)}
                 className="block w-full text-left py-0 text-white font-base hover:underline"
@@ -879,10 +829,8 @@ const Navbar = () => {
                 Account Settings
               </button>
 
-              {/* Nested Options */}
               {accountSettingsOpen && (
                 <div className="ml-4 mt-1">
-                  {/* Manage Profile */}
                   <button
                     onClick={() => {
                       setProfileModalOpen(true);
@@ -894,7 +842,6 @@ const Navbar = () => {
                     Manage Profile
                   </button>
 
-                  {/* Change Password */}
                   <button
                     onClick={() => {
                       setPasswordModalOpen(true);
@@ -1039,7 +986,6 @@ const Navbar = () => {
                 </label>
               </div>
 
-              {/* Name below image */}
               <div className="text-center mt-1 text-lg font-bold text-gray-800">
                 {currentUser.name}
               </div>
@@ -1047,7 +993,6 @@ const Navbar = () => {
 
             <div>
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                {/* Full Name */}
                 <div className="">
                   <label className="block text-sm font-medium text-gray-700">
                     Full Name
@@ -1078,8 +1023,7 @@ const Navbar = () => {
                   />
                 </div>
 
-                {/* Gender - Searchable */}
-                <div className=" relative" ref={genderDropdownRef}>
+                <div className=" relative" ref803={genderDropdownRef}>
                   <label className="block text-sm font-medium text-gray-700">
                     Gender
                   </label>
@@ -1109,7 +1053,6 @@ const Navbar = () => {
                   )}
                 </div>
 
-                {/* Date of Birth */}
                 <div className="">
                   <label className="block text-sm font-medium text-gray-700">
                     Date of Birth
@@ -1124,7 +1067,6 @@ const Navbar = () => {
                   />
                 </div>
 
-                {/* Country - Searchable */}
                 <div className=" relative" ref={countryDropdownRef}>
                   <label className="block text-sm font-medium text-gray-700">
                     Country
@@ -1155,7 +1097,6 @@ const Navbar = () => {
                   )}
                 </div>
 
-                {/* City - Searchable */}
                 <div className=" relative" ref={cityDropdownRef}>
                   <label className="block text-sm font-medium text-gray-700">
                     City
@@ -1186,7 +1127,6 @@ const Navbar = () => {
                   )}
                 </div>
 
-                {/* Username */}
                 <div className="">
                   <label className="block text-sm font-medium text-gray-700 ">
                     Username
@@ -1202,7 +1142,6 @@ const Navbar = () => {
                 </div>
               </div>
 
-              {/* Email - Full Width */}
               <div className="my-3">
                 <label className="block text-sm font-medium text-gray-700">
                   Email
@@ -1216,7 +1155,6 @@ const Navbar = () => {
                 />
               </div>
 
-              {/* Mobile Number - Full Width */}
               <div className="mb-6">
                 <label className="block text-sm font-medium text-gray-700">
                   Mobile Number
@@ -1234,7 +1172,6 @@ const Navbar = () => {
                 </div>
               </div>
 
-              {/* Action Buttons */}
               <div className="flex justify-end gap-3 pt-4 border-t">
                 <button
                   type="button"
