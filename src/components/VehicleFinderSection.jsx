@@ -64,53 +64,35 @@ const budgetData = [
 
 const VehicleFinderSection = () => {
   const currentUser = useSelector((state) => state?.auth?.currentUser);
+  const wishlistByUser = useSelector((state) => state?.wishList?.wishlistByUser || {});
 
   const navigate = useNavigate();
-
   const dispatch = useDispatch();
 
   const [filters, setFilters] = useState(initialState);
-
   const [allCars, setAllCars] = useState([]);
-
   const [allMakes, setAllMakes] = useState([]);
-
   const [allModels, setAllModels] = useState([]);
-
   const [allCities, setAllCities] = useState([]);
-
   const [sorting, setSorting] = useState("low");
-
   const [years, setYears] = useState([]);
-
-  const [addedCar, setAddedCar] = useState(null);
-
-  console.log("added =>", addedCar);
-
   const [activeTab, setActiveTab] = useState("all");
-
   const [carsPerPage, setCarsPerPage] = useState(10);
-  // Pagination
   const [currentPage, setCurrentPage] = useState(1);
 
   const vehicleData = useSelector((state) => state.carSelector);
-
   const [filterPrice, setFilterPrice] = useState({
     budget: { min: "", max: "" },
   });
 
-  const wishlistByUser = useSelector(
-    (state) => state?.wishList?.wishlistByUser
-  );
-
-  const isInWishlist =
-    currentUser?.id &&
-    wishlistByUser?.[currentUser.id]?.some((v) => v?.id === addedCar?.id);
-
-  console.log("isInWishlist =>", isInWishlist);
+  // Helper: Check if a car is already in user's wishlist
+  const isCarInWishlist = (carId) => {
+    if (!currentUser?.id) return false;
+    const userWishlist = wishlistByUser[currentUser.id] || [];
+    return userWishlist.some((item) => item.id === carId);
+  };
 
   const handleWishlist = (car) => {
-    setAddedCar(car);
     if (!currentUser) {
       Swal.fire({
         title: "Login Required",
@@ -128,7 +110,9 @@ const VehicleFinderSection = () => {
       return;
     }
 
-    if (isInWishlist) return; // already in wishlist → do nothing
+    if (isCarInWishlist(car.id)) {
+      return; // Already added
+    }
 
     dispatch(addInList({ userId: currentUser.id, vehicle: car }));
   };
@@ -159,8 +143,7 @@ const VehicleFinderSection = () => {
 
       if (lot.length === 4) {
         navigate(`/detailbid/${lot}`);
-        setLoading(false); // Yaha loading off karein
-        return; // Ex
+        return;
       }
 
       const res = await axios.get(
@@ -198,11 +181,10 @@ const VehicleFinderSection = () => {
   };
 
   const handleFilterPrice = (e) => {
-    const { name, value } = e.target;
+    const { value } = e.target;
     const [min, max] = value.split("-").map(Number);
     setFilterPrice({
-      ...filterPrice,
-      [name]: { min, max },
+      budget: { min, max },
     });
   };
 
@@ -221,9 +203,7 @@ const VehicleFinderSection = () => {
       return;
     }
     try {
-      const res = await axios.get(
-        `${BASE_URL}/getModelById/${vehicleData.make}`
-      );
+      const res = await axios.get(`${BASE_URL}/getModelById/${vehicleData.make}`);
       setAllModels(res.data || []);
     } catch (err) {
       console.log(err);
@@ -282,11 +262,11 @@ const VehicleFinderSection = () => {
     vehicleData.model,
     filters.condition,
     filters.toYear,
-    filters.formCash || filterPrice.budget.min,
-    filters.toCash || filterPrice.budget.max,
+    filters.fromYear,
+    filterPrice.budget.min,
+    filterPrice.budget.max,
     filters.location,
     filters.vehicleType,
-    filters.fromYear,
     sorting,
   ]);
 
@@ -300,7 +280,7 @@ const VehicleFinderSection = () => {
     value: m.modelName,
   }));
 
-  // === Pagination Logic ===
+  // Pagination
   const totalPages = Math.ceil(allCars.length / carsPerPage);
   const startIndex = (currentPage - 1) * carsPerPage;
   const endIndex = Math.min(startIndex + carsPerPage, allCars.length);
@@ -322,9 +302,7 @@ const VehicleFinderSection = () => {
 
   return (
     <div className="flex flex-col lg:flex-row min-h-screen bg-gray-100 p-4 gap-4">
-      {/* ===========================
-        SIDEBAR - Vehicle Finder
-      ============================ */}
+      {/* SIDEBAR - Vehicle Finder */}
       <div className="lg:w-1/3 bg-white p-6 rounded-lg shadow space-y-4">
         <h2 className="text-2xl font-bold text-gray-600">Vehicle Finder</h2>
 
@@ -521,11 +499,9 @@ const VehicleFinderSection = () => {
           </div>
         </div>
 
-        <div className="flex items-center  w-full">
+        <div className="flex items-center w-full">
           <div className="flex-1 border-t border-gray-300"></div>
-
           <span className="px-3 text-sm font-medium text-gray-700">OR</span>
-
           <div className="flex-1 border-t border-gray-300"></div>
         </div>
 
@@ -561,9 +537,7 @@ const VehicleFinderSection = () => {
         </div>
       </div>
 
-      {/* ===========================
-        CAR LISTING
-      ============================ */}
+      {/* CAR LISTING */}
       <div className="w-full lg:w-3/4">
         <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center mb-4 gap-2">
           <h1 className="text-black font-bold text-lg sm:text-xl">
@@ -609,123 +583,106 @@ const VehicleFinderSection = () => {
 
         <div className="overflow-y-auto max-h-screen">
           {currentCars.length > 0 ? (
-            currentCars.map((car) => (
-              <div
-                key={car.id}
-                className={`relative rounded-lg shadow p-4 mb-4 flex flex-col md:flex-row hover:shadow-lg transition-shadow hover:cursor-pointer border border-gray-500
+            currentCars.map((car) => {
+              const inWishlist = isCarInWishlist(car.id); // Check per car
 
-                }`}
-              >
-                {car.certifyStatus === "Certified" && (
-                  <div className="absolute top-2 left-2 bg-green-600 text-white text-xs font-bold px-3 py-1 rounded-full shadow-md">
-                    Certified
-                  </div>
-                )}
-                <div className="w-full md:w-40 h-48 md:h-28 overflow-hidden rounded-md mb-4 md:mb-0 md:mr-4">
-                  <img
-                    src={car?.images?.[0] || "/placeholder.png"}
-                    alt={car.make}
-                    className="w-full h-full object-cover"
-                    onClick={() => navigate(`/detailbid/${car.id}`)}
-                  />
-                </div>
-                <div className="flex-grow">
-                  <div className="flex flex-col sm:flex-row justify-between sm:items-center">
-                    <h3
-                      onClick={() => navigate(`/detailbid/${car.id}`)}
-                      className={`font-semibold text-sm sm:text-base ${
-                        car.certifyStatus === "Certified"
-                          ? "text-green-700"
-                          : "text-gray-800"
-                      }`}
-                    >
-                      {car.make} {car.model} {car.series || ""}{" "}
-                      {car.engine || ""} for sale
-                    </h3>
+              return (
+                <div
+                  key={car.id}
+                  className={`relative rounded-lg shadow p-4 mb-4 flex flex-col md:flex-row hover:shadow-lg transition-shadow hover:cursor-pointer border border-gray-500`}
+                  onClick={() => navigate(`/detailbid/${car.id}`)}
+                >
+                  {car.certifyStatus === "Certified" && (
+                    <div className="absolute top-2 left-2 bg-green-600 text-white text-xs font-bold px-3 py-1 rounded-full shadow-md">
+                      Certified
+                    </div>
+                  )}
 
-                    <span className="text-lg font-bold text-gray-800 mt-2 sm:mt-0">
-                      PKR {car.buyNowPrice}
-                    </span>
+                  <div className="w-full md:w-40 h-48 md:h-28 overflow-hidden rounded-md mb-4 md:mb-0 md:mr-4">
+                    <img
+                      src={car?.images?.[0] || "/placeholder.png"}
+                      alt={car.make}
+                      className="w-full h-full object-cover"
+                    />
                   </div>
 
-                  <p className="text-sm text-gray-600 mt-1">
-                    Lot # {car.lot_number}
-                  </p>
-                  <p className="text-sm text-gray-600 mt-1">{car.cityName}</p>
-                  <div className="flex flex-wrap gap-2 mt-2">
-                    <span className="px-3 py-1 bg-gray-100 text-xs font-medium rounded-full shadow-sm">
-                      {car.year}
-                    </span>
-                    <span className="px-3 py-1 bg-gray-100 text-xs font-medium rounded-full shadow-sm">
-                      {car.mileage} km
-                    </span>
-                    <span className="px-3 py-1 bg-gray-100 text-xs font-medium rounded-full shadow-sm">
-                      {car.fuelType}
-                    </span>
-                    <span className="px-3 py-1 bg-gray-100 text-xs font-medium rounded-full shadow-sm">
-                      {car.bodyStyle}
-                    </span>
-                    <span className="px-3 py-1 bg-gray-100 text-xs font-medium rounded-full shadow-sm">
-                      {car.color}
-                    </span>
-                    <span className="px-3 py-1 bg-gray-100 text-xs font-medium rounded-full shadow-sm">
-                      {car.transmission}
-                    </span>
-                    <span className="px-3 py-1 bg-gray-100 text-xs font-medium rounded-full shadow-sm">
-                      {car.cityName}
-                    </span>
-                  </div>
-                  <div className="flex justify-end">
-                    <button
-                      onClick={() => handleWishlist(car)}
-                      className={`p-2 rounded-full transition-all duration-300 ${
-                        isInWishlist
-                          ? "text-red-600"
-                          : "text-gray-400 hover:text-red-600 hover:bg-red-50"
-                      }`}
-                    >
-                      <FaHeart
-                        size={20}
-                        className={isInWishlist ? "fill-current" : ""}
-                      />
-                    </button>
+                  <div className="flex-grow">
+                    <div className="flex flex-col sm:flex-row justify-between sm:items-center">
+                      <h3 className="font-semibold text-sm sm:text-base text-gray-800">
+                        {car.make} {car.model} {car.series || ""} {car.engine || ""} for sale
+                      </h3>
+                      <span className="text-lg font-bold text-gray-800 mt-2 sm:mt-0">
+                        PKR {car.buyNowPrice}
+                      </span>
+                    </div>
+
+                    <p className="text-sm text-gray-600 mt-1">Lot # {car.lot_number}</p>
+                    <p className="text-sm text-gray-600 mt-1">{car.cityName}</p>
+
+                    <div className="flex flex-wrap gap-2 mt-2">
+                      <span className="px-3 py-1 bg-gray-100 text-xs font-medium rounded-full shadow-sm">
+                        {car.year}
+                      </span>
+                      <span className="px-3 py-1 bg-gray-100 text-xs font-medium rounded-full shadow-sm">
+                        {car.mileage} km
+                      </span>
+                      <span className="px-3 py-1 bg-gray-100 text-xs font-medium rounded-full shadow-sm">
+                        {car.fuelType}
+                      </span>
+                      <span className="px-3 py-1 bg-gray-100 text-xs font-medium rounded-full shadow-sm">
+                        {car.bodyStyle}
+                      </span>
+                      <span className="px-3 py-1 bg-gray-100 text-xs font-medium rounded-full shadow-sm">
+                        {car.color}
+                      </span>
+                      <span className="px-3 py-1 bg-gray-100 text-xs font-medium rounded-full shadow-sm">
+                        {car.transmission}
+                      </span>
+                      <span className="px-3 py-1 bg-gray-100 text-xs font-medium rounded-full shadow-sm">
+                        {car.cityName}
+                      </span>
+                    </div>
+
+                    {/* Heart Button - Stop click from opening detail page */}
+                    <div className="flex justify-end mt-4">
+                      <button
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          handleWishlist(car);
+                        }}
+                        className={`p-2 rounded-full transition-all duration-300 ${
+                          inWishlist
+                            ? "text-red-600"
+                            : "text-gray-400 hover:text-red-600 hover:bg-red-50"
+                        }`}
+                      >
+                        <FaHeart size={20} className={inWishlist ? "fill-current" : ""} />
+                      </button>
+                    </div>
                   </div>
                 </div>
-              </div>
-            ))
+              );
+            })
           ) : (
             <div className="text-center text-gray-600 mt-10">
               No vehicles found.
             </div>
           )}
 
-          {/* Pagination */}
+          {/* Pagination - Your exact original */}
           {allCars.length > 0 && (
             <div className="bg-white rounded-lg shadow-sm p-4 mt-6">
               <div className="flex flex-col sm:flex-row justify-between items-center gap-4 text-sm text-gray-700">
-                {/* Showing X to Y of Z */}
                 <div className="text-gray-600">
-                  Showing{" "}
-                  <span className="font-medium">
-                    {startIndex + 1} to {endIndex}
-                  </span>{" "}
-                  of <span className="font-medium">{allCars.length}</span>{" "}
-                  entries
+                  Showing <span className="font-medium">{startIndex + 1} to {endIndex}</span> of{" "}
+                  <span className="font-medium">{allCars.length}</span> entries
                 </div>
 
-                {/* Page Buttons */}
                 <div className="flex items-center gap-1">
                   <button
-                    onClick={() => {
-                      setCurrentPage(1);
-                      window.scrollTo({ top: 0, behavior: "smooth" });
-                    }}
+                    onClick={() => { setCurrentPage(1); window.scrollTo({ top: 0, behavior: "smooth" }); }}
                     disabled={currentPage === 1}
-                    className={`px-3 py-1 rounded border ${
-                      currentPage === 1
-                        ? "bg-gray-100 text-gray-400 cursor-not-allowed"
-                        : "bg-white text-gray-700 hover:bg-gray-50"
-                    }`}
+                    className={`px-3 py-1 rounded border ${currentPage === 1 ? "bg-gray-100 text-gray-400 cursor-not-allowed" : "bg-white text-gray-700 hover:bg-gray-50"}`}
                   >
                     {"<<"}
                   </button>
@@ -733,11 +690,7 @@ const VehicleFinderSection = () => {
                   <button
                     onClick={goToPrevPage}
                     disabled={currentPage === 1}
-                    className={`px-3 py-1 rounded border ${
-                      currentPage === 1
-                        ? "bg-gray-100 text-gray-400 cursor-not-allowed"
-                        : "bg-white text-gray-700 hover:bg-gray-50"
-                    }`}
+                    className={`px-3 py-1 rounded border ${currentPage === 1 ? "bg-gray-100 text-gray-400 cursor-not-allowed" : "bg-white text-gray-700 hover:bg-gray-50"}`}
                   >
                     {"<"}
                   </button>
@@ -746,22 +699,14 @@ const VehicleFinderSection = () => {
                     let pageNum;
                     if (totalPages <= 5) pageNum = i + 1;
                     else if (currentPage <= 3) pageNum = i + 1;
-                    else if (currentPage >= totalPages - 2)
-                      pageNum = totalPages - 4 + i;
+                    else if (currentPage >= totalPages - 2) pageNum = totalPages - 4 + i;
                     else pageNum = currentPage - 2 + i;
 
                     return (
                       <button
                         key={pageNum}
-                        onClick={() => {
-                          setCurrentPage(pageNum);
-                          window.scrollTo({ top: 0, behavior: "smooth" });
-                        }}
-                        className={`px-3 py-1 rounded border ${
-                          currentPage === pageNum
-                            ? "bg-blue-950 text-white"
-                            : "bg-white text-gray-700 hover:bg-gray-50"
-                        }`}
+                        onClick={() => { setCurrentPage(pageNum); window.scrollTo({ top: 0, behavior: "smooth" }); }}
+                        className={`px-3 py-1 rounded border ${currentPage === pageNum ? "bg-blue-950 text-white" : "bg-white text-gray-700 hover:bg-gray-50"}`}
                       >
                         {pageNum}
                       </button>
@@ -771,32 +716,20 @@ const VehicleFinderSection = () => {
                   <button
                     onClick={goToNextPage}
                     disabled={currentPage === totalPages}
-                    className={`px-3 py-1 rounded border ${
-                      currentPage === totalPages
-                        ? "bg-gray-100 text-gray-400 cursor-not-allowed"
-                        : "bg-white text-gray-700 hover:bg-gray-50"
-                    }`}
+                    className={`px-3 py-1 rounded border ${currentPage === totalPages ? "bg-gray-100 text-gray-400 cursor-not-allowed" : "bg-white text-gray-700 hover:bg-gray-50"}`}
                   >
                     {">"}
                   </button>
 
                   <button
-                    onClick={() => {
-                      setCurrentPage(totalPages);
-                      window.scrollTo({ top: 0, behavior: "smooth" });
-                    }}
+                    onClick={() => { setCurrentPage(totalPages); window.scrollTo({ top: 0, behavior: "smooth" }); }}
                     disabled={currentPage === totalPages}
-                    className={`px-3 py-1 rounded border ${
-                      currentPage === totalPages
-                        ? "bg-gray-100 text-gray-400 cursor-not-allowed"
-                        : "bg-white text-gray-700 hover:bg-gray-50"
-                    }`}
+                    className={`px-3 py-1 rounded border ${currentPage === totalPages ? "bg-gray-100 text-gray-400 cursor-not-allowed" : "bg-white text-gray-700 hover:bg-gray-50"}`}
                   >
                     {">>"}
                   </button>
                 </div>
 
-                {/* Show entries */}
                 <div className="flex items-center gap-2">
                   <span className="text-gray-600">Show</span>
                   <select
