@@ -64,18 +64,31 @@ const budgetData = [
 
 const VehicleFinderSection = () => {
   const currentUser = useSelector((state) => state?.auth?.currentUser);
+
   const navigate = useNavigate();
+
   const dispatch = useDispatch();
 
   const [filters, setFilters] = useState(initialState);
 
   const [allCars, setAllCars] = useState([]);
+
   const [allMakes, setAllMakes] = useState([]);
+
   const [allModels, setAllModels] = useState([]);
+
   const [allCities, setAllCities] = useState([]);
+
   const [sorting, setSorting] = useState("low");
+
   const [years, setYears] = useState([]);
+
+  const [addedCar, setAddedCar] = useState(null);
+
+  console.log("added =>", addedCar);
+
   const [activeTab, setActiveTab] = useState("all");
+
   const [carsPerPage, setCarsPerPage] = useState(10);
   // Pagination
   const [currentPage, setCurrentPage] = useState(1);
@@ -92,9 +105,12 @@ const VehicleFinderSection = () => {
 
   const isInWishlist =
     currentUser?.id &&
-    wishlistByUser?.[currentUser.id]?.some((v) => v.id === allCars.id);
+    wishlistByUser?.[currentUser.id]?.some((v) => v?.id === addedCar?.id);
+
+  console.log("isInWishlist =>", isInWishlist);
 
   const handleWishlist = (car) => {
+    setAddedCar(car);
     if (!currentUser) {
       Swal.fire({
         title: "Login Required",
@@ -596,7 +612,6 @@ const VehicleFinderSection = () => {
             currentCars.map((car) => (
               <div
                 key={car.id}
-                // onClick={() => navigate(`/detailbid/${car.id}`)}
                 className={`relative rounded-lg shadow p-4 mb-4 flex flex-col md:flex-row hover:shadow-lg transition-shadow hover:cursor-pointer border border-gray-500
 
                 }`}
@@ -611,11 +626,13 @@ const VehicleFinderSection = () => {
                     src={car?.images?.[0] || "/placeholder.png"}
                     alt={car.make}
                     className="w-full h-full object-cover"
+                    onClick={() => navigate(`/detailbid/${car.id}`)}
                   />
                 </div>
                 <div className="flex-grow">
                   <div className="flex flex-col sm:flex-row justify-between sm:items-center">
                     <h3
+                      onClick={() => navigate(`/detailbid/${car.id}`)}
                       className={`font-semibold text-sm sm:text-base ${
                         car.certifyStatus === "Certified"
                           ? "text-green-700"
@@ -660,7 +677,7 @@ const VehicleFinderSection = () => {
                   </div>
                   <div className="flex justify-end">
                     <button
-                      onClick={handleWishlist}
+                      onClick={() => handleWishlist(car)}
                       className={`p-2 rounded-full transition-all duration-300 ${
                         isInWishlist
                           ? "text-red-600"

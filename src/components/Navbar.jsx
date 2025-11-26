@@ -467,11 +467,12 @@ const Navbar = () => {
             title="View Wishlist"
           >
             {/* Text */}
-            <span>Wishlist</span> |
+            <span>Wishlist</span>
           </Link>
 
           {currentUser ? null : (
             <div className="lg:flex items-center gap-3 hidden ">
+              |
               <Link
                 to="/register"
                 className="flex items-center gap-1 hover:text-red-600 font-semiboldbold"
