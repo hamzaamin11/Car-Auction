@@ -238,7 +238,9 @@ function AddAdminVehicle({ open, setOpen, onVehicleUpdated }) {
 
   const handleTotalVehicles = async () => {
     try {
-      const res = await axios.get(`${BASE_URL}/getApprovedVehicles`);
+      const res = await axios.get(
+        `${BASE_URL}/getApprovedVehicles/${currentUser?.role}`
+      );
       console.log(res.data);
       setTotalVehicles(res.data);
     } catch (error) {

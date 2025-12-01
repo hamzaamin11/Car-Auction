@@ -48,7 +48,9 @@ export const AuctionEvent = () => {
   const handleGetVehicles = async () => {
     try {
       setLoading(true);
-      const res = await axios.get(`${BASE_URL}/getApprovedVehicles`);
+      const res = await axios.get(
+        `${BASE_URL}/getApprovedVehicles/${currentUser?.role}`
+      );
       // Expecting array in res.data
       const data = Array.isArray(res.data) ? res.data : [];
       setAllVehicles(data);

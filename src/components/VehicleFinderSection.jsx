@@ -64,14 +64,16 @@ const budgetData = [
 
 const VehicleFinderSection = () => {
   const currentUser = useSelector((state) => state?.auth?.currentUser);
-  const wishlistByUser = useSelector((state) => state?.wishList?.wishlistByUser || {});
+  const wishlistByUser = useSelector(
+    (state) => state?.wishList?.wishlistByUser || {}
+  );
 
   const navigate = useNavigate();
   const dispatch = useDispatch();
 
   const [filters, setFilters] = useState(initialState);
   // Add this state (you already have selectedYearRange, just rename or keep both)
-const [quickYearFilter, setQuickYearFilter] = useState(""); // e.g., "2024-2025"
+  const [quickYearFilter, setQuickYearFilter] = useState(""); // e.g., "2024-2025"
   const [allCars, setAllCars] = useState([]);
   const [allMakes, setAllMakes] = useState([]);
   const [allModels, setAllModels] = useState([]);
@@ -81,9 +83,9 @@ const [quickYearFilter, setQuickYearFilter] = useState(""); // e.g., "2024-2025"
   const [activeTab, setActiveTab] = useState("all");
   const [carsPerPage, setCarsPerPage] = useState(10);
   const [currentPage, setCurrentPage] = useState(1);
-const [selectedYearRange, setSelectedYearRange] = useState(""); // e.g., "2024-2025"
+  const [selectedYearRange, setSelectedYearRange] = useState(""); // e.g., "2024-2025"
 
-const [yearRanges, setYearRanges] = useState([]); // dynamic ranges
+  const [yearRanges, setYearRanges] = useState([]); // dynamic ranges
   const vehicleData = useSelector((state) => state.carSelector);
   const [filterPrice, setFilterPrice] = useState({
     budget: { min: "", max: "" },
@@ -126,121 +128,118 @@ const [yearRanges, setYearRanges] = useState([]); // dynamic ranges
     setCurrentPage(1);
   };
 
-const handleGetCars = async () => {
-  try {
-    let {
-      condition,
-      vehicleType,
-      location,
-      lot,
-    } = filters;
+  const handleGetCars = async () => {
+    try {
+      let { condition, vehicleType, location, lot } = filters;
 
-    // Initialize year and price variables
-    let fromYear = "";
-    let toYear = "";
-    let formCash = "";
-    let toCash = "";
+      // Initialize year and price variables
+      let fromYear = "";
+      let toYear = "";
+      let formCash = "";
+      let toCash = "";
 
-    // Priority 1: Use quickYearFilter if selected (from Sort By dropdown)
-    if (quickYearFilter && quickYearFilter !== "") {
-      const selected = yearRanges.find(r => r.value === quickYearFilter);
-      if (selected) {
-        fromYear = selected.from.toString();
-        toYear = selected.to.toString();
+      // Priority 1: Use quickYearFilter if selected (from Sort By dropdown)
+      if (quickYearFilter && quickYearFilter !== "") {
+        const selected = yearRanges.find((r) => r.value === quickYearFilter);
+        if (selected) {
+          fromYear = selected.from.toString();
+          toYear = selected.to.toString();
+        }
       }
-    } 
-    // Priority 2: Use sidebar filters if quickYearFilter is not set
-    else {
-      fromYear = filters.fromYear || "";
-      toYear = filters.toYear || "";
-    }
+      // Priority 2: Use sidebar filters if quickYearFilter is not set
+      else {
+        fromYear = filters.fromYear || "";
+        toYear = filters.toYear || "";
+      }
 
-    // Use filterPrice for budget (from Sort By dropdown)
-    if (filterPrice.budget.min && filterPrice.budget.max) {
-      formCash = filterPrice.budget.min;
-      toCash = filterPrice.budget.max;
-    }
-    // Fallback to manual inputs from sidebar
-    else {
-      formCash = filters.formCash || "";
-      toCash = filters.toCash || "";
-    }
+      // Use filterPrice for budget (from Sort By dropdown)
+      if (filterPrice.budget.min && filterPrice.budget.max) {
+        formCash = filterPrice.budget.min;
+        toCash = filterPrice.budget.max;
+      }
+      // Fallback to manual inputs from sidebar
+      else {
+        formCash = filters.formCash || "";
+        toCash = filters.toCash || "";
+      }
 
-    const make = vehicleData.make || "";
-    const model = vehicleData.model || "";
+      const make = vehicleData.make || "";
+      const model = vehicleData.model || "";
 
-    if (lot.length === 4) {
-      navigate(`/detailbid/${lot}`);
+      if (lot.length === 4) {
+        navigate(`/detailbid/${lot}`);
+        return;
+      }
+
+      const res = await axios.get(
+        `${BASE_URL}/getApprovedVehicles/${currentUser?.role}?vehicleCondition=${condition}&make=${make}&model=${model}&minPrice=${formCash}&maxPrice=${toCash}&sortType=${sorting}&yearStart=${fromYear}&yearEnd=${toYear}&bodyStyle=${vehicleType}&locationId=${location}&lot_number=${lot}`
+      );
+
+      setAllCars(res.data || []);
+      setCurrentPage(1);
+    } catch (err) {
+      console.log(err);
+    }
+  };
+
+  const handleGetYear = async () => {
+    try {
+      const res = await axios.get(`${BASE_URL}/admin/fetchVehicleYears`);
+      const apiYears = res.data
+        .map((year) => parseInt(year))
+        .sort((a, b) => b - a); // newest first
+
+      const formattedYears = apiYears.map((year) => ({
+        label: year.toString(),
+        value: year.toString(),
+      }));
+      setYears(formattedYears);
+
+      // Generate Year Ranges like 2024-2025, 2023-2024, etc.
+      const yearRanges = [];
+      for (let i = 0; i < apiYears.length - 1; i++) {
+        const start = apiYears[i + 1]; // older year
+        const end = apiYears[i]; // newer year
+        yearRanges.push({
+          label: `${start}-${end}`,
+          value: `${start}-${end}`,
+          from: start,
+          to: end,
+        });
+      }
+      // Add "Before oldest" option
+      if (apiYears.length > 0) {
+        const oldest = Math.min(...apiYears);
+        yearRanges.push({
+          label: `Before ${oldest}`,
+          value: `1900-${oldest - 1}`,
+          from: 1900,
+          to: oldest - 1,
+        });
+      }
+      setYearRanges(yearRanges); // ← We'll create this state below
+    } catch (error) {
+      console.log(error);
+    }
+  };
+  const handleYearRangeChange = (e) => {
+    const value = e.target.value;
+    setSelectedYearRange(value);
+
+    if (!value || value === "all-years") {
+      setFilters((prev) => ({ ...prev, fromYear: "", toYear: "" }));
       return;
     }
 
-    const res = await axios.get(
-      `${BASE_URL}/getApprovedVehicles?vehicleCondition=${condition}&make=${make}&model=${model}&minPrice=${formCash}&maxPrice=${toCash}&sortType=${sorting}&yearStart=${fromYear}&yearEnd=${toYear}&bodyStyle=${vehicleType}&locationId=${location}&lot_number=${lot}`
-    );
-
-    setAllCars(res.data || []);
-    setCurrentPage(1);
-  } catch (err) {
-    console.log(err);
-  }
-};
-
- const handleGetYear = async () => {
-  try {
-    const res = await axios.get(`${BASE_URL}/admin/fetchVehicleYears`);
-    const apiYears = res.data.map(year => parseInt(year)).sort((a, b) => b - a); // newest first
-
-    const formattedYears = apiYears.map((year) => ({
-      label: year.toString(),
-      value: year.toString(),
-    }));
-    setYears(formattedYears);
-
-    // Generate Year Ranges like 2024-2025, 2023-2024, etc.
-    const yearRanges = [];
-    for (let i = 0; i < apiYears.length - 1; i++) {
-      const start = apiYears[i + 1]; // older year
-      const end = apiYears[i];     // newer year
-      yearRanges.push({
-        label: `${start}-${end}`,
-        value: `${start}-${end}`,
-        from: start,
-        to: end,
-      });
+    const selected = yearRanges.find((range) => range.value === value);
+    if (selected) {
+      setFilters((prev) => ({
+        ...prev,
+        fromYear: selected.from.toString(),
+        toYear: selected.to.toString(),
+      }));
     }
-    // Add "Before oldest" option
-    if (apiYears.length > 0) {
-      const oldest = Math.min(...apiYears);
-      yearRanges.push({
-        label: `Before ${oldest}`,
-        value: `1900-${oldest - 1}`,
-        from: 1900,
-        to: oldest - 1,
-      });
-    }
-    setYearRanges(yearRanges); // ← We'll create this state below
-  } catch (error) {
-    console.log(error);
-  }
-};
-const handleYearRangeChange = (e) => {
-  const value = e.target.value;
-  setSelectedYearRange(value);
-
-  if (!value || value === "all-years") {
-    setFilters(prev => ({ ...prev, fromYear: "", toYear: "" }));
-    return;
-  }
-
-  const selected = yearRanges.find(range => range.value === value);
-  if (selected) {
-    setFilters(prev => ({
-      ...prev,
-      fromYear: selected.from.toString(),
-      toYear: selected.to.toString(),
-    }));
-  }
-};
+  };
 
   const handleGetAllCities = async () => {
     try {
@@ -275,7 +274,9 @@ const handleYearRangeChange = (e) => {
       return;
     }
     try {
-      const res = await axios.get(`${BASE_URL}/getModelById/${vehicleData.make}`);
+      const res = await axios.get(
+        `${BASE_URL}/getModelById/${vehicleData.make}`
+      );
       setAllModels(res.data || []);
     } catch (err) {
       console.log(err);
@@ -327,10 +328,10 @@ const handleYearRangeChange = (e) => {
     handleGetModels();
   }, [vehicleData.make]);
   useEffect(() => {
-  if (filters.fromYear || filters.toYear) {
-    setQuickYearFilter("");
-  }
-}, [filters.fromYear, filters.toYear]);
+    if (filters.fromYear || filters.toYear) {
+      setQuickYearFilter("");
+    }
+  }, [filters.fromYear, filters.toYear]);
 
   useEffect(() => {
     handleGetCars();
@@ -622,71 +623,82 @@ const handleYearRangeChange = (e) => {
             {allCars.length} Vehicles For Sale
           </h1>
 
-<div className="flex items-center gap-2">
-  <div className="font-semibold whitespace-nowrap">Sort By</div>
+          <div className="flex items-center gap-2">
+            <div className="font-semibold whitespace-nowrap">Sort By</div>
 
-  <div className="flex gap-3 w-full max-w-4xl">
+            <div className="flex gap-3 w-full max-w-4xl">
+              {/* 1. Budget - Native Select (as requested) */}
+              <div className="flex-1 min-w-0">
+                <select
+                  className="w-full border border-black text-black focus:border-blue-900 focus:ring-1 focus:ring-blue-900 rounded-lg px-4 py-2.5 text-sm cursor-pointer bg-white outline-none transition-all"
+                  value={
+                    filterPrice.budget.min
+                      ? `${filterPrice.budget.min}-${filterPrice.budget.max}`
+                      : ""
+                  }
+                  onChange={(e) => {
+                    if (!e.target.value) {
+                      setFilterPrice((prev) => ({
+                        ...prev,
+                        budget: { min: "", max: "" },
+                      }));
+                    } else {
+                      const [min, max] = e.target.value.split("-").map(Number);
+                      setFilterPrice((prev) => ({
+                        ...prev,
+                        budget: { min, max },
+                      }));
+                    }
+                  }}
+                >
+                  <option value="">All Budgets</option>
+                  {budgetData.map((b) => (
+                    <option
+                      key={`${b.min}-${b.max}`}
+                      value={`${b.min}-${b.max}`}
+                    >
+                      {b.label}
+                    </option>
+                  ))}
+                </select>
+              </div>
 
-    {/* 1. Budget - Native Select (as requested) */}
-    <div className="flex-1 min-w-0">
-      <select
-        className="w-full border border-black text-black focus:border-blue-900 focus:ring-1 focus:ring-blue-900 rounded-lg px-4 py-2.5 text-sm cursor-pointer bg-white outline-none transition-all"
-        value={filterPrice.budget.min ? `${filterPrice.budget.min}-${filterPrice.budget.max}` : ""}
-        onChange={(e) => {
-          if (!e.target.value) {
-            setFilterPrice(prev => ({ ...prev, budget: { min: "", max: "" } }));
-          } else {
-            const [min, max] = e.target.value.split("-").map(Number);
-            setFilterPrice(prev => ({ ...prev, budget: { min, max } }));
-          }
-        }}
-      >
-        <option value="">All Budgets</option>
-        {budgetData.map((b) => (
-          <option key={`${b.min}-${b.max}`} value={`${b.min}-${b.max}`}>
-            {b.label}
-          </option>
-        ))}
-      </select>
-    </div>
+              {/* 2. Year Range - Native Select + Fully Independent */}
+              <div className="flex-1 min-w-0">
+                <select
+                  className="w-full border border-black text-black focus:border-blue-900 focus:ring-1 focus:ring-blue-900 rounded-lg px-4 py-2.5 text-sm cursor-pointer bg-white outline-none transition-all"
+                  value={quickYearFilter}
+                  onChange={(e) => {
+                    setQuickYearFilter(e.target.value);
+                  }}
+                >
+                  <option value="">All Years</option>
+                  {yearRanges.map((range) => (
+                    <option key={range.value} value={range.value}>
+                      {range.label}
+                    </option>
+                  ))}
+                </select>
+              </div>
 
-    {/* 2. Year Range - Native Select + Fully Independent */}
-    <div className="flex-1 min-w-0">
-      <select
-        className="w-full border border-black text-black focus:border-blue-900 focus:ring-1 focus:ring-blue-900 rounded-lg px-4 py-2.5 text-sm cursor-pointer bg-white outline-none transition-all"
-        value={quickYearFilter}
-        onChange={(e) => {
-          setQuickYearFilter(e.target.value);
-        }}
-      >
-        <option value="">All Years</option>
-        {yearRanges.map((range) => (
-          <option key={range.value} value={range.value}>
-            {range.label}
-          </option>
-        ))}
-      </select>
-    </div>
-
-    {/* 3. Sort Order - Native Select */}
-    <div className="flex-1 min-w-0">
-      <select
-        className="w-full border border-black text-black focus:border-blue-900 focus:ring-1 focus:ring-blue-900 rounded-lg px-4 py-2.5 text-sm cursor-pointer bg-white outline-none transition-all"
-        value={sorting}
-        onChange={(e) => {
-          setSorting(e.target.value);
-          setCurrentPage(1);
-        }}
-      >
-        <option value="low">Price: Low to High</option>
-        <option value="high">Price: High to Low</option>
-        <option value="year_desc">Year: Newest First</option>
-        <option value="year_asc">Year: Oldest First</option>
-      </select>
-    </div>
-
-  </div>
-</div>
+              {/* 3. Sort Order - Native Select */}
+              <div className="flex-1 min-w-0">
+                <select
+                  className="w-full border border-black text-black focus:border-blue-900 focus:ring-1 focus:ring-blue-900 rounded-lg px-4 py-2.5 text-sm cursor-pointer bg-white outline-none transition-all"
+                  value={sorting}
+                  onChange={(e) => {
+                    setSorting(e.target.value);
+                    setCurrentPage(1);
+                  }}
+                >
+                  <option value="low">Price: Low to High</option>
+                  <option value="high">Price: High to Low</option>
+                  <option value="year_desc">Year: Newest First</option>
+                  <option value="year_asc">Year: Oldest First</option>
+                </select>
+              </div>
+            </div>
+          </div>
         </div>
 
         <div className="overflow-y-auto max-h-screen">
@@ -717,14 +729,17 @@ const handleYearRangeChange = (e) => {
                   <div className="flex-grow">
                     <div className="flex flex-col sm:flex-row justify-between sm:items-center">
                       <h3 className="font-semibold text-sm sm:text-base text-gray-800">
-                        {car.make} {car.model} {car.series || ""} {car.engine || ""} for sale
+                        {car.make} {car.model} {car.series || ""}{" "}
+                        {car.engine || ""} for sale
                       </h3>
                       <span className="text-lg font-bold text-gray-800 mt-2 sm:mt-0">
                         PKR {car.buyNowPrice}
                       </span>
                     </div>
 
-                    <p className="text-sm text-gray-600 mt-1">Lot # {car.lot_number}</p>
+                    <p className="text-sm text-gray-600 mt-1">
+                      Lot # {car.lot_number}
+                    </p>
                     <p className="text-sm text-gray-600 mt-1">{car.cityName}</p>
 
                     <div className="flex flex-wrap gap-2 mt-2">
@@ -764,7 +779,10 @@ const handleYearRangeChange = (e) => {
                             : "text-gray-400 hover:text-red-600 hover:bg-red-50"
                         }`}
                       >
-                        <FaHeart size={20} className={inWishlist ? "fill-current" : ""} />
+                        <FaHeart
+                          size={20}
+                          className={inWishlist ? "fill-current" : ""}
+                        />
                       </button>
                     </div>
                   </div>
@@ -782,15 +800,26 @@ const handleYearRangeChange = (e) => {
             <div className="bg-white rounded-lg shadow-sm p-4 mt-6">
               <div className="flex flex-col sm:flex-row justify-between items-center gap-4 text-sm text-gray-700">
                 <div className="text-gray-600">
-                  Showing <span className="font-medium">{startIndex + 1} to {endIndex}</span> of{" "}
-                  <span className="font-medium">{allCars.length}</span> entries
+                  Showing{" "}
+                  <span className="font-medium">
+                    {startIndex + 1} to {endIndex}
+                  </span>{" "}
+                  of <span className="font-medium">{allCars.length}</span>{" "}
+                  entries
                 </div>
 
                 <div className="flex items-center gap-1">
                   <button
-                    onClick={() => { setCurrentPage(1); window.scrollTo({ top: 0, behavior: "smooth" }); }}
+                    onClick={() => {
+                      setCurrentPage(1);
+                      window.scrollTo({ top: 0, behavior: "smooth" });
+                    }}
                     disabled={currentPage === 1}
-                    className={`px-3 py-1 rounded border ${currentPage === 1 ? "bg-gray-100 text-gray-400 cursor-not-allowed" : "bg-white text-gray-700 hover:bg-gray-50"}`}
+                    className={`px-3 py-1 rounded border ${
+                      currentPage === 1
+                        ? "bg-gray-100 text-gray-400 cursor-not-allowed"
+                        : "bg-white text-gray-700 hover:bg-gray-50"
+                    }`}
                   >
                     {"<<"}
                   </button>
@@ -798,7 +827,11 @@ const handleYearRangeChange = (e) => {
                   <button
                     onClick={goToPrevPage}
                     disabled={currentPage === 1}
-                    className={`px-3 py-1 rounded border ${currentPage === 1 ? "bg-gray-100 text-gray-400 cursor-not-allowed" : "bg-white text-gray-700 hover:bg-gray-50"}`}
+                    className={`px-3 py-1 rounded border ${
+                      currentPage === 1
+                        ? "bg-gray-100 text-gray-400 cursor-not-allowed"
+                        : "bg-white text-gray-700 hover:bg-gray-50"
+                    }`}
                   >
                     {"<"}
                   </button>
@@ -807,14 +840,22 @@ const handleYearRangeChange = (e) => {
                     let pageNum;
                     if (totalPages <= 5) pageNum = i + 1;
                     else if (currentPage <= 3) pageNum = i + 1;
-                    else if (currentPage >= totalPages - 2) pageNum = totalPages - 4 + i;
+                    else if (currentPage >= totalPages - 2)
+                      pageNum = totalPages - 4 + i;
                     else pageNum = currentPage - 2 + i;
 
                     return (
                       <button
                         key={pageNum}
-                        onClick={() => { setCurrentPage(pageNum); window.scrollTo({ top: 0, behavior: "smooth" }); }}
-                        className={`px-3 py-1 rounded border ${currentPage === pageNum ? "bg-blue-950 text-white" : "bg-white text-gray-700 hover:bg-gray-50"}`}
+                        onClick={() => {
+                          setCurrentPage(pageNum);
+                          window.scrollTo({ top: 0, behavior: "smooth" });
+                        }}
+                        className={`px-3 py-1 rounded border ${
+                          currentPage === pageNum
+                            ? "bg-blue-950 text-white"
+                            : "bg-white text-gray-700 hover:bg-gray-50"
+                        }`}
                       >
                         {pageNum}
                       </button>
@@ -824,15 +865,26 @@ const handleYearRangeChange = (e) => {
                   <button
                     onClick={goToNextPage}
                     disabled={currentPage === totalPages}
-                    className={`px-3 py-1 rounded border ${currentPage === totalPages ? "bg-gray-100 text-gray-400 cursor-not-allowed" : "bg-white text-gray-700 hover:bg-gray-50"}`}
+                    className={`px-3 py-1 rounded border ${
+                      currentPage === totalPages
+                        ? "bg-gray-100 text-gray-400 cursor-not-allowed"
+                        : "bg-white text-gray-700 hover:bg-gray-50"
+                    }`}
                   >
                     {">"}
                   </button>
 
                   <button
-                    onClick={() => { setCurrentPage(totalPages); window.scrollTo({ top: 0, behavior: "smooth" }); }}
+                    onClick={() => {
+                      setCurrentPage(totalPages);
+                      window.scrollTo({ top: 0, behavior: "smooth" });
+                    }}
                     disabled={currentPage === totalPages}
-                    className={`px-3 py-1 rounded border ${currentPage === totalPages ? "bg-gray-100 text-gray-400 cursor-not-allowed" : "bg-white text-gray-700 hover:bg-gray-50"}`}
+                    className={`px-3 py-1 rounded border ${
+                      currentPage === totalPages
+                        ? "bg-gray-100 text-gray-400 cursor-not-allowed"
+                        : "bg-white text-gray-700 hover:bg-gray-50"
+                    }`}
                   >
                     {">>"}
                   </button>
