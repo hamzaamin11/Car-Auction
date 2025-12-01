@@ -11,9 +11,9 @@ export const AccountSetting = () => {
   };
 
   return (
-    <div className="flex gap-4 p-6">
+    <div className="lg:flex gap-4 p-6">
       {/* Sidebar */}
-      <div className="w-64 h-56 bg-white border border-gray-200 rounded-xl shadow-sm overflow-hidden">
+      <div className="lg:w-64 h-56 bg-white border border-gray-200 rounded-xl shadow-sm overflow-hidden">
         <h1 className="bg-blue-950 text-white p-3 text-sm font-semibold">
           Menu
         </h1>

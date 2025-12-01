@@ -370,7 +370,7 @@ export const ProfileManage = ({ handleIsOpenModal }) => {
 
           {/* Rest of the form - 100% unchanged */}
           <div>
-            <div className="grid grid-cols-3  gap-4">
+            <div className="grid lg:grid-cols-3   gap-4">
               <div>
                 <label className="block text-sm font-medium text-gray-700">
                   Full Name
@@ -538,7 +538,7 @@ export const ProfileManage = ({ handleIsOpenModal }) => {
                 />
               </div>
             </div>
-            <div className="flex justify-center gap-3 pt-4 border-t">
+            <div className="flex justify-center gap-3 pt-4 border-t mb-9">
               <button
                 type="button"
                 onClick={() => handleIsOpenModal("")}

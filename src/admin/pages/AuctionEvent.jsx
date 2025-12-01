@@ -9,14 +9,13 @@ import { BASE_URL } from "../../components/Contant/URL";
 import { MoreVertical } from "lucide-react";
 import { ViewAdminCar } from "../../components/ViewAdminCar";
 import { AdminAddBid } from "../../components/AdminAddBidComponent/AdminAddBid";
+import { useSelector } from "react-redux";
 
 export const AuctionEvent = () => {
-  // UI controls
+  const { currentUser } = useSelector((state) => state?.auth);
   const [isOpen, setIsOpen] = useState(""); // for AddCity / EditCity modals (kept)
   const [loading, setLoading] = useState(false);
   const [actionMenuOpen, setActionMenuOpen] = useState(null);
-
-  console.log("actionMenuOpen =>", actionMenuOpen);
 
   // Search & pagination
   const [search, setSearch] = useState("");

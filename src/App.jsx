@@ -98,6 +98,7 @@ import { SubcribeUserList } from "./admin/pages/SubcribeUserList";
 import { AwaitingApproval } from "./admin/pages/AwaitingApprovel";
 import { AccountSetting } from "./admin/pages/AccountSetting";
 import { AuctionEvent } from "./admin/pages/AuctionEvent";
+import VehicleInspection from "./pages/VehicleInspection";
 
 function Layout() {
   const location = useLocation();
@@ -288,6 +289,7 @@ function Layout() {
           <Route path="vehicle-prices" element={<SellerVehiclePrices />} />
           <Route path="vehicle-spects" element={<SellerVehicleSpects />} />
           <Route path="vehicle-details" element={<SellerVehicleDetails />} />
+          <Route path="/seller/inspection" element={<VehicleInspection />} />
           {/* Auctions */}
           <Route path="live-auctions" element={<SellerLiveAuctions />} />
           <Route path="upcoming-auctions" element={<UpcomingAuctions />} />

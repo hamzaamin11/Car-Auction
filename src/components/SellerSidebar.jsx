@@ -1,11 +1,5 @@
 import { NavLink } from "react-router-dom";
-import {
-  FaTachometerAlt,
-  FaCar,
-  FaGavel,
-  FaUsers,
-  FaHistory,
-} from "react-icons/fa";
+import { FaTachometerAlt, FaCar, FaGavel, FaSearch } from "react-icons/fa";
 
 const SellerSidebar = () => {
   const menuItems = [
@@ -32,6 +26,13 @@ const SellerSidebar = () => {
         { name: "Live Auctions", path: "/seller/live-auctions" }, // Matches <SellerLiveAuctions />
         { name: "Upcoming Auctions", path: "/seller/upcoming-auctions" },
         { name: "Auction History", path: "/seller/my-bids" }, // Matches <UpcomingAuctions />
+      ],
+    },
+    {
+      name: "Inspection",
+      icon: <FaSearch />,
+      children: [
+        { name: "Upload Documents", path: "/seller/inspection" }, // Matches <SellerLiveAuctions />
       ],
     },
     // {
