@@ -214,7 +214,9 @@ function AddAdminVehicle({ open, setOpen, onVehicleUpdated }) {
 
   const handleGetVehicles = async () => {
     try {
-      const res = await axios.get(`${BASE_URL}/getApprovedVehicles`);
+      const res = await axios.get(
+        `${BASE_URL}/getApprovedVehicles/${currentUser?.role}`
+      );
       setAllVehicles(res.data || []);
       setTotalVehicles(res.data || []);
     } catch (error) {
@@ -896,10 +898,17 @@ function AddAdminVehicle({ open, setOpen, onVehicleUpdated }) {
                           {/* Remove Image Button */}
                           <div
                             onClick={() => {
-                              const updatedPreviews = previewImages.filter((_, i) => i !== index);
-                              const updatedImages = vehicle.image.filter((_, i) => i !== index);
+                              const updatedPreviews = previewImages.filter(
+                                (_, i) => i !== index
+                              );
+                              const updatedImages = vehicle.image.filter(
+                                (_, i) => i !== index
+                              );
                               setPreviewImages(updatedPreviews);
-                              setVehicle((prev) => ({ ...prev, image: updatedImages }));
+                              setVehicle((prev) => ({
+                                ...prev,
+                                image: updatedImages,
+                              }));
                               setSelectedCount(updatedImages.length);
                             }}
                             className="absolute top-1 right-1 bg-white rounded-full shadow p-1 cursor-pointer hover:bg-gray-100"

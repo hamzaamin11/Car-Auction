@@ -135,11 +135,12 @@ const CarCardSlider = () => {
   const [currentIndex, setCurrentIndex] = useState(0);
   const [visibleCards, setVisibleCards] = useState(4);
   const [allCars, setAllCars] = useState([]);
-
+  const {currentUser} = useSelector((state) => state?.auth)
+ 
   // Fetch vehicles
   const handleGetVehicles = async () => {
     try {
-      const res = await axios.get(`${BASE_URL}/getApprovedVehicles`);
+      const res = await axios.get(`${BASE_URL}/getApprovedVehicles/${currentUser?.role}`);
       setAllCars(res.data);
     } catch (error) {
       console.error("Failed to fetch vehicles:", error);

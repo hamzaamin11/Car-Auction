@@ -96,6 +96,8 @@ import { addMake, addModel } from "./components/Redux/SelectorCarSlice";
 import { WishList } from "./pages/WishList";
 import { SubcribeUserList } from "./admin/pages/SubcribeUserList";
 import { AwaitingApproval } from "./admin/pages/AwaitingApprovel";
+import { AccountSetting } from "./admin/pages/AccountSetting";
+import { AuctionEvent } from "./admin/pages/AuctionEvent";
 
 function Layout() {
   const location = useLocation();
@@ -209,6 +211,8 @@ function Layout() {
 
         <Route path="/center" element={<SupportCenter />} />
 
+        <Route path="/accountsetting" element={<AccountSetting />} />
+
         <Route path="/delivery" element={<VehicleDelivery />} />
         <Route path="/news" element={<ChaudhryNews />} />
 
@@ -244,6 +248,9 @@ function Layout() {
           <Route path="/admin/approval" element={<VehicleApproval />} />
           <Route path="/admin/awaiting" element={<AwaitingApproval />} />
           <Route path="/admin/city" element={<CitiesList />} />
+          <Route path="/admin/accountsetting" element={<AccountSetting />} />
+
+          <Route path="/admin/auctionevent" element={<AuctionEvent />} />
 
           <Route path="/admin/suggestionlist" element={<SuggestionList />} />
 
@@ -284,6 +291,7 @@ function Layout() {
           {/* Auctions */}
           <Route path="live-auctions" element={<SellerLiveAuctions />} />
           <Route path="upcoming-auctions" element={<UpcomingAuctions />} />
+          <Route path="/seller/accountsetting" element={<AccountSetting />} />
           {/* Bids */}
           <Route path="my-bids" element={<MyBids />} />
           <Route path="lots-lost" element={<LotsLost />} />

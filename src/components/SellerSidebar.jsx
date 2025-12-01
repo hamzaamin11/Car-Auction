@@ -47,16 +47,14 @@ const SellerSidebar = () => {
   ];
 
   return (
-    <div className="h-full overflow-y-auto p-4">
-      <h2 className="text-2xl font-bold mb-6 text-gray-800 mt-8">
-        Seller Panel
-      </h2>
+    <div className="h-full overflow-y-auto p-4 bg-blue-950">
+      <h2 className="text-2xl font-bold mb-6  mt-8 text-white">Seller Panel</h2>
       <nav className="space-y-1">
         {menuItems.map((item) => (
           <div key={item.name}>
             {item.children ? (
               <div className="mb-2">
-                <div className="flex items-center px-4 py-3 text-gray-600">
+                <div className="flex items-center px-4 py-3 text-white">
                   <span className="mr-3">{item.icon}</span>
                   <span>{item.name}</span>
                 </div>
@@ -68,8 +66,8 @@ const SellerSidebar = () => {
                       className={({ isActive }) =>
                         `block px-3 py-2 text-sm rounded-md ${
                           isActive
-                            ? "bg-blue-950 text-white"
-                            : "text-gray-600 hover:underline"
+                            ? "text-blue-950 bg-white"
+                            : "text-white hover:underline"
                         }`
                       }
                     >
@@ -85,8 +83,8 @@ const SellerSidebar = () => {
                 className={({ isActive }) =>
                   `flex items-center px-4 py-3 rounded-md ${
                     isActive
-                      ? "bg-blue-950 text-white"
-                      : "text-gray-600 hover:underline"
+                      ? "text-blue-950 bg-white"
+                      : "text-white hover:underline"
                   }`
                 }
               >

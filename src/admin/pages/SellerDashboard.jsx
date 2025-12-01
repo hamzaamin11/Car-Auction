@@ -1,6 +1,13 @@
 import React, { useEffect, useState } from "react";
 import Card from "../../components/AdminCardComponent/Card";
-import { FaCalendarAlt, FaCarSide, FaGavel, FaHistory } from "react-icons/fa";
+import {
+  FaCalendarAlt,
+  FaCar,
+  FaCarSide,
+  FaGavel,
+  FaHistory,
+  FaUsers,
+} from "react-icons/fa";
 import axios from "axios";
 import { BASE_URL } from "../../components/Contant/URL";
 import { useSelector } from "react-redux";
@@ -43,7 +50,6 @@ export const SellerDashboard = () => {
     }
   };
 
-
   const handleGetAllHistorybySeller = async () => {
     try {
       const res = await axios.get(
@@ -73,45 +79,59 @@ export const SellerDashboard = () => {
     handleGetAllHistorybySeller();
   }, []);
   return (
-    <div className="lg:p-6 p-2 bg-gray-50   lg:space-y-8 space-y-2">
-      <h2 className="lg:text-3xl text-xl font-bold text-blue-950 text-center lg:text-start">
-        Welcome Seller Dashboard
-      </h2>
+    <>
+      <div className="flex bg-[#F5F8FC] min-h-screen ">
+        {/* MAIN CONTENT */}
+        <div className="flex-1 p-8 space-y-10 text-blue-950">
+          <h1 className="text-3xl font-bold text-blue-950">
+            Welcome, Seller Dashboard
+          </h1>
+          {/* TOP ROW */}
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
+            {/* Approved Vehicles */}
+            <div className="bg-white border border-gray-200 shadow-sm rounded-xl p-6 flex justify-between items-center">
+              <div>
+                <p className="text-blue-950 text-xl">Total Approved Vehicles</p>
+                <h2 className="text-4xl font-bold mt-3">
+                  {allVehicles.length}
+                </h2>
+              </div>
+              <FaCar className=" text-6xl" />
+            </div>
 
-      {/* Summary Stats */}
-      <div className="grid grid-cols-1 lg:grid-cols-4 lg:gap-2 gap-2 ">
-        <Card 
-          title={"Total Vehicles"}
-          totalData={allVehicles.length}
-          color={"bg-blue-200"}
-          icon={<FaCarSide size={28} />}
-          path={"/seller/addVehicle"}
-        />
+            {/* Live Auctions */}
+            <div className="bg-white border border-gray-200 shadow-sm rounded-xl p-6 flex justify-between items-center">
+              <div>
+                <p className=" text-xl">Live Auctions Now</p>
+                <h2 className="text-4xl font-bold mt-3">
+                  {allLiveAuction.length}
+                </h2>
+              </div>
+              <FaGavel className=" text-6xl" />
+            </div>
 
-        <Card
-          title={"Live Auctions"}
-          totalData={allLiveAuction.length}
-          color={"bg-blue-200"}
-          icon={<FaGavel size={28} />}
-          path={"/seller/live-auctions"}
-        />
+            {/* Total Users */}
+            <div className="bg-white border border-gray-200 shadow-sm rounded-xl p-6 flex justify-between items-center">
+              <div>
+                <p className="text-xl">Auction History</p>
+                <h2 className="text-4xl font-bold mt-3">{bidHistory.length}</h2>
+              </div>
+              <FaHistory className=" text-6xl" />
+            </div>
 
-        <Card
-          title={"Upcoming Auctions"}
-          totalData={allUpcoming.length}
-          color={"bg-blue-200"}
-          icon={<FaCalendarAlt size={28} />}
-          path={"/seller/upcoming-auctions"}
-        />
-
-        <Card
-          title={"Auction History"}
-          totalData={bidHistory.length}
-          color={"bg-blue-200"}
-          icon={<FaHistory size={28} />}
-          path={"/seller/my-bids"}
-        />
+            {/* Upcoming Auctions */}
+            <div className="bg-white border border-gray-200 shadow-sm rounded-xl p-6 flex justify-between items-center">
+              <div>
+                <p className=" text-xl">Upcoming Auctions</p>
+                <h2 className="text-4xl font-bold mt-3">
+                  {allUpcoming.length}
+                </h2>
+              </div>
+              <FaCalendarAlt className=" text-6xl" />
+            </div>
+          </div>
+        </div>
       </div>
-    </div>
+    </>
   );
 };

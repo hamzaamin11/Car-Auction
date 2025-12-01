@@ -1,20 +1,25 @@
 import { useEffect, useState } from "react";
-import {
-  FaCarSide,
-  FaGavel,
-  FaUsers,
-  FaCalendarAlt,
-  FaHistory,
-  FaEnvelope,
-  FaHandshake,
-  FaCity,
-} from "react-icons/fa";
+
 import axios from "axios";
 import { BASE_URL } from "../../components/Contant/URL";
 import Card from "../../components/AdminCardComponent/Card";
 import { MdBrandingWatermark } from "react-icons/md";
 
+import {
+  FaCarSide,
+  FaGavel,
+  FaUsers,
+  FaCalendarAlt,
+  FaClipboardCheck,
+  FaEnvelope,
+  FaHandshake,
+  FaCar,
+  FaUser,
+} from "react-icons/fa";
+import { useSelector } from "react-redux";
+
 const Dashboard = () => {
+  const { currentUser } = useSelector((state) => state?.auth);
   const [loading, setLoading] = useState(false);
   const [totalVehicles, setTotalVehicles] = useState({});
   const [allBrands, setAllBrands] = useState([]);
@@ -30,11 +35,14 @@ const Dashboard = () => {
   const [totalCustomers, setTotalCustomers] = useState({});
   const [bidHistory, setBidHistory] = useState([]);
   const [SubcribeUserList, setSubscribeUserList] = useState([]);
-
+  const [awaitingStatus, setAwaitingStatus] = useState([]);
+  const [bidInfo, setBidInfo] = useState([]);
   const handleGetAllVehicle = async () => {
     setLoading(true);
     try {
-      const res = await axios.get(`${BASE_URL}/getApprovedVehicles`);
+      const res = await axios.get(
+        `${BASE_URL}/getApprovedVehicles/${currentUser?.role}`
+      );
       setTotalVehicles(res?.data);
       setLoading(false);
     } catch (error) {
@@ -155,6 +163,26 @@ const Dashboard = () => {
     }
   };
 
+  const handleGetAwaitingVehicles = async () => {
+    try {
+      const res = await axios.get(`${BASE_URL}/getawatingApprovedVehicles`);
+
+      setAwaitingStatus(res.data);
+    } catch (error) {
+      console.log(error);
+    }
+  };
+
+  const handleGetBidSummary = async () => {
+    try {
+      const res = await axios.get(`${BASE_URL}/admin/getBidSummary`);
+
+      setBidInfo(res.data);
+    } catch (error) {
+      console.log(error);
+    }
+  };
+
   useEffect(() => {
     handleGetAllVehicle();
     handleGetAllLiveAuction();
@@ -169,159 +197,117 @@ const Dashboard = () => {
     handleGetContactUs();
     handleGetALLCities();
     handleGetBidHistory();
+    handleGetAwaitingVehicles();
+    handleGetBidSummary();
   }, []);
 
   return (
     <>
-      <div className="lg:p-2 p-2  bg-gray-50 lg:space-y-8 space-y-2">
-        <h2 className="lg:text-3xl text-2xl font-bold text-[#191970] my-2 lg:mt-0">
-          Welcome, Admin
-        </h2>
+      <div className="flex bg-[#F5F8FC] min-h-screen ">
+        {/* MAIN CONTENT */}
+        <div className="flex-1 p-8 space-y-10 text-blue-950">
+          <h1 className="text-3xl font-bold text-blue-950">Welcome, Admin</h1>
 
-        {/* Summary Stats (Desktop and Mobile) */}
-        <div className="grid grid-cols-2 lg:grid-cols-4 gap-2">
-          <Card
-            title={"Approved Vehicles"}
-            totalData={totalVehicles.length}
-            color={"bg-blue-200"}
-            icon={<FaCarSide size={28} />}
-            path={"/admin/vehicles"}
-          />
-          <Card
-            title={"Live Auctions"}
-            totalData={liveAuctions.totalLiveAuctions}
-            color={"bg-blue-200"}
-            icon={<FaGavel size={28} />}
-            path={"/admin/live-auctions"}
-          />
-          <Card
-            title={"Upcoming Auctions"}
-            totalData={upcomingBid.totalUpcomingAuctions}
-            color={"bg-blue-200"}
-            icon={<FaCalendarAlt size={28} />}
-            path={"/admin/upcoming-auctions"}
-          />
-          <Card
-            title={"Total Users"}
-            totalData={totalCustomers.totalBuyers}
-            color={"bg-blue-200"}
-            icon={<FaUsers size={28} />}
-            path={"/admin/manage-users"}
-          />
-        </div>
+          {/* TOP ROW */}
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
+            {/* Approved Vehicles */}
+            <div className="bg-white border border-gray-200 shadow-sm rounded-xl p-6 flex justify-between items-center">
+              <div>
+                <p className="text-blue-950 text-xl">Total Approved Vehicles</p>
+                <h2 className="text-4xl font-bold mt-3">
+                  {totalVehicles.length}
+                </h2>
+              </div>
+              <FaCar className=" text-6xl" />
+            </div>
 
-        {/* Mobile-Only Cards */}
-        <span className="lg:hidden grid grid-cols-2 gap-2">
-          <Card
-            title={"Un-Approved Vehicles"}
-            totalData={unapprovelVehicles.length}
-            color={"bg-blue-200"}
-            icon={<FaCarSide size={28} />}
-            path={"/admin/approval"}
-          />
+            {/* Live Auctions */}
+            <div className="bg-white border border-gray-200 shadow-sm rounded-xl p-6 flex justify-between items-center">
+              <div>
+                <p className=" text-xl">Live Auctions Now</p>
+                <h2 className="text-4xl font-bold mt-3">
+                  {liveAuctions.totalLiveAuctions}
+                </h2>
+              </div>
+              <FaGavel className=" text-6xl" />
+            </div>
 
-          <Card
-            title={"Auction History"}
-            totalData={bidHistory.length}
-            color={"bg-blue-200"}
-            icon={<FaHistory size={28} />}
-            path={"/admin/bid-history"}
-          />
-          <Card
-            title={"Add Makes"}
-            totalData={allBrands.length}
-            color={"bg-blue-200"}
-            icon={<MdBrandingWatermark size={28} />}
-            path={"/admin/addbrand"}
-          />
-          <Card
-            title={"Add Model"}
-            totalData={allModels.length}
-            color={"bg-blue-200"}
-            icon={<FaCarSide size={28} />}
-            path={"/admin/addmodel"}
-          />
-          <Card
-            title={"Add Series"}
-            totalData={allSeries.length}
-            color={"bg-blue-200"}
-            icon={<FaCarSide size={28} />}
-            path={"/admin/addseries"}
-          />
-          <Card
-            title={"Suggestions"}
-            totalData={allSuggestions.length} // Placeholder, update with actual data if available
-            color={"bg-blue-200"}
-            icon={<FaEnvelope size={28} />}
-            path={"/admin/suggestionlist"}
-          />
-          <Card
-            title={"Partnership Opportunities"}
-            totalData={allPartners.length} // Placeholder, update with actual data if available
-            color={"bg-blue-200"}
-            icon={<FaHandshake size={28} />}
-            path={"/admin/becomepartnerlist"}
-          />
-          <Card
-            title={"Get in Touch"}
-            totalData={contactMembers.length} // Placeholder, update with actual data if available
-            color={"bg-blue-200"}
-            icon={<FaEnvelope size={28} />}
-            path={"/admin/contactlist"}
-          />
-          <Card
-            title={"Add City"}
-            totalData={allCities.length} // Placeholder, update with actual data if available
-            color={"bg-blue-200"}
-            icon={<FaCity size={28} />}
-            path={"/admin/city"}
-          />
-        </span>
+            {/* Total Users */}
+            <div className="bg-white border border-gray-200 shadow-sm rounded-xl p-6 flex justify-between items-center">
+              <div>
+                <p className="text-xl">Total Users</p>
+                <h2 className="text-4xl font-bold mt-3">
+                  {totalCustomers.totalBuyers}
+                </h2>
+              </div>
+              <FaUsers className=" text-6xl" />
+            </div>
 
-        {/* Charts 
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-          <div className="bg-white p-6 rounded-xl shadow-sm">
-            <h3 className="text-lg font-semibold mb-4 text-[#191970]">
-              Monthly Vehicle Sales
-            </h3>
-            <ResponsiveContainer width="100%" height={300}>
-              <BarChart data={barData}>
-                <XAxis dataKey="name" />
-                <YAxis />
-                <Tooltip />
-                <Bar dataKey="sales" fill="#191970" radius={[5, 5, 0, 0]} />
-              </BarChart>
-            </ResponsiveContainer>
+            {/* Upcoming Auctions */}
+            <div className="bg-white border border-gray-200 shadow-sm rounded-xl p-6 flex justify-between items-center">
+              <div>
+                <p className=" text-xl">Upcoming Auctions</p>
+                <h2 className="text-4xl font-bold mt-3">
+                  {upcomingBid.totalUpcomingAuctions}
+                </h2>
+              </div>
+              <FaCalendarAlt className=" text-6xl" />
+            </div>
           </div>
-          <div className="bg-white p-6 rounded-xl shadow-sm">
-            <h3 className="text-lg font-semibold mb-4 text-[#191970]">
-              Auction Status
-            </h3>
-            <ResponsiveContainer width="100%" height={300}>
-              <PieChart>
-                <Pie
-                  data={pieData}
-                  cx="50%"
-                  cy="50%"
-                  outerRadius={100}
-                  fill="#8884d8"
-                  dataKey="value"
-                  label
-                >
-                  {pieData.map((entry, index) => (
-                    <Cell
-                      key={`cell-${index}`}
-                      fill={pieColors[index % pieColors.length]}
-                    />
-                  ))}
-                </Pie>
-                <Tooltip />
-                <Legend />
-              </PieChart>
-            </ResponsiveContainer>
+
+          {/* SECOND ROW */}
+          <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+            {/* New Submissions */}
+            <div className="bg-white border border-gray-200 shadow-sm rounded-xl p-6 flex justify-between items-center">
+              <div>
+                <p className=" text-xl">New Submissions Awaiting Approval</p>
+                <h2 className="text-4xl font-bold mt-3">
+                  {awaitingStatus.length}
+                </h2>
+              </div>
+              <FaClipboardCheck className=" text-6xl" />
+            </div>
+
+            {/* Operations Snapshot */}
+            <div className="bg-white border border-gray-200 shadow-sm rounded-xl p-6 space-y-4">
+              <h3 className="font-semibold  text-lg">Vehicle Snapshot</h3>
+
+              <div className="flex justify-between text-gray-700 text-sm">
+                <span>Non Approved Vehicles</span>{" "}
+                <b> {unapprovelVehicles.length}</b>
+              </div>
+
+              <div className="flex justify-between text-gray-700 text-sm">
+                <span>Vehicle Makes</span> <b>{allBrands.length}</b>
+              </div>
+
+              <div className="flex justify-between text-gray-700 text-sm">
+                <span>Auction Models</span> <b>{allModels.length}</b>
+              </div>
+            </div>
+
+            {/* Auction Activity */}
+            <div className="bg-white border border-gray-200 shadow-sm rounded-xl p-6 space-y-4">
+              <h3 className="font-semibold  text-lg">Auction Activity</h3>
+              {bidInfo.length > 0 && (
+                <ul className="space-y-3 text-gray-700 text-sm">
+                  <li className="flex items-center gap-2">
+                    <FaUser /> Customer who placed the latest bid
+                    <b>{bidInfo[0].bidderName.toUpperCase()}</b>
+                  </li>
+                  <li className="flex items-center gap-2">
+                    <FaEnvelope /> Name of the seller
+                    <b>{bidInfo[0].sellerName.toUpperCase()}</b>
+                  </li>
+                  <li className="flex items-center gap-2">
+                    <FaCarSide /> Vehicle Name{" "}
+                    <b>{bidInfo[0].vehicleName.toUpperCase()}</b>
+                  </li>
+                </ul>
+              )}
+            </div>
           </div>
         </div>
-        */}
       </div>
     </>
   );

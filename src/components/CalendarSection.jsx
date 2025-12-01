@@ -29,7 +29,7 @@ export default function CalendarSection() {
     try {
       const res = await axios.get(`${BASE_URL}/seller/getCalenderEvents`);
       console.log("=> date", res.data);
-      setAllAuctions(res.data);
+       setAllAuctions(res.data);
     } catch (error) {
       console.log(error);
     }

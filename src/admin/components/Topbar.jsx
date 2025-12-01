@@ -55,7 +55,9 @@ export default function Topbar() {
     confirmPassword: "",
   });
 
-  const [profileForm, setProfileForm] = useState(getInitialProfileForm(currentUser));
+  const [profileForm, setProfileForm] = useState(
+    getInitialProfileForm(currentUser)
+  );
   const [imageFile, setImageFile] = useState(null);
   const [imagePreview, setImagePreview] = useState("");
 
@@ -67,8 +69,17 @@ export default function Topbar() {
   // Options
   const countries = ["Pakistan"];
   const cities = [
-    "Karachi", "Lahore", "Islamabad", "Rawalpindi", "Faisalabad",
-    "Multan", "Gujranwala", "Peshawar", "Quetta", "Sialkot", "Hyderabad"
+    "Karachi",
+    "Lahore",
+    "Islamabad",
+    "Rawalpindi",
+    "Faisalabad",
+    "Multan",
+    "Gujranwala",
+    "Peshawar",
+    "Quetta",
+    "Sialkot",
+    "Hyderabad",
   ];
   const genders = ["Male", "Female", "Other"];
 
@@ -76,7 +87,7 @@ export default function Topbar() {
     c.toLowerCase().includes(countrySearch.toLowerCase())
   );
   const filteredCities = cities.filter((c) =>
-   c.toLowerCase().includes(citySearch.toLowerCase())
+    c.toLowerCase().includes(citySearch.toLowerCase())
   );
   const filteredGenders = genders.filter((g) =>
     g.toLowerCase().includes(genderSearch.toLowerCase())
@@ -125,11 +136,14 @@ export default function Topbar() {
     if (value.startsWith("92")) value = "+" + value;
     else if (!value.startsWith("+92")) value = "+92" + value;
 
-    if (value.length > 3 && value.length <= 6) value = value.slice(0, 3) + "-" + value.slice(3);
+    if (value.length > 3 && value.length <= 6)
+      value = value.slice(0, 3) + "-" + value.slice(3);
     else if (value.length > 6 && value.length <= 10)
-      value = value.slice(0, 3) + "-" + value.slice(3, 6) + "-" + value.slice(6);
+      value =
+        value.slice(0, 3) + "-" + value.slice(3, 6) + "-" + value.slice(6);
     else if (value.length > 10)
-      value = value.slice(0, 3) + "-" + value.slice(3, 6) + "-" + value.slice(6, 15);
+      value =
+        value.slice(0, 3) + "-" + value.slice(3, 6) + "-" + value.slice(6, 15);
 
     setProfileForm({ ...profileForm, mobileNumber: value });
   };
@@ -139,7 +153,12 @@ export default function Topbar() {
     if (value.length > 5 && value.length <= 12)
       value = value.slice(0, 5) + "-" + value.slice(5);
     else if (value.length > 12)
-      value = value.slice(0, 5) + "-" + value.slice(5, 12) + "-" + value.slice(12, 13);
+      value =
+        value.slice(0, 5) +
+        "-" +
+        value.slice(5, 12) +
+        "-" +
+        value.slice(12, 13);
     setProfileForm({ ...profileForm, cnic: value });
   };
 
@@ -158,7 +177,11 @@ export default function Topbar() {
       await axios.put(`${BASE_URL}/updatePassword/${currentUser?.id}`, {
         password: passwordForm.newPassword,
       });
-      setPasswordForm({ currentPassword: "", newPassword: "", confirmPassword: "" });
+      setPasswordForm({
+        currentPassword: "",
+        newPassword: "",
+        confirmPassword: "",
+      });
       await Swal.fire({
         title: "Success!",
         text: "Password changed successfully!",
@@ -245,7 +268,8 @@ export default function Topbar() {
       setCitySearch(currentUser?.city || "");
       setGenderSearch(
         currentUser?.gender
-          ? currentUser.gender.charAt(0).toUpperCase() + currentUser.gender.slice(1)
+          ? currentUser.gender.charAt(0).toUpperCase() +
+              currentUser.gender.slice(1)
           : ""
       );
       setImagePreview(currentUser?.image || currentUser?.imageUrl || "");
@@ -258,13 +282,22 @@ export default function Topbar() {
       if (dropdownRef.current && !dropdownRef.current.contains(event.target)) {
         setDropdownOpen(false);
       }
-      if (countryDropdownRef.current && !countryDropdownRef.current.contains(event.target)) {
+      if (
+        countryDropdownRef.current &&
+        !countryDropdownRef.current.contains(event.target)
+      ) {
         setShowCountryDropdown(false);
       }
-      if (cityDropdownRef.current && !cityDropdownRef.current.contains(event.target)) {
+      if (
+        cityDropdownRef.current &&
+        !cityDropdownRef.current.contains(event.target)
+      ) {
         setShowCityDropdown(false);
       }
-      if (genderDropdownRef.current && !genderDropdownRef.current.contains(event.target)) {
+      if (
+        genderDropdownRef.current &&
+        !genderDropdownRef.current.contains(event.target)
+      ) {
         setShowGenderDropdown(false);
       }
     };
@@ -306,14 +339,19 @@ export default function Topbar() {
               className="w-10 h-10 rounded-full object-cover border-2 border-gray-300 hover:border-blue-950 transition"
             />
           ) : (
-            <FaUserCircle size={40} className="text-gray-700 hover:text-blue-950 transition" />
+            <FaUserCircle
+              size={40}
+              className="text-gray-700 hover:text-blue-950 transition"
+            />
           )}
         </button>
 
         {/* Modern Dropdown - Image on Left */}
         <div
           className={`absolute right-0 mt-3 w-80 bg-white rounded-2xl shadow-2xl border border-gray-200 overflow-hidden transition-all duration-300 ease-in-out ${
-            dropdownOpen ? "opacity-100 scale-100 visible" : "opacity-0 scale-95 invisible"
+            dropdownOpen
+              ? "opacity-100 scale-100 visible"
+              : "opacity-0 scale-95 invisible"
           }`}
         >
           {/* Header with Image on Left */}
@@ -332,7 +370,8 @@ export default function Topbar() {
             <div className="flex-1">
               <p className="text-lg font-bold text-gray-900 leading-tight">
                 {currentUser?.name
-                  ? currentUser.name.charAt(0).toUpperCase() + currentUser.name.slice(1)
+                  ? currentUser.name.charAt(0).toUpperCase() +
+                    currentUser.name.slice(1)
                   : "User"}
               </p>
               <p className="text-sm text-gray-600 uppercase tracking-wider mt-1 font-medium">
@@ -342,12 +381,18 @@ export default function Topbar() {
           </div>
 
           {/* Account Settings */}
-          <div
-            onClick={() => setAccountSettingsOpen(!accountSettingsOpen)}
-            className="px-6 py-4 flex items-center gap-3 text-gray-700 hover:bg-gray-100 cursor-pointer transition-all"
-          >
+          <div className="px-6 py-4 flex items-center gap-3 text-gray-700 hover:bg-gray-100 cursor-pointer transition-all">
             <Settings size={18} className="text-gray-600" />
-            <span className="font-semibold">Account Settings</span>
+            <Link
+              to={`${
+                currentUser.role === "admin"
+                  ? "/admin/accountsetting"
+                  : "/seller/accountsetting"
+              }`}
+              className="font-semibold"
+            >
+              Account Settings
+            </Link>
           </div>
 
           {/* Submenu */}
@@ -391,10 +436,14 @@ export default function Topbar() {
       {passwordModalOpen && (
         <div className="fixed inset-0 bg-black/50 backdrop-blur-sm flex items-center justify-center z-50">
           <div className="bg-white rounded-xl p-8 w-full max-w-md shadow-2xl">
-            <h2 className="text-2xl font-bold text-center mb-6">Change Password</h2>
+            <h2 className="text-2xl font-bold text-center mb-6">
+              Change Password
+            </h2>
             <form onSubmit={handlePasswordSubmit}>
               <div className="mb-5">
-                <label className="block text-sm font-medium text-gray-700 mb-2">New Password</label>
+                <label className="block text-sm font-medium text-gray-700 mb-2">
+                  New Password
+                </label>
                 <input
                   type="password"
                   name="newPassword"
@@ -405,7 +454,9 @@ export default function Topbar() {
                 />
               </div>
               <div className="mb-6">
-                <label className="block text-sm font-medium text-gray-700 mb-2">Confirm Password</label>
+                <label className="block text-sm font-medium text-gray-700 mb-2">
+                  Confirm Password
+                </label>
                 <input
                   type="password"
                   name="confirmPassword"
@@ -439,23 +490,40 @@ export default function Topbar() {
       {profileModalOpen && (
         <div className="fixed inset-0 bg-blur-sm backdrop-blur-md flex items-center justify-center z-50">
           <div className="bg-white rounded-lg p-8 w-full max-w-2xl shadow-xl max-h-[90vh] overflow-y-auto">
-            <h2 className="text-2xl font-semibold mb-6 text-center">My Profile</h2>
+            <h2 className="text-2xl font-semibold mb-6 text-center">
+              My Profile
+            </h2>
             <div className="flex flex-col items-center mb-6">
               <div className="relative">
                 <div className="w-32 h-32 rounded-full bg-gray-200 flex items-center justify-center overflow-hidden">
                   {imagePreview ? (
-                    <img src={imagePreview} alt="Profile" className="w-full h-full object-cover" />
+                    <img
+                      src={imagePreview}
+                      alt="Profile"
+                      className="w-full h-full object-cover"
+                    />
                   ) : (
                     <FaUserCircle size={128} className="text-gray-400" />
                   )}
                 </div>
-                <input type="file" id="profileImageInput" accept="image/*" onChange={handleImageChange} className="hidden" />
+                <input
+                  type="file"
+                  id="profileImageInput"
+                  accept="image/*"
+                  onChange={handleImageChange}
+                  className="hidden"
+                />
                 <label
                   htmlFor="profileImageInput"
                   className="absolute bottom-0 right-0 bg-red-600 text-white p-2 rounded-full cursor-pointer transition-colors"
                   title="Change profile picture"
                 >
-                  <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
+                  <svg
+                    xmlns="http://www.w3.org/2000/svg"
+                    className="h-5 w-5"
+                    viewBox="0 0 20 20"
+                    fill="currentColor"
+                  >
                     <path d="M13.586 3.586a2 2 0 112.828 2.828l-.793.793-2.828-2.828.793-.793zM11.379 5.793L3 14.172V17h2.828l8.38-8.379-2.83-2.828z" />
                   </svg>
                 </label>
@@ -469,7 +537,9 @@ export default function Topbar() {
             <div>
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                 <div>
-                  <label className="block text-sm font-medium text-gray-700">Full Name</label>
+                  <label className="block text-sm font-medium text-gray-700">
+                    Full Name
+                  </label>
                   <input
                     type="text"
                     name="name"
@@ -480,7 +550,9 @@ export default function Topbar() {
                   />
                 </div>
                 <div>
-                  <label className="block text-sm font-medium text-gray-700">CNIC</label>
+                  <label className="block text-sm font-medium text-gray-700">
+                    CNIC
+                  </label>
                   <input
                     type="tel"
                     placeholder="00000-0000000-0"
@@ -493,11 +565,16 @@ export default function Topbar() {
                   />
                 </div>
                 <div className="relative" ref={genderDropdownRef}>
-                  <label className="block text-sm font-medium text-gray-700">Gender</label>
+                  <label className="block text-sm font-medium text-gray-700">
+                    Gender
+                  </label>
                   <input
                     type="text"
                     value={genderSearch}
-                    onChange={(e) => { setGenderSearch(e.target.value); setShowGenderDropdown(true); }}
+                    onChange={(e) => {
+                      setGenderSearch(e.target.value);
+                      setShowGenderDropdown(true);
+                    }}
                     onFocus={() => setShowGenderDropdown(true)}
                     placeholder="Search or select gender"
                     className="p-2.5 w-full border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-900"
@@ -505,7 +582,11 @@ export default function Topbar() {
                   {showGenderDropdown && filteredGenders.length > 0 && (
                     <div className="absolute z-10 w-full mt-1 bg-white border border-gray-300 rounded-md shadow-lg max-h-48 overflow-y-auto">
                       {filteredGenders.map((gender) => (
-                        <div key={gender} onClick={() => handleGenderSelect(gender)} className="p-2.5 hover:bg-blue-50 cursor-pointer transition-colors">
+                        <div
+                          key={gender}
+                          onClick={() => handleGenderSelect(gender)}
+                          className="p-2.5 hover:bg-blue-50 cursor-pointer transition-colors"
+                        >
                           {gender}
                         </div>
                       ))}
@@ -513,7 +594,9 @@ export default function Topbar() {
                   )}
                 </div>
                 <div>
-                  <label className="block text-sm font-medium text-gray-700">Date of Birth</label>
+                  <label className="block text-sm font-medium text-gray-700">
+                    Date of Birth
+                  </label>
                   <input
                     type="date"
                     name="dateOfBirth"
@@ -523,11 +606,16 @@ export default function Topbar() {
                   />
                 </div>
                 <div className="relative" ref={countryDropdownRef}>
-                  <label className="block text-sm font-medium text-gray-700">Country</label>
+                  <label className="block text-sm font-medium text-gray-700">
+                    Country
+                  </label>
                   <input
                     type="text"
                     value={countrySearch}
-                    onChange={(e) => { setCountrySearch(e.target.value); setShowCountryDropdown(true); }}
+                    onChange={(e) => {
+                      setCountrySearch(e.target.value);
+                      setShowCountryDropdown(true);
+                    }}
                     onFocus={() => setShowCountryDropdown(true)}
                     placeholder="Search or select country"
                     className="p-2.5 w-full border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-900"
@@ -535,7 +623,11 @@ export default function Topbar() {
                   {showCountryDropdown && filteredCountries.length > 0 && (
                     <div className="absolute z-10 w-full mt-1 bg-white border border-gray-300 rounded-md shadow-lg max-h-48 overflow-y-auto">
                       {filteredCountries.map((country) => (
-                        <div key={country} onClick={() => handleCountrySelect(country)} className="p-2.5 hover:bg-blue-50 cursor-pointer transition-colors">
+                        <div
+                          key={country}
+                          onClick={() => handleCountrySelect(country)}
+                          className="p-2.5 hover:bg-blue-50 cursor-pointer transition-colors"
+                        >
                           {country}
                         </div>
                       ))}
@@ -543,11 +635,16 @@ export default function Topbar() {
                   )}
                 </div>
                 <div className="relative" ref={cityDropdownRef}>
-                  <label className="block text-sm font-medium text-gray-700">City</label>
+                  <label className="block text-sm font-medium text-gray-700">
+                    City
+                  </label>
                   <input
                     type="text"
                     value={citySearch}
-                    onChange={(e) => { setCitySearch(e.target.value); setShowCityDropdown(true); }}
+                    onChange={(e) => {
+                      setCitySearch(e.target.value);
+                      setShowCityDropdown(true);
+                    }}
                     onFocus={() => setShowCityDropdown(true)}
                     placeholder="Search or select city"
                     className="p-2.5 w-full border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-900"
@@ -555,7 +652,11 @@ export default function Topbar() {
                   {showCityDropdown && filteredCities.length > 0 && (
                     <div className="absolute z-10 w-full mt-1 bg-white border border-gray-300 rounded-md shadow-lg max-h-48 overflow-y-auto">
                       {filteredCities.map((city) => (
-                        <div key={city} onClick={() => handleCitySelect(city)} className="p-2.5 hover:bg-blue-50 cursor-pointer transition-colors">
+                        <div
+                          key={city}
+                          onClick={() => handleCitySelect(city)}
+                          className="p-2.5 hover:bg-blue-50 cursor-pointer transition-colors"
+                        >
                           {city}
                         </div>
                       ))}
@@ -563,7 +664,9 @@ export default function Topbar() {
                   )}
                 </div>
                 <div className="mb-3">
-                  <label className="block text-sm font-medium text-gray-700">Username</label>
+                  <label className="block text-sm font-medium text-gray-700">
+                    Username
+                  </label>
                   <input
                     type="text"
                     name="username"
@@ -575,7 +678,9 @@ export default function Topbar() {
                 </div>
               </div>
               <div className="mb-4">
-                <label className="block text-sm font-medium text-gray-700">Email</label>
+                <label className="block text-sm font-medium text-gray-700">
+                  Email
+                </label>
                 <input
                   type="email"
                   name="email"
@@ -585,7 +690,9 @@ export default function Topbar() {
                 />
               </div>
               <div className="mb-6">
-                <label className="block text-sm font-medium text-gray-700">Mobile Number</label>
+                <label className="block text-sm font-medium text-gray-700">
+                  Mobile Number
+                </label>
                 <input
                   type="tel"
                   name="mobileNumber"

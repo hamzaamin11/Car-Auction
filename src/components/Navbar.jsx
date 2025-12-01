@@ -36,8 +36,8 @@ const getInitialProfileForm = (user) => ({
 });
 
 const Navbar = () => {
-  const { isAuthenticated, logout } = useAuth();
   const { currentUser } = useSelector((state) => state.auth);
+
   const [accountSettingsOpen, setAccountSettingsOpen] = useState(false);
 
   const [menuOpen, setMenuOpen] = useState(false);
@@ -647,13 +647,13 @@ const Navbar = () => {
                   </div>
 
                   {/* Account Settings */}
-                  <div
-                    onClick={() => setAccountSettingsOpen(!accountSettingsOpen)}
+                  <Link
+                    to={"/accountsetting"}
                     className="px-4 py-3 flex items-center gap-2 text-gray-700 hover:bg-gray-100 cursor-pointer transition font-medium"
                   >
                     <Settings size={18} className="text-gray-500" />
                     Account Settings
-                  </div>
+                  </Link>
 
                   {/* Nested Options */}
                   {accountSettingsOpen && (
