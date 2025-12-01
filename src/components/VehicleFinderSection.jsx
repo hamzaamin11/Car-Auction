@@ -70,6 +70,8 @@ const VehicleFinderSection = () => {
   const dispatch = useDispatch();
 
   const [filters, setFilters] = useState(initialState);
+  // Add this state (you already have selectedYearRange, just rename or keep both)
+const [quickYearFilter, setQuickYearFilter] = useState(""); // e.g., "2024-2025"
   const [allCars, setAllCars] = useState([]);
   const [allMakes, setAllMakes] = useState([]);
   const [allModels, setAllModels] = useState([]);
@@ -79,7 +81,9 @@ const VehicleFinderSection = () => {
   const [activeTab, setActiveTab] = useState("all");
   const [carsPerPage, setCarsPerPage] = useState(10);
   const [currentPage, setCurrentPage] = useState(1);
+const [selectedYearRange, setSelectedYearRange] = useState(""); // e.g., "2024-2025"
 
+const [yearRanges, setYearRanges] = useState([]); // dynamic ranges
   const vehicleData = useSelector((state) => state.carSelector);
   const [filterPrice, setFilterPrice] = useState({
     budget: { min: "", max: "" },
@@ -122,53 +126,121 @@ const VehicleFinderSection = () => {
     setCurrentPage(1);
   };
 
-  const handleGetCars = async () => {
-    try {
-      let {
-        condition,
-        toCash,
-        formCash,
-        fromYear,
-        toYear,
-        vehicleType,
-        location,
-        lot,
-      } = filters;
+const handleGetCars = async () => {
+  try {
+    let {
+      condition,
+      vehicleType,
+      location,
+      lot,
+    } = filters;
 
-      toCash = filterPrice.budget.max ?? "";
-      formCash = filterPrice.budget.min ?? "";
+    // Initialize year and price variables
+    let fromYear = "";
+    let toYear = "";
+    let formCash = "";
+    let toCash = "";
 
-      const make = vehicleData.make || "";
-      const model = vehicleData.model || "";
-
-      if (lot.length === 4) {
-        navigate(`/detailbid/${lot}`);
-        return;
+    // Priority 1: Use quickYearFilter if selected (from Sort By dropdown)
+    if (quickYearFilter && quickYearFilter !== "") {
+      const selected = yearRanges.find(r => r.value === quickYearFilter);
+      if (selected) {
+        fromYear = selected.from.toString();
+        toYear = selected.to.toString();
       }
-
-      const res = await axios.get(
-        `${BASE_URL}/getApprovedVehicles?vehicleCondition=${condition}&make=${make}&model=${model}&minPrice=${formCash}&maxPrice=${toCash}&sortType=${sorting}&yearStart=${fromYear}&yearEnd=${toYear}&bodyStyle=${vehicleType}&locationId=${location}&lot_number=${lot}`
-      );
-
-      setAllCars(res.data || []);
-      setCurrentPage(1);
-    } catch (err) {
-      console.log(err);
+    } 
+    // Priority 2: Use sidebar filters if quickYearFilter is not set
+    else {
+      fromYear = filters.fromYear || "";
+      toYear = filters.toYear || "";
     }
-  };
 
-  const handleGetYear = async () => {
-    try {
-      const res = await axios.get(`${BASE_URL}/admin/fetchVehicleYears`);
-      const formattedYears = res.data.map((year) => ({
-        label: year,
-        value: year,
-      }));
-      setYears(formattedYears);
-    } catch (error) {
-      console.log(error);
+    // Use filterPrice for budget (from Sort By dropdown)
+    if (filterPrice.budget.min && filterPrice.budget.max) {
+      formCash = filterPrice.budget.min;
+      toCash = filterPrice.budget.max;
     }
-  };
+    // Fallback to manual inputs from sidebar
+    else {
+      formCash = filters.formCash || "";
+      toCash = filters.toCash || "";
+    }
+
+    const make = vehicleData.make || "";
+    const model = vehicleData.model || "";
+
+    if (lot.length === 4) {
+      navigate(`/detailbid/${lot}`);
+      return;
+    }
+
+    const res = await axios.get(
+      `${BASE_URL}/getApprovedVehicles?vehicleCondition=${condition}&make=${make}&model=${model}&minPrice=${formCash}&maxPrice=${toCash}&sortType=${sorting}&yearStart=${fromYear}&yearEnd=${toYear}&bodyStyle=${vehicleType}&locationId=${location}&lot_number=${lot}`
+    );
+
+    setAllCars(res.data || []);
+    setCurrentPage(1);
+  } catch (err) {
+    console.log(err);
+  }
+};
+
+ const handleGetYear = async () => {
+  try {
+    const res = await axios.get(`${BASE_URL}/admin/fetchVehicleYears`);
+    const apiYears = res.data.map(year => parseInt(year)).sort((a, b) => b - a); // newest first
+
+    const formattedYears = apiYears.map((year) => ({
+      label: year.toString(),
+      value: year.toString(),
+    }));
+    setYears(formattedYears);
+
+    // Generate Year Ranges like 2024-2025, 2023-2024, etc.
+    const yearRanges = [];
+    for (let i = 0; i < apiYears.length - 1; i++) {
+      const start = apiYears[i + 1]; // older year
+      const end = apiYears[i];     // newer year
+      yearRanges.push({
+        label: `${start}-${end}`,
+        value: `${start}-${end}`,
+        from: start,
+        to: end,
+      });
+    }
+    // Add "Before oldest" option
+    if (apiYears.length > 0) {
+      const oldest = Math.min(...apiYears);
+      yearRanges.push({
+        label: `Before ${oldest}`,
+        value: `1900-${oldest - 1}`,
+        from: 1900,
+        to: oldest - 1,
+      });
+    }
+    setYearRanges(yearRanges); // ← We'll create this state below
+  } catch (error) {
+    console.log(error);
+  }
+};
+const handleYearRangeChange = (e) => {
+  const value = e.target.value;
+  setSelectedYearRange(value);
+
+  if (!value || value === "all-years") {
+    setFilters(prev => ({ ...prev, fromYear: "", toYear: "" }));
+    return;
+  }
+
+  const selected = yearRanges.find(range => range.value === value);
+  if (selected) {
+    setFilters(prev => ({
+      ...prev,
+      fromYear: selected.from.toString(),
+      toYear: selected.to.toString(),
+    }));
+  }
+};
 
   const handleGetAllCities = async () => {
     try {
@@ -254,6 +326,11 @@ const VehicleFinderSection = () => {
   useEffect(() => {
     handleGetModels();
   }, [vehicleData.make]);
+  useEffect(() => {
+  if (filters.fromYear || filters.toYear) {
+    setQuickYearFilter("");
+  }
+}, [filters.fromYear, filters.toYear]);
 
   useEffect(() => {
     handleGetCars();
@@ -268,6 +345,7 @@ const VehicleFinderSection = () => {
     filters.location,
     filters.vehicleType,
     sorting,
+    quickYearFilter,
   ]);
 
   const totalMakes = allMakes.map((m) => ({
@@ -544,41 +622,71 @@ const VehicleFinderSection = () => {
             {allCars.length} Vehicles For Sale
           </h1>
 
-          <div className="flex items-center gap-1">
-            <div className="font-semibold">Sort By</div>
-            <div className="flex gap-2">
-              <div className="w-full">
-                <CustomDropdown
-                  datas={budgetData.map((b) => ({
-                    label: b.label,
-                    value: `${b.min}-${b.max}`,
-                  }))}
-                  placeholder="Select Budget"
-                  name="budget"
-                  value={
-                    filterPrice.budget.min
-                      ? `${filterPrice.budget.min}-${filterPrice.budget.max}`
-                      : ""
-                  }
-                  onChange={handleFilterPrice}
-                />
-              </div>
+<div className="flex items-center gap-2">
+  <div className="font-semibold whitespace-nowrap">Sort By</div>
 
-              <select
-                className="border text-black border-black focus:border-blue-900 focus:ring-1 focus:ring-blue-900 rounded-lg px-3 py-2 text-sm w-full sm:w-auto cursor-pointer bg-white outline-none transition-all duration-200"
-                onChange={(e) => {
-                  setSorting(e.target.value);
-                  setCurrentPage(1);
-                }}
-                value={sorting}
-              >
-                <option value="low">Price: Low to High</option>
-                <option value="high">Price: High to Low</option>
-                <option value="year_desc">Year: Newest to Oldest</option>
-                <option value="year_asc">Year: Oldest to Newest</option>
-              </select>
-            </div>
-          </div>
+  <div className="flex gap-3 w-full max-w-4xl">
+
+    {/* 1. Budget - Native Select (as requested) */}
+    <div className="flex-1 min-w-0">
+      <select
+        className="w-full border border-black text-black focus:border-blue-900 focus:ring-1 focus:ring-blue-900 rounded-lg px-4 py-2.5 text-sm cursor-pointer bg-white outline-none transition-all"
+        value={filterPrice.budget.min ? `${filterPrice.budget.min}-${filterPrice.budget.max}` : ""}
+        onChange={(e) => {
+          if (!e.target.value) {
+            setFilterPrice(prev => ({ ...prev, budget: { min: "", max: "" } }));
+          } else {
+            const [min, max] = e.target.value.split("-").map(Number);
+            setFilterPrice(prev => ({ ...prev, budget: { min, max } }));
+          }
+        }}
+      >
+        <option value="">All Budgets</option>
+        {budgetData.map((b) => (
+          <option key={`${b.min}-${b.max}`} value={`${b.min}-${b.max}`}>
+            {b.label}
+          </option>
+        ))}
+      </select>
+    </div>
+
+    {/* 2. Year Range - Native Select + Fully Independent */}
+    <div className="flex-1 min-w-0">
+      <select
+        className="w-full border border-black text-black focus:border-blue-900 focus:ring-1 focus:ring-blue-900 rounded-lg px-4 py-2.5 text-sm cursor-pointer bg-white outline-none transition-all"
+        value={quickYearFilter}
+        onChange={(e) => {
+          setQuickYearFilter(e.target.value);
+        }}
+      >
+        <option value="">All Years</option>
+        {yearRanges.map((range) => (
+          <option key={range.value} value={range.value}>
+            {range.label}
+          </option>
+        ))}
+      </select>
+    </div>
+
+    {/* 3. Sort Order - Native Select */}
+    <div className="flex-1 min-w-0">
+      <select
+        className="w-full border border-black text-black focus:border-blue-900 focus:ring-1 focus:ring-blue-900 rounded-lg px-4 py-2.5 text-sm cursor-pointer bg-white outline-none transition-all"
+        value={sorting}
+        onChange={(e) => {
+          setSorting(e.target.value);
+          setCurrentPage(1);
+        }}
+      >
+        <option value="low">Price: Low to High</option>
+        <option value="high">Price: High to Low</option>
+        <option value="year_desc">Year: Newest First</option>
+        <option value="year_asc">Year: Oldest First</option>
+      </select>
+    </div>
+
+  </div>
+</div>
         </div>
 
         <div className="overflow-y-auto max-h-screen">

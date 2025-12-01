@@ -16,10 +16,13 @@ import { io } from "socket.io-client";
 import { current } from "@reduxjs/toolkit";
 import Swal from "sweetalert2";
 import { IoMdArrowBack } from "react-icons/io";
-import { ChevronRight } from "lucide-react";
+
 import { WarningModal } from "../../components/ModelModal/WarningModel";
 import defaultImage from "../../../public/images/default.png";
-
+import { useDispatch } from "react-redux";
+import { FaHeart } from "react-icons/fa";
+import { ChevronLeft, ChevronRight } from "lucide-react";
+import { addInList } from "../../components/Redux/WishlistSlice";
 export const Customerbid = () => {
   const { currentUser } = useSelector((state) => state.auth);
 
@@ -63,7 +66,7 @@ export const Customerbid = () => {
   console.log("=>", remainingTime);
   const [phase, setPhase] = useState("loading");
   const [key, setKey] = useState(0);
-
+const [activeTab, setActiveTab] = useState("similar");   // ← ADD THIS LINE
   const imageList = selectedPrice?.images || [];
 
   const handleIsOpenModal = (active) => {
@@ -257,9 +260,21 @@ export const Customerbid = () => {
     setKey((prev) => prev + 1);
   }, [allCustomerBid]);
 
-  useEffect(() => {
+useEffect(() => {
+  // This runs every time you click a different car
+  setSelectedPrice(null);
+  setAllCustomerBid([]);
+  setRemainingTime(0);
+  setPhase("loading");
+  setViewImage(null);
+  setIndexImage(0);
+  setIsOpen(false);
+
+  if (vehicleId) {
     handleGetPrice();
-  }, []);
+    handleGetallBid();
+  }
+}, [vehicleId]);
 
   // === ADD TO CALENDAR FUNCTION ===
   const generateICS = () => {
@@ -372,7 +387,7 @@ END:VCALENDAR`.trim();
         {/* LEFT: IMAGE SLIDER */}
         <div className="bg-white rounded-xl shadow-md p-4 relative">
           {/* Image container */}
-          <div className="relative w-full h-[350px] sm:h-[400px] md:h-[450px] lg:h-[500px] rounded-lg overflow-hidden">
+          <div className="relative w-full h-[350px] sm:h-[400px] md:h-[450px] lg:h-[400px] rounded-lg overflow-hidden">
             <img
               src={viewImage || defaultImage}
               alt="No image found"
@@ -1106,9 +1121,286 @@ END:VCALENDAR`.trim();
         />
       )}
       <ToastContainer />
+      {/* ====================== NEW TABS SECTION STARTS ====================== */}
+      <div className="mt-16">
+        <div className="bg-white rounded-xl shadow-lg overflow-hidden">
+          {/* Tabs */}
+          <div className="border-b border-gray-200">
+            <div className="flex">
+              <button
+                onClick={() => setActiveTab("similar")}
+                className={`flex-1 py-5 text-lg font-bold transition-all ${
+                  activeTab === "similar"
+                    ? "text-blue-950 border-b-4 border-blue-950"
+                    : "text-gray-500 hover:text-blue-950"
+                }`}
+              >
+                View Similar Vehicles
+              </button>
+              <button
+                onClick={() => setActiveTab("about")}
+                className={`flex-1 py-5 text-lg font-bold transition-all ${
+                  activeTab === "about"
+                    ? "text-blue-950 border-b-4 border-blue-950"
+                    : "text-gray-500 hover:text-blue-950"
+                }`}
+              >
+                About WheelBidz
+              </button>
+            </div>
+          </div>
+
+          {/* Content */}
+          <div className="p-6">
+            {/* Similar Vehicles Tab */}
+            {activeTab === "similar" && selectedPrice && (
+              <SimilarVehicles currentVehicle={selectedPrice} />
+            )}
+
+            {/* About Tab */}
+            {activeTab === "about" && (
+              <div className="text-center py-16 bg-gray-50 rounded-xl">
+                <h2 className="text-4xl font-bold text-gray-800 mb-6">About WheelBidz</h2>
+                <p className="text-lg text-gray-700 max-w-4xl mx-auto leading-relaxed px-4">
+                  WheelBidz is Pakistan’s most trusted online vehicle auction platform. We offer certified used cars with full transparency, live bidding, detailed inspection reports, and verified documents.
+                </p>
+                <div className="grid grid-cols-1 md:grid-cols-3 gap-10 mt-12 max-w-5xl mx-auto">
+                  <div>
+                    <div className="text-5xl font-bold text-blue-950">10K+</div>
+                    <p className="mt-3 text-gray-600">Vehicles Sold</p>
+                  </div>
+                  <div>
+                    <div className="text-5xl font-bold text-blue-950">50K+</div>
+                    <p className="mt-3 text-gray-600">Happy Customers</p>
+                  </div>
+                  <div>
+                    <div className="text-5xl font-bold text-blue-950">100%</div>
+                    <p className="mt-3 text-gray-600">Transparent Bidding</p>
+                  </div>
+                </div>
+              </div>
+            )}
+          </div>
+        </div>
+      </div>
+      {/* ====================== NEW TABS SECTION ENDS ====================== */}
+
+      {isOpen && (
+        <LiveCommentsModal
+          isOpen={isOpen}
+          setIsOpen={setIsOpen}
+          allCustomerBid={allCustomerBid}
+          onSubmitBid={handleSubmitBid}
+          phase={phase}
+          remainingTime={remainingTime}
+          timerKey={key}
+          selectedPrice={selectedPrice}
+          handleGetallBid={handleGetallBid}
+          handleGetPrice={handleGetPrice}
+        />
+      )}
+      <ToastContainer />
       {isOpenModal === "warning" && (
         <WarningModal onClose={() => handleIsOpenModal("")} />
       )}
+    </div>
+  );
+};
+
+// ==================== EXACT SAME CARD AS HOMEPAGE ====================
+const CarCard = ({ car }) => {
+  const navigate = useNavigate();
+  const dispatch = useDispatch();
+  const { currentUser } = useSelector((state) => state.auth);
+  const wishlistByUser = useSelector((state) => state.wishList.wishlistByUser);
+
+  const isInWishlist = currentUser?.id && wishlistByUser?.[currentUser.id]?.some(v => v.id === car.id);
+
+  const handleWishlist = (e) => {
+    e.stopPropagation();
+    if (!currentUser) {
+      Swal.fire({ title: "Login Required", text: "Please login to add to wishlist", icon: "warning" });
+      return;
+    }
+    if (isInWishlist) return;
+    dispatch(addInList({ userId: currentUser.id, vehicle: car }));
+  };
+
+  return (
+   <div
+    onClick={() => navigate(`/detailbid/${car.id}`)}
+    className="relative bg-white rounded-xl shadow-lg hover:shadow-2xl transition-all duration-300 overflow-hidden cursor-pointer"
+  >
+    <img
+      src={car.images?.[0] || defaultImage}
+      alt={`${car.make} ${car.model}`}
+      className="w-full h-48 object-cover rounded-t-xl"
+    />
+
+    <div className="p-6 space-y-1">
+      {/* Heart Icon */}
+      <div className="flex justify-end -mt-2">
+        <button
+          onClick={handleWishlist}
+          className={`p-1 rounded-full shadow-lg transition-all ${
+            isInWishlist ? "text-red-600 " : "text-gray-400 hover:text-red-600"
+          }`}
+        >
+          <FaHeart size={20} className={isInWishlist ? "fill-current" : ""} />
+        </button>
+      </div>
+
+      {/* Title */}
+      <h3 className="text-[15px] font-bold text-gray-800 -mt-6">
+        {car.make} {car.model} 
+      </h3>
+
+      <p className=" text-black text-[13px]"><span className="font-medium">Lot#</span> {car.lot_number}</p>
+        <p className=" text-black text-[13px]">
+          <span className="font-medium">Model Year:</span> {car.year}
+        </p>
+         <p className="text-sm text-black text-[13px]">
+          <span className="font-medium">Location:</span> {car.cityName}
+        </p>
+     
+
+     
+
+      <button
+        onClick={() => navigate(`/detailbid/${car.id}`)}
+        className="mt-3 w-full bg-blue-950 hover:bg-blue-900 text-white py-2 rounded text-sm font-semibold"
+      >
+        View Details
+      </button>
+    </div>
+  </div>
+  );
+};
+
+// ==================== SIMILAR VEHICLES COMPONENT ====================
+const SimilarVehicles = ({ currentVehicle }) => {
+  const [cars, setCars] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [currentIndex, setCurrentIndex] = useState(0);
+
+  const carsPerPage = 4;
+
+  useEffect(() => {
+    const fetchSimilar = async () => {
+      if (!currentVehicle?.vehicleId) {
+        console.log("Waiting for vehicleId...");
+        return;
+      }
+
+      console.log("Fetching similar vehicles for vehicleId:", currentVehicle.vehicleId);
+
+      try {
+        const res = await axios.get(
+          `${BASE_URL}/getSimilarVehicles/${currentVehicle.vehicleId}`
+        );
+
+        console.log("Similar vehicles loaded:", res.data);
+        setCars(res.data || []);
+      } catch (error) {
+        console.error("Failed to fetch similar vehicles:", error.response || error);
+        setCars([]);
+      } finally {
+        setLoading(false);
+        setCurrentIndex(0); // Reset carousel on new data
+      }
+    };
+
+    fetchSimilar();
+  }, [currentVehicle?.vehicleId]);
+
+  // Navigation handlers
+  const goToPrevious = () => {
+    setCurrentIndex((prev) => 
+      prev === 0 ? Math.max(0, cars.length - carsPerPage) : prev - carsPerPage
+    );
+  };
+
+  const goToNext = () => {
+    setCurrentIndex((prev) => 
+      prev + carsPerPage >= cars.length ? 0 : prev + carsPerPage
+    );
+  };
+
+  // Loading state
+  if (loading) {
+    return (
+      <div className="text-center py-12 text-gray-600">
+        Loading similar vehicles...
+      </div>
+    );
+  }
+
+  // No results
+  if (cars.length === 0) {
+    return (
+      <div className="text-center py-12 text-gray-500">
+        No similar vehicles found
+      </div>
+    );
+  }
+
+  const visibleCars = cars.slice(currentIndex, currentIndex + carsPerPage);
+  const hasPrevious = currentIndex > 0;
+  const hasNext = currentIndex + carsPerPage < cars.length;
+
+  return (
+    <div className="py-10 -mx-6 -mb-6 bg-gray-100 rounded-b-xl">
+      <h2 className="text-3xl font-bold text-center mb-10 text-gray-800">
+        View Similar Vehicles
+      </h2>
+
+      <div className="relative px-10"> {/* Extra padding for arrows */}
+  {/* Previous Arrow */}
+<button
+  onClick={goToPrevious}
+  disabled={!hasPrevious}
+  className={`absolute left-2 top-1/2 -translate-y-1/2 z-10 w-12 h-12 rounded-full bg-white shadow-lg flex items-center justify-center transition-all ${
+    hasPrevious 
+      ? 'hover:bg-gray-100 hover:shadow-xl text-gray-800' 
+      : 'text-gray-300 cursor-not-allowed'
+  }`}
+>
+  <ChevronLeft className="w-7 h-7" />
+</button>
+
+{/* Next Arrow */}
+<button
+  onClick={goToNext}
+  disabled={!hasNext}
+  className={`absolute right-2 top-1/2 -translate-y-1/2 z-10 w-12 h-12 rounded-full bg-white shadow-lg flex items-center justify-center transition-all ${
+    hasNext 
+      ? 'hover:bg-gray-100 hover:shadow-xl text-gray-800' 
+      : 'text-gray-300 cursor-not-allowed'
+  }`}
+>
+  <ChevronRight className="w-7 h-7" />
+</button>
+
+        {/* Carousel Grid */}
+        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
+          {visibleCars.map((car) => (
+            <CarCard 
+              key={car.id || car.vehicleId || car._id} 
+              car={car} 
+            />
+          ))}
+          {/* Fill empty slots if less than 4 */}
+          {visibleCars.length < carsPerPage && (
+            <>
+              {Array.from({ length: carsPerPage - visibleCars.length }).map((_, i) => (
+                <div key={`empty-${i}`} className="invisible">
+                  <CarCard car={{}} /> {/* Invisible placeholder */}
+                </div>
+              ))}
+            </>
+          )}
+        </div>
+      </div>
     </div>
   );
 };

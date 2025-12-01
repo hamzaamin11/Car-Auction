@@ -47,8 +47,15 @@ const FilterPriceCars = () => {
   const dispatch = useDispatch();
 
   const [allMake, setAllMake] = useState([]);
+  
 
   const [allCities, setAllCities] = useState([]);
+  const [quickYearFilter, setQuickYearFilter] = useState(""); // e.g., "2024-2025"
+
+
+const [selectedYearRange, setSelectedYearRange] = useState(""); // e.g., "2024-2025"
+
+const [yearRanges, setYearRanges] = useState([]); // dynamic ranges
 
   const [filterPrice, setFilterPrice] = useState({
     budget: { min: "", max: "" },
@@ -281,43 +288,74 @@ const FilterPriceCars = () => {
     return filters.length > 0 ? `/filterprice/${filters[0]}` : "/filterprice";
   };
 
-  const handleGetFilterByVehicle = async () => {
-    setLoading(true);
+const handleGetFilterByVehicle = async () => {
+  setLoading(true);
 
-    // Agar lot number diya hai → directly navigate
-    if (filterData.lot.length === 4) {
-      navigate(`/detailbid/${filterData.lot}`);
-      setLoading(false); // Yaha loading off karein
-      return; // Exit here
+  // Lot number direct navigation
+  if (filterData.lot.length === 4) {
+    navigate(`/detailbid/${filterData.lot}`);
+    setLoading(false);
+    return;
+  }
+
+  try {
+    // Build clean params – only add if value exists
+    const params = new URLSearchParams();
+
+    // Always send these
+    if (filterData.allMakes) params.append("make", filterData.allMakes);
+    if (filterData.allModels) params.append("model", filterData.allModels);
+    if (filterData.vehicleType) params.append("bodyStyle", filterData.vehicleType);
+    if (filterData.location) params.append("locationId", filterData.location);
+    if (filterData.lot) params.append("lot_number", filterData.lot);
+
+    // Price – use quick budget OR manual input
+    const minPrice = filterPrice.budget.min || filterData.formCash;
+    const maxPrice = filterPrice.budget.max || filterData.toCash;
+    if (minPrice) params.append("minPrice", minPrice);
+    if (maxPrice) params.append("maxPrice", maxPrice);
+
+    // Year – use quick filter OR sidebar years
+ // Year – use quick filter OR sidebar years (quick filter takes priority)
+    let yearStart, yearEnd;
+
+    if (quickYearFilter) {
+      const selected = yearRanges.find(r => r.value === quickYearFilter);
+      if (selected) {
+        yearStart = selected.from;
+        yearEnd = selected.to;
+      }
+    } else {
+      yearStart = filterData.selectYear;
+      yearEnd = filterData.toYear;
     }
 
-    // Agar lot nahi hai → fir API call chalegi
-    try {
-      const res = await axios.get(`${BASE_URL}/getApprovedVehicles`, {
-        params: {
-          locationId: filterData?.location,
-          make: filterData?.allMakes,
-          model: filterData?.allModels,
-          bodyStyle: filterData?.vehicleType,
-          minPrice: filterData?.formCash || filterPrice.budget.min,
-          maxPrice: filterData?.toCash || filterPrice.budget.max,
-          sortType: sorting,
-          yearStart: filterData.selectYear || "",
-          yearEnd: filterData.toYear || "",
-          vehicleCondition: activeTab !== "all" ? activeTab : undefined,
-          lot_number: filterData.lot,
-        },
-      });
+    if (yearStart) params.append("yearStart", yearStart);
+    if (yearEnd) params.append("yearEnd", yearEnd);
 
-      setAllFilterCars(res.data);
-      setCurrentPage(1);
-    } catch (error) {
-      console.log("Error fetching cars:", error);
-      setAllFilterCars([]);
-    } finally {
-      setLoading(false); // Yeh hamesha chalega
+    // Condition (All / Used / New)
+    if (activeTab !== "all") {
+      params.append("vehicleCondition", activeTab);
     }
-  };
+
+    // Sort Type – always send empty string if no sorting
+    if (sorting) {
+      params.append("sortType", sorting);
+    }
+
+    const res = await axios.get(`${BASE_URL}/getApprovedVehicles`, {
+      params,
+    });
+
+    setAllFilterCars(res.data || []);
+    setCurrentPage(1);
+  } catch (error) {
+    console.log("Error fetching cars:", error);
+    setAllFilterCars([]);
+  } finally {
+    setLoading(false);
+  }
+};
 
   const handleGetFilterModel = async () => {
     if (!filterData.allMakes) {
@@ -355,13 +393,18 @@ const FilterPriceCars = () => {
     }
   };
 
-  const handleChange = (name, value) => {
+ const handleChange = (name, value) => {
     const updatedFilterData = { ...filterData, [name]: value };
     if (name === "allMakes") {
       updatedFilterData.allModels = "";
     }
+    
+    // Clear quick year filter when sidebar year filters are used
+    if (name === "selectYear" || name === "toYear") {
+      setQuickYearFilter("");
+    }
+    
     setFilterData(updatedFilterData);
-    navigate(buildFilterUrl(updatedFilterData));
   };
 
   const handleFilterPrice = (e) => {
@@ -377,10 +420,44 @@ const FilterPriceCars = () => {
     handleGetAllMakes();
     handleGetYear();
   }, []);
-
   useEffect(() => {
+  const generateYearRanges = async () => {
+    try {
+      const res = await axios.get(`${BASE_URL}/admin/fetchVehicleYears`);
+      const apiYears = res.data.map(year => parseInt(year)).sort((a, b) => b - a);
+
+      const ranges = [];
+      for (let i = 0; i < apiYears.length - 1; i++) {
+        const older = apiYears[i + 1];
+        const newer = apiYears[i];
+        ranges.push({
+          label: `${older}-${newer}`,
+          value: `${older}-${newer}`,
+          from: older,
+          to: newer,
+        });
+      }
+      if (apiYears.length > 0) {
+        const oldest = Math.min(...apiYears);
+        ranges.push({
+          label: `Before ${oldest}`,
+          value: `1900-${oldest - 1}`,
+          from: 1900,
+          to: oldest - 1,
+        });
+      }
+      setYearRanges(ranges);
+    } catch (err) {
+      console.log(err);
+    }
+  };
+
+  generateYearRanges();
+}, []);
+
+ useEffect(() => {
     handleGetFilterByVehicle();
-  }, [activeTab, sorting, filterData, filterPrice]);
+  }, [activeTab, sorting, filterData, filterPrice, quickYearFilter]);
 
   useEffect(() => {
     handleGetFilterModel();
@@ -631,41 +708,57 @@ const FilterPriceCars = () => {
               : "Cars"}{" "}
             Vehicles For Sale
           </h1>
-          <div className="flex items-center gap-1">
-            <div className="font-semibold">Sort By</div>
-            <div className="flex gap-2">
-              <div className="w-full">
-                <CustomDropdown
-                  datas={budgetData.map((b) => ({
-                    label: b.label,
-                    value: `${b.min}-${b.max}`,
-                  }))}
-                  placeholder="Select Budget"
-                  name="budget"
-                  value={
-                    filterPrice.budget.min
-                      ? `${filterPrice.budget.min}-${filterPrice.budget.max}`
-                      : ""
-                  }
-                  onChange={handleFilterPrice}
-                />
-              </div>
+     <div className="flex items-center gap-2">
+  <div className="font-semibold whitespace-nowrap">Sort By</div>
+  <div className="flex gap-3 w-full max-w-4xl">
 
-              <select
-                className="border text-black border-black focus:border-blue-900 focus:ring-1 focus:ring-blue-900 rounded-lg px-3 py-2 text-sm w-full sm:w-auto cursor-pointer bg-white outline-none transition-all duration-200"
-                onChange={(e) => {
-                  setSorting(e.target.value);
-                  setCurrentPage(1);
-                }}
-                value={sorting}
-              >
-                <option value="low">Price: Low to High</option>
-                <option value="high">Price: High to Low</option>
-                <option value="year_desc">Year: Newest to Oldest</option>
-                <option value="year_asc">Year: Oldest to Newest</option>
-              </select>
-            </div>
-          </div>
+    {/* Budget */}
+    <select
+      className="flex-1 border border-black rounded-lg px-4 py-2.5 text-sm bg-white"
+      value={filterPrice.budget.min ? `${filterPrice.budget.min}-${filterPrice.budget.max}` : ""}
+      onChange={(e) => {
+        if (!e.target.value) {
+          setFilterPrice(prev => ({ ...prev, budget: { min: "", max: "" } }));
+        } else {
+          const [min, max] = e.target.value.split("-").map(Number);
+          setFilterPrice(prev => ({ ...prev, budget: { min, max } }));
+        }
+      }}
+    >
+      <option value="">All Budgets</option>
+      {budgetData.map(b => (
+        <option key={b.label} value={`${b.min}-${b.max}`}>{b.label}</option>
+      ))}
+    </select>
+
+    {/* Year Range */}
+    <select
+      className="flex-1 border border-black rounded-lg px-4 py-2.5 text-sm bg-white"
+      value={quickYearFilter}
+      onChange={(e) => setQuickYearFilter(e.target.value)}
+    >
+      <option value="">All Years</option>
+      {yearRanges.map(r => (
+        <option key={r.value} value={r.value}>{r.label}</option>
+      ))}
+    </select>
+
+    {/* Sorting */}
+    <select
+      className="flex-1 border border-black rounded-lg px-4 py-2.5 text-sm bg-white"
+      value={sorting}
+      onChange={(e) => {
+        setSorting(e.target.value);
+        setCurrentPage(1);
+      }}
+    >
+      <option value="low">Price: Low to High</option>
+      <option value="high">Price: High to Low</option>
+      <option value="year_desc">Year: Newest First</option>
+      <option value="year_asc">Year: Oldest First</option>
+    </select>
+  </div>
+</div>
         </div>
 
         <div className="overflow-y-auto max-h-screen">
@@ -738,7 +831,7 @@ const FilterPriceCars = () => {
                       </span>
                     </div>
 
-                    {/* ❤️ Wishlist Button */}
+                    {/*Wishlist Button */}
                     <div className="flex justify-end mt-4">
                       <button
                         onClick={(e) => {
