@@ -574,6 +574,269 @@ const VehicleInspection = () => {
           </div>
         </header>
 
+        <section className="lg:mt-6 mt-3 space-y-4 max-h-[55vh] overflow-y-auto md:hidden block">
+          {loading ? (
+            <p className="text-center text-indigo-600 font-semibold">
+              Loading vehicles...
+            </p>
+          ) : currentCars.length === 0 ? (
+            <p className="text-center text-gray-600">No vehicles found.</p>
+          ) : (
+            currentCars?.map((vehicle) => (
+              <div
+                key={vehicle.newVehicleId}
+                className="bg-white border rounded-xl shadow-sm hover:shadow-md transition p-2 flex items-center justify-between gap-4"
+              >
+                <div className="w-20 h-20 sm:w-28 sm:h-28 rounded-lg overflow-hidden bg-gray-100 flex-shrink-0">
+                  <img
+                    src={vehicle.images[0]}
+                    alt={`${vehicle.make} ${vehicle.model}`}
+                    className="w-full h-full object-cover hover:cursor-pointer"
+                    onClick={() => (
+                      setSelectVehicle(vehicle), handleIsOpenToggle("View")
+                    )}
+                  />
+                </div>
+                <div className="flex-1 min-w-0">
+                  <h2 className="font-bold text-gray-800 text-xs truncate">
+                    {vehicle.make || "—"} {vehicle.model || "—"}{" "}
+                    {vehicle.series || "—"}
+                  </h2>
+                  <p className="text-xs font-bold text-gray-900">
+                    PKR {vehicle.buyNowPrice}
+                  </p>
+                  <p className="text-xs text-gray-600">
+                    {vehicle.year || "—"} • {vehicle.fuelType || "—"} •{" "}
+                    {vehicle.transmission || "—"}
+                  </p>
+                  <p
+                    className={`text-[8px] text-center rounded w-16 ${
+                      vehicle.approval === "Y"
+                        ? "bg-green-500 text-white"
+                        : "bg-red-500 text-white"
+                    }`}
+                  >
+                    {vehicle.approval === "Y" ? "Approved" : "Not Approved"}
+                  </p>
+                </div>
+                <div className="relative flex-shrink-0">
+                  <button
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      toggleDropdown(vehicle.newVehicleId);
+                    }}
+                    className="px-3 py-1 text-gray-600 text-xl"
+                  >
+                    <BsThreeDotsVertical />
+                  </button>
+                  {isDropdownOpen === vehicle.newVehicleId && (
+                    <div className="absolute right-0 mt-2 w-32 bg-white border rounded-lg shadow-lg z-10">
+                      {!isCustomer ? (
+                        <>
+                          <button
+                            onClick={(e) => {
+                              e.stopPropagation();
+                              handleIsOpenToggle("inspection");
+                            }}
+                            className="block w-full px-4 py-2 text-sm text-yellow-600 hover:bg-yellow-100 text-left rounded-t-lg"
+                          >
+                            Upload Doc
+                          </button>
+                          {vehicle.bidId ? (
+                            <button
+                              onClick={(e) => {
+                                e.stopPropagation();
+                                handleEndBidding(vehicle.bidId);
+                                handleIsOpenToggle("bid");
+                              }}
+                              className="block w-full px-4 py-2 text-sm text-green-600 hover:bg-green-100 text-left"
+                            >
+                              Bid Added
+                            </button>
+                          ) : (
+                            <button
+                              onClick={(e) => {
+                                e.stopPropagation();
+                                setSelectVehicle(vehicle);
+                                handleIsOpenToggle("View");
+                              }}
+                              className="block w-full text-left px-4 py-2 text-sm text-green-600 hover:bg-green-100"
+                            >
+                              View Vehicle
+                            </button>
+                          )}
+                          <button
+                            onClick={(e) => {
+                              e.stopPropagation();
+                              handleDelete(
+                                vehicle.newVehicleId,
+                                vehicle.approval
+                              );
+                            }}
+                            className="block w-full text-left px-4 py-2 text-sm text-red-600 hover:bg-red-100 rounded-b-lg"
+                          >
+                            View Doc
+                          </button>
+                        </>
+                      ) : (
+                        <button
+                          onClick={(e) => {
+                            e.stopPropagation();
+                            setCustomerBidData({
+                              userId: user?.id,
+                              vehicleId: vehicle.id,
+                              maxBid: "",
+                              monsterBid: "",
+                            });
+                            setIsCustomerBidModalOpen(true);
+                          }}
+                          className="block w-full text-left px-4 py-2 text-sm text-blue-500 hover:bg-blue-500 hover:text-white"
+                        >
+                          Create Bid
+                        </button>
+                      )}
+                    </div>
+                  )}
+                </div>
+              </div>
+            ))
+          )}
+          {currentCars.length > 0 && (
+            <div className="bg-white rounded-lg shadow-sm p-4 mt-6">
+              <div className="flex flex-col sm:flex-row justify-between items-center gap-4 text-sm text-gray-700">
+                {/* Page Buttons */}
+                <div className="flex items-center gap-1 flex-wrap justify-center">
+                  {/* First Page */}
+                  <button
+                    onClick={() => {
+                      setCurrentPage(1);
+                      window.scrollTo({ top: 0, behavior: "smooth" });
+                    }}
+                    disabled={currentPage === 1}
+                    className={`px-2 py-1 rounded border text-xs sm:text-sm ${
+                      currentPage === 1
+                        ? "bg-gray-100 text-gray-400 cursor-not-allowed"
+                        : "bg-white text-gray-700 hover:bg-gray-50"
+                    }`}
+                  >
+                    {"<<"}
+                  </button>
+
+                  {/* Prev */}
+                  <button
+                    onClick={goToPrevPage}
+                    disabled={currentPage === 1}
+                    className={`px-2 py-1 rounded border text-xs sm:text-sm ${
+                      currentPage === 1
+                        ? "bg-gray-100 text-gray-400 cursor-not-allowed"
+                        : "bg-white text-gray-700 hover:bg-gray-50"
+                    }`}
+                  >
+                    {"<"}
+                  </button>
+
+                  {/* Page Numbers */}
+                  {Array.from(
+                    {
+                      length: Math.min(
+                        window.innerWidth < 640 ? 3 : 5,
+                        totalPages
+                      ),
+                    },
+                    (_, i) => {
+                      let pageNum;
+
+                      if (totalPages <= 5) pageNum = i + 1;
+                      else if (currentPage <= 2) pageNum = i + 1;
+                      else if (currentPage >= totalPages - 1)
+                        pageNum =
+                          totalPages - (window.innerWidth < 640 ? 2 : 4) + i;
+                      else pageNum = currentPage - 1 + i;
+
+                      return (
+                        <button
+                          key={pageNum}
+                          onClick={() => {
+                            setCurrentPage(pageNum);
+                            window.scrollTo({ top: 0, behavior: "smooth" });
+                          }}
+                          className={`px-2 py-1 rounded border text-xs sm:text-sm ${
+                            currentPage === pageNum
+                              ? "bg-blue-950 text-white"
+                              : "bg-white text-gray-700 hover:bg-gray-50"
+                          }`}
+                        >
+                          {pageNum}
+                        </button>
+                      );
+                    }
+                  )}
+
+                  {/* Next */}
+                  <button
+                    onClick={goToNextPage}
+                    disabled={currentPage === totalPages}
+                    className={`px-2 py-1 rounded border text-xs sm:text-sm ${
+                      currentPage === totalPages
+                        ? "bg-gray-100 text-gray-400 cursor-not-allowed"
+                        : "bg-white text-gray-700 hover:bg-gray-50"
+                    }`}
+                  >
+                    {">"}
+                  </button>
+
+                  {/* Last Page */}
+                  <button
+                    onClick={() => {
+                      setCurrentPage(totalPages);
+                      window.scrollTo({ top: 0, behavior: "smooth" });
+                    }}
+                    disabled={currentPage === totalPages}
+                    className={`px-2 py-1 rounded border text-xs sm:text-sm ${
+                      currentPage === totalPages
+                        ? "bg-gray-100 text-gray-400 cursor-not-allowed"
+                        : "bg-white text-gray-700 hover:bg-gray-50"
+                    }`}
+                  >
+                    {">>"}
+                  </button>
+                </div>
+
+                {/* Show entries */}
+                <div className="flex items-center gap-2 text-xs sm:text-sm">
+                  <span className="text-gray-600">Show</span>
+
+                  <select
+                    value={carsPerPage}
+                    onChange={(e) => {
+                      setCarsPerPage(Number(e.target.value));
+                      setCurrentPage(1);
+                    }}
+                    className="border rounded px-2 py-1 text-xs sm:text-sm focus:outline-none focus:ring-2 focus:ring-blue-900"
+                  >
+                    {[10, 20, 50, 100].map((size) => (
+                      <option key={size} value={size}>
+                        {size}
+                      </option>
+                    ))}
+                  </select>
+
+                  <span className="text-gray-600">entries</span>
+                </div>
+                {/* Showing X to Y of Z */}
+                <div className="text-gray-600 text-center sm:text-left">
+                  Showing{" "}
+                  <span className="font-medium">
+                    {startIndex + 1} to {endIndex}
+                  </span>{" "}
+                  of <span className="font-medium">{allVehicles.length}</span>{" "}
+                  entries
+                </div>
+              </div>
+            </div>
+          )}
+        </section>
+
         <section
           className="lg:mt-6  overflow-y-auto md:block hidden pb-10 space-y-2"
           style={{ maxHeight: "calc(100vh - 210px)" }}

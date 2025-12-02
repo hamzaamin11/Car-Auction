@@ -32,6 +32,7 @@ const Sidebar = () => {
         { name: "Vehicle List", path: "/admin/vehicles" },
         { name: "For Approval Vehicles", path: "/admin/approval" },
         { name: "Awaiting Approval", path: "/admin/awaiting" },
+        { name: "Vehicle Inspection", path: "/admin/inspection" },
         { name: "Vehicle Makes List", path: "/admin/addbrand" },
         { name: "Vehicle Model List", path: "/admin/addmodel" },
         { name: "Vehicle Series List", path: "/admin/addseries" },

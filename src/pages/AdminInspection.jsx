@@ -18,6 +18,7 @@ import {
 } from "../components/Redux/SelectorCarSlice";
 import Select from "react-select";
 import Dropdown from "../Dropdown"; // <-- Your custom dropdown
+import { InspectionDoc } from "../admin/components/InspectionModal/InspectionDoc";
 
 const bodyStyles = [
   "Convertible",
@@ -88,7 +89,7 @@ const certifyOptions = [
   { label: "Non-Certified", value: "Non-Certified" },
 ];
 
-const AddVehicles = () => {
+const AdminInspection = () => {
   const { user } = useAuth();
   const isCustomer = user?.role === "customer";
   const { currentUser } = useSelector((state) => state?.auth);
@@ -408,171 +409,8 @@ const AddVehicles = () => {
     }
   };
 
-  const fetchAuctionVehicles = async () => {
-    try {
-      const res = await fetch(`${BASE_URL}/seller/getAuctionVehicle`);
-      if (!res.ok) throw new Error("Failed to fetch auction vehicles");
-      const data = await res.json();
-      setAuctionVehicles(data);
-    } catch (err) {
-      console.error(err);
-    }
-  };
-
   const handleIsOpenToggle = (active) => {
     setIsOpen((prev) => (prev === active ? "" : active));
-  };
-
-  const handleChange = (e) => {
-    const { name, value } = e.target;
-    setVehicleData((prev) => ({ ...prev, [name]: value }));
-  };
-
-  const handleSearchable = (selectedOption) => {
-    setVehicleData((prev) => ({
-      ...prev,
-      locationId: selectedOption?.value,
-    }));
-  };
-
-  const handleEdit = (vehicle) => {
-    // Parse the buyNowPrice string (e.g., "34 Lac") to a raw number (e.g., "3400000")
-    const rawPrice = parsePrice(vehicle.buyNowPrice).toString();
-    console.log("Parsed buyNowPrice:", rawPrice); // Debug to confirm parsing
-    setVehicleData({
-      ...vehicle,
-      buyNowPrice: rawPrice,
-      image: [], // Reset image array to empty for new selections only
-    });
-    setImagePreview(null); // No preview in edit mode
-    setSelectedCount(0); // Reset count to 0, ignoring previous images
-    setPrice(rawPrice); // Set price state to raw number
-    setFormOpen(true);
-    setEditId(vehicle.newVehicleId);
-  };
-
-  const handlePriceChange = (e) => {
-    const value = e.target.value;
-    if (value === "" || /^[1-9][0-9]{0,8}$/.test(value)) {
-      setPrice(value);
-      const parsedValue = parsePrice(value);
-      setVehicleData((prev) => ({
-        ...prev,
-        buyNowPrice: parsedValue.toString(), // Update correct field
-      }));
-    }
-  };
-
-  const handleSubmit = async (e) => {
-    e.preventDefault();
-
-    if (editId && vehicleData.approval === "Y") {
-      await Swal.fire({
-        title: "Cannot Edit Vehicle",
-        text: "Your vehicle is approved now, you cannot edit it.",
-        icon: "error",
-        confirmButtonColor: "#9333ea",
-        confirmButtonText: "OK",
-      });
-      return;
-    }
-
-    const requiredFields = {
-      year: "Year",
-      make: "Make",
-      model: "Model",
-      series: "Series",
-      bodyStyle: "Body Style",
-      transmission: "Transmission",
-      driveType: "Drive Type",
-      fuelType: "Fuel Type",
-      color: "Color",
-      mileage: "Mileage",
-      vehicleCondition: "Vehicle Condition",
-      locationId: "Location",
-      buyNowPrice: "Buy Now Price",
-      certifyStatus: "Certify Status",
-      image: "Image",
-    };
-
-    for (let field in requiredFields) {
-      if (
-        !vehicleData[field] ||
-        (Array.isArray(vehicleData[field]) && vehicleData[field].length === 0)
-      ) {
-        Swal.fire({
-          title: "Missing Field",
-          text: `${requiredFields[field]} is required.`,
-          icon: "error",
-          confirmButtonColor: "#ef4444",
-        });
-        return;
-        return;
-      }
-    }
-    if (vehicleData.buyNowPrice < 10000) {
-      await Swal.fire({
-        title: "Cannot Edit Vehicle",
-        text: "Your vehicle Price is less than 10000",
-        icon: "error",
-        confirmButtonColor: "#9333ea",
-        confirmButtonText: "OK",
-      });
-      return;
-    }
-    setLoading(true);
-    const formData = new FormData();
-    formData.append("userId", currentUser?.id);
-    Object.entries(vehicleData).forEach(([key, value]) => {
-      if (key === "userId") return;
-      if (key === "image") {
-        if (Array.isArray(value)) {
-          value.forEach((file) => {
-            formData.append("image", file);
-          });
-        }
-      } else if (value !== null && value !== undefined) {
-        formData.append(key, value.toString());
-      }
-    });
-
-    const method = editId ? "PUT" : "POST";
-    const url = editId
-      ? `${BASE_URL}/seller/updateVehicle/${editId}`
-      : `${BASE_URL}/seller/addVehicle`;
-
-    try {
-      const res = await fetch(url, { method, body: formData });
-      if (!res.ok) throw new Error("Submission failed.");
-      setVehicleData(initialFields);
-      setImage(null);
-      setImagePreview(null);
-      setSelectedCount(0);
-      setPrice("");
-      setFormOpen(false);
-      setEditId(null);
-      Swal.fire({
-        title: "Success!",
-        text: editId
-          ? "Vehicle updated successfully"
-          : "Vehicle added successfully",
-        icon: "success",
-        confirmButtonColor: "#10b981",
-        timer: 3000,
-        timerProgressBar: true,
-      });
-      handleGetAllVehicleById();
-    } catch (err) {
-      setErrorMsg(err.message);
-      Swal.fire({
-        title: "Error",
-        text: err.message || "Something went wrong.",
-        icon: "error",
-        confirmButtonColor: "#ef4444",
-      });
-    } finally {
-      setLoading(false);
-    }
   };
 
   const handleDelete = async (vehicleId, approval) => {
@@ -706,7 +544,7 @@ const AddVehicles = () => {
       <div className="max-w-7xl mx-auto">
         <header className="flex flex-col md:flex-row justify-between items-center">
           <h1 className="lg:text-3xl text-xl font-bold text-gray-800 p-3">
-            Vehicle List
+            Inspection Vehicle List
           </h1>
           <div className="relative w-full max-w-md">
             <span className="absolute inset-y-0 left-0 flex items-center pl-3 text-gray-400">
@@ -734,426 +572,8 @@ const AddVehicles = () => {
               }}
             />
           </div>
-          {!isCustomer && (
-            <CustomAdd
-              text="Add Vehicle"
-              variant="add"
-              onClick={() => {
-                setFormOpen(!formOpen);
-                setVehicleData({
-                  ...initialFields,
-                  userId: currentUser?.id || "",
-                });
-                setImage(null);
-                setImagePreview(null);
-                setEditId(null);
-                setSelectedCount(0);
-                setPrice("");
-                setErrorMsg("");
-                setSuccessMsg("");
-                dispatch(addYear(""));
-                dispatch(addMake(""));
-                dispatch(addModel(""));
-                dispatch(addSeries(""));
-              }}
-            />
-          )}
         </header>
 
-        {(errorMsg || successMsg) && (
-          <div
-            className={`mb-6 p-4 rounded ${
-              errorMsg
-                ? "bg-red-100 text-red-700"
-                : "bg-green-100 text-green-700"
-            }`}
-          >
-            {errorMsg || successMsg}
-          </div>
-        )}
-
-        {formOpen && (
-          <div className="fixed inset-0 z-50 flex items-center justify-center backdrop-blur-sm bg-opacity-30 px-4">
-            <div className="bg-white w-full max-w-5xl max-h-[95vh] overflow-y-auto p-6 rounded-lg relative">
-              <div className="flex justify-between items-center border-b pb-3 mb-4">
-                <h2 className="text-2xl font-bold text-gray-800">
-                  {editId ? "Update Vehicle" : "Add a New Vehicle"}
-                </h2>
-                <button
-                  onClick={() => setFormOpen(false)}
-                  className="text-red-700 text-3xl"
-                >
-                  &times;
-                </button>
-              </div>
-              <form onSubmit={handleSubmit} className="space-y-2">
-                <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-1">
-                    City <span className="text-red-500">*</span>
-                  </label>
-                  <Dropdown
-                    options={cityData}
-                    value={
-                      cityData.find(
-                        (option) =>
-                          String(option.value) ===
-                          String(vehicleData?.locationId)
-                      ) || null
-                    }
-                    onChange={(option) => handleSearchable(option)}
-                    placeholder="Select City...."
-                    className="w-full"
-                  />
-                  <div>
-                    <label className="block text-sm font-medium text-gray-700 my-1">
-                      Car Info <span className="text-red-500">*</span>
-                    </label>
-                    <input
-                      onClick={handleUpdateCarInfo}
-                      value={`${selected?.year || vehicleData?.year} ${
-                        selected?.make || vehicleData?.make
-                      } ${selected?.model || vehicleData?.model} ${
-                        selected?.series || vehicleData?.series
-                      }`}
-                      placeholder="Year/Make/Model/Version"
-                      readOnly
-                      className={`border border-gray-300 px-4 py-2 rounded focus:outline-none focus:ring-2 focus:ring-indigo-500 w-full ${
-                        (selected.year &&
-                          selected.make &&
-                          selected.model &&
-                          selected.series) ||
-                        (vehicleData?.year &&
-                          vehicleData?.make &&
-                          vehicleData?.model &&
-                          vehicleData?.series)
-                          ? "bg-green-200 text-green-700"
-                          : "bg-red-200"
-                      }`}
-                    />
-                  </div>
-                </div>
-                <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                  <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-1">
-                      Vehicle Drive Type <span className="text-red-500">*</span>
-                    </label>
-                    <Dropdown
-                      options={driveTypeOptions}
-                      value={
-                        driveTypeOptions.find(
-                          (o) => o.value === vehicleData.driveType
-                        ) || null
-                      }
-                      onChange={(opt) =>
-                        setVehicleData((p) => ({
-                          ...p,
-                          driveType: opt?.value || "",
-                        }))
-                      }
-                      placeholder="Select Drive Type"
-                      className={
-                        vehicleData.driveType
-                          ? "text-gray-900"
-                          : "text-gray-400"
-                      }
-                    />
-                  </div>
-                  <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-1">
-                      Vehicle Body Style <span className="text-red-500">*</span>
-                    </label>
-                    <Dropdown
-                      options={bodyStyleOptions}
-                      value={
-                        bodyStyleOptions.find(
-                          (o) => o.value === vehicleData.bodyStyle
-                        ) || null
-                      }
-                      onChange={(opt) =>
-                        setVehicleData((p) => ({
-                          ...p,
-                          bodyStyle: opt?.value || "",
-                        }))
-                      }
-                      placeholder="Please Select BodyStyle"
-                      className={
-                        vehicleData.bodyStyle
-                          ? "text-gray-900"
-                          : "text-gray-400"
-                      }
-                    />
-                  </div>
-                  <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-1">
-                      Vehicle Transmission Type{" "}
-                      <span className="text-red-500">*</span>
-                    </label>
-                    <Dropdown
-                      options={transmissionOptions}
-                      value={
-                        transmissionOptions.find(
-                          (o) => o.value === vehicleData.transmission
-                        ) || null
-                      }
-                      onChange={(opt) =>
-                        setVehicleData((p) => ({
-                          ...p,
-                          transmission: opt?.value || "",
-                        }))
-                      }
-                      placeholder="Please Select Transmission Type"
-                      className={
-                        vehicleData.transmission
-                          ? "text-gray-900"
-                          : "text-gray-400"
-                      }
-                    />
-                  </div>
-                  <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-1">
-                      Vehicle Meter Reading{" "}
-                      <span className="text-red-500">*</span>
-                    </label>
-                    <input
-                      name="mileage"
-                      value={vehicleData?.mileage || ""}
-                      onChange={(e) => {
-                        const value = e.target.value;
-                        if (value === "" || /^[1-9][0-9]{0,6}$/.test(value)) {
-                          handleChange(e);
-                        }
-                      }}
-                      placeholder="Meter Reading(KM)"
-                      className="border border-gray-300 px-4 py-2 rounded focus:outline-none focus:ring-2 focus:ring-indigo-500 w-full"
-                    />
-                  </div>
-                  <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-1">
-                      Vehicle Color <span className="text-red-500">*</span>
-                    </label>
-                    <Dropdown
-                      options={colorOptions}
-                      value={
-                        colorOptions.find(
-                          (o) => o.value === vehicleData.color
-                        ) || null
-                      }
-                      onChange={(opt) =>
-                        setVehicleData((p) => ({
-                          ...p,
-                          color: opt?.value || "",
-                        }))
-                      }
-                      placeholder="Please Select Color"
-                      className={
-                        vehicleData.color ? "text-gray-900" : "text-gray-400"
-                      }
-                    />
-                  </div>
-                  <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-1">
-                      Vehicle Fuel Type <span className="text-red-500">*</span>
-                    </label>
-                    <Dropdown
-                      options={fuelTypeOptions}
-                      value={
-                        fuelTypeOptions.find(
-                          (o) => o.value === vehicleData.fuelType
-                        ) || null
-                      }
-                      onChange={(opt) =>
-                        setVehicleData((p) => ({
-                          ...p,
-                          fuelType: opt?.value || "",
-                        }))
-                      }
-                      placeholder="Select Fuel Type"
-                      className={
-                        vehicleData.fuelType ? "text-gray-900" : "text-gray-400"
-                      }
-                    />
-                  </div>
-                  <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-1">
-                      Vehicle Condition
-                    </label>
-                    <Dropdown
-                      options={conditionOptions}
-                      value={
-                        conditionOptions.find(
-                          (o) => o.value === vehicleData.vehicleCondition
-                        ) || null
-                      }
-                      onChange={(opt) =>
-                        setVehicleData((p) => ({
-                          ...p,
-                          vehicleCondition: opt?.value || "",
-                        }))
-                      }
-                      placeholder="Select Vehicle Condition"
-                      className={
-                        vehicleData.vehicleCondition
-                          ? "text-gray-900"
-                          : "text-gray-400"
-                      }
-                    />
-                  </div>
-                  <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-1">
-                      Add Price <span className="text-red-500">*</span>
-                    </label>
-                    <input
-                      type="text"
-                      name="buyNowPrice"
-                      value={price}
-                      onChange={handlePriceChange}
-                      placeholder="Add Price "
-                      className="border border-gray-300 px-4 py-2 rounded focus:outline-none focus:ring-2 focus:ring-indigo-500 w-full"
-                    />
-                    {price && (
-                      <p className="mt-2 text-sm text-red-500 font-semibold">
-                        {numberToIndianWords(parsePrice(price))}
-                      </p>
-                    )}
-                  </div>
-                </div>
-                <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-1">
-                    Certification Status <span className="text-red-500">*</span>
-                  </label>
-                  <Dropdown
-                    options={certifyOptions}
-                    value={
-                      certifyOptions.find(
-                        (o) => o.value === vehicleData.certifyStatus
-                      ) || null
-                    }
-                    onChange={(opt) =>
-                      setVehicleData((p) => ({
-                        ...p,
-                        certifyStatus: opt?.value || "",
-                      }))
-                    }
-                    placeholder="Please Select Certification Status"
-                    className={
-                      vehicleData.certifyStatus
-                        ? "text-gray-900"
-                        : "text-gray-400"
-                    }
-                  />
-                </div>
-                <div className="col-span-1 sm:col-span-2 mt-4">
-                  <div className="mb-6">
-                    <label className="block text-sm font-medium text-gray-700 mb-2">
-                      Vehicle Images <span className="text-red-500">*</span>
-                    </label>
-                    <div className="flex items-center justify-center w-full">
-                      <label
-                        htmlFor="vehicleImage"
-                        className="flex flex-col items-center justify-center w-full h-40 border-2 border-dashed border-gray-300 rounded-lg cursor-pointer bg-gray-50 hover:bg-gray-100 transition"
-                      >
-                        <div className="flex flex-col items-center justify-center pt-5 pb-6">
-                          <svg
-                            className="w-10 h-10 mb-3 text-gray-400"
-                            fill="none"
-                            stroke="currentColor"
-                            strokeWidth="2"
-                            viewBox="0 0 24 24"
-                          >
-                            <path
-                              strokeLinecap="round"
-                              strokeLinejoin="round"
-                              d="M7 16a4 4 0 01-.88-7.903A5.002 5.002 0 0115.9 6H16a5 5 0 010 10h-1m-4 4v-8m0 0l-3 3m3-3l3 3"
-                            />
-                          </svg>
-                          <p className="text-sm text-gray-600">
-                            <span className="font-medium text-indigo-600">
-                              Click to upload
-                            </span>
-                          </p>
-                          <p className="text-xs text-gray-400">
-                            PNG, JPG (Max 5MB each)
-                          </p>
-                          <p className="text-xs text-gray-400 px-2">
-                            You can add maximum 5 images and first image will be
-                            used as front on the card
-                          </p>
-                          {selectedCount > 0 && (
-                            <p className="text-sm text-green-600 font-medium mt-2">
-                              {selectedCount} image
-                              {selectedCount > 1 ? "s" : ""} selected
-                            </p>
-                          )}
-                        </div>
-                        <input
-                          id="vehicleImage"
-                          type="file"
-                          multiple
-                          name="image"
-                          onChange={handleFileChange}
-                          className="hidden"
-                        />
-                      </label>
-                    </div>
-                    {preview?.length > 0 && (
-                      <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-5 gap-4 mt-4">
-                        {preview?.map((src, index) => (
-                          <div
-                            key={index}
-                            className="relative border rounded-xl shadow-sm overflow-hidden"
-                          >
-                            <img
-                              src={src}
-                              alt="preview"
-                              className="h-28 w-full object-cover"
-                            />
-                            <div
-                              onClick={() => {
-                                const updatedPreviews = preview.filter(
-                                  (_, i) => i !== index
-                                );
-                                const updatedImages = vehicleData.image.filter(
-                                  (_, i) => i !== index
-                                );
-                                setPreview(updatedPreviews);
-                                setVehicleData((prev) => ({
-                                  ...prev,
-                                  image: updatedImages,
-                                }));
-                                setSelectedCount(updatedImages.length);
-                              }}
-                              className="absolute top-1 right-1 bg-white rounded-full shadow p-1 cursor-pointer hover:bg-gray-100"
-                            >
-                              <span className="text-xs text-gray-600">×</span>
-                            </div>
-                          </div>
-                        ))}
-                      </div>
-                    )}
-                  </div>
-                  <div className="flex justify-center">
-                    <button
-                      type="submit"
-                      disabled={loading}
-                      className="bg-blue-950 text-white px-5 py-2 rounded-lg shadow-md"
-                    >
-                      {loading ? "Loading..." : "Submit Vehicle"}
-                    </button>
-                  </div>
-                </div>
-              </form>
-              {isOpen === "selector" && (
-                <div className="fixed inset-0 bg-opacity-40 flex items-center justify-center z-50">
-                  <div className="w-full max-w-5xl bg-white p-6 rounded-lg shadow-lg relative">
-                    <CarSelector
-                      handleIsOpenToggle={() => handleIsOpenToggle("")}
-                    />
-                  </div>
-                </div>
-              )}
-            </div>
-          </div>
-        )}
         <section className="lg:mt-6 mt-3 space-y-4 max-h-[55vh] overflow-y-auto md:hidden block">
           {loading ? (
             <p className="text-center text-indigo-600 font-semibold">
@@ -1216,11 +636,11 @@ const AddVehicles = () => {
                           <button
                             onClick={(e) => {
                               e.stopPropagation();
-                              handleEdit(vehicle);
+                              handleIsOpenToggle("inspection");
                             }}
                             className="block w-full px-4 py-2 text-sm text-yellow-600 hover:bg-yellow-100 text-left rounded-t-lg"
                           >
-                            Edit
+                            Upload Doc
                           </button>
                           {vehicle.bidId ? (
                             <button
@@ -1242,7 +662,7 @@ const AddVehicles = () => {
                               }}
                               className="block w-full text-left px-4 py-2 text-sm text-green-600 hover:bg-green-100"
                             >
-                              View
+                              View Vehicle
                             </button>
                           )}
                           <button
@@ -1255,7 +675,7 @@ const AddVehicles = () => {
                             }}
                             className="block w-full text-left px-4 py-2 text-sm text-red-600 hover:bg-red-100 rounded-b-lg"
                           >
-                            Delete
+                            View Doc
                           </button>
                         </>
                       ) : (
@@ -1486,11 +906,11 @@ const AddVehicles = () => {
                           <button
                             onClick={(e) => {
                               e.stopPropagation();
-                              handleEdit(vehicle);
+                              handleIsOpenToggle("inspection");
                             }}
                             className="block w-full text-left px-4 py-2 text-sm text-yellow-600 hover:bg-yellow-100 rounded-t-lg"
                           >
-                            Edit
+                            Upload Doc
                           </button>
                           {vehicle.bidId ? (
                             <button
@@ -1512,7 +932,7 @@ const AddVehicles = () => {
                               }}
                               className="block w-full text-left px-4 py-2 text-sm text-green-600 hover:bg-green-100 rounded"
                             >
-                              View
+                              View Vehicle
                             </button>
                           )}
                           <button
@@ -1525,7 +945,7 @@ const AddVehicles = () => {
                             }}
                             className="block w-full text-left px-4 py-2 text-sm text-red-600 hover:bg-red-100 rounded-b-lg"
                           >
-                            Delete
+                            View Doc
                           </button>
                         </>
                       ) : (
@@ -1684,8 +1104,12 @@ const AddVehicles = () => {
           getAllVehicles={handleGetAllVehicleById}
         />
       )}
+
+      {isOpen === "inspection" && (
+        <InspectionDoc handleIsOpenToggle={handleIsOpenToggle} />
+      )}
     </div>
   );
 };
 
-export default AddVehicles;
+export default AdminInspection;

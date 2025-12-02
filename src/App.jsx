@@ -99,6 +99,7 @@ import { AwaitingApproval } from "./admin/pages/AwaitingApprovel";
 import { AccountSetting } from "./admin/pages/AccountSetting";
 import { AuctionEvent } from "./admin/pages/AuctionEvent";
 import VehicleInspection from "./pages/VehicleInspection";
+import AdminInspection from "./pages/AdminInspection";
 
 function Layout() {
   const location = useLocation();
@@ -252,6 +253,8 @@ function Layout() {
           <Route path="/admin/accountsetting" element={<AccountSetting />} />
 
           <Route path="/admin/auctionevent" element={<AuctionEvent />} />
+
+          <Route path="/admin/inspection" element={<AdminInspection />} />
 
           <Route path="/admin/suggestionlist" element={<SuggestionList />} />
 

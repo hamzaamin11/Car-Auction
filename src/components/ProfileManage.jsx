@@ -538,7 +538,7 @@ export const ProfileManage = ({ handleIsOpenModal }) => {
                 />
               </div>
             </div>
-            <div className="flex justify-center gap-3 pt-4 border-t mb-9">
+            <div className="flex justify-center gap-3 pt-4 border-t mb-9 ">
               <button
                 type="button"
                 onClick={() => handleIsOpenModal("")}

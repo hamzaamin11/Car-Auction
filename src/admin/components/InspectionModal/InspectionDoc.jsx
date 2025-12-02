@@ -32,7 +32,7 @@ export const InspectionDoc = ({ handleIsOpenToggle }) => {
   };
 
   return (
-    <div className="fixed  bg-white p-6 w-full  z-50 inset-0 ">
+    <div className="fixed  bg-white p-6 w-full  z-50 inset-0 overflow-y-auto ">
       <h3 className="font-bold text-lg mb-6 flex items-center gap-2 bg-blue-950 text-white p-2 p rounded">
         Upload Vehicle Documents
       </h3>
