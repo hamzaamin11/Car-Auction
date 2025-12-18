@@ -74,7 +74,7 @@ export const Configuration = () => {
       {/* YOUR ORIGINAL HEADER */}
       <div className="flex flex-col sm:flex-row justify-between items-center gap-4 mb-6">
         <h2 className="lg:text-3xl text-xl font-bold text-gray-800">
-          Conmission List
+          Commission List
         </h2>
         <div className="relative w-full max-w-md">
           <CustomSearch
