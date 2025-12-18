@@ -1,22 +1,30 @@
 import { Outlet } from "react-router-dom";
-import SellerSidebar from "../../src/components/SellerSidebar";
+import SellerSidebar from "../../src/components/SellerSidebar"; // Make sure path is correct
 import Topbar from "../admin/components/Topbar";
 
 const SellerLayout = () => {
   return (
     <div className="flex flex-col h-screen bg-gray-50">
-      {/* Main Content Area */}
+      {/* Fixed Topbar */}
       <Topbar />
-      <div className="flex flex-1 h-full">
-        {/* Sidebar - Fixed width */}
-        <div className="w-64 flex-shrink-0 hidden lg:block border-r bg-white">
-          <SellerSidebar />
-        </div>
 
-        {/* Content Area - Flexible width */}
-        <main className="flex-1 overflow-y-auto ">
-          <Outlet /> {/* This will render matched routes */}
+      {/* Main flex area: Sidebar + Content */}
+      <div className="flex flex-1 overflow-hidden">
+        {/* Desktop Sidebar - Visible only on lg+ */}
+        <aside className="w-64 flex-shrink-0 hidden lg:block border-r border-gray-200 bg-white overflow-y-auto">
+          <SellerSidebar />
+        </aside>
+
+        {/* Main Content Area */}
+        <main className="flex-1 overflow-y-auto bg-gray-50">
+          <Outlet />
         </main>
+      </div>
+
+      {/* IMPORTANT: Render SellerSidebar again for mobile */}
+      {/* This handles the hamburger menu and mobile sliding sidebar */}
+      <div className="lg:hidden">
+        <SellerSidebar />
       </div>
     </div>
   );
