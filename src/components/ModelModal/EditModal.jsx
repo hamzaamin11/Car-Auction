@@ -4,12 +4,15 @@ import { BASE_URL } from "../Contant/URL";
 import Select from "react-select";
 import Swal from "sweetalert2";
 import CustomDropdown from "../../CustomDropdown";
+import { useSelector } from "react-redux";
 const initialState = {
   brandId: "",
   modelName: "",
 };
 
 export const EditModal = ({ handleClose, seleteModel, handleGetAllModels }) => {
+  const { currentUser } = useSelector((state) => state?.auth);
+
   const [formData, setFormData] = useState(initialState);
 
   const [allBrands, setAllBrands] = useState([]);
@@ -29,7 +32,9 @@ export const EditModal = ({ handleClose, seleteModel, handleGetAllModels }) => {
 
   const handleGetAllBrands = async () => {
     try {
-      const res = await axios.get(`${BASE_URL}/admin/getBrands`);
+      const res = await axios.get(
+        `${BASE_URL}/admin/getBrands/${currentUser?.role}`
+      );
       setAllBrands(res.data);
     } catch (error) {
       console.log(error);

@@ -19,8 +19,9 @@ import {
 import Select from "react-select";
 import Dropdown from "../Dropdown"; // <-- Your custom dropdown
 import { InspectionDoc } from "../admin/components/InspectionModal/InspectionDoc";
+import { AdminVehicleInspectionDocsView } from "../components/AdminVehicleInspectionDocsView";
 
-const VehicleInspection = () => {
+const ViewInspectionVehicle = () => {
   const { user } = useAuth();
   const isCustomer = user?.role === "customer";
   const { currentUser } = useSelector((state) => state?.auth);
@@ -78,9 +79,6 @@ const VehicleInspection = () => {
   const [isDropdownOpen, setIsDropdownOpen] = useState(null);
   console.log("vehicleData =>>:", imagePreview);
 
-  // Convert numerical price to Indian format (e.g., 2800000 -> "28 Lac")
-
-  // Convert number to Indian words (e.g., 1000000 -> "Ten Lac")
   const numberToIndianWords = (num) => {
     if (!num) return "";
     const ones = [
@@ -147,54 +145,6 @@ const VehicleInspection = () => {
     return words.trim();
   };
 
-  const handleFileChange = (e) => {
-    const files = Array.from(e.target.files);
-
-    if (editId) {
-      // Edit mode: Allow up to 5 new images, ignore existing image count
-      if (files.length > 5) {
-        Swal.fire({
-          title: "Limit Exceeded",
-          text: "You can add a maximum of 5 new images in edit mode.",
-          icon: "warning",
-          confirmButtonColor: "#9333ea",
-        });
-        return;
-        return;
-      }
-      setVehicleData((prev) => ({
-        ...prev,
-        image: [...(prev.image || []), ...files], // Append new files only
-      }));
-      setSelectedCount(files.length); // Count only new files
-    } else {
-      // Add mode: Limit to 5 images total
-      const currentImageCount = vehicleData.image.length;
-      if (currentImageCount + files.length > 5) {
-        Swal.fire({
-          title: "Limit Exceeded",
-          text: "You can add a maximum of 5 images.",
-          icon: "warning",
-          confirmButtonColor: "#9333ea",
-        });
-        return;
-        return;
-      }
-      setVehicleData((prev) => ({
-        ...prev,
-        image: [...prev.image, ...files],
-      }));
-      setSelectedCount(currentImageCount + files.length);
-    }
-
-    const Newpreviews = files.map((file) => URL.createObjectURL(file));
-
-    setPreview([...preview, Newpreviews]);
-
-    // Reset the file input to prevent accumulation
-    e.target.value = null;
-  };
-
   const handleGetAllCities = async () => {
     try {
       const res = await axios.get(`${BASE_URL}/getCitites`);
@@ -219,8 +169,6 @@ const VehicleInspection = () => {
       window.scrollTo({ top: 0, behavior: "smooth" });
     }
   };
-
-  console.log("sdabd =>", selectVehicle);
 
   const goToPrevPage = () => {
     if (currentPage > 1) {
@@ -251,6 +199,31 @@ const VehicleInspection = () => {
         }?search=${search}&Entry=${10}&page=${pageNo}`
       );
       setAllVehicles(res.data);
+    } catch (error) {
+      console.log(error);
+    }
+  };
+
+  const handleUpdateInspectionStatus = async (mark, inspectionId) => {
+    try {
+      const res = await axios.post(
+        `${BASE_URL}/api/admin/inspection/update-status/${inspectionId}`,
+        {
+          status: mark, // approved or rejected
+          remarks: "", // optional
+        }
+      );
+
+      console.log(res.data);
+      await Swal.fire({
+        title: "Success!",
+        text: res?.data?.message,
+        icon: "success",
+        confirmButtonColor: "#9333ea",
+        timer: 2000,
+        timerProgressBar: true,
+      });
+      handleGetAllVehicleById();
     } catch (error) {
       console.log(error);
     }
@@ -342,37 +315,6 @@ const VehicleInspection = () => {
     }
   };
 
-  const handleSubmitSellerBid = async (userId, bidData) => {
-    try {
-      const response = await fetch(`${BASE_URL}/seller/createBid`, {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({
-          userId,
-          ...bidData,
-        }),
-      });
-
-      if (!response.ok) {
-        throw new Error("Failed to create bid");
-      }
-
-      const data = await response.json();
-      setIsSellerBidModalOpen(false);
-    } catch (error) {
-      console.error("Error submitting seller bid:", error);
-    }
-  };
-
-  const cityData = [
-    ...(allCities?.map((city) => ({
-      label: city.cityName,
-      value: city.id,
-    })) || []),
-  ];
-
   const handleEndBidding = async (bidId) => {
     handleIsOpenToggle("bid");
     try {
@@ -386,10 +328,6 @@ const VehicleInspection = () => {
       console.error("End bidding error:", err);
       alert("Error: " + err.message);
     }
-  };
-
-  const handleUpdateCarInfo = () => {
-    handleIsOpenToggle("selector");
   };
 
   useEffect(() => {
@@ -425,7 +363,7 @@ const VehicleInspection = () => {
       <div className="max-w-7xl mx-auto">
         <header className="flex flex-col md:flex-row justify-between items-center">
           <h1 className="lg:text-3xl text-xl font-bold text-gray-800 p-3">
-            Inspection Vehicle List
+            Vehicles Inspection List
           </h1>
           <div className="relative w-full max-w-md">
             <span className="absolute inset-y-0 left-0 flex items-center pl-3 text-gray-400">
@@ -519,38 +457,49 @@ const VehicleInspection = () => {
                               e.stopPropagation();
                               handleIsOpenToggle("inspection");
                             }}
-                            className={`block w-full px-4 py-2 text-sm text-yellow-600 hover:bg-yellow-100 text-left rounded-t-lg ${
+                            className="block w-full px-4 py-2 text-sm text-yellow-600 hover:bg-yellow-100 text-left rounded-t-lg"
+                          >
+                            View Docs
+                          </button>
+                          {vehicle?.inspectionStatus === "approved" ||
+                            vehicle?.inspectionStatus === "rejected"}
+                          <button
+                            disabled={vehicle?.inspectionStatus === "approved"}
+                            onClick={(e) => {
+                              e.stopPropagation();
+
+                              handleUpdateInspectionStatus(
+                                "approved",
+                                vehicle?.inspectionId
+                              );
+                            }}
+                            className={`block w-full text-left px-4 py-2 text-sm text-green-600 hover:bg-green-100  ${
                               vehicle?.inspectionStatus === "approved" ||
                               vehicle?.inspectionStatus === "rejected"
-                                ? "text-yellow-300 bg-gray-100 cursor-not-allowed"
-                                : "text-yellow-600 hover:bg-yellow-100"
+                                ? "text-green-300 bg-gray-100 cursor-not-allowed"
+                                : "text-green-600 hover:bg-green-100"
                             }`}
                           >
-                            Upload Docs
+                            Approved
                           </button>
-                          {vehicle.bidId ? (
-                            <button
-                              onClick={(e) => {
-                                e.stopPropagation();
-                                handleEndBidding(vehicle.bidId);
-                                handleIsOpenToggle("bid");
-                              }}
-                              className="block w-full px-4 py-2 text-sm text-green-600 hover:bg-green-100 text-left"
-                            >
-                              Bid Added
-                            </button>
-                          ) : (
-                            <button
-                              onClick={(e) => {
-                                e.stopPropagation();
-                                setSelectVehicle(vehicle);
-                                handleIsOpenToggle("View");
-                              }}
-                              className="block w-full text-left px-4 py-2 text-sm text-green-600 hover:bg-green-100"
-                            >
-                              View Vehicle
-                            </button>
-                          )}
+
+                          <button
+                            onClick={(e) => {
+                              e.stopPropagation();
+                              handleUpdateInspectionStatus(
+                                "rejected",
+                                vehicle?.inspectionId
+                              );
+                            }}
+                            className={`block w-full text-left px-4 py-2 text-sm text-red-600 hover:bg-red-100 rounded-b-lg ${
+                              vehicle?.inspectionStatus === "approved" ||
+                              vehicle?.inspectionStatus === "rejected"
+                                ? "text-red-300 bg-gray-100 cursor-not-allowed"
+                                : "text-red-600 hover:bg-green-100"
+                            }`}
+                          >
+                            Reject
+                          </button>
                         </>
                       ) : (
                         <button
@@ -737,7 +686,7 @@ const VehicleInspection = () => {
                     )}
                   />
                 </div>
-                <div className="flex-1 min-w-0 space-y-1 ">
+                <div className="flex-1 min-w-0 space-y-1">
                   <h2 className="font-bold text-gray-800">
                     {vehicle.make || "—"} {vehicle.model || "—"}{" "}
                     {vehicle.series || "—"}
@@ -754,7 +703,7 @@ const VehicleInspection = () => {
                     <span>{vehicle.cityName || "—"}</span>|
                     <span
                       className={`text-xs text-center rounded p-1 ${
-                        vehicle.inspectionStatus === "approved"
+                        vehicle.approval === "Y"
                           ? "bg-green-500 text-white"
                           : "bg-red-500 text-white"
                       }`}
@@ -780,17 +729,12 @@ const VehicleInspection = () => {
                           <button
                             onClick={(e) => {
                               e.stopPropagation();
-                              handleIsOpenToggle("inspection");
+                              handleIsOpenToggle("ViewDocsInpsection");
                               setSelectVehicle(vehicle);
                             }}
-                            className={`block w-full text-left px-4 py-2 text-sm text-yellow-600 hover:bg-yellow-100 rounded-t-lg ${
-                              vehicle?.inspectionStatus === "approved" ||
-                              vehicle?.inspectionStatus === "rejected"
-                                ? "text-yellow-300 bg-gray-100 cursor-not-allowed"
-                                : "text-yellow-600 hover:bg-yellow-100"
-                            }`}
+                            className="block w-full text-left px-4 py-2 text-sm text-yellow-600 hover:bg-yellow-100 rounded-t-lg"
                           >
-                            Upload Docs
+                            View Docs
                           </button>
                           {vehicle.bidId ? (
                             <button
@@ -807,14 +751,39 @@ const VehicleInspection = () => {
                             <button
                               onClick={(e) => {
                                 e.stopPropagation();
-                                setSelectVehicle(vehicle);
-                                handleIsOpenToggle("View");
+                                handleUpdateInspectionStatus(
+                                  "approved",
+                                  vehicle?.inspectionId
+                                );
+                                handleIsOpenToggle("");
                               }}
-                              className="block w-full text-left px-4 py-2 text-sm text-green-600 hover:bg-green-100 rounded"
+                              className={`block w-full text-left px-4 py-2 text-sm text-green-600 hover:bg-green-100 rounded ${
+                                vehicle?.inspectionStatus === "approved" ||
+                                vehicle?.inspectionStatus === "rejected"
+                                  ? "text-green-300 bg-gray-100 cursor-not-allowed"
+                                  : "text-green-600 hover:bg-green-100"
+                              }`}
                             >
-                              View Vehicle
+                              Approved
                             </button>
                           )}
+                          <button
+                            onClick={(e) => {
+                              e.stopPropagation();
+                              handleUpdateInspectionStatus(
+                                "rejected",
+                                vehicle?.inspectionId
+                              );
+                            }}
+                            className={`block w-full text-left px-4 py-2 text-sm text-red-600 hover:bg-red-100 rounded-b-lg ${
+                              vehicle?.inspectionStatus === "approved" ||
+                              vehicle?.inspectionStatus === "rejected"
+                                ? "text-red-300 bg-gray-100 cursor-not-allowed"
+                                : "text-red-600 hover:bg-green-100"
+                            }`}
+                          >
+                            Reject
+                          </button>
                         </>
                       ) : (
                         <button
@@ -973,8 +942,8 @@ const VehicleInspection = () => {
         />
       )}
 
-      {isOpen === "inspection" && (
-        <InspectionDoc
+      {isOpen === "ViewDocsInpsection" && (
+        <AdminVehicleInspectionDocsView
           handleIsOpenToggle={handleIsOpenToggle}
           selectedVehicle={selectVehicle}
         />
@@ -983,4 +952,4 @@ const VehicleInspection = () => {
   );
 };
 
-export default VehicleInspection;
+export default ViewInspectionVehicle;

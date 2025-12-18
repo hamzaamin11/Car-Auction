@@ -389,6 +389,7 @@ function AddAdminVehicle({ open, setOpen, onVehicleUpdated }) {
       setLoading(false);
       setPrice("");
       setSelectedCount(0);
+      setPreviewImages([]);
       await Swal.fire({
         title: "Success!",
         text: "Vehicle Added successfully.",
@@ -1025,23 +1026,7 @@ function AddAdminVehicle({ open, setOpen, onVehicleUpdated }) {
                       >
                         Edit
                       </button>
-                      {vehicle.saleStatus === "upcoming" ||
-                      vehicle.saleStatus === "sold" ? (
-                        <button className="w-full px-4 py-2 text-sm text-green-600 hover:bg-green-100 text-left opacity-50 cursor-not-allowed">
-                          Bid Added
-                        </button>
-                      ) : (
-                        <button
-                          onClick={() => {
-                            setSelectedVehicle(vehicle);
-                            setIsOpenBid(true);
-                            setActionMenuOpen(null);
-                          }}
-                          className="w-full px-4 py-2 text-sm text-green-600 hover:bg-green-100 text-left"
-                        >
-                          Add Bid
-                        </button>
-                      )}
+
                       <button
                         onClick={() => handleViewClick(vehicle)}
                         className="w-full px-4 py-2 text-sm text-indigo-600 hover:bg-indigo-100 text-left"

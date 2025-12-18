@@ -5,12 +5,14 @@ import { toast, ToastContainer } from "react-toastify";
 import Select from "react-select";
 import Swal from "sweetalert2";
 import CustomDropdown from "../../CustomDropdown";
+import { useSelector } from "react-redux";
 const initialState = {
   brandId: "",
   modelName: "",
 };
 
 export const AddModel = ({ handleClose, handleGetAllModels }) => {
+  const { currentUser } = useSelector((state) => state?.auth);
   const [allBrands, setAllBrands] = useState([]);
 
   const [formData, setFormData] = useState(initialState);
@@ -25,7 +27,9 @@ export const AddModel = ({ handleClose, handleGetAllModels }) => {
   const handleGetAllBrands = async () => {
     setLoading(true);
     try {
-      const res = await axios.get(`${BASE_URL}/admin/getBrands`);
+      const res = await axios.get(
+        `${BASE_URL}/admin/getBrands/${currentUser?.role}`
+      );
       setAllBrands(res.data);
     } catch (error) {
       console.log(error);
@@ -88,7 +92,7 @@ export const AddModel = ({ handleClose, handleGetAllModels }) => {
             <label className="block text-sm font-semibold text-gray-700 mb-1">
               Brand Name
             </label>
-            <CustomDropdown 
+            <CustomDropdown
               options={[
                 { label: "Select your brand", value: "" },
                 ...allBrands.map((brand) => ({

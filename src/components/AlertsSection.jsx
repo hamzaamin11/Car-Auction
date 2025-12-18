@@ -3,9 +3,11 @@ import { Link } from "react-router-dom";
 import CustomDropdown from "../CustomDropdown";
 import axios from "axios";
 import { BASE_URL } from "./Contant/URL"; // Adjust path if needed
+import { useSelector } from "react-redux";
 
 const WheelBidzAlert = () => {
   // ────── Years (static) ──────
+  const { currentUser } = useSelector((state) => state?.auth);
   const searchYears = Array.from({ length: 30 }, (_, i) => ({
     label: (2025 - i).toString(),
     value: (2025 - i).toString(),
@@ -29,7 +31,7 @@ const WheelBidzAlert = () => {
   const [selectedMake, setSelectedMake] = useState(null);
   const [selectedModel, setSelectedModel] = useState(null);
   const [yearFrom, setYearFrom] = useState(searchYears[10]); // 2015
-  const [yearTo, setYearTo] = useState(searchYears[0]);     // 2025
+  const [yearTo, setYearTo] = useState(searchYears[0]); // 2025
 
   // ────── Loading states ──────
   const [loadingBrands, setLoadingBrands] = useState(false);
@@ -40,7 +42,9 @@ const WheelBidzAlert = () => {
     const fetchBrands = async () => {
       setLoadingBrands(true);
       try {
-        const res = await axios.get(`${BASE_URL}/admin/getBrands`);
+        const res = await axios.get(
+          `${BASE_URL}/admin/getBrands/${currentUser?.role}`
+        );
         const brandOpts = res.data.map((b) => ({
           label: b.brandName,
           value: b.id.toString(),
@@ -150,7 +154,10 @@ const WheelBidzAlert = () => {
         <form onSubmit={handleSubmit} className="space-y-4">
           {/* Email */}
           <div>
-            <label htmlFor="email" className="block text-sm font-medium text-gray-800">
+            <label
+              htmlFor="email"
+              className="block text-sm font-medium text-gray-800"
+            >
               Email
             </label>
             <input
@@ -176,7 +183,9 @@ const WheelBidzAlert = () => {
           {/* Year Range */}
           <div className="flex flex-wrap gap-4">
             <div className="flex flex-col w-40">
-              <label className="text-sm font-medium text-gray-800">From Year</label>
+              <label className="text-sm font-medium text-gray-800">
+                From Year
+              </label>
               <CustomDropdown
                 options={searchYears}
                 value={yearFrom}
@@ -184,7 +193,9 @@ const WheelBidzAlert = () => {
               />
             </div>
             <div className="flex flex-col w-40">
-              <label className="text-sm font-medium text-gray-800">To Year</label>
+              <label className="text-sm font-medium text-gray-800">
+                To Year
+              </label>
               <CustomDropdown
                 options={searchYears}
                 value={yearTo}
@@ -221,7 +232,10 @@ const WheelBidzAlert = () => {
 
           {/* First Name */}
           <div>
-            <label htmlFor="firstname" className="block text-sm font-medium text-gray-800">
+            <label
+              htmlFor="firstname"
+              className="block text-sm font-medium text-gray-800"
+            >
               First Name
             </label>
             <input
@@ -238,7 +252,10 @@ const WheelBidzAlert = () => {
 
           {/* Last Name */}
           <div>
-            <label htmlFor="lastname" className="block text-sm font-medium text-gray-800">
+            <label
+              htmlFor="lastname"
+              className="block text-sm font-medium text-gray-800"
+            >
               Last Name
             </label>
             <input

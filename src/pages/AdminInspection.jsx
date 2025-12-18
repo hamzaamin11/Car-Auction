@@ -20,75 +20,6 @@ import Select from "react-select";
 import Dropdown from "../Dropdown"; // <-- Your custom dropdown
 import { InspectionDoc } from "../admin/components/InspectionModal/InspectionDoc";
 
-const bodyStyles = [
-  "Convertible",
-  "Coupe",
-  "Crossover",
-  "Hatchback",
-  "Minivan",
-  "Pickup ",
-  "Sedan",
-  "Station Wagon",
-  "SUV",
-  "Van",
-  "Truck",
-];
-
-const carColors = [
-  "White",
-  "Black",
-  "Silver",
-  "Gray",
-  "Red",
-  "Blue",
-  "Green",
-  "Yellow",
-  "Orange",
-  "Brown",
-  "Beige",
-  "Gold",
-  "Maroon",
-  "Purple",
-  "Pink",
-  "Turquoise",
-];
-
-/* ---------- Dropdown Option Arrays ---------- */
-const driveTypeOptions = [
-  { label: "FWD (Front-Wheel Drive)", value: "fwd" },
-  { label: "RWD (Rear-Wheel Drive)", value: "rwd" },
-  { label: "AWD (All-Wheel Drive)", value: "awd" },
-  { label: "4WD (Four-Wheel Drive)", value: "4wd" },
-];
-
-const bodyStyleOptions = [...bodyStyles.map((b) => ({ label: b, value: b }))];
-
-const transmissionOptions = [
-  { label: "Automatic", value: "Automatic" },
-  { label: "Manual", value: "Manual" },
-];
-
-const colorOptions = [...carColors.map((c) => ({ label: c, value: c }))];
-
-const fuelTypeOptions = [
-  { label: "Petrol", value: "petrol" },
-  { label: "Diesel", value: "diesel" },
-  { label: "CNG (Compressed Natural Gas)", value: "cng" },
-  { label: "LPG (Liquefied Petroleum Gas)", value: "lpg" },
-  { label: "Electric", value: "electric" },
-  { label: "Hybrid", value: "hybrid" },
-];
-
-const conditionOptions = [
-  { label: "New", value: "new" },
-  { label: "Used", value: "used" },
-];
-
-const certifyOptions = [
-  { label: "Certified", value: "Certified" },
-  { label: "Non-Certified", value: "Non-Certified" },
-];
-
 const AdminInspection = () => {
   const { user } = useAuth();
   const isCustomer = user?.role === "customer";
@@ -122,34 +53,13 @@ const AdminInspection = () => {
     image: [],
   };
 
-  const fieldLabels = {
-    vin: "VIN",
-    year: "Year",
-    make: "Make",
-    model: "Model",
-    series: "Series",
-    bodyStyle: "Body Style",
-    engine: "Engine",
-    transmission: "Transmission",
-    driveType: "Drive Type",
-    fuelType: "Fuel Type",
-    color: "Color",
-    mileage: "Mileage",
-    vehicleCondition: "Condition",
-    keysAvailable: "Keys Available",
-    locationId: "Location ID",
-    saleStatus: "Sale Status",
-    auctionDate: "Auction Date",
-    currentBid: "Current Bid",
-    buyNowPrice: "Buy Now Price",
-    certifyStatus: "Certified",
-  };
-
   const [vehicleData, setVehicleData] = useState(initialFields);
   const selected = useSelector((state) => state.carSelector);
   const [vehicles, setVehicles] = useState([]);
   const [allVehicles, setAllVehicles] = useState([]);
   const [selectVehicle, setSelectVehicle] = useState();
+
+  console.log("=>>>", selectVehicle);
   const [image, setImage] = useState(null);
   const [imagePreview, setImagePreview] = useState([]);
   const [preview, setPreview] = useState([]);
@@ -169,37 +79,6 @@ const AdminInspection = () => {
   const [price, setPrice] = useState("");
   const [isDropdownOpen, setIsDropdownOpen] = useState(null);
   console.log("vehicleData =>>:", imagePreview);
-
-  // Convert numerical price to Indian format (e.g., 2800000 -> "28 Lac")
-  const formatPriceToIndian = (num) => {
-    if (!num) return "";
-    num = parseInt(num);
-    if (num >= 10000000) {
-      return `${(num / 10000000).toFixed(2)} Crore`;
-    } else if (num >= 100000) {
-      return `${(num / 100000).toFixed(2)} Lac`;
-    } else if (num >= 1000) {
-      return `${(num / 1000).toFixed(2)} Thousand`;
-    }
-    return num.toString();
-  };
-
-  // Parse user input (e.g., "10 Lac" -> 1000000)
-  const parsePrice = (priceStr) => {
-    if (!priceStr) return "";
-    priceStr = priceStr.toString().toLowerCase().trim();
-    if (priceStr.includes("crore")) {
-      const num = parseFloat(priceStr);
-      return num * 10000000;
-    } else if (priceStr.includes("lac")) {
-      const num = parseFloat(priceStr);
-      return num * 100000;
-    } else if (priceStr.includes("thousand")) {
-      const num = parseFloat(priceStr);
-      return num * 1000;
-    }
-    return parseInt(priceStr) || "";
-  };
 
   // Convert number to Indian words (e.g., 1000000 -> "Ten Lac")
   const numberToIndianWords = (num) => {
@@ -365,8 +244,8 @@ const AdminInspection = () => {
   const handleGetAllVehicleById = async () => {
     try {
       const res = await axios.get(
-        `${BASE_URL}/getVehiclesByUser/${
-          currentUser?.id
+        `${BASE_URL}/getVehiclesAdminUploadDocs/${currentUser?.id}/${
+          currentUser?.role
         }?search=${search}&Entry=${10}&page=${pageNo}`
       );
       setAllVehicles(res.data);
@@ -544,7 +423,7 @@ const AdminInspection = () => {
       <div className="max-w-7xl mx-auto">
         <header className="flex flex-col md:flex-row justify-between items-center">
           <h1 className="lg:text-3xl text-xl font-bold text-gray-800 p-3">
-            Inspection Vehicle List
+            Vehicles Upload Documents List
           </h1>
           <div className="relative w-full max-w-md">
             <span className="absolute inset-y-0 left-0 flex items-center pl-3 text-gray-400">
@@ -637,10 +516,16 @@ const AdminInspection = () => {
                             onClick={(e) => {
                               e.stopPropagation();
                               handleIsOpenToggle("inspection");
+                              setSelectVehicle(vehicle);
                             }}
-                            className="block w-full px-4 py-2 text-sm text-yellow-600 hover:bg-yellow-100 text-left rounded-t-lg"
+                            className={`block w-full px-4 py-2 text-sm text-yellow-600 hover:bg-yellow-100 text-left rounded-t-lg ${
+                              vehicle?.inspectionStatus === "approved" ||
+                              vehicle?.inspectionStatus === "rejected"
+                                ? "text-yellow-300 bg-gray-100 cursor-not-allowed"
+                                : "text-yellow-600 hover:bg-yellow-100"
+                            }`}
                           >
-                            Upload Doc
+                            Upload Docs
                           </button>
                           {vehicle.bidId ? (
                             <button
@@ -665,18 +550,6 @@ const AdminInspection = () => {
                               View Vehicle
                             </button>
                           )}
-                          <button
-                            onClick={(e) => {
-                              e.stopPropagation();
-                              handleDelete(
-                                vehicle.newVehicleId,
-                                vehicle.approval
-                              );
-                            }}
-                            className="block w-full text-left px-4 py-2 text-sm text-red-600 hover:bg-red-100 rounded-b-lg"
-                          >
-                            View Doc
-                          </button>
                         </>
                       ) : (
                         <button
@@ -907,10 +780,16 @@ const AdminInspection = () => {
                             onClick={(e) => {
                               e.stopPropagation();
                               handleIsOpenToggle("inspection");
+                              setSelectVehicle(vehicle);
                             }}
-                            className="block w-full text-left px-4 py-2 text-sm text-yellow-600 hover:bg-yellow-100 rounded-t-lg"
+                            className={`block w-full text-left px-4 py-2 text-sm text-yellow-600 hover:bg-yellow-100 rounded-t-lg ${
+                              vehicle?.inspectionStatus === "approved" ||
+                              vehicle?.inspectionStatus === "rejected"
+                                ? "text-yellow-300 bg-gray-100 cursor-not-allowed"
+                                : "text-yellow-600 hover:bg-yellow-100"
+                            }`}
                           >
-                            Upload Doc
+                            Upload Docs
                           </button>
                           {vehicle.bidId ? (
                             <button
@@ -935,18 +814,6 @@ const AdminInspection = () => {
                               View Vehicle
                             </button>
                           )}
-                          <button
-                            onClick={(e) => {
-                              e.stopPropagation();
-                              handleDelete(
-                                vehicle.newVehicleId,
-                                vehicle.approval
-                              );
-                            }}
-                            className="block w-full text-left px-4 py-2 text-sm text-red-600 hover:bg-red-100 rounded-b-lg"
-                          >
-                            View Doc
-                          </button>
                         </>
                       ) : (
                         <button
@@ -1106,7 +973,10 @@ const AdminInspection = () => {
       )}
 
       {isOpen === "inspection" && (
-        <InspectionDoc handleIsOpenToggle={handleIsOpenToggle} />
+        <InspectionDoc
+          handleIsOpenToggle={handleIsOpenToggle}
+          selectedVehicle={selectVehicle}
+        />
       )}
     </div>
   );

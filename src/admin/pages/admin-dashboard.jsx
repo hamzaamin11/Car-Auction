@@ -18,8 +18,17 @@ import {
 } from "react-icons/fa";
 import { useSelector } from "react-redux";
 
+const currentDate = new Date().toISOString().split("T")[0];
+
+const initialState = {
+  fromDate: currentDate,
+  toDate: currentDate,
+};
+
 const Dashboard = () => {
   const { currentUser } = useSelector((state) => state?.auth);
+  const [filterDate, setFilterDate] = useState(initialState);
+  console.log("filter date =>", filterDate);
   const [loading, setLoading] = useState(false);
   const [totalVehicles, setTotalVehicles] = useState({});
   const [allBrands, setAllBrands] = useState([]);
@@ -37,6 +46,24 @@ const Dashboard = () => {
   const [SubcribeUserList, setSubscribeUserList] = useState([]);
   const [awaitingStatus, setAwaitingStatus] = useState([]);
   const [bidInfo, setBidInfo] = useState([]);
+  const [kpisStats, setKpisStats] = useState();
+
+  const totalGMV = kpisStats?.data?.totalGMV;
+
+  const totalAuction = kpisStats?.data?.totalAuctionsCompleted;
+
+  const totalUsers = kpisStats?.data?.totalUsers?.newToday;
+
+  const totalMonthUsers = kpisStats?.data?.totalUsers?.last30Days;
+
+  const soldRate = kpisStats?.data?.soldRate?.last30Days;
+
+  const activeAuction = kpisStats?.data?.complianceKPIs?.activeAuctions;
+
+  const pendingAuction = kpisStats?.data?.complianceKPIs?.pendingKYC;
+
+  console.log("totalGMV =>", totalAuction?.custom);
+
   const handleGetAllVehicle = async () => {
     setLoading(true);
     try {
@@ -87,6 +114,18 @@ const Dashboard = () => {
     }
   };
 
+  const handleAdminKPIS = async () => {
+    try {
+      const res = await axios.get(
+        `${BASE_URL}/AdminDashboardStats/${currentUser?.id}?fromDate=${filterDate.fromDate}&toDate=${filterDate.toDate}`
+      );
+      console.log("KPIS =>>", res.data);
+      setKpisStats(res.data);
+    } catch {
+      console.log(error);
+    }
+  };
+
   const handleGetAllPartners = async () => {
     try {
       const res = await axios.get(`${BASE_URL}/admin/getPartner`);
@@ -114,10 +153,17 @@ const Dashboard = () => {
     }
   };
 
+  const handlechange = (e) => {
+    const { name, value } = e.target;
+    setFilterDate({ ...filterDate, [name]: value });
+  };
+
   const handleGetAllBrands = async () => {
     setLoading(true);
     try {
-      const res = await axios.get(`${BASE_URL}/admin/getBrands`);
+      const res = await axios.get(
+        `${BASE_URL}/admin/getBrands/${currentUser?.role}`
+      );
       setAllBrands(res.data);
       setLoading(false);
     } catch (error) {
@@ -183,6 +229,8 @@ const Dashboard = () => {
     }
   };
 
+  console.log("KPIS =>", kpisStats);
+
   useEffect(() => {
     handleGetAllVehicle();
     handleGetAllLiveAuction();
@@ -201,9 +249,13 @@ const Dashboard = () => {
     handleGetBidSummary();
   }, []);
 
+  useEffect(() => {
+    handleAdminKPIS();
+  }, [filterDate]);
+
   return (
     <>
-      <div className="flex bg-[#F5F8FC] min-h-screen ">
+      <div className="flex bg-[#F5F8FC]  ">
         {/* MAIN CONTENT */}
         <div className="flex-1 p-8 space-y-10 text-blue-950">
           <h1 className="text-3xl font-bold text-blue-950">Welcome, Admin</h1>
@@ -306,6 +358,116 @@ const Dashboard = () => {
                 </ul>
               )}
             </div>
+          </div>
+        </div>
+      </div>
+      <div className="p-6">
+        <h1 className="text-3xl font-bold text-blue-950 pb-4">
+          Busniess Stats
+        </h1>
+
+        <div className="flex lg:flex-row flex-col gap-6 text-blue-950">
+          <div className="bg-white border border-gray-200 shadow-sm rounded-xl p-6 flex justify-between items-center w-full">
+            <div className="space-y-3">
+              <p className="text-xl font-semibold">Total GMV</p>
+
+              <h2 className="text-lg font-bold">{totalGMV?.custom} PKR</h2>
+
+              <div className="flex items-center gap-3 pt-2">
+                <div className="flex flex-col">
+                  <label className="text-[10px] font-semibold text-gray-800 mb-1">
+                    From
+                  </label>
+                  <input
+                    type="date"
+                    name="fromDate"
+                    onChange={handlechange}
+                    value={filterDate.fromDate}
+                    className="border border-gray-300 rounded-lg px-3 py-2 text-[10px] focus:border-blue-900 focus:outline-none"
+                  />
+                </div>
+
+                <div className="flex flex-col">
+                  <label className="text-[10px] font-semibold text-gray-800 mb-1">
+                    To
+                  </label>
+                  <input
+                    type="date"
+                    name="toDate"
+                    onChange={handlechange}
+                    value={filterDate.toDate}
+                    className="border border-gray-300 rounded-lg px-3 py-2 text-[10px] focus:border-blue-900 focus:outline-none"
+                  />
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div className="bg-white border border-gray-200 shadow-sm rounded-xl p-6 flex justify-between items-center w-full">
+            <div className="space-y-5">
+              <p className="text-xl font-semibold">Total Auction Completed</p>
+
+              <h2 className="text-sm font-semibold">
+                Today Auction Completed{""}
+                <span className="px-4 text-lg font-semibold">
+                  {totalAuction?.today}
+                </span>
+              </h2>
+              <h2 className="text-sm font-semibold">
+                MTD Auction Completed{""}
+                <span className="px-4 text-lg font-semibold">
+                  {totalAuction?.MTD}
+                </span>
+              </h2>
+            </div>
+          </div>
+
+          <div className="bg-white border border-gray-200 shadow-sm rounded-xl p-6 flex justify-between items-center w-full">
+            <div className="space-y-5">
+              <p className="text-xl font-semibold">Total Registered Users</p>
+
+              <h2 className="text-sm font-semibold">
+                Today Register Users{""}
+                <span className="px-4 text-lg font-semibold">
+                  {totalUsers?.total}
+                </span>
+              </h2>
+              <h2 className="text-sm font-semibold">
+                Last 30 Days Register Users{""}
+                <span className="px-4 text-lg font-semibold">
+                  {totalMonthUsers?.total}
+                </span>
+              </h2>
+            </div>
+          </div>
+
+          <div className="bg-white border border-gray-200 shadow-sm rounded-xl p-6 flex justify-between items-center w-full">
+            <div className="space-y-5">
+              <p className="text-xl font-semibold">Sold Rate Average</p>
+
+              <h2 className="text-sm font-semibold">
+                Last 30 Days Sold Rate{""}
+                <span className="px-4 text-lg font-semibold">{soldRate}</span>
+              </h2>
+            </div>
+          </div>
+        </div>
+        <div className="bg-white border border-gray-200 shadow-sm rounded-xl text-blue-950 p-6 flex justify-between items-center w-[295px] mt-6">
+          <div className="space-y-5">
+            <p className="text-xl font-semibold">Compliance KPIs</p>
+
+            <h2 className="text-sm font-semibold">
+              Total Active Auctions{""}
+              <span className="px-4 text-lg font-semibold">
+                {activeAuction}
+              </span>
+            </h2>
+            <h2 className="text-sm font-semibold">
+              Pending KYC{""}
+              <span className="px-4 text-lg font-semibold">
+                {pendingAuction}
+              </span>
+            </h2>
           </div>
         </div>
       </div>

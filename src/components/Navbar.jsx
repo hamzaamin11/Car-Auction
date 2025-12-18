@@ -10,6 +10,7 @@ import {
   FaUserCircle,
   FaCarSide,
   FaHeart,
+  FaTachometerAlt,
 } from "react-icons/fa";
 import { UserPlus, LogIn } from "lucide-react";
 import { RiArrowDropDownLine } from "react-icons/ri";
@@ -655,6 +656,14 @@ const Navbar = () => {
                     Account Settings
                   </Link>
 
+                  <Link
+                    to={"/customerstats"}
+                    className="px-4 py-3 flex items-center gap-2 text-gray-700 hover:bg-gray-100 cursor-pointer transition font-medium"
+                  >
+                    <FaTachometerAlt size={18} className="text-gray-600" />
+                    Dashboard Stats
+                  </Link>
+
                   {/* Nested Options */}
                   {accountSettingsOpen && (
                     <div className="bg-gray-50 border-t border-gray-200">
@@ -822,12 +831,19 @@ const Navbar = () => {
                   {currentUser?.name || "--"}
                 </span>
               </div>
-              <button
-                onClick={() => setAccountSettingsOpen(!accountSettingsOpen)}
+              <Link
+                to={"/accountsetting"}
                 className="block w-full text-left py-0 text-white font-base hover:underline"
               >
                 Account Settings
-              </button>
+              </Link>
+
+              <Link
+                to={"/customerstats"}
+                className="block w-full text-left py-0 text-white font-base hover:underline"
+              >
+                Dashboard Stats
+              </Link>
 
               {accountSettingsOpen && (
                 <div className="ml-4 mt-1">

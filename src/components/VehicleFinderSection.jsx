@@ -261,7 +261,9 @@ const VehicleFinderSection = () => {
 
   const handleGetMakes = async () => {
     try {
-      const res = await axios.get(`${BASE_URL}/admin/getBrands`);
+      const res = await axios.get(
+        `${BASE_URL}/admin/getBrands/${currentUser?.role}`
+      );
       setAllMakes(res.data || []);
     } catch (err) {
       console.log(err);

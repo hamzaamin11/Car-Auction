@@ -7,11 +7,14 @@ import { FaHeart } from "react-icons/fa";
 import { useDispatch, useSelector } from "react-redux";
 import { addInList } from "./Redux/WishlistSlice";
 import Swal from "sweetalert2";
+import moment from "moment";
 
 // ---------------- CarCard -------------------
 const CarCard = ({ car }) => {
   const navigate = useNavigate();
   const dispatch = useDispatch();
+
+  console.log("=>>>>", car);
 
   const currentUser = useSelector((state) => state?.auth?.currentUser);
   const wishlistByUser = useSelector(
@@ -115,6 +118,27 @@ const CarCard = ({ car }) => {
             </span>
           )}
         </p>
+        {car?.auctionDate === null ? (
+          <p className="text-sm text-black text-[13px]">
+            <span className="font-medium">Auction Date:</span> {"N/A"}
+          </p>
+        ) : (
+          <p className="text-sm text-black text-[13px]">
+            <span className="font-medium">Auction Date:</span>
+            {new Date(car.auctionDate.slice(0, 10)).toLocaleDateString("en-GB")}
+          </p>
+        )}
+        {car?.auctionDate === null ? (
+          <p className="text-sm text-black text-[13px]">
+            <span className="font-medium">Auction Time:</span> {"N/A"}
+          </p>
+        ) : (
+          <p className="text-sm text-black text-[13px]">
+            <span className="font-medium">Auction Time:</span>{" "}
+            {moment(car?.startTime).local().format("hh:mm A")}
+          </p>
+        )}
+
         <p className="text-sm text-black text-[13px]">
           <span className="font-medium">Location:</span> {car.cityName}
         </p>
@@ -135,12 +159,14 @@ const CarCardSlider = () => {
   const [currentIndex, setCurrentIndex] = useState(0);
   const [visibleCards, setVisibleCards] = useState(4);
   const [allCars, setAllCars] = useState([]);
-  const {currentUser} = useSelector((state) => state?.auth)
- 
+  const { currentUser } = useSelector((state) => state?.auth);
+
   // Fetch vehicles
   const handleGetVehicles = async () => {
     try {
-      const res = await axios.get(`${BASE_URL}/getApprovedVehicles/${currentUser?.role}`);
+      const res = await axios.get(
+        `${BASE_URL}/getApprovedVehicles/${currentUser?.role}`
+      );
       setAllCars(res.data);
     } catch (error) {
       console.error("Failed to fetch vehicles:", error);

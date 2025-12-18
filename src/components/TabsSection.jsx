@@ -3,6 +3,7 @@ import { useNavigate } from "react-router-dom";
 import axios from "axios";
 import { BASE_URL } from "./Contant/URL";
 import CustomDropdown from "../CustomDropdown";
+import { useSelector } from "react-redux";
 const SearchableOption = ({ datas, placeholder, name, value, onChange }) => {
   const [search, setSearch] = useState("");
   const [filteredData, setFilteredData] = useState(datas || []);
@@ -110,6 +111,7 @@ const SearchableOption = ({ datas, placeholder, name, value, onChange }) => {
 };
 
 const TabsSection = () => {
+  const { currentUser } = useSelector((state) => state?.auth);
   const [filterData, setFilterData] = useState({
     city: "",
     make: "",
@@ -134,7 +136,9 @@ const TabsSection = () => {
   // ✅ Fetch all makes (brands)
   const handleGetAllMakes = async () => {
     try {
-      const res = await axios.get(`${BASE_URL}/admin/getBrands`);
+      const res = await axios.get(
+        `${BASE_URL}/admin/getBrands/${currentUser?.role}`
+      );
       setAllMake(res.data);
     } catch (error) {
       console.log("Error fetching makes:", error);

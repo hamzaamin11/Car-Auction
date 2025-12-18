@@ -377,7 +377,9 @@ const FilterPriceCars = () => {
 
   const handleGetAllMakes = async () => {
     try {
-      const res = await axios.get(`${BASE_URL}/admin/getBrands`);
+      const res = await axios.get(
+        `${BASE_URL}/admin/getBrands/${currentUser?.role}`
+      );
       setAllMake(res.data);
     } catch (error) {
       console.log("Error fetching makes:", error);

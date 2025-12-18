@@ -1,8 +1,10 @@
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { useNavigate } from "react-router-dom";
 import { navigationStart, navigationSuccess } from "./Redux/NavigationSlice";
 import { RotateLoader } from "./Loader/RotateLoader";
+import axios from "axios";
+import { BASE_URL } from "./Contant/URL";
 const carBrands = [
   {
     name: "Audi  ",
@@ -256,7 +258,39 @@ const papularBrands = [
 ];
 
 const SalesTable = () => {
+  const { currentUser } = useSelector((state) => state?.auth);
   const navigate = useNavigate();
+
+  const [popularVehicles, setPopularVehicles] = useState([]);
+
+  const [allMakes, setAllMakes] = useState([]);
+
+  const handleGetAllPopularVehicles = async () => {
+    try {
+      const res = await axios.get(`${BASE_URL}/admin/getPopularVehicles`);
+
+      setPopularVehicles(res.data);
+    } catch (error) {
+      console.log(error);
+    }
+  };
+
+  const handleAllMakes = async () => {
+    try {
+      const res = await axios.get(
+        `${BASE_URL}/admin/getBrands/${currentUser?.role}`
+      );
+      setAllMakes(res.data);
+      console.log(res.data);
+    } catch (error) {
+      console.log(error);
+    }
+  };
+
+  useEffect(() => {
+    handleGetAllPopularVehicles();
+    handleAllMakes();
+  }, []);
 
   return (
     <div className="w-full bg-gradient-to-b from-[#f9f9f9] to-[#ededed] p-6">
@@ -268,17 +302,17 @@ const SalesTable = () => {
           Search by Popular Makes
         </h1>
         <div className="grid grid-cols-1 sm:grid-cols-3 md:grid-cols-4 gap-6">
-          {papularBrands?.map((brand, index) => (
+          {popularVehicles?.map((brand, index) => (
             <div
               key={index}
-              onClick={() => navigate(`/carPrice/${brand.type}`)}
+              onClick={() => navigate(`/carPrice/${brand.brandName}`)}
               className="group bg-white rounded-xl shadow-md hover:shadow-xl 
                        transition-all duration-300 cursor-pointer border border-gray-100 
                        hover:border-blue-950 flex flex-col items-center p-5"
             >
               <img
-                src={brand.image}
-                alt={brand.name}
+                src={brand.logo}
+                alt={brand.brandName}
                 className="w-24 h-20 object-contain transition-transform duration-300 group-hover:scale-110"
               />
 
@@ -289,7 +323,7 @@ const SalesTable = () => {
                            transition-all duration-300 
                            group-hover:bg-blue-950"
                 >
-                  {brand.name.toUpperCase()}
+                  {brand.brandName.toUpperCase()}
                 </span>
               </div>
             </div>
@@ -300,17 +334,17 @@ const SalesTable = () => {
       <div className="bg-gray-200/50 p-4 my-5">
         <h1 className="text-xl p-2 font-bold text-blue-950">All other Makes</h1>
         <div className="grid grid-cols-1 sm:grid-cols-3 md:grid-cols-4 gap-4">
-          {carBrands?.map((brand, index) => (
+          {allMakes?.map((brand, index) => (
             <div
               key={index}
-              onClick={() => navigate(`/carPrice/${brand.type}`)}
+              onClick={() => navigate(`/carPrice/${brand.brandName}`)}
               className=" bg-white rounded shadow-md hover:shadow-xl 
                        transition-all duration-300 cursor-pointer border border-gray-100 
                        hover:border-blue-950 flex items-center justify-center px-10"
             >
               <img
-                src={brand.image}
-                alt={brand.name}
+                src={brand.logo}
+                alt={brand.brandName}
                 className="w-8 h-8 object-contain transition-transform duration-300 group-hover:scale-110"
               />
 
@@ -321,7 +355,7 @@ const SalesTable = () => {
                            transition-all duration-300 
                            group-hover:bg-blue-950"
                 >
-                  {brand.name.toUpperCase()}
+                  {brand.brandName.toUpperCase()}
                 </span>
               </div>
             </div>

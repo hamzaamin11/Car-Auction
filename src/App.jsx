@@ -100,6 +100,11 @@ import { AccountSetting } from "./admin/pages/AccountSetting";
 import { AuctionEvent } from "./admin/pages/AuctionEvent";
 import VehicleInspection from "./pages/VehicleInspection";
 import AdminInspection from "./pages/AdminInspection";
+import { CustomerDashboard } from "./pages/CustomerDashboard";
+import ViewInspectionVehicle from "./pages/ViewInspectionVehicle";
+import { Configuration } from "./pages/Configuration";
+import { AdminAccount } from "./pages/AdminAccount";
+import { CustomerProtectedRoute } from "./CustomerProtectedRoute";
 
 function Layout() {
   const location = useLocation();
@@ -144,93 +149,102 @@ function Layout() {
           (role !== "admin" && role !== "seller")) && <Navbar />}
       <Routes>
         {/* Main Routes */}
-        <Route path="/" element={<Home />} />
-        <Route path="/alert" element={<VehicleAlerts />} />
-        <Route path="/search" element={<SearchPage />} />
-        <Route path="/soldVehicles" element={<SoldVehicles />} />
+        <Route element={<CustomerProtectedRoute />}>
+          <Route path="/" element={<Home />} />
+          <Route path="/alert" element={<VehicleAlerts />} />
+          <Route path="/search" element={<SearchPage />} />
+          <Route path="/soldVehicles" element={<SoldVehicles />} />
 
-        <Route path="/about" element={<About />} />
+          <Route path="/about" element={<About />} />
 
-        <Route path="/contact" element={<ContactUs />} />
+          <Route path="/customerstats" element={<CustomerDashboard />} />
 
-        <Route path="/partner" element={<BecomePartner />} />
+          <Route path="/contact" element={<ContactUs />} />
 
-        <Route path="/suggestion" element={<Suggestion />} />
+          <Route path="/partner" element={<BecomePartner />} />
 
-        <Route path="/wishlist" element={<WishList />} />
+          <Route path="/suggestion" element={<Suggestion />} />
 
-        <Route path="/register" element={<Register />} />
+          <Route path="/wishlist" element={<WishList />} />
 
-        <Route path="/validation" element={<ValidationEmail />} />
+          <Route path="/register" element={<Register />} />
 
-        <Route path="/registerwitemail" element={<RegistrationWithEmail />} />
+          <Route path="/validation" element={<ValidationEmail />} />
 
-        <Route path="/login" element={<Signin />} />
+          <Route path="/registerwitemail" element={<RegistrationWithEmail />} />
 
-        <Route path="/work" element={<HowItWorks />} />
+          <Route path="/login" element={<Signin />} />
 
-        <Route path="/finder" element={<VehicleFinder />} />
+          <Route path="/work" element={<HowItWorks />} />
 
-        <Route path="/Allvehicles" element={<AllVehicles />} />
+          <Route path="/finder" element={<VehicleFinder />} />
 
-        <Route path="/Usedvehicles" element={<UsedVehicles />} />
+          <Route path="/Allvehicles" element={<AllVehicles />} />
 
-        <Route path="/make" element={<SearchByMake />} />
+          <Route path="/Usedvehicles" element={<UsedVehicles />} />
 
-        <Route path="/sellerIntro" element={<SellerIntro />} />
+          <Route path="/make" element={<SearchByMake />} />
 
-        <Route path="/saleslist" element={<SalesList />} />
+          <Route path="/sellerIntro" element={<SellerIntro />} />
 
-        <Route path="/saved" element={<SavedSearches />} />
+          <Route path="/saleslist" element={<SalesList />} />
 
-        <Route path="/alerts" element={<VehicleAlerts />} />
+          <Route path="/saved" element={<SavedSearches />} />
 
-        <Route path="/today" element={<TodaysAuctions />} />
+          <Route path="/alerts" element={<VehicleAlerts />} />
 
-        <Route path="/carPrice/:carType" element={<AudiPricelist />} />
+          <Route path="/today" element={<TodaysAuctions />} />
 
-        <Route path="/standardline/:id" element={<AudiStandardLine />} />
+          <Route path="/carPrice/:carType" element={<AudiPricelist />} />
 
-        <Route path="/detailbid/:id" element={<Customerbid />} />
+          <Route path="/standardline/:id" element={<AudiStandardLine />} />
 
-        <Route path="/roadprice" element={<GetRoadPrice />} />
+          <Route path="/detailbid/:id" element={<Customerbid />} />
 
-        <Route path="/OnRoadPriceCalculator/:city" element={<OnRoadPrice />} />
+          <Route path="/roadprice" element={<GetRoadPrice />} />
 
-        <Route path="/import" element={<ImportCarForm />} />
+          <Route
+            path="/OnRoadPriceCalculator/:city"
+            element={<OnRoadPrice />}
+          />
 
-        <Route path="/calendar" element={<AuctionsCalendar />} />
+          <Route path="/import" element={<ImportCarForm />} />
 
-        <Route path="/join" element={<JoinAuctions />} />
+          <Route path="/calendar" element={<AuctionsCalendar />} />
 
-        <Route path="/calculator" element={<PriceCalculator />} />
+          <Route path="/join" element={<JoinAuctions />} />
 
-        <Route path="/certified" element={<CertifiedCarsPage />} />
+          <Route path="/calculator" element={<PriceCalculator />} />
 
-        <Route path="/buy" element={<BuyYourVehicle />} />
+          <Route path="/certified" element={<CertifiedCarsPage />} />
 
-        <Route path="/sell" element={<SellInAuction />} />
+          <Route path="/buy" element={<BuyYourVehicle />} />
 
-        <Route path="/center" element={<SupportCenter />} />
+          <Route path="/sell" element={<SellInAuction />} />
 
-        <Route path="/accountsetting" element={<AccountSetting />} />
+          <Route path="/center" element={<SupportCenter />} />
 
-        <Route path="/delivery" element={<VehicleDelivery />} />
-        <Route path="/news" element={<ChaudhryNews />} />
+          <Route path="/accountsetting" element={<AccountSetting />} />
 
-        <Route path="/details/:type" element={<UsedCars />} />
+          <Route path="/delivery" element={<VehicleDelivery />} />
+          <Route path="/news" element={<ChaudhryNews />} />
 
-        <Route path="/filterprice/:name/:value" element={<FilterPriceCars />} />
+          <Route path="/details/:type" element={<UsedCars />} />
 
-        <Route path="/Salvagevehicles" element={<SalvageVehicles />} />
-        <Route path="/add-vehicles" element={<AddVehicles />} />
+          <Route
+            path="/filterprice/:name/:value"
+            element={<FilterPriceCars />}
+          />
 
-        <Route path="/my-bids" element={<MyBids />} />
-        <Route path="/make-bidding" element={<MakeBidding />} />
-        <Route path="/lots-won" element={<LotsWon />} />
-        <Route path="/lots-lost" element={<LotsLost />} />
-        <Route path="/payment" element={<PaymentMethod />} />
+          <Route path="/Salvagevehicles" element={<SalvageVehicles />} />
+          <Route path="/add-vehicles" element={<AddVehicles />} />
 
+          <Route path="/my-bids" element={<MyBids />} />
+          <Route path="/make-bidding" element={<MakeBidding />} />
+          <Route path="/lots-won" element={<LotsWon />} />
+          <Route path="/lots-lost" element={<LotsLost />} />
+          <Route path="/payment" element={<PaymentMethod />} />
+        </Route>
         <Route path="/admin-login" element={<AdminLogin />} />
 
         {/* Protected admin routes */}
@@ -252,9 +266,15 @@ function Layout() {
           <Route path="/admin/city" element={<CitiesList />} />
           <Route path="/admin/accountsetting" element={<AccountSetting />} />
 
+          <Route path="/admin/configuration" element={<Configuration />} />
+
+          <Route path="/admin/account" element={<AdminAccount />} />
+
           <Route path="/admin/auctionevent" element={<AuctionEvent />} />
 
-          <Route path="/admin/inspection" element={<AdminInspection />} />
+          <Route path="/admin/uploaddocs" element={<AdminInspection />} />
+
+          <Route path="/admin/inspection" element={<ViewInspectionVehicle />} />
 
           <Route path="/admin/suggestionlist" element={<SuggestionList />} />
 

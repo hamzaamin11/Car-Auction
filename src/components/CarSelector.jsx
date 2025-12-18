@@ -11,6 +11,7 @@ import axios from "axios";
 import { BASE_URL } from "./Contant/URL";
 
 const CarSelector = ({ handleIsOpenToggle }) => {
+  const { currentUser } = useSelector((state) => state?.auth);
   const selected = useSelector((state) => state.carSelector);
   const dispatch = useDispatch();
 
@@ -52,7 +53,9 @@ const CarSelector = ({ handleIsOpenToggle }) => {
   // API: Get all brands
   const handleGetAllMake = async () => {
     try {
-      const res = await axios.get(`${BASE_URL}/admin/getBrands`);
+      const res = await axios.get(
+        `${BASE_URL}/admin/getBrands/${currentUser?.role}`
+      );
       setCarMake(res.data);
     } catch (error) {
       console.log(error);

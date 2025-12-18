@@ -6,12 +6,14 @@ import { EditBrandModal } from "../../components/BrandModal/EditBrandModal";
 import Swal from "sweetalert2"; // SweetAlert2 added
 import CustomAdd from "../../CustomAdd";
 import CustomSearch from "../../CustomSearch";
+import { useSelector } from "react-redux";
 
 export const BrandList = () => {
+  const { currentUser } = useSelector((state) => state?.auth);
   const [isOpen, setIsOpen] = useState("");
   const [loading, setLoading] = useState(false);
-  const [allBrands, setAllBrands] = useState([]);           // All loaded brands
-  const [hasMore, setHasMore] = useState(true);             // Are there more pages?
+  const [allBrands, setAllBrands] = useState([]); // All loaded brands
+  const [hasMore, setHasMore] = useState(true); // Are there more pages?
   const [seleteBrand, setSeleteBrand] = useState();
   const [search, setSearch] = useState("");
   const [currentPage, setCurrentPage] = useState(1);
@@ -31,9 +33,14 @@ export const BrandList = () => {
   // Fetch a specific page from backend
   const fetchPage = async (page, searchTerm = "") => {
     try {
-      const res = await axios.get(`${BASE_URL}/admin/getBrands`, {
-        params: { search: searchTerm, page, limit: itemsPerRequest },
-      });
+      const res = await axios.get(
+        `${BASE_URL}/admin/getBrands/${currentUser?.role}`,
+        {
+          params: { search: searchTerm, page, limit: itemsPerRequest },
+        }
+      );
+
+      console.log("res data =>", res?.data);
 
       const newBrands = res.data || [];
       if (newBrands.length < itemsPerRequest) setHasMore(false);
@@ -49,6 +56,23 @@ export const BrandList = () => {
     }
   };
 
+  const handlePostPopularVehicle = async (brandId, popular) => {
+    try {
+      const res = await axios.post(
+        `${BASE_URL}/admin/setPopularVehicle/${popular}/${brandId}`
+      );
+      await Swal.fire({
+        title: "Success!",
+        text: res.data.message,
+        icon: "success",
+        confirmButtonColor: "#9333ea",
+      });
+      loadBrands(true);
+    } catch (error) {
+      console.log(error);
+    }
+  };
+
   // Load initial data + handle search
   const loadBrands = async (reset = false) => {
     setLoading(true);
@@ -59,7 +83,7 @@ export const BrandList = () => {
       setAllBrands(brands);
       setHasMore(brands.length === itemsPerRequest);
     } else {
-      setAllBrands(prev => [...prev, ...brands]);
+      setAllBrands((prev) => [...prev, ...brands]);
     }
     setLoading(false);
   };
@@ -113,12 +137,23 @@ export const BrandList = () => {
     <div className="min-h-screen bg-gray-100 lg:p-6 p-2">
       <div className="flex flex-col sm:flex-row justify-between items-center gap-4 mb-6">
         <h2 className="lg:text-3xl text-xl font-bold text-gray-800">
-          Vehicle Makes List 
+          Vehicle Makes List
         </h2>
         <div className="relative w-full max-w-md">
           <span className="absolute inset-y-0 left-0 flex items-center pl-3 text-gray-400">
-            <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M21 21l-4.35-4.35m0 0A7.5 7.5 0 104.5 4.5a7.5 7.5 0 0012.15 12.15z" />
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              className="h-5 w-5"
+              fill="none"
+              viewBox="0 0 24 24"
+              stroke="currentColor"
+            >
+              <path
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                strokeWidth="2"
+                d="M21 21l-4.35-4.35m0 0A7.5 7.5 0 104.5 4.5a7.5 7.5 0 0012.15 12.15z"
+              />
             </svg>
           </span>
           <CustomSearch
@@ -142,21 +177,57 @@ export const BrandList = () => {
           </thead>
           <tbody>
             {loading && allBrands.length === 0 ? (
-              <tr><td colSpan="4" className="text-center py-10">Loading...</td></tr>
+              <tr>
+                <td colSpan="4" className="text-center py-10">
+                  Loading...
+                </td>
+              </tr>
             ) : currentDisplay.length === 0 ? (
-              <tr><td colSpan="4" className="text-center py-10 text-gray-500">No brands found</td></tr>
+              <tr>
+                <td colSpan="4" className="text-center py-10 text-gray-500">
+                  No brands found
+                </td>
+              </tr>
             ) : (
               currentDisplay.map((brand, index) => (
-                <tr key={brand._id} className="border-b hover:bg-gray-50">
+                <tr key={brand.id} className="border-b hover:bg-gray-50">
                   <td className="py-3 px-4">{startIndex + index + 1}</td>
                   <td className="py-3 px-4">
-                    <img src={brand.logo} alt={brand.brandName} className="w-12 h-12 object-contain rounded" />
+                    <img
+                      src={brand.logo}
+                      alt={brand.brandName}
+                      className="w-12 h-12 object-contain rounded"
+                    />
                   </td>
                   <td className="py-3 px-4">
-                    {brand.brandName.charAt(0).toUpperCase() + brand.brandName.slice(1)}
+                    {brand.brandName.charAt(0).toUpperCase() +
+                      brand.brandName.slice(1)}
                   </td>
                   <td className="py-3 px-4 text-center">
-                    <CustomAdd text="Edit" variant="edit" onClick={() => handleEditBtn(brand)} />
+                    {brand.isPopular === "N" ? (
+                      <button
+                        className="text-blue-950 hover:bg-blue-950 hover:text-white border border-blue-950 p-[5px] rounded text-sm mx-2 hover:cursor-pointer hover:font-semibold"
+                        onClick={() => {
+                          handlePostPopularVehicle("popular", brand?.id);
+                        }}
+                      >
+                        Add Popular
+                      </button>
+                    ) : (
+                      <button
+                        className="text-red-600 border border-red-600 hover:bg-red-600 hover:text-white p-[5px] rounded text-sm mx-2 hover:cursor-pointer hover:font-semibold"
+                        onClick={() => {
+                          handlePostPopularVehicle("nonpopular", brand.id);
+                        }}
+                      >
+                        Non Popular
+                      </button>
+                    )}
+                    <CustomAdd
+                      text="Edit"
+                      variant="edit"
+                      onClick={() => handleEditBtn(brand)}
+                    />
                   </td>
                 </tr>
               ))
@@ -176,43 +247,85 @@ export const BrandList = () => {
             </div>
 
             <div className="flex items-center gap-1">
-              <button onClick={() => goToPage(1)} disabled={currentPage === 1}
-                className={`px-3 py-1 rounded border ${currentPage === 1 ? "bg-gray-100 text-gray-400 cursor-not-allowed" : "bg-white hover:bg-gray-50"}`}>
+              <button
+                onClick={() => goToPage(1)}
+                disabled={currentPage === 1}
+                className={`px-3 py-1 rounded border ${
+                  currentPage === 1
+                    ? "bg-gray-100 text-gray-400 cursor-not-allowed"
+                    : "bg-white hover:bg-gray-50"
+                }`}
+              >
                 {"<<"}
               </button>
-              <button onClick={() => goToPage(currentPage - 1)} disabled={currentPage === 1}
-                className={`px-3 py-1 rounded border ${currentPage === 1 ? "bg-gray-100 text-gray-400 cursor-not-allowed" : "bg-white hover:bg-gray-50"}`}>
+              <button
+                onClick={() => goToPage(currentPage - 1)}
+                disabled={currentPage === 1}
+                className={`px-3 py-1 rounded border ${
+                  currentPage === 1
+                    ? "bg-gray-100 text-gray-400 cursor-not-allowed"
+                    : "bg-white hover:bg-gray-50"
+                }`}
+              >
                 {"<"}
               </button>
 
-              {getPageNumbers().map(page => (
-                <button key={page} onClick={() => goToPage(page)}
-                  className={`px-3 py-1 rounded border ${currentPage === page ? "bg-blue-950 text-white" : "bg-white hover:bg-gray-50"}`}>
+              {getPageNumbers().map((page) => (
+                <button
+                  key={page}
+                  onClick={() => goToPage(page)}
+                  className={`px-3 py-1 rounded border ${
+                    currentPage === page
+                      ? "bg-blue-950 text-white"
+                      : "bg-white hover:bg-gray-50"
+                  }`}
+                >
                   {page}
                 </button>
               ))}
 
-              <button onClick={() => goToPage(currentPage + 1)} disabled={!hasMore && currentPage >= totalPages}
-                className={`px-3 py-1 rounded border ${(!hasMore && currentPage >= totalPages) ? "bg-gray-100 text-gray-400 cursor-not-allowed" : "bg-white hover:bg-gray-50"}`}>
+              <button
+                onClick={() => goToPage(currentPage + 1)}
+                disabled={!hasMore && currentPage >= totalPages}
+                className={`px-3 py-1 rounded border ${
+                  !hasMore && currentPage >= totalPages
+                    ? "bg-gray-100 text-gray-400 cursor-not-allowed"
+                    : "bg-white hover:bg-gray-50"
+                }`}
+              >
                 {">"}
               </button>
-              <button onClick={() => goToPage(totalPages)} disabled={!hasMore && currentPage >= totalPages}
-                className={`px-3 py-1 rounded border ${(!hasMore && currentPage >= totalPages) ? "bg-gray-100 text-gray-400 cursor-not-allowed" : "bg-white hover:bg-gray-50"}`}>
+              <button
+                onClick={() => goToPage(totalPages)}
+                disabled={!hasMore && currentPage >= totalPages}
+                className={`px-3 py-1 rounded border ${
+                  !hasMore && currentPage >= totalPages
+                    ? "bg-gray-100 text-gray-400 cursor-not-allowed"
+                    : "bg-white hover:bg-gray-50"
+                }`}
+              >
                 {">>"}
               </button>
             </div>
 
-            <div className="flex items-center gap-2">
-             
-          
-            </div>
+            <div className="flex items-center gap-2"></div>
           </div>
         </div>
       )}
 
-      {isOpen === "Add" && <AddBrandModal handleClose={() => handleToggleModal("")} handleGetAllBrands={() => loadBrands(true)} />}
-      {isOpen === "Edit" && <EditBrandModal handleClose={() => handleToggleModal("")} seleteBrand={seleteBrand} handleGetAllBrands={() => loadBrands(true)} />}
-
+      {isOpen === "Add" && (
+        <AddBrandModal
+          handleClose={() => handleToggleModal("")}
+          handleGetAllBrands={() => loadBrands(true)}
+        />
+      )}
+      {isOpen === "Edit" && (
+        <EditBrandModal
+          handleClose={() => handleToggleModal("")}
+          seleteBrand={seleteBrand}
+          handleGetAllBrands={() => loadBrands(true)}
+        />
+      )}
     </div>
   );
 };

@@ -5,9 +5,12 @@ import {
   FaGavel,
   FaUsers,
   FaHistory,
+  FaSearch,
+  FaMoneyBillAlt,
 } from "react-icons/fa";
 import { FaMessage } from "react-icons/fa6";
 import { FiHelpCircle } from "react-icons/fi";
+import { IoIosSettings } from "react-icons/io";
 
 const Sidebar = () => {
   const { pathName } = useLocation();
@@ -32,7 +35,6 @@ const Sidebar = () => {
         { name: "Vehicle List", path: "/admin/vehicles" },
         { name: "For Approval Vehicles", path: "/admin/approval" },
         { name: "Awaiting Approval", path: "/admin/awaiting" },
-        { name: "Vehicle Inspection", path: "/admin/inspection" },
         { name: "Vehicle Makes List", path: "/admin/addbrand" },
         { name: "Vehicle Model List", path: "/admin/addmodel" },
         { name: "Vehicle Series List", path: "/admin/addseries" },
@@ -53,9 +55,32 @@ const Sidebar = () => {
     },
 
     {
+      name: "Inspection",
+      icon: <FaSearch />,
+      children: [
+        { name: "Upload Documents", path: "/admin/uploaddocs" },
+        { name: "Vehicle Inspection", path: "/admin/inspection" },
+      ],
+    },
+
+    {
       name: "Users",
       path: "/admin/manage-users",
       icon: <FaUsers />,
+    },
+
+    {
+      name: "Configuration",
+      icon: <IoIosSettings />,
+      children: [
+        { name: "Account Configuration", path: "/admin/configuration" },
+      ],
+    },
+
+    {
+      name: "Account",
+      path: "/admin/account",
+      icon: <FaMoneyBillAlt />,
     },
 
     {
