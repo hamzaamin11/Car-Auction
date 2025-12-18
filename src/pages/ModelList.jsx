@@ -10,8 +10,8 @@ import CustomSearch from "../CustomSearch";
 export const ModelList = () => {
   const [isOpen, setIsOpen] = useState("");
   const [loading, setLoading] = useState(false);
-  const [allModels, setAllModels] = useState([]);        // All loaded models
-  const [hasMore, setHasMore] = useState(true);          // More pages exist?
+  const [allModels, setAllModels] = useState([]); // All loaded models
+  const [hasMore, setHasMore] = useState(true); // More pages exist?
   const [seleteModel, setSeleteModel] = useState();
   const [search, setSearch] = useState("");
   const [currentPage, setCurrentPage] = useState(1);
@@ -74,14 +74,16 @@ export const ModelList = () => {
   // Load data — SAME LOGIC AS YOUR BRANDLIST
   const loadModels = async (reset = false) => {
     setLoading(true);
-    const pageToLoad = reset ? 1 : Math.floor(allModels.length / itemsPerRequest) + 1;
+    const pageToLoad = reset
+      ? 1
+      : Math.floor(allModels.length / itemsPerRequest) + 1;
     const newModels = await fetchPage(pageToLoad, search);
 
     if (reset) {
       setAllModels(newModels);
       setHasMore(newModels.length === itemsPerRequest);
     } else {
-      setAllModels(prev => [...prev, ...newModels]);
+      setAllModels((prev) => [...prev, ...newModels]);
     }
     setLoading(false);
   };
@@ -103,7 +105,7 @@ export const ModelList = () => {
   }, [currentPage, itemsPerPage]);
 
   // PERFECT PAGINATION MATH — EXACT SAME AS BRANDLIST
-  const totalItems = allModels.length + (hasMore ? 1 : 0);  // +1 keeps "Next" alive
+  const totalItems = allModels.length + (hasMore ? 1 : 0); // +1 keeps "Next" alive
   const totalPages = Math.ceil(totalItems / itemsPerPage);
   const startIndex = (currentPage - 1) * itemsPerPage;
   const endIndex = Math.min(startIndex + itemsPerPage, allModels.length);
@@ -133,12 +135,23 @@ export const ModelList = () => {
       {/* Header — YOUR ORIGINAL */}
       <div className="flex flex-col sm:flex-row justify-between items-center gap-4 mb-6">
         <h2 className="lg:text-3xl text-xl font-bold text-gray-800">
-          Vehicle Model List 
+          Vehicle Model List
         </h2>
         <div className="relative w-full max-w-md">
           <span className="absolute inset-y-0 left-0 flex items-center pl-3 text-gray-400">
-            <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M21 21l-4.35-4.35m0 0A7.5 7.5 0 104.5 4.5a7.5 7.5 0 0012.15 12.15z" />
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              className="h-5 w-5"
+              fill="none"
+              viewBox="0 0 24 24"
+              stroke="currentColor"
+            >
+              <path
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                strokeWidth="2"
+                d="M21 21l-4.35-4.35m0 0A7.5 7.5 0 104.5 4.5a7.5 7.5 0 0012.15 12.15z"
+              />
             </svg>
           </span>
           <CustomSearch
@@ -163,21 +176,35 @@ export const ModelList = () => {
           </thead>
           <tbody>
             {loading && allModels.length === 0 ? (
-              <tr><td colSpan="4" className="text-center py-10">Loading...</td></tr>
+              <tr>
+                <td colSpan="4" className="text-center py-10">
+                  Loading...
+                </td>
+              </tr>
             ) : currentDisplay.length === 0 ? (
-              <tr><td colSpan="4" className="text-center py-10 text-gray-500">No models found</td></tr>
+              <tr>
+                <td colSpan="4" className="text-center py-10 text-gray-500">
+                  No models found
+                </td>
+              </tr>
             ) : (
               currentDisplay.map((model, index) => (
                 <tr key={model._id} className="border-b hover:bg-gray-50">
                   <td className="py-3 px-4">{startIndex + index + 1}</td>
                   <td className="py-3 px-4">
-                    {model.brandName?.charAt(0).toUpperCase() + model.brandName?.slice(1)}
+                    {model.brandName?.charAt(0).toUpperCase() +
+                      model.brandName?.slice(1)}
                   </td>
                   <td className="py-3 px-4">
-                    {model.modelName?.charAt(0).toUpperCase() + model.modelName?.slice(1)}
+                    {model.modelName?.charAt(0).toUpperCase() +
+                      model.modelName?.slice(1)}
                   </td>
                   <td className="py-3 px-4 text-center">
-                    <CustomAdd text="Edit" variant="edit" onClick={() => handleEditBtn(model)} />
+                    <CustomAdd
+                      text="Edit"
+                      variant="edit"
+                      onClick={() => handleEditBtn(model)}
+                    />
                   </td>
                 </tr>
               ))
@@ -189,7 +216,8 @@ export const ModelList = () => {
       {/* PAGINATION — EXACT SAME AS BRANDLIST */}
       {allModels.length > 0 && (
         <div className="bg-white rounded-lg shadow-sm p-4 mt-6">
-          <div className="flex flex-col sm:flex-row justify-between items-center gap-4 text-sm text-gray-700">
+          <div className="flex flex-col sm:flex-row lg:justify-between items-center gap-4 text-sm text-gray-700">
+            {/* Showing entries */}
             <div className="text-gray-600">
               Showing <span className="font-medium">{startIndex + 1}</span> to{" "}
               <span className="font-medium">{endIndex}</span>{" "}
@@ -197,45 +225,85 @@ export const ModelList = () => {
             </div>
 
             <div className="flex items-center gap-1">
-              <button onClick={() => goToPage(1)} disabled={currentPage === 1}
-                className={`px-3 py-1 rounded border ${currentPage === 1 ? "bg-gray-100 text-gray-400 cursor-not-allowed" : "bg-white hover:bg-gray-50"}`}>
+              <button
+                onClick={() => goToPage(1)}
+                disabled={currentPage === 1}
+                className={`px-3 py-1 rounded border ${
+                  currentPage === 1
+                    ? "bg-gray-100 text-gray-400 cursor-not-allowed"
+                    : "bg-white hover:bg-gray-50"
+                }`}
+              >
                 {"<<"}
               </button>
-              <button onClick={() => goToPage(currentPage - 1)} disabled={currentPage === 1}
-                className={`px-3 py-1 rounded border ${currentPage === 1 ? "bg-gray-100 text-gray-400 cursor-not-allowed" : "bg-white hover:bg-gray-50"}`}>
+              <button
+                onClick={() => goToPage(currentPage - 1)}
+                disabled={currentPage === 1}
+                className={`px-3 py-1 rounded border ${
+                  currentPage === 1
+                    ? "bg-gray-100 text-gray-400 cursor-not-allowed"
+                    : "bg-white hover:bg-gray-50"
+                }`}
+              >
                 {"<"}
               </button>
 
-              {getPageNumbers().map(page => (
-                <button key={page} onClick={() => goToPage(page)}
-                  className={`px-3 py-1 rounded border ${currentPage === page ? "bg-blue-950 text-white" : "bg-white hover:bg-gray-50"}`}>
+              {getPageNumbers().map((page) => (
+                <button
+                  key={page}
+                  onClick={() => goToPage(page)}
+                  className={`px-3 py-1 rounded border ${
+                    currentPage === page
+                      ? "bg-blue-950 text-white"
+                      : "bg-white hover:bg-gray-50"
+                  }`}
+                >
                   {page}
                 </button>
               ))}
 
-              <button onClick={() => goToPage(currentPage + 1)} disabled={!hasMore && currentPage >= totalPages}
-                className={`px-3 py-1 rounded border ${(!hasMore && currentPage >= totalPages) ? "bg-gray-100 text-gray-400 cursor-not-allowed" : "bg-white hover:bg-gray-50"}`}>
+              <button
+                onClick={() => goToPage(currentPage + 1)}
+                disabled={!hasMore && currentPage >= totalPages}
+                className={`px-3 py-1 rounded border ${
+                  !hasMore && currentPage >= totalPages
+                    ? "bg-gray-100 text-gray-400 cursor-not-allowed"
+                    : "bg-white hover:bg-gray-50"
+                }`}
+              >
                 {">"}
               </button>
-              <button onClick={() => goToPage(totalPages)} disabled={!hasMore && currentPage >= totalPages}
-                className={`px-3 py-1 rounded border ${(!hasMore && currentPage >= totalPages) ? "bg-gray-100 text-gray-400 cursor-not-allowed" : "bg-white hover:bg-gray-50"}`}>
+              <button
+                onClick={() => goToPage(totalPages)}
+                disabled={!hasMore && currentPage >= totalPages}
+                className={`px-3 py-1 rounded border ${
+                  !hasMore && currentPage >= totalPages
+                    ? "bg-gray-100 text-gray-400 cursor-not-allowed"
+                    : "bg-white hover:bg-gray-50"
+                }`}
+              >
                 {">>"}
               </button>
             </div>
 
-            <div className="flex items-center gap-2">
-              {/* You can add entries selector here later if you want */}
-            </div>
+            
           </div>
         </div>
       )}
 
       {/* Modals — YOUR ORIGINAL */}
       {isOpen === "Add" && (
-        <AddModel handleClose={() => handleToggleModal("")} handleGetAllModels={() => loadModels(true)} />
+        <AddModel
+          handleClose={() => handleToggleModal("")}
+          handleGetAllModels={() => loadModels(true)}
+        />
       )}
       {isOpen === "Edit" && (
-        <EditModal handleClose={() => handleToggleModal("")} seleteModel={seleteModel} handleGetAllModels={() => loadModels(true)} />
+        <EditModal
+          handleClose={() => handleToggleModal("")}
+          seleteModel={seleteModel}
+          handleGetAllModels={() => loadModels(true)}
+        />
       )}
 
       {/* ToastContainer removed — SweetAlert2 handles everything now */}

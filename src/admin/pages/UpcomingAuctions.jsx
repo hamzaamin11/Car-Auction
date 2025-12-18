@@ -196,7 +196,7 @@ export default function UpcomingAuctions() {
 
   return (
     <>
-      <div className="max-w-8xl mx-4 px-2 lg:py-6 py-3 font-sans">
+      <div className="max-w-8xl mx-4 px-2 lg:py-6 py-3 ">
         <div className="flex flex-col sm:flex-row justify-between items-center gap-4 mb-2">
           <h1 className="text-xl lg:text-3xl font-bold text-gray-900">
             Upcoming Auctions

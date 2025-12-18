@@ -119,9 +119,17 @@ function Layout() {
   const role = currentUser?.role;
 
   const isAdminRoute = location.pathname.startsWith("/admin");
+  const isSellerRoute = location.pathname.startsWith("/seller/dashboard");
   const isAdminLogin = location.pathname === "/admin-login";
+  const liveAuction = location.pathname === "/seller/live-auctions";
+  const upcomingAuction = location.pathname === "/seller/upcoming-auctions";
 
-  const hideNavbarFooter = isAdminRoute || isAdminLogin;
+  const hideNavbarFooter =
+    isAdminRoute ||
+    isAdminLogin ||
+    isSellerRoute ||
+    liveAuction ||
+    upcomingAuction;
 
   if (
     location.pathname === "/" ||
@@ -314,8 +322,14 @@ function Layout() {
           <Route path="vehicle-details" element={<SellerVehicleDetails />} />
           <Route path="/seller/inspection" element={<VehicleInspection />} />
           {/* Auctions */}
-          <Route path="live-auctions" element={<SellerLiveAuctions />} />
-          <Route path="upcoming-auctions" element={<UpcomingAuctions />} />
+          <Route
+            path="/seller/live-auctions"
+            element={<SellerLiveAuctions />}
+          />
+          <Route
+            path="/seller/upcoming-auctions"
+            element={<UpcomingAuctions />}
+          />
           <Route path="/seller/accountsetting" element={<AccountSetting />} />
           {/* Bids */}
           <Route path="my-bids" element={<MyBids />} />

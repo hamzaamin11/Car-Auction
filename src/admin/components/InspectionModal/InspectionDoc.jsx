@@ -2,7 +2,13 @@ import axios from "axios";
 import { useEffect, useState } from "react";
 import { BASE_URL } from "../../../components/Contant/URL";
 import { useSelector } from "react-redux";
-import { FaArrowLeft } from "react-icons/fa";
+import {
+  FaArrowLeft,
+  FaUpload,
+  FaImage,
+  FaSave,
+  FaTimes,
+} from "react-icons/fa";
 
 const initialState = {
   registrationImg: "",
@@ -15,9 +21,7 @@ const initialState = {
 };
 
 export const InspectionDoc = ({ handleIsOpenToggle, selectedVehicle }) => {
-  console.log(" =>>", selectedVehicle);
   const { currentUser } = useSelector((state) => state?.auth);
-
   const [inspectionData, setInspectionData] = useState(initialState);
   const [previewImage, setPreviewImage] = useState(initialState);
   const [selectedImage, setSelectedImage] = useState({ data: {} });
@@ -30,12 +34,10 @@ export const InspectionDoc = ({ handleIsOpenToggle, selectedVehicle }) => {
     if (!file) return;
 
     const preview = URL.createObjectURL(file);
-
     setInspectionData((prev) => ({
       ...prev,
       [name]: file,
     }));
-
     setPreviewImage((prev) => ({
       ...prev,
       [name]: preview,
@@ -56,9 +58,8 @@ export const InspectionDoc = ({ handleIsOpenToggle, selectedVehicle }) => {
         formData
       );
       console.log("Upload Response:", res.data);
-
-      // Refresh after upload
       handleGetAllDocs();
+      handleIsOpenToggle("");
       setLoading(false);
     } catch (error) {
       console.log(error);
@@ -72,7 +73,6 @@ export const InspectionDoc = ({ handleIsOpenToggle, selectedVehicle }) => {
       const res = await axios.get(
         `${BASE_URL}/seller/getInspection/${currentUser?.id}/${selectedVehicle?.newVehicleId}`
       );
-
       console.log("Server data =>", res.data);
       setSelectedImage(res.data);
     } catch (error) {
@@ -94,7 +94,7 @@ export const InspectionDoc = ({ handleIsOpenToggle, selectedVehicle }) => {
         <img
           src={localPreview}
           alt={key}
-          className="w-full h-full object-cover"
+          className="w-full h-full object-cover rounded-lg"
         />
       );
 
@@ -103,107 +103,162 @@ export const InspectionDoc = ({ handleIsOpenToggle, selectedVehicle }) => {
         <img
           src={serverImage}
           alt={key}
-          className="w-full h-full object-cover"
+          className="w-full h-full object-cover rounded-lg"
         />
       );
 
-    return "📷";
+    return (
+      <div className="flex flex-col items-center justify-center text-gray-400">
+        <FaImage className="text-4xl mb-2" />
+        <span className="text-sm">No Image</span>
+      </div>
+    );
   };
 
+  const documentGroups = [
+    {
+      title: "Vehicle Registration Documents",
+      items: [
+        { key: "registrationImg", label: "Original Registration Book" },
+        { key: "ownerCnicImg", label: "Owner Original CNIC" },
+        { key: "transferOrderImg", label: "Transfer Order (T.O.) Form" },
+        { key: "FormImg", label: "Form 'F' (Application)" },
+      ],
+    },
+    {
+      title: "Verification & Identification",
+      items: [
+        { key: "bioMetricSlipImg", label: "Biometric Verification Slip" },
+        { key: "chassicImg", label: "Engine & Chassis Numbers" },
+        { key: "nocImg", label: "NOC Certificate" },
+      ],
+    },
+  ];
+
   return (
-    <div className="fixed bg-white p-6 w-full z-50 inset-0 overflow-y-auto">
-      <h3 className="font-bold text-lg mb-6 flex items-center gap-3 bg-blue-950 text-white p-2 rounded ">
-        <span onClick={() => handleIsOpenToggle("")}>
-          <FaArrowLeft />
-        </span>
-        Upload Vehicle Documents
-      </h3>
-
-      {/* -------- TOP ROW INPUTS -------- */}
-      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 mb-10">
-        {[
-          ["registrationImg", "Original Registration Book"],
-          ["ownerCnicImg", "Owner Original CNIC"],
-          ["transferOrderImg", "Transfer Order (T.O.) Form"],
-          ["FormImg", "Form 'F' (Application for Registration/Transfer)"],
-        ].map(([key, label]) => (
-          <div key={key} className="flex flex-col">
-            <label className="mb-1 font-semibold">{label}</label>
-            <input
-              type="file"
-              name={key}
-              accept="image/*"
-              className="border p-2 rounded-md"
-              onChange={handleUploadImage}
-            />
-          </div>
-        ))}
-      </div>
-
-      {/* -------- PREVIEW ROW -------- */}
-      <div className="flex justify-around items-center gap-4 mb-10">
-        {["registrationImg", "ownerCnicImg", "transferOrderImg", "FormImg"].map(
-          (key, i) => (
-            <div
-              key={i}
-              className="w-56 h-56 bg-gray-200 rounded-md flex items-center justify-center text-3xl overflow-hidden"
-            >
-              {renderImage(key)}
+    <div className="fixed inset-0 bg-gray-100 bg-opacity-95 flex items-center justify-center p-4 z-50">
+      <div className="bg-white rounded-2xl shadow-2xl w-full max-w-7xl max-h-[90vh] overflow-y-auto">
+        {/* Header */}
+        <div className="sticky top-0 bg-blue-900 text-white p-3 rounded-t-2xl">
+          <div className="flex items-center justify-between">
+            <div className="flex items-center gap-4">
+              <button
+                onClick={() => handleIsOpenToggle("")}
+                className="hover:bg-blue-800 p-3 rounded-full transition"
+              >
+                <FaArrowLeft className="text-xl" />
+              </button>
+              <div>
+                <h2 className="text-2xl font-bold">Vehicle Documents Upload</h2>
+                <p className="text-blue-200 mt-1">
+                  Upload all required inspection documents
+                </p>
+              </div>
             </div>
-          )
-        )}
-      </div>
-
-      {/* -------- BOTTOM ROW INPUTS -------- */}
-      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 mb-10">
-        {[
-          ["bioMetricSlipImg", "Biometric Verification Slip"],
-          ["chassicImg", "Image of Engine & Chassis Numbers"],
-          ["nocImg", "NOC (No Objection Certificate)"],
-        ].map(([key, label]) => (
-          <div key={key} className="flex flex-col">
-            <label className="mb-1 font-semibold">{label}</label>
-            <input
-              type="file"
-              name={key}
-              accept="image/*"
-              className="border p-2 rounded-md"
-              onChange={handleUploadImage}
-            />
           </div>
-        ))}
-      </div>
+        </div>
 
-      {/* -------- LOWER PREVIEW -------- */}
-      <div className="flex justify-around gap-4 mb-6">
-        {["bioMetricSlipImg", "chassicImg", "nocImg"].map((key, i) => (
-          <div
-            key={i}
-            className="w-56 h-56 bg-gray-200 rounded-md flex items-center justify-center text-3xl overflow-hidden"
-          >
-            {renderImage(key)}
+        {/* Main Content */}
+        <div className="p-6">
+          {documentGroups.map((group, groupIndex) => (
+            <div key={groupIndex} className="mb-10">
+              <h3 className="text-xl font-semibold text-gray-800 mb-6 pb-2 border-b border-gray-200">
+                {group.title}
+              </h3>
+
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                {group.items.map(({ key, label }) => (
+                  <div
+                    key={key}
+                    className="bg-gray-50 rounded-xl p-5 hover:shadow-md transition-shadow"
+                  >
+                    <div className="flex flex-col lg:flex-row gap-6">
+                      {/* Preview Box */}
+                      <div className="flex-shrink-0">
+                        <div className="w-48 h-48 bg-white border-2 border-dashed border-gray-300 rounded-lg overflow-hidden flex items-center justify-center">
+                          {renderImage(key)}
+                        </div>
+                      </div>
+
+                      {/* Upload Section */}
+                      <div className="flex-1">
+                        <h4 className="font-semibold text-gray-800 mb-2">
+                          {label}
+                        </h4>
+                        <p className="text-gray-600 text-sm mb-4">
+                          Upload clear image of the document. Supported formats:
+                          JPG, PNG, PDF
+                        </p>
+
+                        <div className="mb-4">
+                          <label className="block mb-2 text-sm font-medium text-gray-700">
+                            Choose File
+                          </label>
+                          <div className="flex items-center gap-3">
+                            <label className="flex items-center gap-2 bg-blue-900 text-white px-4 py-2.5 rounded-lg cursor-pointer hover:opacity-95 transition">
+                              <FaUpload />
+                              <span>Browse</span>
+                              <input
+                                type="file"
+                                name={key}
+                                accept="image/*"
+                                className="hidden"
+                                onChange={handleUploadImage}
+                              />
+                            </label>
+                            <span className="text-sm text-gray-500">
+                              Max size: 5MB
+                            </span>
+                          </div>
+                        </div>
+
+                        <div className="text-xs text-gray-500 p-3 bg-blue-50 rounded-lg">
+                          📌 Ensure the document is valid, clear, and all
+                          details are visible
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            </div>
+          ))}
+        </div>
+
+        {/* Footer Actions */}
+        <div className="sticky bottom-0 bg-white border-t border-gray-200 p-6 rounded-b-2xl">
+          <div className="flex flex-col sm:flex-row items-center justify-between gap-4">
+            <div className="text-sm text-gray-600">
+              <span className="font-medium">Note:</span> All documents must be
+              clear and valid for inspection
+            </div>
+
+            <div className="flex gap-3">
+              <button
+                onClick={() => handleIsOpenToggle("")}
+                className="flex items-center gap-2 px-6 py-3 border border-gray-300 text-gray-700 rounded-lg hover:bg-gray-50 transition"
+              >
+                <FaTimes />
+                Cancel
+              </button>
+
+              <button
+                onClick={handleUploadData}
+                disabled={loading}
+                className="flex items-center gap-2 px-8 py-3 bg-blue-900 text-white rounded-lg hover:opacity-90 transition disabled:opacity-50"
+              >
+                {loading ? (
+                  <>⏳ Processing...</>
+                ) : (
+                  <>
+                    <FaSave />
+                    Save All Documents
+                  </>
+                )}
+              </button>
+            </div>
           </div>
-        ))}
-      </div>
-
-      {/* -------- ACTION BUTTONS -------- */}
-      <div className="flex justify-center gap-3 py-5">
-        <button
-          type="button"
-          onClick={() => handleIsOpenToggle("")}
-          className="px-6 py-2.5 text-white bg-red-600 rounded-md hover:opacity-95"
-        >
-          Cancel
-        </button>
-
-        <button
-          type="button"
-          disabled={loading}
-          onClick={handleUploadData}
-          className="px-6 py-2.5 bg-blue-950 text-white rounded-md"
-        >
-          {loading ? "Loading..." : "Save Changes"}
-        </button>
+        </div>
       </div>
     </div>
   );

@@ -98,7 +98,9 @@ export default function LiveAuctions() {
       (auction) =>
         (auction.make || "").toLowerCase().includes(search.toLowerCase()) ||
         (auction.model || "").toLowerCase().includes(search.toLowerCase()) ||
-        (auction.vehicleCondition || "").toLowerCase().includes(search.toLowerCase())
+        (auction.vehicleCondition || "")
+          .toLowerCase()
+          .includes(search.toLowerCase())
     );
     setFilteredAuctions(filtered);
   }, [search, allLiveAuction]);
@@ -185,7 +187,7 @@ export default function LiveAuctions() {
                   </th>
                   <th className="px-4 py-3 text-left text-sm font-semibold">
                     Model
-                    </th>
+                  </th>
                   <th className="px-4 py-3 text-left text-sm font-semibold">
                     Condition
                   </th>
@@ -222,8 +224,12 @@ export default function LiveAuctions() {
                           className="w-16 h-16 object-cover rounded"
                         />
                       </td>
-                      <td className="px-4 py-3 text-gray-700">{user?.make || "--"}</td>
-                      <td className="px-4 py-3 text-gray-700">{user?.model || "--"}</td>
+                      <td className="px-4 py-3 text-gray-700">
+                        {user?.make || "--"}
+                      </td>
+                      <td className="px-4 py-3 text-gray-700">
+                        {user?.model || "--"}
+                      </td>
                       <td className="px-4 py-3 text-gray-700">
                         {user?.vehicleCondition || "--"}
                       </td>
@@ -265,7 +271,9 @@ export default function LiveAuctions() {
                     {currentUser.role === "admin" && (
                       <p className="flex justify-between items-center">
                         <p className="text-gray-900 font-bold">Owner Name</p>
-                        <span className="text-gray-500">{user?.name || "--"}</span>
+                        <span className="text-gray-500">
+                          {user?.name || "--"}
+                        </span>
                       </p>
                     )}
                     <p className="flex justify-between">
@@ -286,7 +294,9 @@ export default function LiveAuctions() {
                       <span className="text-gray-900 font-bold">
                         Current Bid
                       </span>
-                      <span className="text-gray-500">{user?.sellerOffer || "--"}</span>
+                      <span className="text-gray-500">
+                        {user?.sellerOffer || "--"}
+                      </span>
                     </p>
                     <p className="flex justify-between">
                       <span className="text-gray-900 font-bold">End Time</span>
@@ -331,14 +341,22 @@ export default function LiveAuctions() {
                 <button
                   onClick={() => goToPage(1)}
                   disabled={pageNo === 1}
-                  className={`px-3 py-1 rounded border ${pageNo === 1 ? "bg-gray-100 text-gray-400 cursor-not-allowed" : "bg-white hover:bg-gray-50"}`}
+                  className={`px-3 py-1 rounded border ${
+                    pageNo === 1
+                      ? "bg-gray-100 text-gray-400 cursor-not-allowed"
+                      : "bg-white hover:bg-gray-50"
+                  }`}
                 >
                   {"<<"}
                 </button>
                 <button
                   onClick={() => goToPage(pageNo - 1)}
                   disabled={pageNo === 1}
-                  className={`px-3 py-1 rounded border ${pageNo === 1 ? "bg-gray-100 text-gray-400 cursor-not-allowed" : "bg-white hover:bg-gray-50"}`}
+                  className={`px-3 py-1 rounded border ${
+                    pageNo === 1
+                      ? "bg-gray-100 text-gray-400 cursor-not-allowed"
+                      : "bg-white hover:bg-gray-50"
+                  }`}
                 >
                   {"<"}
                 </button>
@@ -347,7 +365,11 @@ export default function LiveAuctions() {
                   <button
                     key={page}
                     onClick={() => goToPage(page)}
-                    className={`px-3 py-1 rounded border ${pageNo === page ? "bg-blue-950 text-white" : "bg-white hover:bg-gray-50"}`}
+                    className={`px-3 py-1 rounded border ${
+                      pageNo === page
+                        ? "bg-blue-950 text-white"
+                        : "bg-white hover:bg-gray-50"
+                    }`}
                   >
                     {page}
                   </button>
@@ -356,14 +378,22 @@ export default function LiveAuctions() {
                 <button
                   onClick={() => goToPage(pageNo + 1)}
                   disabled={pageNo >= totalPages}
-                  className={`px-3 py-1 rounded border ${pageNo >= totalPages ? "bg-gray-100 text-gray-400 cursor-not-allowed" : "bg-white hover:bg-gray-50"}`}
+                  className={`px-3 py-1 rounded border ${
+                    pageNo >= totalPages
+                      ? "bg-gray-100 text-gray-400 cursor-not-allowed"
+                      : "bg-white hover:bg-gray-50"
+                  }`}
                 >
                   {">"}
                 </button>
                 <button
                   onClick={() => goToPage(totalPages)}
                   disabled={pageNo >= totalPages}
-                  className={`px-3 py-1 rounded border ${pageNo >= totalPages ? "bg-gray-100 text-gray-400 cursor-not-allowed" : "bg-white hover:bg-gray-50"}`}
+                  className={`px-3 py-1 rounded border ${
+                    pageNo >= totalPages
+                      ? "bg-gray-100 text-gray-400 cursor-not-allowed"
+                      : "bg-white hover:bg-gray-50"
+                  }`}
                 >
                   {">>"}
                 </button>
@@ -384,7 +414,6 @@ export default function LiveAuctions() {
             handleClick={() => setselectedVehicle(null)}
           />
         )}
-        <ToastContainer />
       </div>
     </>
   );

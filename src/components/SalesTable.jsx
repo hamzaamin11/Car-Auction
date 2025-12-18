@@ -311,7 +311,7 @@ const SalesTable = () => {
                        hover:border-blue-950 flex flex-col items-center p-5"
             >
               <img
-                src={brand.logo}
+                src={brand?.logo}
                 alt={brand.brandName}
                 className="w-24 h-20 object-contain transition-transform duration-300 group-hover:scale-110"
               />

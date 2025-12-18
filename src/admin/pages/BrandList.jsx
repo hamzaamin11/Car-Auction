@@ -67,7 +67,17 @@ export const BrandList = () => {
         icon: "success",
         confirmButtonColor: "#9333ea",
       });
-      loadBrands(true);
+      // 🔹 Reload current page without resetting pagination
+      const brands = await fetchPage(currentPage, search);
+      setAllBrands((prev) => {
+        const newAllBrands = [...prev];
+        // Replace the brands of current page
+        const start = (currentPage - 1) * itemsPerRequest;
+        for (let i = 0; i < brands.length; i++) {
+          newAllBrands[start + i] = brands[i];
+        }
+        return newAllBrands;
+      });
     } catch (error) {
       console.log(error);
     }
@@ -239,14 +249,16 @@ export const BrandList = () => {
       {/* EXACT SAME PAGINATION UI — NOW WORKS 100% */}
       {allBrands.length > 0 && (
         <div className="bg-white rounded-lg shadow-sm p-4 mt-6">
-          <div className="flex flex-col sm:flex-row justify-between items-center gap-4 text-sm text-gray-700">
+          <div className="flex flex-col sm:flex-row lg:justify-between items-center gap-4 text-sm text-gray-700">
+            {/* Showing entries */}
             <div className="text-gray-600">
               Showing <span className="font-medium">{startIndex + 1}</span> to{" "}
-              <span className="font-medium">{endIndex}</span>{" "}
-              <span className="font-medium"></span> entries
+              <span className="font-medium">{endIndex}</span> entries
             </div>
 
+            {/* Page buttons */}
             <div className="flex items-center gap-1">
+              {/* First page */}
               <button
                 onClick={() => goToPage(1)}
                 disabled={currentPage === 1}
@@ -258,6 +270,8 @@ export const BrandList = () => {
               >
                 {"<<"}
               </button>
+
+              {/* Previous page */}
               <button
                 onClick={() => goToPage(currentPage - 1)}
                 disabled={currentPage === 1}
@@ -270,6 +284,7 @@ export const BrandList = () => {
                 {"<"}
               </button>
 
+              {/* Page numbers */}
               {getPageNumbers().map((page) => (
                 <button
                   key={page}
@@ -284,22 +299,25 @@ export const BrandList = () => {
                 </button>
               ))}
 
+              {/* Next page */}
               <button
                 onClick={() => goToPage(currentPage + 1)}
-                disabled={!hasMore && currentPage >= totalPages}
+                disabled={currentPage === totalPages}
                 className={`px-3 py-1 rounded border ${
-                  !hasMore && currentPage >= totalPages
+                  currentPage === totalPages
                     ? "bg-gray-100 text-gray-400 cursor-not-allowed"
                     : "bg-white hover:bg-gray-50"
                 }`}
               >
                 {">"}
               </button>
+
+              {/* Last page */}
               <button
                 onClick={() => goToPage(totalPages)}
-                disabled={!hasMore && currentPage >= totalPages}
+                disabled={currentPage === totalPages}
                 className={`px-3 py-1 rounded border ${
-                  !hasMore && currentPage >= totalPages
+                  currentPage === totalPages
                     ? "bg-gray-100 text-gray-400 cursor-not-allowed"
                     : "bg-white hover:bg-gray-50"
                 }`}
@@ -307,8 +325,6 @@ export const BrandList = () => {
                 {">>"}
               </button>
             </div>
-
-            <div className="flex items-center gap-2"></div>
           </div>
         </div>
       )}
