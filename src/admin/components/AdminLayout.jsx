@@ -11,16 +11,23 @@ const AdminLayout = () => {
       </div> 
 
       {/* Main Content Area */}
-      <div className="flex flex-1 pt-16 h-full">
-        {/* Sidebar - Fixed width */}
-        <div className="w-64 flex-shrink-0 border-r bg-white hidden md:block">
+      <div className="flex flex-1 pt-16 h-full overflow-hidden">
+        {/* Desktop Sidebar - Visible on md and above */}
+        <div className="w-64 flex-shrink-0 border-r bg-white hidden md:block overflow-y-auto">
           <Sidebar />
         </div>
 
-        {/* Content Area - Flexible width */}
+        {/* Main Content - Flexible */}
         <main className="flex-1 overflow-y-auto lg:p-6 py-4">
           <Outlet />
         </main>
+      </div>
+
+      {/* Mobile Sidebar Handler - IMPORTANT */}
+      {/* This renders the hamburger button and mobile sliding menu */}
+      {/* Only visible on screens smaller than md */}
+      <div className="md:hidden">
+        <Sidebar />
       </div>
     </div>
   );

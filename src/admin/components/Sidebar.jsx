@@ -1,25 +1,20 @@
-import { NavLink, useLocation } from "react-router-dom";
+import { useState } from "react";
+import { NavLink } from "react-router-dom";
 import {
   FaTachometerAlt,
   FaCar,
   FaGavel,
   FaUsers,
-  FaHistory,
   FaSearch,
   FaMoneyBillAlt,
+  FaBars,
+  FaTimes,
 } from "react-icons/fa";
-import { FaMessage } from "react-icons/fa6";
 import { FiHelpCircle } from "react-icons/fi";
 import { IoIosSettings } from "react-icons/io";
 
 const Sidebar = () => {
-  const { pathName } = useLocation();
-
-  {
-    location.pathname === "/admin"
-      ? "bg-blue-950 text-white"
-      : "text-white hover:bg-gray-100";
-  }
+  const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
 
   const menuItems = [
     {
@@ -39,8 +34,6 @@ const Sidebar = () => {
         { name: "Vehicle Model List", path: "/admin/addmodel" },
         { name: "Vehicle Series List", path: "/admin/addseries" },
         { name: "City List", path: "/admin/city" },
-
-        // { name: "View Details", path: "/admin/vehicle-details" },
       ],
     },
     {
@@ -53,7 +46,6 @@ const Sidebar = () => {
         { name: "Auction History", path: "/admin/bid-history" },
       ],
     },
-
     {
       name: "Inspection",
       icon: <FaSearch />,
@@ -62,13 +54,11 @@ const Sidebar = () => {
         { name: "Vehicle Inspection", path: "/admin/inspection" },
       ],
     },
-
     {
       name: "Users",
       path: "/admin/manage-users",
       icon: <FaUsers />,
     },
-
     {
       name: "Configuration",
       icon: <IoIosSettings />,
@@ -76,13 +66,11 @@ const Sidebar = () => {
         { name: "Account Configuration", path: "/admin/configuration" },
       ],
     },
-
     {
       name: "Account",
       path: "/admin/account",
       icon: <FaMoneyBillAlt />,
     },
-
     {
       name: "Support Center",
       icon: <FiHelpCircle />,
@@ -90,34 +78,44 @@ const Sidebar = () => {
         { name: "Suggestions", path: "/admin/suggestionlist" },
         { name: "Partnership Opportunities", path: "/admin/becomepartnerlist" },
         { name: "Get in Touch", path: "/admin/contactlist" },
-        { name: "Subcribe Users", path: "/admin/subcribeuser" },
+        { name: "Subscribe Users", path: "/admin/subcribeuser" },
       ],
     },
   ];
 
-  return (
-    <div className="h-full overflow-y-auto p-4 bg-blue-950 ">
-      <h2 className="text-2xl font-bold mb-6 text-white mt-8">Admin Panel</h2>
+  const toggleMobileMenu = () => {
+    setIsMobileMenuOpen(prev => !prev);
+  };
 
-      <nav className="space-y-1">
+  const closeMobileMenu = () => {
+    setIsMobileMenuOpen(false);
+  };
+
+  const sidebarContent = (
+    <div className="w-64 h-full bg-blue-950 text-white flex flex-col">
+      <div className="p-6 border-b border-blue-800">
+        <h2 className="text-2xl font-bold">Admin Panel</h2>
+      </div>
+      <nav className="flex-1 overflow-y-auto p-4 space-y-2">
         {menuItems.map((item) => (
           <div key={item.name}>
             {item.children ? (
-              <div className="mb-2">
-                <div className="flex items-center px-4 py-3 text-white">
-                  <span className="mr-3">{item.icon}</span>
-                  <span>{item.name}</span>
+              <div className="space-y-1">
+                <div className="flex items-center px-4 py-3 text-white opacity-90">
+                  <span className="mr-3 text-xl">{item.icon}</span>
+                  <span className="font-semibold">{item.name}</span>
                 </div>
-                <div className="ml-8 space-y-1">
+                <div className="ml-10 space-y-1">
                   {item.children.map((child) => (
                     <NavLink
                       key={child.path}
                       to={child.path}
+                      onClick={closeMobileMenu}
                       className={({ isActive }) =>
-                        `block px-3 py-2 text-sm rounded-md ${
+                        `block px-4 py-2 text-sm rounded-lg transition-colors ${
                           isActive
-                            ? "text-blue-950 bg-white"
-                            : "text-white hover:underline"
+                            ? "bg-white text-blue-950 font-semibold"
+                            : "hover:bg-blue-800"
                         }`
                       }
                     >
@@ -130,22 +128,67 @@ const Sidebar = () => {
               <NavLink
                 to={item.path}
                 end={item.end}
+                onClick={closeMobileMenu}
                 className={({ isActive }) =>
-                  `flex items-center px-4 py-3 rounded-md ${
+                  `flex items-center px-4 py-3 rounded-lg transition-colors ${
                     isActive
-                      ? "text- blue-950 bg-white"
-                      : "text-white hover:underline"
+                      ? "bg-white text-blue-950 font-semibold"
+                      : "hover:bg-blue-800"
                   }`
                 }
               >
-                <span className="mr-3">{item.icon}</span>
-                <span>{item.name}</span>
+                <span className="mr-3 text-xl">{item.icon}</span>
+                <span className="font-semibold">{item.name}</span>
               </NavLink>
             )}
           </div>
         ))}
       </nav>
     </div>
+  );
+
+  return (
+    <>
+      {/* Hamburger Button - Mobile only */}
+      <button
+        onClick={toggleMobileMenu}
+        className="fixed top-4 left-4 z-50 lg:hidden p-3 bg-white text-blue-950 rounded-lg shadow-xl"
+        aria-label="Toggle menu"
+      >
+        {isMobileMenuOpen ? <FaTimes size={28} /> : <FaBars size={28} />}
+      </button>
+
+      {/* Desktop Sidebar - lg and above */}
+      <aside className="hidden lg:flex fixed inset-y-0 left-0 z-40">
+        {sidebarContent}
+      </aside>
+
+      {/* Mobile Sliding Menu */}
+      <div className="lg:hidden">
+        <div
+          className={`fixed inset-0 z-40 transition-opacity duration-300 ${
+            isMobileMenuOpen
+              ? "opacity-100 pointer-events-auto"
+              : "opacity-0 pointer-events-none"
+          }`}
+        >
+          {/* Overlay - semi-transparent black (better than full white) */}
+          <div
+            className="absolute inset-0 bg-white"
+            onClick={closeMobileMenu}
+          />
+
+          {/* Sliding Sidebar */}
+          <aside
+            className={`absolute inset-y-0 left-0 transform transition-transform duration-300 ease-in-out ${
+              isMobileMenuOpen ? "translate-x-0" : "-translate-x-full"
+            }`}
+          >
+            {sidebarContent}
+          </aside>
+        </div>
+      </div>
+    </>
   );
 };
 
