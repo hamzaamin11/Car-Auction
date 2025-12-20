@@ -118,17 +118,17 @@ const CarCard = ({ car }) => {
             </span>
           )}
         </p>
-        {car?.auctionDate === null ? (
+        {car?.startTime === null ? (
           <p className="text-sm text-black text-[13px]">
             <span className="font-medium">Auction Date:</span> {"N/A"}
           </p>
         ) : (
           <p className="text-sm text-black text-[13px]">
             <span className="font-medium">Auction Date:</span>
-            {new Date(car.auctionDate.slice(0, 10)).toLocaleDateString("en-GB")}
+            {new Date(car.startTime.slice(0, 10)).toLocaleDateString("en-GB")}
           </p>
         )}
-        {car?.auctionDate === null ? (
+        {car?.startTime === null ? (
           <p className="text-sm text-black text-[13px]">
             <span className="font-medium">Auction Time:</span> {"N/A"}
           </p>

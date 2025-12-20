@@ -136,7 +136,7 @@ export const InspectionDoc = ({ handleIsOpenToggle, selectedVehicle }) => {
   ];
 
   return (
-    <div className="fixed inset-0 bg-gray-100 bg-opacity-95 flex items-center justify-center p-4 z-50">
+    <div className="fixed inset-0 backdrop-blur-lg bg-opacity-95 flex items-center justify-center p-4 z-50">
       <div className="bg-white rounded-2xl shadow-2xl w-full max-w-7xl max-h-[90vh] overflow-y-auto">
         {/* Header */}
         <div className="sticky top-0 bg-blue-900 text-white p-3 rounded-t-2xl">
@@ -248,7 +248,7 @@ export const InspectionDoc = ({ handleIsOpenToggle, selectedVehicle }) => {
                 className="flex items-center gap-2 px-8 py-3 bg-blue-900 text-white rounded-lg hover:opacity-90 transition disabled:opacity-50"
               >
                 {loading ? (
-                  <>⏳ Processing...</>
+                  <> Loading...</>
                 ) : (
                   <>
                     <FaSave />

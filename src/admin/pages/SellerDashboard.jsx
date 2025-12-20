@@ -11,6 +11,7 @@ import {
 import axios from "axios";
 import { useSelector } from "react-redux";
 import { BASE_URL } from "../../components/Contant/URL";
+import { Link } from "react-router-dom";
 
 // Reusable Card Component
 const DashboardCard = ({
@@ -96,7 +97,7 @@ export const SellerDashboard = () => {
           {/* ACTIVE LOTS CARD */}
           <div className="group relative bg-gradient-to-br from-white to-blue-50 rounded-2xl border border-blue-100 p-6 shadow-lg hover:shadow-xl transition-all duration-300 hover:-translate-y-1">
             <div className="absolute top-4 right-4">
-              <div className="bg-gradient-to-r from-blue-500 to-blue-400 p-3 rounded-xl group-hover:scale-110 transition-transform">
+              <div className="bg-blue-900 p-3 rounded-xl group-hover:scale-110 transition-transform">
                 <FaCar className="text-2xl text-white" />
               </div>
             </div>
@@ -104,27 +105,30 @@ export const SellerDashboard = () => {
             <h3 className="text-lg font-semibold text-gray-800 mb-2">
               Active Lots
             </h3>
-            <div className="mt-8 space-y-4">
-              <div className="flex items-center justify-between">
-                <span className="text-gray-600 text-sm">Total Vehicles</span>
-                <span className="text-2xl font-bold text-blue-700">
-                  {vehicle?.totalApproved || 0}
-                </span>
-              </div>
-              <div className="pt-3 border-t border-blue-100">
+            <Link to={"/seller/addVehicle"}>
+              <div className="mt-8 space-y-4">
                 <div className="flex items-center justify-between">
-                  <span className="text-gray-600 text-sm">Total Price</span>
-                  <span className="text-xl font-bold text-gray-900">
-                    {vehicle?.approvedAmount || "0"} PKR
+                  <span className="text-gray-600 text-sm">Total Vehicles</span>
+                  <span className="text-2xl font-bold text-blue-900">
+                    {vehicle?.totalApproved || 0}
                   </span>
                 </div>
+
+                <div className="pt-3 border-t border-blue-100">
+                  <div className="flex items-center justify-between">
+                    <span className="text-gray-600 text-sm">Total Price</span>
+                    <span className="text-xl font-bold text-gray-900">
+                      {vehicle?.approvedAmount || "0"} PKR
+                    </span>
+                  </div>
+                </div>
               </div>
-            </div>
+            </Link>
 
             <div className="mt-6 pt-4 border-t border-blue-100">
               <div className="w-full bg-blue-100 rounded-full h-2">
                 <div
-                  className="bg-gradient-to-r from-blue-500 to-blue-600 h-2 rounded-full transition-all duration-500"
+                  className="bg-blue-900 h-2 rounded-full transition-all duration-500"
                   style={{
                     width: `${Math.min(
                       (vehicle?.totalApproved || 0) * 10,
@@ -137,47 +141,43 @@ export const SellerDashboard = () => {
           </div>
 
           {/* SOLD LOTS CARD */}
-          <div className="group relative bg-gradient-to-br from-white to-green-50 rounded-2xl border border-green-100 p-6 shadow-lg hover:shadow-xl transition-all duration-300 hover:-translate-y-1">
+          <div className="group relative bg-gradient-to-br from-white to-blue-50 rounded-2xl border border-blue-100 p-6 shadow-lg hover:shadow-xl transition-all duration-300 hover:-translate-y-1">
             <div className="absolute top-4 right-4">
-              <div className="bg-gradient-to-r from-green-500 to-green-400 p-3 rounded-xl group-hover:scale-110 transition-transform">
+              <div className="bg-blue-900 p-3 rounded-xl group-hover:scale-110 transition-transform">
                 <FaGavel className="text-2xl text-white" />
               </div>
             </div>
 
             <div className="flex items-center gap-2 mb-2">
               <h3 className="text-lg font-semibold text-gray-800">Sold Lots</h3>
-              <span className="text-xs bg-green-100 text-green-800 px-2 py-1 rounded-full">
+              <span className="text-xs bg-blue-100 text-blue-900 px-2 py-1 rounded-full">
                 Last 30 Days
               </span>
             </div>
-
-            <div className="mt-8 space-y-4">
-              <div className="flex items-center justify-between">
-                <span className="text-gray-600 text-sm">Total Vehicles</span>
-                <span className="text-2xl font-bold text-green-700">
-                  {lastMonth?.last30Sold || 0}
-                </span>
-              </div>
-              <div className="pt-3 border-t border-green-100">
+            <Link to={"/seller/my-bids"}>
+              <div className="mt-8 space-y-4">
                 <div className="flex items-center justify-between">
-                  <span className="text-gray-600 text-sm">Total Price</span>
-                  <span className="text-xl font-bold text-gray-900">
-                    {lastMonth?.last30Amount || "0"} PKR
+                  <span className="text-gray-600 text-sm">Total Vehicles</span>
+                  <span className="text-2xl font-bold text-blue-900">
+                    {lastMonth?.last30Sold || 0}
                   </span>
                 </div>
+                <div className="pt-3 border-t border-green-100">
+                  <div className="flex items-center justify-between">
+                    <span className="text-gray-600 text-sm">Total Price</span>
+                    <span className="text-xl font-bold text-gray-900">
+                      {lastMonth?.last30Amount || "0"} PKR
+                    </span>
+                  </div>
+                </div>
               </div>
-            </div>
-
-            <div className="mt-6 flex items-center gap-2 text-sm text-green-600">
-              <FaArrowUp className="text-green-500" />
-              <span>Recent sales performance</span>
-            </div>
+            </Link>
           </div>
 
           {/* SELL-THROUGH RATE CARD */}
-          <div className="group relative bg-gradient-to-br from-white to-purple-50 rounded-2xl border border-purple-100 p-6 shadow-lg hover:shadow-xl transition-all duration-300 hover:-translate-y-1">
+          <div className="group relative bg-gradient-to-br from-white to-blue-50 rounded-2xl border border-blue-100 p-6 shadow-lg hover:shadow-xl transition-all duration-300 hover:-translate-y-1">
             <div className="absolute top-4 right-4">
-              <div className="bg-gradient-to-r from-purple-500 to-purple-400 p-3 rounded-xl group-hover:scale-110 transition-transform">
+              <div className="bg-blue-900 p-3 rounded-xl group-hover:scale-110 transition-transform">
                 <FaChartLine className="text-2xl text-white" />
               </div>
             </div>
@@ -237,9 +237,9 @@ export const SellerDashboard = () => {
           </div>
 
           {/* AVERAGE DAYS TO SALE CARD */}
-          <div className="group relative bg-gradient-to-br from-white to-orange-50 rounded-2xl border border-orange-100 p-6 shadow-lg hover:shadow-xl transition-all duration-300 hover:-translate-y-1">
+          <div className="group relative bg-gradient-to-br from-white to-blue-50 rounded-2xl border border-blue-100 p-6 shadow-lg hover:shadow-xl transition-all duration-300 hover:-translate-y-1">
             <div className="absolute top-4 right-4">
-              <div className="bg-gradient-to-r from-orange-500 to-orange-400 p-3 rounded-xl group-hover:scale-110 transition-transform">
+              <div className="bg-blue-900 p-3 rounded-xl group-hover:scale-110 transition-transform">
                 <FaClock className="text-2xl text-white" />
               </div>
             </div>
@@ -251,7 +251,7 @@ export const SellerDashboard = () => {
             <div className="mt-8 space-y-4">
               <div className="flex items-center justify-between">
                 <span className="text-gray-600 text-sm">Sold Vehicles</span>
-                <span className="text-2xl font-bold text-orange-700">
+                <span className="text-2xl font-bold text-blue-900">
                   {daysSale?.totalSold || 0}
                 </span>
               </div>
@@ -265,26 +265,13 @@ export const SellerDashboard = () => {
               </div>
             </div>
 
-            <div className="mt-6">
-              <div className="flex items-center justify-between text-sm text-gray-600">
-                <span>Quick Sale Indicator</span>
-                <span
-                  className={`font-bold ${
-                    (daysSale?.averageDays || 0) < 10
-                      ? "text-green-600"
-                      : "text-yellow-600"
-                  }`}
-                >
-                  {(daysSale?.averageDays || 0) < 10 ? "Fast" : "Average"}
-                </span>
-              </div>
-            </div>
+            <div className="mt-6"></div>
           </div>
 
           {/* TOP BIDDERS CARD */}
-          <div className="group relative bg-gradient-to-br from-white to-indigo-50 rounded-2xl border border-indigo-100 p-6 shadow-lg hover:shadow-xl transition-all duration-300 hover:-translate-y-1">
+          <div className="group relative bg-gradient-to-br from-white to-blue-50 rounded-2xl border border-blue-100 p-6 shadow-lg hover:shadow-xl transition-all duration-300 hover:-translate-y-1">
             <div className="absolute top-4 right-4">
-              <div className="bg-gradient-to-r from-indigo-500 to-indigo-400 p-3 rounded-xl group-hover:scale-110 transition-transform">
+              <div className="bg-blue-900 p-3 rounded-xl group-hover:scale-110 transition-transform">
                 <FaUser className="text-2xl text-white" />
               </div>
             </div>
@@ -295,7 +282,7 @@ export const SellerDashboard = () => {
 
             <div className="mt-8 space-y-4">
               <div className="flex items-center gap-3 p-3 bg-indigo-50 rounded-lg">
-                <div className="w-10 h-10 bg-gradient-to-r from-indigo-500 to-indigo-600 rounded-full flex items-center justify-center">
+                <div className="w-10 h-10 bg-blue-900 rounded-full flex items-center justify-center">
                   <span className="text-white font-bold">
                     {bidder?.name?.charAt(0) || "B"}
                   </span>
@@ -309,26 +296,22 @@ export const SellerDashboard = () => {
               </div>
 
               <div className="grid grid-cols-2 gap-3">
-                <div className="p-3 bg-white rounded-lg border border-indigo-100">
+                <div className="p-2 bg-white rounded-lg border border-indigo-100">
                   <p className="text-xs text-gray-600 mb-1">Contact Number</p>
-                  <p className="font-medium text-gray-900">
+                  <p className=" text-xs text-gray-900">
                     {bidder?.contact || "N/A"}
                   </p>
                 </div>
-                <div className="p-3 bg-white rounded-lg border border-indigo-100">
+                <div className="p-2 bg-white rounded-lg border border-indigo-100">
                   <p className="text-xs text-gray-600 mb-1">Total Bids</p>
-                  <p className="font-medium text-gray-900">
+                  <p className="text-xs text-gray-900">
                     {bidder?.totalBids || "0"}
                   </p>
                 </div>
               </div>
             </div>
 
-            <div className="mt-6 pt-4 border-t border-indigo-100">
-              <button className="w-full bg-gradient-to-r from-indigo-600 to-indigo-500 text-white py-2 rounded-lg hover:opacity-90 transition-opacity text-sm font-medium">
-                View All Bidders
-              </button>
-            </div>
+            <div className="mt-6 pt-4 border-t border-indigo-100"></div>
           </div>
 
           <div className=""></div>

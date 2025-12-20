@@ -410,7 +410,7 @@ const Dashboard = () => {
                       <span className="text-gray-500">vehicles</span>
                     </div>
                     <Link
-                      to={"/admin/approval"}
+                      to={"/admin/awaiting"}
                       className="mt-6 bg-blue-900 hover:opacity-95 text-white px-5 py-2.5 rounded-lg font-medium transition-colors flex items-center justify-center gap-2"
                     >
                       <FaClipboardCheck /> Review Now
