@@ -54,7 +54,9 @@ const Dashboard = () => {
   const [awaitingStatus, setAwaitingStatus] = useState([]);
   const [bidInfo, setBidInfo] = useState([]);
   const [kpisStats, setKpisStats] = useState();
-
+const approvalRate = totalVehicles.length && (unapprovelVehicles.length || awaitingStatus.length)
+  ? Math.round((totalVehicles.length / (totalVehicles.length + unapprovelVehicles.length + awaitingStatus.length)) * 100)
+  : 0;
   const totalGMV = kpisStats?.data?.totalGMV;
 
   const totalAuction = kpisStats?.data?.totalAuctionsCompleted;
@@ -268,7 +270,7 @@ const Dashboard = () => {
           {/* HEADER */}
           <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
             <div>
-              <h1 className="text-3xl md:text-4xl font-bold bg-gradient-to-r from-blue-900 to-blue-700 bg-clip-text text-transparent">
+              <h1 className="text-3xl md:text-4xl font-bold bg-blue-950 bg-clip-text text-transparent">
                 Dashboard Overview
               </h1>
               <p className="text-gray-600 mt-2">
@@ -297,19 +299,19 @@ const Dashboard = () => {
                       {totalVehicles.length}
                     </h2>
                     <div className="flex items-center gap-1 mt-2">
-                      <div className="w-full bg-blue-100 rounded-full h-2">
-                        <div
-                          className="bg-blue-900 h-2 rounded-full"
-                          style={{ width: "75%" }}
-                        ></div>
-                      </div>
-                      <span className="text-xs text-blue-900 font-medium">
-                        75%
-                      </span>
-                    </div>
+  <div className="w-full bg-blue-100 rounded-full h-2">
+    <div
+      className="bg-blue-950 h-2 rounded-full"
+      style={{ width: `${approvalRate}%` }}
+    ></div>
+  </div>
+  <span className="text-xs text-blue-950 font-medium">
+    {approvalRate}%
+  </span>
+</div>
                   </div>
                   <div className="bg-blue-100 p-3 rounded-xl group-hover:bg-blue-200 transition-colors">
-                    <FaCar className="text-3xl text-blue-900" />
+                    <FaCar className="text-3xl text-blue-950" />
                   </div>
                 </div>
               </Link>
@@ -327,14 +329,14 @@ const Dashboard = () => {
                       {liveAuctions.totalLiveAuctions}
                     </h2>
                     <div className="flex items-center gap-2 mt-2">
-                      <div className="w-2 h-2 bg-blue-900 rounded-full animate-pulse"></div>
-                      <span className="text-xs text-blue-900 font-medium">
+                      <div className="w-2 h-2 bg-blue-950 rounded-full animate-pulse"></div>
+                      <span className="text-xs text-blue-950 font-medium">
                         Active Now
                       </span>
                     </div>
                   </div>
                   <div className="bg-blue-100 p-3 rounded-xl group-hover:bg-blue-200 transition-colors">
-                    <FaGavel className="text-3xl text-blue-900" />
+                    <FaGavel className="text-3xl text-blue-950" />
                   </div>
                 </div>
               </Link>
@@ -351,12 +353,12 @@ const Dashboard = () => {
                     <h2 className="text-4xl font-bold text-gray-900">
                       {totalCustomers.totalBuyers}
                     </h2>
-                    <div className="text-xs text-blue-900 font-medium mt-2">
+                    <div className="text-xs text-blue-950 font-medium mt-2">
                       +12% from last month
                     </div>
                   </div>
                   <div className="bg-blue-100 p-3 rounded-xl group-hover:bg-blue-200 transition-colors">
-                    <FaUsers className="text-3xl text-blue-900" />
+                    <FaUsers className="text-3xl text-blue-950" />
                   </div>
                 </div>
               </Link>
@@ -373,12 +375,12 @@ const Dashboard = () => {
                     <h2 className="text-4xl font-bold text-gray-900">
                       {upcomingBid.totalUpcomingAuctions}
                     </h2>
-                    <div className="text-xs text-blue-900 font-medium mt-2">
+                    <div className="text-xs text-blue-950 font-medium mt-2">
                       Scheduled this week
                     </div>
                   </div>
                   <div className="bg-blue-100 p-3 rounded-xl group-hover:bg-blue-200 transition-colors">
-                    <FaCalendarAlt className="text-3xl text-blue-900" />
+                    <FaCalendarAlt className="text-3xl text-blue-950" />
                   </div>
                 </div>
               </Link>
@@ -392,7 +394,7 @@ const Dashboard = () => {
               <div className="bg-white rounded-2xl border border-gray-200 shadow-lg p-6 h-full">
                 <div className="flex justify-between items-center mb-6">
                   <h3 className="text-xl font-bold text-gray-800">
-                    Pending Approvals
+                    Awaiting Approvals
                   </h3>
                   <span className="bg-red-100 text-red-600 text-xs font-bold px-3 py-1 rounded-full">
                     Action Required
@@ -411,7 +413,7 @@ const Dashboard = () => {
                     </div>
                     <Link
                       to={"/admin/awaiting"}
-                      className="mt-6 bg-blue-900 hover:opacity-95 text-white px-5 py-2.5 rounded-lg font-medium transition-colors flex items-center justify-center gap-2"
+                      className="mt-6 bg-blue-950 text-white px-5 py-2.5 rounded-lg font-medium transition-colors flex items-center justify-center gap-2"
                     >
                       <FaClipboardCheck /> Review Now
                     </Link>
@@ -431,7 +433,7 @@ const Dashboard = () => {
               {/* Vehicle Snapshot */}
               <div className="bg-white rounded-2xl border border-gray-200 shadow-lg p-6">
                 <h3 className="font-bold text-gray-800 mb-4 flex items-center gap-2">
-                  <FaCarSide className="text-blue-900" /> Vehicle Snapshot
+                  <FaCarSide className="text-blue-950" /> Vehicle Snapshot
                 </h3>
                 <div className="space-y-4">
                   {[
@@ -477,14 +479,14 @@ const Dashboard = () => {
               {/* Auction Activity */}
               <div className="bg-white rounded-2xl border border-gray-200 shadow-lg p-6">
                 <h3 className="font-bold text-gray-800 mb-4 flex items-center gap-2">
-                  <FaChartLine className="text-blue-900" /> Latest Bid Activity
+                  <FaChartLine className="text-blue-950" /> Latest Bid Activity
                 </h3>
                 {bidInfo.length > 0 ? (
                   <div className="space-y-4">
                     <div className="bg-gradient-to-r from-blue-50 to-white p-4 rounded-xl">
                       <div className="flex items-center gap-3 mb-3">
                         <div className="bg-blue-100 p-2 rounded-lg">
-                          <FaUser className="text-blue-900" />
+                          <FaUser className="text-blue-950" />
                         </div>
                         <div>
                           <p className="text-sm text-gray-600">Latest Bidder</p>
@@ -495,7 +497,7 @@ const Dashboard = () => {
                       </div>
                       <div className="flex items-center gap-3 mb-3">
                         <div className="bg-blue-100 p-2 rounded-lg">
-                          <FaEnvelope className="text-blue-900" />
+                          <FaEnvelope className="text-blue-950" />
                         </div>
                         <div>
                           <p className="text-sm text-gray-600">Seller</p>
@@ -506,7 +508,7 @@ const Dashboard = () => {
                       </div>
                       <div className="flex items-center gap-3">
                         <div className="bg-blue-100 p-2 rounded-lg">
-                          <FaCarSide className="text-blue-900" />
+                          <FaCarSide className="text-blue-950" />
                         </div>
                         <div>
                           <p className="text-sm text-gray-600">Vehicle</p>
@@ -538,7 +540,7 @@ const Dashboard = () => {
                 </p>
               </div>
               <div className="flex items-center gap-2 mt-4 md:mt-0">
-                <div className="w-2 h-2 bg-blue-900 rounded-full"></div>
+                <div className="w-2 h-2 bg-blue-950 rounded-full"></div>
                 <span className="text-sm text-gray-700">Real-time Data</span>
               </div>
             </div>
@@ -550,7 +552,7 @@ const Dashboard = () => {
                 <div className="flex items-start justify-between mb-4">
                   <h3 className="font-bold text-gray-800">Total GMV</h3>
                   <div className="bg-blue-100 p-2 rounded-lg">
-                    <FaChartBar className="text-blue-900" />
+                    <FaChartBar className="text-blue-950" />
                   </div>
                 </div>
                 <h2 className="text-3xl font-bold text-gray-900 mb-6">
@@ -593,19 +595,19 @@ const Dashboard = () => {
                     Auction Completion
                   </h3>
                   <div className="bg-blue-100 p-2 rounded-lg">
-                    <FaCheckCircle className="text-blue-900" />
+                    <FaCheckCircle className="text-blue-950" />
                   </div>
                 </div>
                 <div className="space-y-4">
                   <div className="flex items-center justify-between p-3 bg-blue-50 rounded-lg">
                     <span className="text-gray-700">Today</span>
-                    <span className="text-2xl font-bold text-blue-900">
+                    <span className="text-2xl font-bold text-blue-950">
                       {totalAuction?.today}
                     </span>
                   </div>
                   <div className="flex items-center justify-between p-3 bg-blue-50 rounded-lg">
                     <span className="text-gray-700">Month to Date</span>
-                    <span className="text-2xl font-bold text-blue-900">
+                    <span className="text-2xl font-bold text-blue-950">
                       {totalAuction?.MTD}
                     </span>
                   </div>
@@ -617,19 +619,19 @@ const Dashboard = () => {
                 <div className="flex items-start justify-between mb-6">
                   <h3 className="font-bold text-gray-800">User Growth</h3>
                   <div className="bg-blue-100 p-2 rounded-lg">
-                    <FaUserPlus className="text-blue-900" />
+                    <FaUserPlus className="text-blue-950" />
                   </div>
                 </div>
                 <div className="space-y-4">
                   <div className="flex items-center justify-between p-3 bg-blue-50 rounded-lg">
                     <span className="text-gray-700">Today</span>
-                    <span className="text-2xl font-bold text-blue-900">
+                    <span className="text-2xl font-bold text-blue-950">
                       {totalUsers?.total}
                     </span>
                   </div>
                   <div className="flex items-center justify-between p-3 bg-blue-50 rounded-lg">
                     <span className="text-gray-700">Last 30 Days</span>
-                    <span className="text-2xl font-bold text-blue-900">
+                    <span className="text-2xl font-bold text-blue-950">
                       {totalMonthUsers?.total}
                     </span>
                   </div>
@@ -643,11 +645,11 @@ const Dashboard = () => {
                   <div className="flex items-start justify-between mb-4">
                     <h3 className="font-bold text-gray-800">Sold Rate</h3>
                     <div className="bg-blue-100 p-2 rounded-lg">
-                      <FaPercentage className="text-blue-900" />
+                      <FaPercentage className="text-blue-950" />
                     </div>
                   </div>
                   <div className="text-center py-3">
-                    <div className="text-4xl font-bold text-blue-900 mb-2">
+                    <div className="text-4xl font-bold text-blue-950 mb-2">
                       {soldRate}%
                     </div>
                     <p className="text-sm text-gray-600">
@@ -661,7 +663,7 @@ const Dashboard = () => {
                   <div className="flex items-start justify-between mb-4">
                     <h3 className="font-bold text-gray-800">Compliance KPIs</h3>
                     <div className="bg-blue-100 p-2 rounded-lg">
-                      <FaShieldAlt className="text-blue-900" />
+                      <FaShieldAlt className="text-blue-950" />
                     </div>
                   </div>
                   <div className="space-y-3">

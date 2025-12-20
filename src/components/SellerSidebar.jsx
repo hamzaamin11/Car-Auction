@@ -109,7 +109,7 @@ const SellerSidebar = () => {
         className="fixed top-4 left-4 z-50 lg:hidden p-3 bg-gray-100 text-blue-950 rounded-lg shadow-xl"
         aria-label="Toggle menu"
       >
-        {isMobileMenuOpen ? <FaTimes size={28} /> : <FaBars size={28} />}
+        {isMobileMenuOpen ? <FaTimes size={12} /> : <FaBars size={12} />}
       </button>
 
       {/* Desktop Sidebar - Visible only on lg+ */}

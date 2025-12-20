@@ -139,7 +139,7 @@ export const InspectionDoc = ({ handleIsOpenToggle, selectedVehicle }) => {
     <div className="fixed inset-0 backdrop-blur-lg bg-opacity-95 flex items-center justify-center p-4 z-50">
       <div className="bg-white rounded-2xl shadow-2xl w-full max-w-7xl max-h-[90vh] overflow-y-auto">
         {/* Header */}
-        <div className="sticky top-0 bg-blue-900 text-white p-3 rounded-t-2xl">
+        <div className="sticky top-0 bg-blue-950 text-white p-3 rounded-t-2xl">
           <div className="flex items-center justify-between">
             <div className="flex items-center gap-4">
               <button
@@ -150,7 +150,7 @@ export const InspectionDoc = ({ handleIsOpenToggle, selectedVehicle }) => {
               </button>
               <div>
                 <h2 className="text-2xl font-bold">Vehicle Documents Upload</h2>
-                <p className="text-blue-200 mt-1">
+                <p className="text-white mt-1">
                   Upload all required inspection documents
                 </p>
               </div>
@@ -195,7 +195,7 @@ export const InspectionDoc = ({ handleIsOpenToggle, selectedVehicle }) => {
                             Choose File
                           </label>
                           <div className="flex items-center gap-3">
-                            <label className="flex items-center gap-2 bg-blue-900 text-white px-4 py-2.5 rounded-lg cursor-pointer hover:opacity-95 transition">
+                            <label className="flex items-center gap-2 bg-blue-950 text-white px-4 py-2.5 rounded-lg cursor-pointer hover:opacity-95 transition">
                               <FaUpload />
                               <span>Browse</span>
                               <input
@@ -245,7 +245,7 @@ export const InspectionDoc = ({ handleIsOpenToggle, selectedVehicle }) => {
               <button
                 onClick={handleUploadData}
                 disabled={loading}
-                className="flex items-center gap-2 px-8 py-3 bg-blue-900 text-white rounded-lg hover:opacity-90 transition disabled:opacity-50"
+                className="flex items-center gap-2 px-8 py-3 bg-blue-950 text-white rounded-lg hover:opacity-90 transition disabled:opacity-50"
               >
                 {loading ? (
                   <> Loading...</>

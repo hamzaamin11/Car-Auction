@@ -72,7 +72,7 @@ export const SellerDashboard = () => {
         <div className="mb-8 md:mb-10">
           <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
             <div>
-              <h1 className="text-2xl md:text-3xl lg:text-4xl font-bold bg-gradient-to-r from-blue-900 via-blue-700 to-blue-600 bg-clip-text text-transparent">
+              <h1 className="text-2xl md:text-3xl lg:text-4xl font-bold bg-blue-950 bg-clip-text text-transparent">
                 Seller Dashboard
               </h1>
               <p className="text-gray-600 mt-2">
@@ -83,7 +83,7 @@ export const SellerDashboard = () => {
               <div className="relative">
                 <div className="absolute -inset-1 bg-gradient-to-r from-blue-600 to-blue-400 rounded-full blur opacity-20"></div>
                 <div className="relative bg-white px-4 py-2 rounded-full shadow-md border border-blue-100">
-                  <span className="text-sm font-medium text-blue-700">
+                  <span className="text-sm font-medium text-blue-950">
                     Real-time Analytics
                   </span>
                 </div>
@@ -97,7 +97,7 @@ export const SellerDashboard = () => {
           {/* ACTIVE LOTS CARD */}
           <div className="group relative bg-gradient-to-br from-white to-blue-50 rounded-2xl border border-blue-100 p-6 shadow-lg hover:shadow-xl transition-all duration-300 hover:-translate-y-1">
             <div className="absolute top-4 right-4">
-              <div className="bg-blue-900 p-3 rounded-xl group-hover:scale-110 transition-transform">
+              <div className="bg-blue-950 p-3 rounded-xl group-hover:scale-110 transition-transform">
                 <FaCar className="text-2xl text-white" />
               </div>
             </div>
@@ -109,7 +109,7 @@ export const SellerDashboard = () => {
               <div className="mt-8 space-y-4">
                 <div className="flex items-center justify-between">
                   <span className="text-gray-600 text-sm">Total Vehicles</span>
-                  <span className="text-2xl font-bold text-blue-900">
+                  <span className="text-2xl font-bold text-blue-950">
                     {vehicle?.totalApproved || 0}
                   </span>
                 </div>
@@ -128,7 +128,7 @@ export const SellerDashboard = () => {
             <div className="mt-6 pt-4 border-t border-blue-100">
               <div className="w-full bg-blue-100 rounded-full h-2">
                 <div
-                  className="bg-blue-900 h-2 rounded-full transition-all duration-500"
+                  className="bg-blue-950 h-2 rounded-full transition-all duration-500"
                   style={{
                     width: `${Math.min(
                       (vehicle?.totalApproved || 0) * 10,
@@ -143,14 +143,14 @@ export const SellerDashboard = () => {
           {/* SOLD LOTS CARD */}
           <div className="group relative bg-gradient-to-br from-white to-blue-50 rounded-2xl border border-blue-100 p-6 shadow-lg hover:shadow-xl transition-all duration-300 hover:-translate-y-1">
             <div className="absolute top-4 right-4">
-              <div className="bg-blue-900 p-3 rounded-xl group-hover:scale-110 transition-transform">
+              <div className="bg-blue-950 p-3 rounded-xl group-hover:scale-110 transition-transform">
                 <FaGavel className="text-2xl text-white" />
               </div>
             </div>
 
             <div className="flex items-center gap-2 mb-2">
               <h3 className="text-lg font-semibold text-gray-800">Sold Lots</h3>
-              <span className="text-xs bg-blue-100 text-blue-900 px-2 py-1 rounded-full">
+              <span className="text-xs bg-blue-100 text-blue-950 px-2 py-1 rounded-full">
                 Last 30 Days
               </span>
             </div>
@@ -158,7 +158,7 @@ export const SellerDashboard = () => {
               <div className="mt-8 space-y-4">
                 <div className="flex items-center justify-between">
                   <span className="text-gray-600 text-sm">Total Vehicles</span>
-                  <span className="text-2xl font-bold text-blue-900">
+                  <span className="text-2xl font-bold text-blue-950">
                     {lastMonth?.last30Sold || 0}
                   </span>
                 </div>
@@ -177,7 +177,7 @@ export const SellerDashboard = () => {
           {/* SELL-THROUGH RATE CARD */}
           <div className="group relative bg-gradient-to-br from-white to-blue-50 rounded-2xl border border-blue-100 p-6 shadow-lg hover:shadow-xl transition-all duration-300 hover:-translate-y-1">
             <div className="absolute top-4 right-4">
-              <div className="bg-blue-900 p-3 rounded-xl group-hover:scale-110 transition-transform">
+              <div className="bg-blue-950 p-3 rounded-xl group-hover:scale-110 transition-transform">
                 <FaChartLine className="text-2xl text-white" />
               </div>
             </div>
@@ -219,8 +219,8 @@ export const SellerDashboard = () => {
                       x2="100%"
                       y2="100%"
                     >
-                      <stop offset="0%" stopColor="#8b5cf6" />
-                      <stop offset="100%" stopColor="#6366f1" />
+                      <stop offset="0%" stopColor="#172554" />
+                      <stop offset="100%" stopColor="#172554" />
                     </linearGradient>
                   </defs>
                 </svg>
@@ -239,7 +239,7 @@ export const SellerDashboard = () => {
           {/* AVERAGE DAYS TO SALE CARD */}
           <div className="group relative bg-gradient-to-br from-white to-blue-50 rounded-2xl border border-blue-100 p-6 shadow-lg hover:shadow-xl transition-all duration-300 hover:-translate-y-1">
             <div className="absolute top-4 right-4">
-              <div className="bg-blue-900 p-3 rounded-xl group-hover:scale-110 transition-transform">
+              <div className="bg-blue-950 p-3 rounded-xl group-hover:scale-110 transition-transform">
                 <FaClock className="text-2xl text-white" />
               </div>
             </div>
@@ -251,7 +251,7 @@ export const SellerDashboard = () => {
             <div className="mt-8 space-y-4">
               <div className="flex items-center justify-between">
                 <span className="text-gray-600 text-sm">Sold Vehicles</span>
-                <span className="text-2xl font-bold text-blue-900">
+                <span className="text-2xl font-bold text-blue-950">
                   {daysSale?.totalSold || 0}
                 </span>
               </div>
@@ -271,7 +271,7 @@ export const SellerDashboard = () => {
           {/* TOP BIDDERS CARD */}
           <div className="group relative bg-gradient-to-br from-white to-blue-50 rounded-2xl border border-blue-100 p-6 shadow-lg hover:shadow-xl transition-all duration-300 hover:-translate-y-1">
             <div className="absolute top-4 right-4">
-              <div className="bg-blue-900 p-3 rounded-xl group-hover:scale-110 transition-transform">
+              <div className="bg-blue-950 p-3 rounded-xl group-hover:scale-110 transition-transform">
                 <FaUser className="text-2xl text-white" />
               </div>
             </div>
@@ -282,7 +282,7 @@ export const SellerDashboard = () => {
 
             <div className="mt-8 space-y-4">
               <div className="flex items-center gap-3 p-3 bg-indigo-50 rounded-lg">
-                <div className="w-10 h-10 bg-blue-900 rounded-full flex items-center justify-center">
+                <div className="w-10 h-10 bg-blue-950 rounded-full flex items-center justify-center">
                   <span className="text-white font-bold">
                     {bidder?.name?.charAt(0) || "B"}
                   </span>
