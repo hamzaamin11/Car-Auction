@@ -1000,7 +1000,7 @@ const AddVehicles = () => {
                   </div>
                   <div>
                     <label className="block text-sm font-medium text-gray-700 mb-1">
-                      Add Price <span className="text-red-500">*</span>
+                      Add Reserve Price <span className="text-red-500">*</span>
                     </label>
                     <input
                       type="text"
@@ -1186,8 +1186,10 @@ const AddVehicles = () => {
                     PKR {vehicle.buyNowPrice}
                   </p>
                   <p className="text-xs text-gray-600">
-                    {vehicle.year || "—"} • {vehicle.fuelType || "—"} •{" "}
-                    {vehicle.transmission || "—"}
+                    {vehicle.year || "—"} •{" "}
+                    {vehicle.fuelType.charAt(0).toUpperCase() +
+                      vehicle.fuelType.slice(1) || "--"}{" "}
+                    • {vehicle.transmission || "—"} • {vehicle.cityName || "—"}
                   </p>
                   <p
                     className={`text-[8px] text-center rounded w-16 ${
@@ -1196,7 +1198,7 @@ const AddVehicles = () => {
                         : "bg-red-500 text-white"
                     }`}
                   >
-                    {vehicle.approval === "Y" ? "Approved" : "Not Approved"}
+                    {vehicle.approval === "Y" ? "Approved" : "Pending"}
                   </p>
                 </div>
                 <div className="relative flex-shrink-0">
@@ -1454,8 +1456,11 @@ const AddVehicles = () => {
                   <div className="flex flex-wrap gap-1 text-sm text-gray-500">
                     <span>{vehicle.year || "—"}</span>|
                     <span>{vehicle.mileage || "—"}KM</span>|
-                    <span>{vehicle.fuelType || "—"}</span>|
-                    <span>{vehicle.color || "—"}</span>|
+                    <span>
+                      {vehicle.fuelType.charAt(0).toUpperCase() +
+                        vehicle.fuelType.slice(1) || "--"}
+                    </span>
+                    |<span>{vehicle.color || "—"}</span>|
                     <span>{vehicle.transmission || "—"}</span>|
                     <span>{vehicle.cityName || "—"}</span>|
                     <span
@@ -1465,7 +1470,7 @@ const AddVehicles = () => {
                           : "bg-red-500 text-white"
                       }`}
                     >
-                      {vehicle.approval === "Y" ? "Approved" : "Not Approved"}
+                      {vehicle.approval === "Y" ? "Approved" : "Pending"}
                     </span>
                   </div>
                 </div>
@@ -1649,23 +1654,7 @@ const AddVehicles = () => {
                 </div>
 
                 {/* Show entries */}
-                <div className="flex items-center gap-2">
-                  {/* <select
-                    value={carsPerPage}
-                    onChange={(e) => {
-                      setCarsPerPage(Number(e.target.value));
-                      setCurrentPage(1);
-                    }}
-                    className="border rounded px-2 py-1 text-sm focus:outline-none focus:ring-2 focus:ring-blue-900"
-                  >
-                    {[10, 20, 50, 100].map((size) => (
-                      <option key={size} value={size}>
-                        {size}
-                      </option>
-                    ))}
-                  </select>
-                  <span className="text-gray-600">entries</span> */}
-                </div>
+               
               </div>
             </div>
           )}

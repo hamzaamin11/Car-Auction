@@ -29,8 +29,8 @@ export const ViewAdminCar = ({ selectedVehicle, handleClick }) => {
     setIndexImage((prev) => (prev > 0 ? prev - 1 : 0));
 
   return (
-    <div className="fixed inset-0 z-50 backdrop-blur-sm flex items-start justify-center pt-20">
-      <div className="bg-white  md:w-[70%] lg:w-[60%]  w-full rounded-lg shadow-lg p-6 relative max-h-[80vh] overflow-auto">
+    <div className="fixed inset-0 z-50 backdrop-blur-sm flex items-start justify-center pt-20 ">
+      <div className="bg-white  md:w-[70%] lg:w-[60%]  w-full rounded-lg shadow-lg p-6 relative max-h-[80vh] overflow-auto border">
         {/* Close Icon */}
         <button
           onClick={handleClick}
@@ -40,7 +40,9 @@ export const ViewAdminCar = ({ selectedVehicle, handleClick }) => {
         </button>
 
         {/* Header */}
-        <h2 className="text-xl font-bold text-gray-800 mb-6">Vehicle Details</h2>
+        <h2 className="text-xl font-bold text-gray-800 mb-6">
+          Vehicle Details
+        </h2>
 
         {/* Grid Layout */}
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
@@ -115,7 +117,7 @@ export const ViewAdminCar = ({ selectedVehicle, handleClick }) => {
                 selectedVehicle?.vehicleCondition.slice(1) || "--"}
             </p>
             <p>
-              <span className="font-bold">Price:</span>{" "}
+              <span className="font-bold">Reserve Price:</span>{" "}
               {selectedVehicle?.buyNowPrice || "--"}
             </p>
           </div>

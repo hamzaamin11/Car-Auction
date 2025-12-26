@@ -425,8 +425,12 @@ const ViewInspectionVehicle = () => {
                     PKR {vehicle.buyNowPrice}
                   </p>
                   <p className="text-xs text-gray-600">
-                    {vehicle.year || "—"} • {vehicle.fuelType || "—"} •{" "}
-                    {vehicle.transmission || "—"}
+                    {vehicle.year || "—"} •{" "}
+                    {vehicle?.fuelType
+                      ? vehicle.fuelType.charAt(0).toUpperCase() +
+                        vehicle.fuelType.slice(1)
+                      : "—"}
+                    • {vehicle.transmission || "—"}
                   </p>
                   <p
                     className={`text-[8px] text-center rounded w-16 ${
@@ -697,8 +701,13 @@ const ViewInspectionVehicle = () => {
                   <div className="flex flex-wrap gap-1 text-sm text-gray-500">
                     <span>{vehicle.year || "—"}</span>|
                     <span>{vehicle.mileage || "—"}KM</span>|
-                    <span>{vehicle.fuelType || "—"}</span>|
-                    <span>{vehicle.color || "—"}</span>|
+                    <span>
+                      {vehicle?.fuelType
+                        ? vehicle.fuelType.charAt(0).toUpperCase() +
+                          vehicle.fuelType.slice(1)
+                        : "—"}
+                    </span>
+                    |<span>{vehicle.color || "—"}</span>|
                     <span>{vehicle.transmission || "—"}</span>|
                     <span>{vehicle.cityName || "—"}</span>|
                     <span

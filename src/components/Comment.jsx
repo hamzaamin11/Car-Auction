@@ -114,7 +114,7 @@ const LiveCommentsModal = ({
       return Swal.fire({
         icon: "warning",
         title: "Invalid Bid",
-        text: `Your bid must be at least $${selectedPrice.buyNowPrice}`,
+        text: `Your bid must be at least PKR${selectedPrice.buyNowPrice}`,
         confirmButtonColor: "#f59e0b",
       });
     }
@@ -198,11 +198,7 @@ const LiveCommentsModal = ({
             </button>
 
             <h2 className="text-lg font-semibold">Live Auction</h2>
-            <h2 className="text-lg font-semibold">
-              {selectedPrice.make} {selectedPrice.model} - PKR{" "}
-              {selectedPrice.buyNowPrice}
-            </h2>
-
+           
             <CountdownCircleTimer
               key={timerKey}
               isPlaying={phase !== "ended"}

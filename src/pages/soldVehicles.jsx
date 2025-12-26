@@ -457,7 +457,7 @@ const SoldVehicles = () => {
                         </p>
                       </div>
                       <div>
-                        <p className="text-sm text-gray-500">Price:</p>
+                        <p className="text-sm text-gray-500">Reverse Price:</p>
                         <p className="font-semibold text-gray-900">
                           {selectedVehicle.buyNowPrice ||
                             selectedVehicle.MonsterBid ||

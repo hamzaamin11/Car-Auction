@@ -74,7 +74,7 @@ export const Configuration = () => {
       {/* YOUR ORIGINAL HEADER */}
       <div className="flex flex-col sm:flex-row justify-between items-center gap-4 mb-6">
         <h2 className="lg:text-3xl text-xl font-bold text-gray-800">
-          Commission List
+          Configure Commission
         </h2>
         <div className="relative w-full max-w-md">
           <CustomSearch
@@ -121,12 +121,12 @@ export const Configuration = () => {
               </tr>
             </tbody>
           )}
-          </table>
-          {getCommission === null && (
-            <span className="flex items-center justify-center p-2 text-gray-300">
-              No Commission
-            </span>
-          )}
+        </table>
+        {getCommission === null && (
+          <span className="flex items-center justify-center p-2 text-gray-300">
+            No Commission
+          </span>
+        )}
       </div>
 
       {isOpen === "Add" && (

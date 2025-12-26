@@ -146,9 +146,7 @@ export const CitiesList = () => {
     <div className="min-h-screen bg-gray-100 p-2 lg:p-6">
       {/* YOUR ORIGINAL HEADER */}
       <div className="flex flex-col sm:flex-row justify-between items-center gap-4 mb-6">
-        <h2 className="lg:text-3xl text-xl font-bold text-gray-800">
-          Cities List
-        </h2>
+        <h2 className="lg:text-3xl text-xl font-bold text-gray-800">Cities</h2>
         <div className="relative w-full max-w-md">
           <CustomSearch
             placeholder="Search By City Name..."

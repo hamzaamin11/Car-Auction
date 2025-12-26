@@ -215,7 +215,7 @@ function AddAdminVehicle({ open, setOpen, onVehicleUpdated }) {
   const handleGetVehicles = async () => {
     try {
       const res = await axios.get(
-        `${BASE_URL}/getApprovedVehicles/${currentUser?.role}`
+        `${BASE_URL}/ApprovedVehicleList/${currentUser?.role}`
       );
       setAllVehicles(res.data || []);
       setTotalVehicles(res.data || []);
@@ -557,8 +557,8 @@ function AddAdminVehicle({ open, setOpen, onVehicleUpdated }) {
       </div>
 
       {showModal && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center backdrop-blur-sm bg-opacity-30 px-4 sm:px-6">
-          <div className="bg-white w-full max-w-5xl max-h-[95vh] overflow-y-auto p-4 sm:p-6 rounded-lg relative">
+        <div className="fixed  inset-0 z-50 flex items-center justify-center backdrop-blur-sm bg-opacity-30 px-4 sm:px-6">
+          <div className="bg-white w-full max-w-5xl max-h-[95vh] overflow-y-auto p-4 sm:p-6 rounded-lg relative  border">
             <div className="flex justify-between items-center border-b pb-3 mb-4">
               <h2 className="text-xl sm:text-2xl font-bold text-gray-800">
                 Add a New Vehicle
@@ -760,7 +760,7 @@ function AddAdminVehicle({ open, setOpen, onVehicleUpdated }) {
 
                 <div>
                   <label className="block text-sm font-medium text-gray-700 mb-1">
-                    Add Vehicle Price <span className="text-red-500">*</span>
+                    Add Reserve Price <span className="text-red-500">*</span>
                   </label>
                   <input
                     type="text"

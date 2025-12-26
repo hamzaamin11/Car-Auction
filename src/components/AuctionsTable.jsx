@@ -136,7 +136,7 @@ export default function AuctionsTable() {
                           : "text-red-500"
                       }`}
                     >
-                      {sale.auctionStatus || "N/A"}
+                      {sale.auctionStatus.toUpperCase() || "N/A"}
                     </td>
                   </tr>
                 );

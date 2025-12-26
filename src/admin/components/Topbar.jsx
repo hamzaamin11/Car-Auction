@@ -314,14 +314,14 @@ export default function Topbar() {
   return (
     <header className="bg-white shadow-md px-4 py-3 md:px-6 flex items-center justify-between relative z-50">
       {/* Logo */}
-      <div className="flex items-center gap-3">
+      <div className="flex items-center gap-3 ">
         <Link
           to={currentUser?.role === "admin" ? "/admin" : "/seller/dashboard"}
         >
           <img
             src={logo}
             alt="Logo"
-            className="h-10 w-12 sm:h-14 sm:w-24 object-contain md:block"
+            className="h-10 w-12 sm:h-14 sm:w-24 object-contain md:block hidden"
           />
         </Link>
       </div>

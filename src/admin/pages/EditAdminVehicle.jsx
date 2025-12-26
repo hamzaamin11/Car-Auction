@@ -148,7 +148,69 @@ function EditAdminVehicle({
   }, [vehicle]);
 
   const numberToIndianWords = (num) => {
-    /* unchanged – omitted for brevity */
+    if (num === 0) return "Zero";
+    const ones = [
+      "",
+      "One",
+      "Two",
+      "Three",
+      "Four",
+      "Five",
+      "Six",
+      "Seven",
+      "Eight",
+      "Nine",
+      "Ten",
+      "Eleven",
+      "Twelve",
+      "Thirteen",
+      "Fourteen",
+      "Fifteen",
+      "Sixteen",
+      "Seventeen",
+      "Eighteen",
+      "Nineteen",
+    ];
+    const tens = [
+      "",
+      "",
+      "Twenty",
+      "Thirty",
+      "Forty",
+      "Fifty",
+      "Sixty",
+      "Seventy",
+      "Eighty",
+      "Ninety",
+    ];
+    const twoDigits = (n) => {
+      if (n < 20) return ones[n];
+      const t = Math.floor(n / 10);
+      const o = n % 10;
+      return tens[t] + (o ? " " + ones[o] : "");
+    };
+    const threeDigits = (n) => {
+      const h = Math.floor(n / 100);
+      const r = n % 100;
+      return (h ? ones[h] + " Hundred " : "") + (r ? twoDigits(r) : "").trim();
+    };
+    let words = "";
+    if (Math.floor(num / 10000000) > 0) {
+      words += numberToIndianWords(Math.floor(num / 10000000)) + " Crore ";
+      num %= 10000000;
+    }
+    if (Math.floor(num / 100000) > 0) {
+      words += numberToIndianWords(Math.floor(num / 100000)) + " Lac ";
+      num %= 100000;
+    }
+    if (Math.floor(num / 1000) > 0) {
+      words += numberToIndianWords(Math.floor(num / 1000)) + " Thousand ";
+      num %= 1000;
+    }
+    if (num > 0) {
+      words += threeDigits(num);
+    }
+    return words.trim();
   };
 
   const handleFileChange = (e) => {
@@ -329,7 +391,7 @@ function EditAdminVehicle({
 
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/20 bg-opacity-30 px-4">
-      <div className="bg-white w-full max-w-5xl max-h-[90vh] overflow-y-auto p-6 rounded-lg relative">
+      <div className="bg-white w-full max-w-5xl max-h-[90vh] overflow-y-auto p-6 rounded-lg relative border">
         <div className="flex justify-between items-center border-b pb-3 mb-4">
           <h2 className="text-2xl font-bold text-gray-800">Edit Vehicle</h2>
           <button
@@ -524,7 +586,7 @@ function EditAdminVehicle({
             {/* Price */}
             <div>
               <label className="block text-sm font-medium text-gray-700 mb-1">
-                Add Vehicle Price <span className="text-red-500">*</span>
+                Add Reserve Price <span className="text-red-500">*</span>
               </label>
               <input
                 type="text"

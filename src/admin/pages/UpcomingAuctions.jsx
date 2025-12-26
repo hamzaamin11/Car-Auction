@@ -94,7 +94,7 @@ export default function UpcomingAuctions() {
     setIsOpen((prev) => (prev === active ? "" : active));
   };
 
- const handleUpdateBid = async (id) => {
+  const handleUpdateBid = async (id) => {
     try {
       const res = await axios.put(
         `${BASE_URL}/admin/updateBidStatusAdmin/${id}`
@@ -259,7 +259,7 @@ export default function UpcomingAuctions() {
                       Condition
                     </th>
                     <th className="px-4 py-3 text-left text-sm font-semibold">
-                      Price
+                      Reserve Price
                     </th>
                     <th className="px-4 py-3 text-left text-sm font-semibold">
                       Start Time
@@ -366,7 +366,9 @@ export default function UpcomingAuctions() {
                       </span>
                     </p>
                     <p className="flex justify-between">
-                      <span className="text-gray-900 font-bold">Price</span>
+                      <span className="text-gray-900 font-bold">
+                        Reserve Price
+                      </span>
                       <span className="text-gray-500">{user?.sellerOffer}</span>
                     </p>
                     <p className="flex justify-between">
@@ -418,8 +420,8 @@ export default function UpcomingAuctions() {
             <div className="bg-white rounded-lg shadow-sm p-4 mt-6">
               <div className="flex flex-col sm:flex-row justify-between items-center gap-4 text-sm text-gray-700">
                 <div className="text-gray-600">
-                  Showing <span className="font-medium">{startIndex + 1}</span> to{" "}
-                  <span className="font-medium">{endIndex}</span> of{" "}
+                  Showing <span className="font-medium">{startIndex + 1}</span>{" "}
+                  to <span className="font-medium">{endIndex}</span> of{" "}
                   <span className="font-medium">{totalItems}</span> entries
                 </div>
 
@@ -427,14 +429,22 @@ export default function UpcomingAuctions() {
                   <button
                     onClick={() => goToPage(1)}
                     disabled={pageNo === 1}
-                    className={`px-3 py-1 rounded border ${pageNo === 1 ? "bg-gray-100 text-gray-400 cursor-not-allowed" : "bg-white hover:bg-gray-50"}`}
+                    className={`px-3 py-1 rounded border ${
+                      pageNo === 1
+                        ? "bg-gray-100 text-gray-400 cursor-not-allowed"
+                        : "bg-white hover:bg-gray-50"
+                    }`}
                   >
                     {"<<"}
                   </button>
                   <button
                     onClick={() => goToPage(pageNo - 1)}
                     disabled={pageNo === 1}
-                    className={`px-3 py-1 rounded border ${pageNo === 1 ? "bg-gray-100 text-gray-400 cursor-not-allowed" : "bg-white hover:bg-gray-50"}`}
+                    className={`px-3 py-1 rounded border ${
+                      pageNo === 1
+                        ? "bg-gray-100 text-gray-400 cursor-not-allowed"
+                        : "bg-white hover:bg-gray-50"
+                    }`}
                   >
                     {"<"}
                   </button>
@@ -443,7 +453,11 @@ export default function UpcomingAuctions() {
                     <button
                       key={page}
                       onClick={() => goToPage(page)}
-                      className={`px-3 py-1 rounded border ${pageNo === page ? "bg-blue-950 text-white" : "bg-white hover:bg-gray-50"}`}
+                      className={`px-3 py-1 rounded border ${
+                        pageNo === page
+                          ? "bg-blue-950 text-white"
+                          : "bg-white hover:bg-gray-50"
+                      }`}
                     >
                       {page}
                     </button>
@@ -452,14 +466,22 @@ export default function UpcomingAuctions() {
                   <button
                     onClick={() => goToPage(pageNo + 1)}
                     disabled={pageNo >= totalPages}
-                    className={`px-3 py-1 rounded border ${pageNo >= totalPages ? "bg-gray-100 text-gray-400 cursor-not-allowed" : "bg-white hover:bg-gray-50"}`}
+                    className={`px-3 py-1 rounded border ${
+                      pageNo >= totalPages
+                        ? "bg-gray-100 text-gray-400 cursor-not-allowed"
+                        : "bg-white hover:bg-gray-50"
+                    }`}
                   >
                     {">"}
                   </button>
                   <button
                     onClick={() => goToPage(totalPages)}
                     disabled={pageNo >= totalPages}
-                    className={`px-3 py-1 rounded border ${pageNo >= totalPages ? "bg-gray-100 text-gray-400 cursor-not-allowed" : "bg-white hover:bg-gray-50"}`}
+                    className={`px-3 py-1 rounded border ${
+                      pageNo >= totalPages
+                        ? "bg-gray-100 text-gray-400 cursor-not-allowed"
+                        : "bg-white hover:bg-gray-50"
+                    }`}
                   >
                     {">>"}
                   </button>
@@ -629,7 +651,7 @@ export default function UpcomingAuctions() {
                       </div>
                       <div>
                         <p className="text-sm font-bold text-gray-900">
-                          Price:
+                          Reserve Price:
                         </p>
                         <p className="text-base text-gray-900 capitalize">
                           {selectedVehicle.sellerOffer ||

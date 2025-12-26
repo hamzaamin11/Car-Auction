@@ -226,9 +226,11 @@ export const AwaitingApproval = () => {
                     PKR {vehicle.buyNowPrice}
                   </p>
                   <p className="text-sm text-gray-600">
-                    {vehicle.year} | {vehicle.fuelType} | {vehicle.transmission}{" "}
-                    | {vehicle.mileage} KM | {vehicle.color} |{" "}
-                    {vehicle?.cityName ?? "--"}
+                    {vehicle.year} |{" "}
+                    {vehicle.fuelType.charAt(0).toUpperCase() +
+                      vehicle.fuelType.slice(1)}{" "}
+                    | {vehicle.transmission} | {vehicle.mileage} KM |{" "}
+                    {vehicle.color} | {vehicle?.cityName ?? "--"}
                   </p>
                 </div>
 
@@ -413,8 +415,8 @@ export const AwaitingApproval = () => {
 
       {/* View Modal - 100% unchanged */}
       {isViewModalOpen && selectedVehicle && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center bg-blur-md backdrop-blur-md p-4">
-          <div className="bg-white rounded-lg shadow-2xl w-full max-w-4xl max-h-[90vh] overflow-y-auto relative">
+        <div className="fixed inset-0 z-500 flex items-center justify-center backdrop-blur-sm p-4">
+          <div className="bg-white rounded-lg shadow-2xl w-full max-w-4xl max-h-[90vh] overflow-y-auto relative border">
             <button
               onClick={handleCloseModal}
               className="absolute top-4 right-4 z-10 bg-white rounded-full p-2 shadow-lg hover:bg-gray-100 transition"

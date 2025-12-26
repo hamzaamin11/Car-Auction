@@ -146,9 +146,7 @@ export const BrandList = () => {
   return (
     <div className="min-h-screen bg-gray-100 lg:p-6 p-2">
       <div className="flex flex-col sm:flex-row justify-between items-center gap-4 mb-6">
-        <h2 className="lg:text-3xl text-xl font-bold text-gray-800">
-          Vehicle Makes List
-        </h2>
+        <h2 className="lg:text-3xl text-xl font-bold text-gray-800">Makes</h2>
         <div className="relative w-full max-w-md">
           <span className="absolute inset-y-0 left-0 flex items-center pl-3 text-gray-400">
             <svg

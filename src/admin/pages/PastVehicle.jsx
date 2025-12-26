@@ -10,16 +10,16 @@ import axios from "axios";
 import { BASE_URL } from "../../components/Contant/URL";
 import Swal from "sweetalert2";
 import CustomSearch from "../../CustomSearch";
-import EditAdminVehicle from "./EditAdminVehicle";
+import { useSelector } from "react-redux";
 
-export const VehicleApproval = () => {
+export const PastVehicle = () => {
+  const { currentUser } = useSelector((state) => state?.auth);
   const [actionMenuOpen, setActionMenuOpen] = useState(null);
   const [search, setSearch] = useState("");
   const [vehicles, setVehicles] = useState([]);
   const [selectedVehicle, setSelectedVehicle] = useState(null);
   const [isViewModalOpen, setIsViewModalOpen] = useState(false);
   const [currentImageIndex, setCurrentImageIndex] = useState(0);
-  const [isOpen, setIsOpen] = useState("");
   const [pageNo, setPageNo] = useState(1);
 
   const menuRef = useRef(null);
@@ -27,16 +27,14 @@ export const VehicleApproval = () => {
 
   const handleGetAllUnapprovalVehicles = async () => {
     try {
-      const res = await axios.get(`${BASE_URL}/getUnApprovedVehicles`);
+      const res = await axios.get(
+        `${BASE_URL}/PastAuctionVehicleList/${currentUser.role}`
+      );
       console.log(res.data);
       setVehicles(res.data);
     } catch (error) {
       console.log(error);
     }
-  };
-
-  const handleIsOpen = (active) => {
-    setIsOpen((prev) => (prev === active ? "" : active));
   };
 
   const toggleActionMenu = (id) => {
@@ -52,31 +50,6 @@ export const VehicleApproval = () => {
       await Swal.fire({
         title: "Success!",
         text: "This vehicle has been approved successfully.",
-        icon: "success",
-        confirmButtonColor: "#9333ea",
-      });
-    } catch (error) {
-      console.error(error);
-      await Swal.fire({
-        title: "Error!",
-        text: "Something went wrong.",
-        icon: "error",
-        confirmButtonColor: "#9333ea",
-      });
-    }
-  };
-
-  const handleAwaiting = async (vehicle) => {
-    try {
-      const res = await axios.put(
-        `${BASE_URL}/AwaitingApprovedVehicles/${vehicle.id}`
-      );
-      setActionMenuOpen(null);
-      console.log(res.data);
-      handleGetAllUnapprovalVehicles();
-      await Swal.fire({
-        title: "Success!",
-        text: "This vehicle has been added in awaiting approval.",
         icon: "success",
         confirmButtonColor: "#9333ea",
       });
@@ -134,11 +107,6 @@ export const VehicleApproval = () => {
     setActionMenuOpen(null);
   };
 
-  const handleUpdateVehicle = (vehicle, openModel) => {
-    console.log(vehicle, openModel);
-    setSelectedVehicle(vehicle);
-    handleIsOpen(openModel);
-  };
   const handleCloseModal = () => {
     setIsViewModalOpen(false);
     setSelectedVehicle(null);
@@ -213,7 +181,7 @@ export const VehicleApproval = () => {
     <div className="min-h-screen bg-gray-100 p-6">
       <div className="flex flex-col sm:flex-row justify-between items-center mb-6">
         <h2 className="lg:text-3xl text-xl font-bold text-gray-800 text-center">
-          Pending Vehicle Approvals
+          Past Auction Vehicles
         </h2>
 
         <div className="relative w-full sm:w-80 mt-4 sm:mt-0">
@@ -280,32 +248,6 @@ export const VehicleApproval = () => {
 
                   {actionMenuOpen === vehicle.id && (
                     <div className="absolute right-0 mt-2 w-48 bg-white border rounded-lg shadow-lg z-10">
-                      <button
-                        onClick={() => handleUpdateVehicle(vehicle, "edit")}
-                        className="w-full px-4 py-2 text-sm text-orange-600 hover:bg-orange-100 text-left rounded-t-lg"
-                      >
-                        Edit
-                      </button>
-                      <button
-                        onClick={() => handleApprove(vehicle)}
-                        className="w-full px-4 py-2 text-sm text-green-600 hover:bg-green-100 text-left rounded-t-lg"
-                      >
-                        Approve
-                      </button>
-
-                      <button
-                        onClick={() => handleAwaiting(vehicle)}
-                        className="w-full px-4 py-2 text-sm text-yellow-600 hover:bg-yellow-100 text-left rounded-t-lg"
-                      >
-                        Awaiting
-                      </button>
-
-                      <button
-                        onClick={() => handleReject(vehicle)}
-                        className="w-full px-4 py-2 text-sm text-red-600 hover:bg-red-100 text-left"
-                      >
-                        Reject
-                      </button>
                       <button
                         onClick={() => handleViewDetails(vehicle)}
                         className="w-full px-4 py-2 text-sm text-blue-600 hover:bg-blue-100 text-left rounded-b-lg"
@@ -464,7 +406,7 @@ export const VehicleApproval = () => {
 
       {/* View Modal - 100% unchanged */}
       {isViewModalOpen && selectedVehicle && (
-        <div className="fixed inset-0 z-500 flex items-center justify-center backdrop-blur-sm p-4">
+        <div className="fixed inset-0 z-500 flex items-center justify-center  backdrop-blur-sm p-4">
           <div className="bg-white rounded-lg shadow-2xl w-full max-w-4xl max-h-[90vh] overflow-y-auto relative border">
             <button
               onClick={handleCloseModal}
@@ -657,14 +599,6 @@ export const VehicleApproval = () => {
             </div>
           </div>
         </div>
-      )}
-      {isOpen === "edit" && (
-        <EditAdminVehicle
-          open={() => handleIsOpen("edit")}
-          setOpen={() => handleIsOpen("")}
-          selectedVehicle={selectedVehicle}
-          onVehicleUpdated={handleGetAllUnapprovalVehicles}
-        />
       )}
     </div>
   );

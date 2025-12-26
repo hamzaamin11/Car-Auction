@@ -16,20 +16,22 @@ import moment from "moment/moment";
 import axios from "axios";
 import { BASE_URL } from "../../components/Contant/URL";
 import CustomSearch from "../../CustomSearch";
+import CustomAdd from "../../CustomAdd";
+import Swal from "sweetalert2";
+import { LiveBidModal } from "../components/ViewAdminBidModal/LiveBidModal";
 
 export default function LiveAuctions() {
-  const { getLiveAuctions, AllLiveAuctions, AuctionById } =
-    useContext(AuctionsContext);
-
   const [selectedVehicle, setselectedVehicle] = useState(null);
+
+  console.log();
   const { currentUser } = useSelector((state) => state.auth);
   const [selectedAuctionId, setSelectedAuctionId] = useState(null);
   const [allLiveAuction, setAllLiveAuction] = useState([]);
   const [filteredAuctions, setFilteredAuctions] = useState([]);
-
-  console.log(filteredAuctions.length);
+  const [isOpenModal, setIsOpenModal] = useState("");
   const [search, setSearch] = useState("");
   const [loading, setLoading] = useState(false);
+  const [bidData, setBiddata] = useState([]);
 
   const id = currentUser?.id;
   const [pageNo, setPageNo] = useState(1);
@@ -63,6 +65,65 @@ export default function LiveAuctions() {
       setTotalItems(0);
     } finally {
       setLoading(false);
+    }
+  };
+
+  const handleIsOpenModal = (active) => {
+    setIsOpenModal((prev) => (prev === active ? "" : active));
+  };
+
+  const handleStopAuction = async (vehicleId) => {
+    const result = await Swal.fire({
+      title: "Are you sure?",
+      text: "This Bid will be permanently Stop!",
+      icon: "warning",
+      showCancelButton: true,
+      confirmButtonColor: "#d33",
+      cancelButtonColor: "#9333ea",
+      confirmButtonText: "Yes, Stop it!",
+      cancelButtonText: "Cancel",
+    });
+
+    if (result.isConfirmed) {
+      try {
+        const res = await axios.post(`${BASE_URL}/endAuctionByAdmin`, {
+          vehicleId: vehicleId,
+        });
+        Swal.fire({
+          title: "Deleted!",
+          text: "Bid has been Stop successfully.",
+          icon: "success",
+          confirmButtonColor: "#9333ea",
+          timer: 2000,
+          timerProgressBar: true,
+        });
+        handleGetAllLive();
+      } catch (error) {
+        console.log(error);
+        Swal.fire({
+          title: "Error",
+          text: error?.response?.data?.message,
+          icon: "error",
+          confirmButtonColor: "#9333ea",
+        });
+      }
+    }
+  };
+
+  const handleGetVehicleBid = async (vehicleId) => {
+    try {
+      const res = await axios.post(`${BASE_URL}/LiveBidUpdates`, {
+        vehicleId: vehicleId,
+      });
+      console.log(res.data);
+      setBiddata(res.data);
+    } catch (error) {
+      Swal.fire({
+        title: "Error",
+        text: error.response.data.message,
+        icon: "error",
+        confirmButtonColor: "#9333ea",
+      });
     }
   };
 
@@ -192,13 +253,16 @@ export default function LiveAuctions() {
                     Condition
                   </th>
                   <th className="px-4 py-3 text-left text-sm font-semibold">
-                    Price
+                    Reserve Price
                   </th>
                   <th className="px-4 py-3 text-left text-sm font-semibold">
                     End Time
                   </th>
                   <th className="px-4 py-3 text-left text-sm font-semibold">
                     Date
+                  </th>
+                  <th className="px-4 py-3 text-left text-sm font-semibold">
+                    Actions
                   </th>
                 </tr>
               </thead>
@@ -207,14 +271,14 @@ export default function LiveAuctions() {
                   filteredAuctions.map((user, idx) => (
                     <tr
                       key={user.id}
-                      onClick={() => setselectedVehicle(user)}
                       className={`${
                         idx % 2 === 0 ? "bg-gray-50" : ""
                       } cursor-pointer hover:bg-gray-100`}
                     >
                       {currentUser.role === "admin" && (
                         <td className="px-4 py-3 font-medium text-gray-900">
-                          {user?.name || "--"}
+                          {user?.name?.charAt(0)?.toUpperCase() +
+                            user?.name.slice(1) || "--"}
                         </td>
                       )}
                       <td className="px-4 py-3">
@@ -222,16 +286,24 @@ export default function LiveAuctions() {
                           src={user?.images?.[0] || "/placeholder.jpg"}
                           alt={user?.make || "Vehicle"}
                           className="w-16 h-16 object-cover rounded"
+                          onClick={() => setselectedVehicle(user)}
                         />
                       </td>
-                      <td className="px-4 py-3 text-gray-700">
+                      <td
+                        onClick={() => setselectedVehicle(user)}
+                        className="px-4 py-3 text-gray-700"
+                      >
                         {user?.make || "--"}
                       </td>
-                      <td className="px-4 py-3 text-gray-700">
+                      <td
+                        onClick={() => setselectedVehicle(user)}
+                        className="px-4 py-3 text-gray-700"
+                      >
                         {user?.model || "--"}
                       </td>
                       <td className="px-4 py-3 text-gray-700">
-                        {user?.vehicleCondition || "--"}
+                        {user?.vehicleCondition.charAt(0).toUpperCase() +
+                          user?.vehicleCondition.slice(1) || "--"}
                       </td>
                       <td className="px-4 py-3 text-gray-700">
                         {user?.sellerOffer || "--"}
@@ -246,11 +318,30 @@ export default function LiveAuctions() {
                           ? new Date(user.endTime).toLocaleDateString("en-GB")
                           : "N/A"}
                       </td>
+                      <td className="">
+                        <div className="flex gap-2">
+                          <CustomAdd
+                            text="View Bid"
+                            variant="view"
+                            onClick={() => {
+                              handleGetVehicleBid(user?.vehicleId),
+                                handleIsOpenModal("liveBid");
+                            }}
+                          />
+                          {currentUser.role === "admin" && (
+                            <CustomAdd
+                              text="End Bid"
+                              variant="delete"
+                              onClick={() => handleStopAuction(user?.vehicleId)}
+                            />
+                          )}
+                        </div>
+                      </td>
                     </tr>
                   ))
                 ) : (
                   <tr>
-                    <td colSpan="8" className="text-center py-10 text-gray-500">
+                    <td colSpan="9" className="text-center py-10 text-gray-500">
                       No live auctions found.
                     </td>
                   </tr>
@@ -292,7 +383,7 @@ export default function LiveAuctions() {
                     </p>
                     <p className="flex justify-between">
                       <span className="text-gray-900 font-bold">
-                        Current Bid
+                        Reserve Price
                       </span>
                       <span className="text-gray-500">
                         {user?.sellerOffer || "--"}
@@ -412,6 +503,12 @@ export default function LiveAuctions() {
           <ViewBrandModal
             selectedVehicle={selectedVehicle}
             handleClick={() => setselectedVehicle(null)}
+          />
+        )}
+        {isOpenModal === "liveBid" && (
+          <LiveBidModal
+            vehicle={bidData}
+            onClose={() => handleIsOpenModal("")}
           />
         )}
       </div>

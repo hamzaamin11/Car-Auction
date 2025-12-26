@@ -62,7 +62,7 @@ export default function ManageUsers() {
       setAllUsers(users);
       setHasMore(users.length === itemsPerRequest);
     } else {
-      setAllUsers(prev => [...prev, ...users]);
+      setAllUsers((prev) => [...prev, ...users]);
     }
     setLoading(false);
   };
@@ -108,7 +108,7 @@ export default function ManageUsers() {
     if (result.isConfirmed) {
       try {
         await delUser(userId);
-        setAllUsers(prev => prev.filter(u => u.id !== userId));
+        setAllUsers((prev) => prev.filter((u) => u.id !== userId));
         Swal.fire({
           title: "Deleted!",
           text: "User has been deleted successfully.",
@@ -134,7 +134,9 @@ export default function ManageUsers() {
   };
 
   const handleUserUpdated = (updatedUser) => {
-    setAllUsers(prev => prev.map(u => u.id === updatedUser.id ? { ...u, ...updatedUser } : u));
+    setAllUsers((prev) =>
+      prev.map((u) => (u.id === updatedUser.id ? { ...u, ...updatedUser } : u))
+    );
     setIsModalOpen(false);
   };
 
@@ -168,10 +170,18 @@ export default function ManageUsers() {
     const iconSizes = { sm: 16, md: 20, lg: 32 };
 
     if (user.image) {
-      return <img src={user.image} alt={user.name} className={`${sizeClasses[size]} rounded-full object-cover border-2 border-gray-200`} />;
+      return (
+        <img
+          src={user.image}
+          alt={user.name}
+          className={`${sizeClasses[size]} rounded-full object-cover border-2 border-gray-200`}
+        />
+      );
     }
     return (
-      <div className={`${sizeClasses[size]} rounded-full bg-gray-200 flex items-center justify-center border-2 border-gray-300`}>
+      <div
+        className={`${sizeClasses[size]} rounded-full bg-gray-200 flex items-center justify-center border-2 border-gray-300`}
+      >
         <User size={iconSizes[size]} className="text-gray-500" />
       </div>
     );
@@ -185,8 +195,19 @@ export default function ManageUsers() {
         </h1>
         <div className="relative w-full max-w-md">
           <span className="absolute inset-y-0 left-0 flex items-center pl-3 text-gray-400">
-            <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M21 21l-4.35-4.35m0 0A7.5 7.5 0 104.5 4.5a7.5 7.5 0 0012.15 12.15z" />
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              className="h-5 w-5"
+              fill="none"
+              viewBox="0 0 24 24"
+              stroke="currentColor"
+            >
+              <path
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                strokeWidth="2"
+                d="M21 21l-4.35-4.35m0 0A7.5 7.5 0 104.5 4.5a7.5 7.5 0 0012.15 12.15z"
+              />
             </svg>
           </span>
           <CustomSearch
@@ -200,11 +221,12 @@ export default function ManageUsers() {
         </div>
       </div>
 
-      <div className="flex gap-2 text-2xl text-gray-800 font-semibold">
+      <div className="flex gap-2 lg:text-2xl text-xl text-gray-800 font-semibold">
         <div>
           Total Customers:
           <span>{totals?.totalCustomers}</span>
-        </div> |
+        </div>{" "}
+        |
         <div>
           Total Seller:
           <span>{totals?.totalSellers}</span>
@@ -230,31 +252,50 @@ export default function ManageUsers() {
                     <div className="flex items-center gap-3">
                       <UserImage user={user} size="md" />
                       <span className="font-medium text-gray-900">
-                        {user?.name?.charAt(0)?.toUpperCase() + user?.name?.slice(1)}
+                        {user?.name?.charAt(0)?.toUpperCase() +
+                          user?.name?.slice(1)}
                       </span>
                     </div>
                   </td>
                   <td className="px-6 py-4 text-gray-700">
-                    {user?.email?.charAt(0)?.toUpperCase() + user?.email?.slice(1)}
+                    {user?.email?.charAt(0)?.toUpperCase() +
+                      user?.email?.slice(1)}
                   </td>
                   <td className="px-6 py-4 text-left text-gray-700">
                     {user?.contact?.slice(0, 15)}
                   </td>
                   <td>
-                    <span className={`px-2 py-1 text-xs font-bold rounded-full ${
-                      user.role === "admin"
-                        ? "bg-blue-100 text-blue-500"
-                        : user.role === "customer"
-                        ? "bg-yellow-100 text-yellow-500"
-                        : "bg-green-100 text-green-500"
-                    }`}>
+                    <span
+                      className={`px-2 py-1 text-xs font-bold rounded-full ${
+                        user.role === "admin"
+                          ? "bg-blue-100 text-blue-500"
+                          : user.role === "customer"
+                          ? "bg-yellow-100 text-yellow-500"
+                          : "bg-green-100 text-green-500"
+                      }`}
+                    >
                       {user.role.charAt(0).toUpperCase() + user.role.slice(1)}
                     </span>
                   </td>
                   <td className="px-6 py-4 flex items-center justify-center gap-2">
-                    <CustomAdd text="Edit" variant="edit" onClick={() => { setSelectedUser(user); setIsModalOpen(true); }} />
-                    <CustomAdd text="View" variant="view" onClick={() => handleView(user)} />
-                    <CustomAdd text="Delete" variant="delete" onClick={() => handleDeleteUser(user.id)} />
+                    <CustomAdd
+                      text="Edit"
+                      variant="edit"
+                      onClick={() => {
+                        setSelectedUser(user);
+                        setIsModalOpen(true);
+                      }}
+                    />
+                    <CustomAdd
+                      text="View"
+                      variant="view"
+                      onClick={() => handleView(user)}
+                    />
+                    <CustomAdd
+                      text="Delete"
+                      variant="delete"
+                      onClick={() => handleDeleteUser(user.id)}
+                    />
                   </td>
                 </tr>
               ))}
@@ -265,20 +306,25 @@ export default function ManageUsers() {
 
       <div className="md:hidden space-y-4">
         {currentDisplay.map((user) => (
-          <div key={user.id} className="bg-white shadow rounded-xl p-4 border border-gray-200">
+          <div
+            key={user.id}
+            className="bg-white shadow rounded-xl p-4 border border-gray-200"
+          >
             <div className="flex gap-3 mb-3">
               <UserImage user={user} size="lg" />
               <div className="flex-1 flex items-start justify-between">
                 <h2 className="text-lg font-semibold text-gray-900 py-4">
                   {user.name.charAt(0).toUpperCase() + user.name.slice(1)}
                 </h2>
-                <span className={`px-2 py-1 text-xs font-bold rounded-full ${
-                  user.role === "admin"
-                    ? "bg-blue-100 text-blue-500"
-                    : user.role === "customer"
-                    ? "bg-yellow-100 text-yellow-500"
-                    : "bg-green-100 text-green-500"
-                }`}>
+                <span
+                  className={`px-2 py-1 text-xs font-bold rounded-full ${
+                    user.role === "admin"
+                      ? "bg-blue-100 text-blue-500"
+                      : user.role === "customer"
+                      ? "bg-yellow-100 text-yellow-500"
+                      : "bg-green-100 text-green-500"
+                  }`}
+                >
                   {user?.role?.charAt(0)?.toUpperCase() + user?.role?.slice(1)}
                 </span>
               </div>
@@ -294,9 +340,27 @@ export default function ManageUsers() {
               </p>
             </div>
             <div className="flex gap-2">
-              <CustomAdd text="Edit" variant="edit" onClick={() => { setSelectedUser(user); setIsModalOpen(true); }} className="flex-1" />
-              <CustomAdd text="View" variant="view" onClick={() => handleView(user)} className="flex-1" />
-              <CustomAdd text="Delete" variant="delete" onClick={() => handleDeleteUser(user.id)} className="flex-1" />
+              <CustomAdd
+                text="Edit"
+                variant="edit"
+                onClick={() => {
+                  setSelectedUser(user);
+                  setIsModalOpen(true);
+                }}
+                className="flex-1"
+              />
+              <CustomAdd
+                text="View"
+                variant="view"
+                onClick={() => handleView(user)}
+                className="flex-1"
+              />
+              <CustomAdd
+                text="Delete"
+                variant="delete"
+                onClick={() => handleDeleteUser(user.id)}
+                className="flex-1"
+              />
             </div>
           </div>
         ))}
@@ -313,44 +377,85 @@ export default function ManageUsers() {
           <div className="flex flex-col sm:flex-row justify-between items-center gap-4 text-sm text-gray-700">
             <div className="text-gray-600">
               Showing <span className="font-medium">{startIndex + 1}</span> to{" "}
-              <span className="font-medium">{endIndex}</span> {" "}
+              <span className="font-medium">{endIndex}</span>{" "}
               <span className="font-medium"></span> entries
             </div>
 
             <div className="flex items-center gap-1">
-              <button onClick={() => goToPage(1)} disabled={currentPage === 1}
-                className={`px-3 py-1 rounded border ${currentPage === 1 ? "bg-gray-100 text-gray-400 cursor-not-allowed" : "bg-white hover:bg-gray-50"}`}>
+              <button
+                onClick={() => goToPage(1)}
+                disabled={currentPage === 1}
+                className={`px-3 py-1 rounded border ${
+                  currentPage === 1
+                    ? "bg-gray-100 text-gray-400 cursor-not-allowed"
+                    : "bg-white hover:bg-gray-50"
+                }`}
+              >
                 {"<<"}
               </button>
-              <button onClick={() => goToPage(currentPage - 1)} disabled={currentPage === 1}
-                className={`px-3 py-1 rounded border ${currentPage === 1 ? "bg-gray-100 text-gray-400 cursor-not-allowed" : "bg-white hover:bg-gray-50"}`}>
+              <button
+                onClick={() => goToPage(currentPage - 1)}
+                disabled={currentPage === 1}
+                className={`px-3 py-1 rounded border ${
+                  currentPage === 1
+                    ? "bg-gray-100 text-gray-400 cursor-not-allowed"
+                    : "bg-white hover:bg-gray-50"
+                }`}
+              >
                 {"<"}
               </button>
 
-              {getPageNumbers().map(page => (
-                <button key={page} onClick={() => goToPage(page)}
-                  className={`px-3 py-1 rounded border ${currentPage === page ? "bg-blue-950 text-white" : "bg-white hover:bg-gray-50"}`}>
+              {getPageNumbers().map((page) => (
+                <button
+                  key={page}
+                  onClick={() => goToPage(page)}
+                  className={`px-3 py-1 rounded border ${
+                    currentPage === page
+                      ? "bg-blue-950 text-white"
+                      : "bg-white hover:bg-gray-50"
+                  }`}
+                >
                   {page}
                 </button>
               ))}
 
-              <button onClick={() => goToPage(currentPage + 1)} disabled={!hasMore && currentPage >= totalPages}
-                className={`px-3 py-1 rounded border ${(!hasMore && currentPage >= totalPages) ? "bg-gray-100 text-gray-400 cursor-not-allowed" : "bg-white hover:bg-gray-50"}`}>
+              <button
+                onClick={() => goToPage(currentPage + 1)}
+                disabled={!hasMore && currentPage >= totalPages}
+                className={`px-3 py-1 rounded border ${
+                  !hasMore && currentPage >= totalPages
+                    ? "bg-gray-100 text-gray-400 cursor-not-allowed"
+                    : "bg-white hover:bg-gray-50"
+                }`}
+              >
                 {">"}
               </button>
-              <button onClick={() => goToPage(totalPages)} disabled={!hasMore && currentPage >= totalPages}
-                className={`px-3 py-1 rounded border ${(!hasMore && currentPage >= totalPages) ? "bg-gray-100 text-gray-400 cursor-not-allowed" : "bg-white hover:bg-gray-50"}`}>
+              <button
+                onClick={() => goToPage(totalPages)}
+                disabled={!hasMore && currentPage >= totalPages}
+                className={`px-3 py-1 rounded border ${
+                  !hasMore && currentPage >= totalPages
+                    ? "bg-gray-100 text-gray-400 cursor-not-allowed"
+                    : "bg-white hover:bg-gray-50"
+                }`}
+              >
                 {">>"}
               </button>
             </div>
-
-            <div className="flex items-center gap-2"></div>
           </div>
         </div>
       )}
 
-      <ViewUserModal isOpen={isViewModalOpen} closeModal={() => setIsViewModalOpen(false)} />
-      <EditUserModal Open={isModalOpen} setOpen={setIsModalOpen} selectedUser={selectedUser} onUserUpdated={handleUserUpdated} />
+      <ViewUserModal
+        isOpen={isViewModalOpen}
+        closeModal={() => setIsViewModalOpen(false)}
+      />
+      <EditUserModal
+        Open={isModalOpen}
+        setOpen={setIsModalOpen}
+        selectedUser={selectedUser}
+        onUserUpdated={handleUserUpdated}
+      />
       {/* ToastContainer completely removed */}
     </div>
   );

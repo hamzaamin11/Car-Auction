@@ -48,7 +48,7 @@ export const AuctionEvent = () => {
     try {
       setLoading(true);
       const res = await axios.get(
-        `${BASE_URL}/getApprovedVehicles/${currentUser?.role}`
+        `${BASE_URL}/ApprovedVehicleList/${currentUser?.role}`
       );
       // Expecting array in res.data
       const data = Array.isArray(res.data) ? res.data : [];
@@ -124,6 +124,42 @@ export const AuctionEvent = () => {
     setSelectedVehicle(vehicle);
     setViewModal(true);
     setActionMenuOpen(null);
+  };
+
+  const handleStopEventAuction = async (vehicleId) => {
+    const result = await Swal.fire({
+      title: "Are you sure?",
+      text: "This Vehicle Event will be Cancel!",
+      icon: "warning",
+      showCancelButton: true,
+      confirmButtonColor: "#d33",
+      cancelButtonColor: "#9333ea",
+      confirmButtonText: "Yes, delete it!",
+      cancelButtonText: "Cancel",
+    });
+    if (result.isConfirmed) {
+      try {
+        const res = await axios.post(
+          `${BASE_URL}/cancelAuctionByAdmin/${vehicleId}`
+        );
+        Swal.fire({
+          title: "Cancel!",
+          text: "Event has been cancel successfully.",
+          icon: "success",
+          confirmButtonColor: "#9333ea",
+          timer: 2000,
+          timerProgressBar: true,
+        });
+        console.log(res.data);
+      } catch (error) {
+        Swal.fire({
+          title: "Error",
+          text: error?.response?.data?.message,
+          icon: "error",
+          confirmButtonColor: "#9333ea",
+        });
+      }
+    }
   };
 
   // close action menu when clicking outside the component
@@ -279,7 +315,12 @@ export const AuctionEvent = () => {
                       | {vehicle?.mileage ?? "--"} KM |{" "}
                       {color.charAt(0).toUpperCase() + color.slice(1)} |{" "}
                       {cityName.charAt(0).toUpperCase() + cityName.slice(1) ||
-                        "--"}
+                        "--"}{" "}
+                      {vehicle?.saleStatus === "upcoming" && (
+                        <span className="text-xs bg-red-500 text-white px-2 py-1 rounded ml-2">
+                          Live
+                        </span>
+                      )}
                     </p>
                   </div>
 
@@ -312,8 +353,14 @@ export const AuctionEvent = () => {
                         )}
 
                         <button
+                          onClick={() => handleStopEventAuction(vehicle?.id)}
+                          className="w-full px-4 py-2 text-sm text-orange-600 hover:bg-orange-100 text-left"
+                        >
+                          Stop Event Auction
+                        </button>
+                        <button
                           onClick={() => handleViewClick(vehicle)}
-                          className="w-full px-4 py-2 text-sm text-indigo-600 hover:bg-indigo-100 text-left"
+                          className="w-full px-4 py-2 text-sm text-blue-900 hover:bg-blue-100 text-left"
                         >
                           View Auction Event
                         </button>
@@ -363,6 +410,11 @@ export const AuctionEvent = () => {
                         {color.charAt(0).toUpperCase() + color.slice(1)} |{" "}
                         {cityName.charAt(0).toUpperCase() + cityName.slice(1) ||
                           "--"}
+                        {vehicle?.saleStatus === "upcoming" && (
+                          <span className="text-xs bg-red-500 text-white py-[1px] px-2 rounded ml-2">
+                            Live
+                          </span>
+                        )}
                       </p>
                     </div>
 

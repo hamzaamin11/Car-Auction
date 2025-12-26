@@ -10,7 +10,7 @@ import CustomSearch from "../CustomSearch";
 export const SeriesList = () => {
   const [isOpen, setIsOpen] = useState("");
   const [loading, setLoading] = useState(false);
-  const [allSeries, setAllSeries] = useState([]);     // All loaded series
+  const [allSeries, setAllSeries] = useState([]); // All loaded series
   const [hasMore, setHasMore] = useState(true);
   const [seleteSeries, setSeleteSeries] = useState();
   const [search, setSearch] = useState("");
@@ -88,14 +88,16 @@ export const SeriesList = () => {
   // Load data — EXACT SAME LOGIC AS BRANDLIST
   const loadSeries = async (reset = false) => {
     setLoading(true);
-    const pageToLoad = reset ? 1 : Math.floor(allSeries.length / itemsPerRequest) + 1;
+    const pageToLoad = reset
+      ? 1
+      : Math.floor(allSeries.length / itemsPerRequest) + 1;
     const newSeries = await fetchPage(pageToLoad, search);
 
     if (reset) {
       setAllSeries(newSeries);
       setHasMore(newSeries.length === itemsPerRequest);
     } else {
-      setAllSeries(prev => [...prev, ...newSeries]);
+      setAllSeries((prev) => [...prev, ...newSeries]);
     }
     setLoading(false);
   };
@@ -147,19 +149,35 @@ export const SeriesList = () => {
       {/* YOUR ORIGINAL HEADER — UNTOUCHED */}
       <div className="flex flex-col gap-3 sm:gap-4 mb-6">
         <div className="md:hidden flex flex-col gap-3">
-          <h2 className="text-2xl font-bold text-gray-800 text-center">Vehicle Series List</h2>
+          <h2 className="text-2xl font-bold text-gray-800 text-center">
+            Vehicle Series List
+          </h2>
           <div className="relative">
-            <CustomSearch placeholder="Search By Car Model..." value={search} onChange={(e) => setSearch(e.target.value)} />
+            <CustomSearch
+              placeholder="Search By Car Model..."
+              value={search}
+              onChange={(e) => setSearch(e.target.value)}
+            />
           </div>
-          <CustomAdd text="Add Series" onClick={() => handleToggleModal("Add")} />
+          <CustomAdd
+            text="Add Series"
+            onClick={() => handleToggleModal("Add")}
+          />
         </div>
 
         <div className="hidden md:flex justify-between items-center gap-4">
-          <h2 className="text-3xl font-bold text-gray-800">Vehicle Series List </h2>
+          <h2 className="text-3xl font-bold text-gray-800">Series</h2>
           <div className="relative flex-1 max-w-md">
-            <CustomSearch placeholder="Search By Car Model..." value={search} onChange={(e) => setSearch(e.target.value)} />
+            <CustomSearch
+              placeholder="Search By Car Model..."
+              value={search}
+              onChange={(e) => setSearch(e.target.value)}
+            />
           </div>
-          <CustomAdd text="Add Series" onClick={() => handleToggleModal("Add")} />
+          <CustomAdd
+            text="Add Series"
+            onClick={() => handleToggleModal("Add")}
+          />
         </div>
       </div>
 
@@ -177,9 +195,17 @@ export const SeriesList = () => {
           </thead>
           <tbody>
             {loading && allSeries.length === 0 ? (
-              <tr><td colSpan="5" className="text-center py-10">Loading...</td></tr>
+              <tr>
+                <td colSpan="5" className="text-center py-10">
+                  Loading...
+                </td>
+              </tr>
             ) : currentDisplay.length === 0 ? (
-              <tr><td colSpan="5" className="text-center py-10 text-gray-500">No series found</td></tr>
+              <tr>
+                <td colSpan="5" className="text-center py-10 text-gray-500">
+                  No series found
+                </td>
+              </tr>
             ) : (
               currentDisplay.map((series, index) => (
                 <tr key={series._id} className="border-b hover:bg-gray-50">
@@ -187,12 +213,21 @@ export const SeriesList = () => {
                   <td className="py-3 px-4">{series.brandName}</td>
                   <td className="py-3 px-4">{series.modelName}</td>
                   <td className="py-3 px-4">
-                    {series.seriesName?.charAt(0).toUpperCase() + series.seriesName?.slice(1)}
+                    {series.seriesName?.charAt(0).toUpperCase() +
+                      series.seriesName?.slice(1)}
                   </td>
                   <td className="py-3 px-4 text-center">
                     <div className="flex gap-2 justify-center">
-                      <CustomAdd text="Edit" variant="edit" onClick={() => handleEditBtn(series)} />
-                      <CustomAdd text="Delete" variant="delete" onClick={() => handleDeleteSeries(series?.seriesId)} />
+                      <CustomAdd
+                        text="Edit"
+                        variant="edit"
+                        onClick={() => handleEditBtn(series)}
+                      />
+                      <CustomAdd
+                        text="Delete"
+                        variant="delete"
+                        onClick={() => handleDeleteSeries(series?.seriesId)}
+                      />
                     </div>
                   </td>
                 </tr>
@@ -208,7 +243,10 @@ export const SeriesList = () => {
           <p className="text-center text-gray-500 py-6">No series found</p>
         ) : (
           currentDisplay.map((series, index) => (
-            <div key={series._id} className="bg-white border border-gray-200 rounded-xl shadow-sm p-4 mb-4 hover:shadow-md">
+            <div
+              key={series._id}
+              className="bg-white border border-gray-200 rounded-xl shadow-sm p-4 mb-4 hover:shadow-md"
+            >
               <h4 className="font-bold text-lg text-gray-800 capitalize mb-2">
                 {series.seriesName}
               </h4>
@@ -219,8 +257,16 @@ export const SeriesList = () => {
                 <span>{series.modelName}</span>
               </div>
               <div className="flex gap-3 mt-4">
-                <CustomAdd text="Edit" variant="edit" onClick={() => handleEditBtn(series)} />
-                <CustomAdd text="Delete" variant="delete" onClick={() => handleDeleteSeries(series?.seriesId)} />
+                <CustomAdd
+                  text="Edit"
+                  variant="edit"
+                  onClick={() => handleEditBtn(series)}
+                />
+                <CustomAdd
+                  text="Delete"
+                  variant="delete"
+                  onClick={() => handleDeleteSeries(series?.seriesId)}
+                />
               </div>
             </div>
           ))
@@ -237,28 +283,63 @@ export const SeriesList = () => {
             </div>
 
             <div className="flex items-center gap-1">
-              <button onClick={() => goToPage(1)} disabled={currentPage === 1}
-                className={`px-3 py-1 rounded border ${currentPage === 1 ? "bg-gray-100 text-gray-400 cursor-not-allowed" : "bg-white hover:bg-gray-50"}`}>
+              <button
+                onClick={() => goToPage(1)}
+                disabled={currentPage === 1}
+                className={`px-3 py-1 rounded border ${
+                  currentPage === 1
+                    ? "bg-gray-100 text-gray-400 cursor-not-allowed"
+                    : "bg-white hover:bg-gray-50"
+                }`}
+              >
                 {"<<"}
               </button>
-              <button onClick={() => goToPage(currentPage - 1)} disabled={currentPage === 1}
-                className={`px-3 py-1 rounded border ${currentPage === 1 ? "bg-gray-100 text-gray-400 cursor-not-allowed" : "bg-white hover:bg-gray-50"}`}>
+              <button
+                onClick={() => goToPage(currentPage - 1)}
+                disabled={currentPage === 1}
+                className={`px-3 py-1 rounded border ${
+                  currentPage === 1
+                    ? "bg-gray-100 text-gray-400 cursor-not-allowed"
+                    : "bg-white hover:bg-gray-50"
+                }`}
+              >
                 {"<"}
               </button>
 
-              {getPageNumbers().map(page => (
-                <button key={page} onClick={() => goToPage(page)}
-                  className={`px-3 py-1 rounded border ${currentPage === page ? "bg-blue-950 text-white" : "bg-white hover:bg-gray-50"}`}>
+              {getPageNumbers().map((page) => (
+                <button
+                  key={page}
+                  onClick={() => goToPage(page)}
+                  className={`px-3 py-1 rounded border ${
+                    currentPage === page
+                      ? "bg-blue-950 text-white"
+                      : "bg-white hover:bg-gray-50"
+                  }`}
+                >
                   {page}
                 </button>
               ))}
 
-              <button onClick={() => goToPage(currentPage + 1)} disabled={!hasMore && currentPage >= totalPages}
-                className={`px-3 py-1 rounded border ${(!hasMore && currentPage >= totalPages) ? "bg-gray-100 text-gray-400 cursor-not-allowed" : "bg-white hover:bg-gray-50"}`}>
+              <button
+                onClick={() => goToPage(currentPage + 1)}
+                disabled={!hasMore && currentPage >= totalPages}
+                className={`px-3 py-1 rounded border ${
+                  !hasMore && currentPage >= totalPages
+                    ? "bg-gray-100 text-gray-400 cursor-not-allowed"
+                    : "bg-white hover:bg-gray-50"
+                }`}
+              >
                 {">"}
               </button>
-              <button onClick={() => goToPage(totalPages)} disabled={!hasMore && currentPage >= totalPages}
-                className={`px-3 py-1 rounded border ${(!hasMore && currentPage >= totalPages) ? "bg-gray-100 text-gray-400 cursor-not-allowed" : "bg-white hover:bg-gray-50"}`}>
+              <button
+                onClick={() => goToPage(totalPages)}
+                disabled={!hasMore && currentPage >= totalPages}
+                className={`px-3 py-1 rounded border ${
+                  !hasMore && currentPage >= totalPages
+                    ? "bg-gray-100 text-gray-400 cursor-not-allowed"
+                    : "bg-white hover:bg-gray-50"
+                }`}
+              >
                 {">>"}
               </button>
             </div>
@@ -268,10 +349,17 @@ export const SeriesList = () => {
 
       {/* Modals */}
       {isOpen === "Add" && (
-        <AddSeries handleClose={() => handleToggleModal("")} handleGetAllSeries={() => loadSeries(true)} />
+        <AddSeries
+          handleClose={() => handleToggleModal("")}
+          handleGetAllSeries={() => loadSeries(true)}
+        />
       )}
       {isOpen === "Edit" && (
-        <EditSeries handleClose={() => handleToggleModal("")} seleteSeries={seleteSeries} handleGetAllSeries={() => loadSeries(true)} />
+        <EditSeries
+          handleClose={() => handleToggleModal("")}
+          seleteSeries={seleteSeries}
+          handleGetAllSeries={() => loadSeries(true)}
+        />
       )}
     </div>
   );

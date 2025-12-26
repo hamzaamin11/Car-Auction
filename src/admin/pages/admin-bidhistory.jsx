@@ -54,7 +54,7 @@ const AdminBidHistory = () => {
     setFilteredBiders(filtered);
   }, [search, allBiders]);
 
-  //  PAGINATION 
+  //  PAGINATION
   const totalItems = filteredBiders.length;
   const totalPages = Math.ceil(totalItems / itemsPerPage);
   const startIndex = (currentPage - 1) * itemsPerPage;
@@ -133,11 +133,21 @@ const AdminBidHistory = () => {
             <thead className="bg-blue-950 text-white">
               <tr>
                 <th className="px-6 py-3 text-sm font-semibold">SR#</th>
-                <th className="px-6 py-3 text-left text-sm font-semibold">Customer Name</th>
-                <th className="px-6 py-3 text-left text-sm font-semibold">Vehicle</th>
-                <th className="px-6 py-3 text-left text-sm font-semibold">Bid Amount</th>
-                <th className="px-6 py-3 text-left text-sm font-semibold">Date</th>
-                <th className="px-6 py-3 text-center text-sm font-semibold">Status</th>
+                <th className="px-6 py-3 text-left text-sm font-semibold">
+                  Customer Name
+                </th>
+                <th className="px-6 py-3 text-left text-sm font-semibold">
+                  Vehicle
+                </th>
+                <th className="px-6 py-3 text-left text-sm font-semibold">
+                  Bid Amount
+                </th>
+                <th className="px-6 py-3 text-left text-sm font-semibold">
+                  Date
+                </th>
+                <th className="px-6 py-3 text-center text-sm font-semibold">
+                  Status
+                </th>
               </tr>
             </thead>
             <tbody className="divide-y divide-gray-100">
@@ -156,7 +166,7 @@ const AdminBidHistory = () => {
                       contact,
                       cnic,
                       address,
-                      date,
+                      bidCreatedAt,
                       year,
                       engine,
                       transmission,
@@ -203,7 +213,9 @@ const AdminBidHistory = () => {
                         PKR {MonsterBid || maxBid || "0000"}
                       </td>
                       <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-                        {date ? new Date(date).toLocaleDateString("en-GB") : "N/A"}
+                        {bidCreatedAt
+                          ? new Date(bidCreatedAt).toLocaleDateString("en-GB")
+                          : "N/A"}
                       </td>
                       <td className="px-6 py-4 whitespace-nowrap text-center">
                         <span
@@ -255,7 +267,10 @@ const AdminBidHistory = () => {
                 },
                 index
               ) => (
-                <div key={index} className="bg-white rounded-xl shadow-md border border-gray-200 p-4">
+                <div
+                  key={index}
+                  className="bg-white rounded-xl shadow-md border border-gray-200 p-4"
+                >
                   <div className="flex justify-end items-center mb-3">
                     <span
                       className={`inline-flex items-center justify-center px-3 py-1 text-xs rounded-full font-semibold ${
@@ -306,7 +321,9 @@ const AdminBidHistory = () => {
                       </span>
                     </p>
                     <p className="flex justify-between">
-                      <span className="text-gray-900 font-bold">Bid Amount</span>
+                      <span className="text-gray-900 font-bold">
+                        Bid Amount
+                      </span>
                       <span className="text-[#191970] font-semibold">
                         PKR {MonsterBid || maxBid || "0000"}
                       </span>
@@ -314,7 +331,9 @@ const AdminBidHistory = () => {
                     <p className="flex justify-between">
                       <span className="text-gray-900 font-bold">Date</span>
                       <span className="text-gray-500">
-                        {date ? new Date(date).toLocaleDateString("en-GB") : "N/A"}
+                        {date
+                          ? new Date(date).toLocaleDateString("en-GB")
+                          : "N/A"}
                       </span>
                     </p>
                   </div>
@@ -337,28 +356,63 @@ const AdminBidHistory = () => {
               </div>
 
               <div className="flex items-center gap-1">
-                <button onClick={() => goToPage(1)} disabled={currentPage === 1}
-                  className={`px-3 py-1 rounded border ${currentPage === 1 ? "bg-gray-100 text-gray-400 cursor-not-allowed" : "bg-white hover:bg-gray-50"}`}>
+                <button
+                  onClick={() => goToPage(1)}
+                  disabled={currentPage === 1}
+                  className={`px-3 py-1 rounded border ${
+                    currentPage === 1
+                      ? "bg-gray-100 text-gray-400 cursor-not-allowed"
+                      : "bg-white hover:bg-gray-50"
+                  }`}
+                >
                   {"<<"}
                 </button>
-                <button onClick={() => goToPage(currentPage - 1)} disabled={currentPage === 1}
-                  className={`px-3 py-1 rounded border ${currentPage === 1 ? "bg-gray-100 text-gray-400 cursor-not-allowed" : "bg-white hover:bg-gray-50"}`}>
+                <button
+                  onClick={() => goToPage(currentPage - 1)}
+                  disabled={currentPage === 1}
+                  className={`px-3 py-1 rounded border ${
+                    currentPage === 1
+                      ? "bg-gray-100 text-gray-400 cursor-not-allowed"
+                      : "bg-white hover:bg-gray-50"
+                  }`}
+                >
                   {"<"}
                 </button>
 
-                {getPageNumbers().map(page => (
-                  <button key={page} onClick={() => goToPage(page)}
-                    className={`px-3 py-1 rounded border ${currentPage === page ? "bg-blue-950 text-white" : "bg-white hover:bg-gray-50"}`}>
+                {getPageNumbers().map((page) => (
+                  <button
+                    key={page}
+                    onClick={() => goToPage(page)}
+                    className={`px-3 py-1 rounded border ${
+                      currentPage === page
+                        ? "bg-blue-950 text-white"
+                        : "bg-white hover:bg-gray-50"
+                    }`}
+                  >
                     {page}
                   </button>
                 ))}
 
-                <button onClick={() => goToPage(currentPage + 1)} disabled={currentPage >= totalPages}
-                  className={`px-3 py-1 rounded border ${currentPage >= totalPages ? "bg-gray-100 text-gray-400 cursor-not-allowed" : "bg-white hover:bg-gray-50"}`}>
+                <button
+                  onClick={() => goToPage(currentPage + 1)}
+                  disabled={currentPage >= totalPages}
+                  className={`px-3 py-1 rounded border ${
+                    currentPage >= totalPages
+                      ? "bg-gray-100 text-gray-400 cursor-not-allowed"
+                      : "bg-white hover:bg-gray-50"
+                  }`}
+                >
                   {">"}
                 </button>
-                <button onClick={() => goToPage(totalPages)} disabled={currentPage >= totalPages}
-                  className={`px-3 py-1 rounded border ${currentPage >= totalPages ? "bg-gray-100 text-gray-400 cursor-not-allowed" : "bg-white hover:bg-gray-50"}`}>
+                <button
+                  onClick={() => goToPage(totalPages)}
+                  disabled={currentPage >= totalPages}
+                  className={`px-3 py-1 rounded border ${
+                    currentPage >= totalPages
+                      ? "bg-gray-100 text-gray-400 cursor-not-allowed"
+                      : "bg-white hover:bg-gray-50"
+                  }`}
+                >
                   {">>"}
                 </button>
               </div>
@@ -383,11 +437,36 @@ const AdminBidHistory = () => {
               </div>
               <div className="p-6">
                 <div className="grid grid-cols-2 gap-6">
-                  <div><p className="text-sm text-gray-500">Name:</p><p className="font-semibold text-gray-900">{selectedCustomer.name}</p></div>
-                  <div><p className="text-sm text-gray-500">Contact:</p><p className="font-semibold text-gray-900">{selectedCustomer.contact || "N/A"}</p></div>
-                  <div><p className="text-sm text-gray-500">EMAIL:</p><p className="font-semibold text-gray-900">{selectedCustomer.email || "N/A"}</p></div>
-                  <div><p className="text-sm text-gray-500">CNIC:</p><p className="font-semibold text-gray-900">{selectedCustomer.cnic || "N/A"}</p></div>
-                  <div><p className="text-sm text-gray-500">Address:</p><p className="font-semibold text-gray-900">{selectedCustomer.address || "N/A"}</p></div>
+                  <div>
+                    <p className="text-sm text-gray-500">Name:</p>
+                    <p className="font-semibold text-gray-900">
+                      {selectedCustomer.name}
+                    </p>
+                  </div>
+                  <div>
+                    <p className="text-sm text-gray-500">Contact:</p>
+                    <p className="font-semibold text-gray-900">
+                      {selectedCustomer.contact || "N/A"}
+                    </p>
+                  </div>
+                  <div>
+                    <p className="text-sm text-gray-500">EMAIL:</p>
+                    <p className="font-semibold text-gray-900">
+                      {selectedCustomer.email || "N/A"}
+                    </p>
+                  </div>
+                  <div>
+                    <p className="text-sm text-gray-500">CNIC:</p>
+                    <p className="font-semibold text-gray-900">
+                      {selectedCustomer.cnic || "N/A"}
+                    </p>
+                  </div>
+                  <div>
+                    <p className="text-sm text-gray-500">Address:</p>
+                    <p className="font-semibold text-gray-900">
+                      {selectedCustomer.address || "N/A"}
+                    </p>
+                  </div>
                 </div>
               </div>
             </div>
@@ -417,41 +496,115 @@ const AdminBidHistory = () => {
                   {/* LEFT COLUMN – FULLY PRESERVED */}
                   <div className="space-y-4">
                     <div className="grid grid-cols-2 gap-4">
-                      <div><p className="text-sm text-gray-500">Location:</p><p className="font-semibold text-gray-900">{selectedVehicle.locationId || "N/A"}</p></div>
-                      <div><p className="text-sm text-gray-500">Make:</p><p className="font-semibold text-gray-900">{selectedVehicle.make}</p></div>
+                      <div>
+                        <p className="text-sm text-gray-500">Location:</p>
+                        <p className="font-semibold text-gray-900">
+                          {selectedVehicle.locationId || "N/A"}
+                        </p>
+                      </div>
+                      <div>
+                        <p className="text-sm text-gray-500">Make:</p>
+                        <p className="font-semibold text-gray-900">
+                          {selectedVehicle.make}
+                        </p>
+                      </div>
                     </div>
                     <div className="grid grid-cols-2 gap-4">
-                      <div><p className="text-sm text-gray-500">Model:</p><p className="font-semibold text-gray-900">{selectedVehicle.model}</p></div>
-                      <div><p className="text-sm text-gray-500">Series:</p><p className="font-semibold text-gray-900">{selectedVehicle.series || "N/A"}</p></div>
+                      <div>
+                        <p className="text-sm text-gray-500">Model:</p>
+                        <p className="font-semibold text-gray-900">
+                          {selectedVehicle.model}
+                        </p>
+                      </div>
+                      <div>
+                        <p className="text-sm text-gray-500">Series:</p>
+                        <p className="font-semibold text-gray-900">
+                          {selectedVehicle.series || "N/A"}
+                        </p>
+                      </div>
                     </div>
                     <div className="grid grid-cols-2 gap-4">
-                      <div><p className="text-sm text-gray-500">Color:</p><p className="font-semibold text-gray-900">{selectedVehicle.color || "N/A"}</p></div>
-                      <div><p className="text-sm text-gray-500">Transmission:</p><p className="font-semibold text-gray-900">{selectedVehicle.transmission || "N/A"}</p></div>
+                      <div>
+                        <p className="text-sm text-gray-500">Color:</p>
+                        <p className="font-semibold text-gray-900">
+                          {selectedVehicle.color || "N/A"}
+                        </p>
+                      </div>
+                      <div>
+                        <p className="text-sm text-gray-500">Transmission:</p>
+                        <p className="font-semibold text-gray-900">
+                          {selectedVehicle.transmission || "N/A"}
+                        </p>
+                      </div>
                     </div>
                     <div className="grid grid-cols-2 gap-4">
-                      <div><p className="text-sm text-gray-500">Fuel Type:</p><p className="font-semibold text-gray-900 capitalize">{selectedVehicle.fuelType || "N/A"}</p></div>
-                      <div><p className="text-sm text-gray-500">Body Style:</p><p className="font-semibold text-gray-900">{selectedVehicle.bodyStyle || "N/A"}</p></div>
+                      <div>
+                        <p className="text-sm text-gray-500">Fuel Type:</p>
+                        <p className="font-semibold text-gray-900 capitalize">
+                          {selectedVehicle.fuelType || "N/A"}
+                        </p>
+                      </div>
+                      <div>
+                        <p className="text-sm text-gray-500">Body Style:</p>
+                        <p className="font-semibold text-gray-900">
+                          {selectedVehicle.bodyStyle || "N/A"}
+                        </p>
+                      </div>
                     </div>
                     <div className="grid grid-cols-2 gap-4">
-                      <div><p className="text-sm text-gray-500">Certification Status:</p><p className="font-semibold text-gray-900">{selectedVehicle.certifyStatus || "N/A"}</p></div>
-                      <div><p className="text-sm text-gray-500">Drive Type:</p><p className="font-semibold text-gray-900 uppercase">{selectedVehicle.driveType || "N/A"}</p></div>
+                      <div>
+                        <p className="text-sm text-gray-500">
+                          Certification Status:
+                        </p>
+                        <p className="font-semibold text-gray-900">
+                          {selectedVehicle.certifyStatus || "N/A"}
+                        </p>
+                      </div>
+                      <div>
+                        <p className="text-sm text-gray-500">Drive Type:</p>
+                        <p className="font-semibold text-gray-900 uppercase">
+                          {selectedVehicle.driveType || "N/A"}
+                        </p>
+                      </div>
                     </div>
                     <div className="grid grid-cols-2 gap-4">
-                      <div><p className="text-sm text-gray-500">Meter Reading:</p><p className="font-semibold text-gray-900">{selectedVehicle.mileage || "N/A"}</p></div>
-                      <div><p className="text-sm text-gray-500">Year:</p><p className="font-semibold text-gray-900">{selectedVehicle.year || "N/A"}</p></div>
+                      <div>
+                        <p className="text-sm text-gray-500">Meter Reading:</p>
+                        <p className="font-semibold text-gray-900">
+                          {selectedVehicle.mileage || "N/A"}
+                        </p>
+                      </div>
+                      <div>
+                        <p className="text-sm text-gray-500">Year:</p>
+                        <p className="font-semibold text-gray-900">
+                          {selectedVehicle.year || "N/A"}
+                        </p>
+                      </div>
                     </div>
                     <div className="grid grid-cols-2 gap-4">
-                      <div><p className="text-sm text-gray-500">Condition:</p><p className="font-semibold text-gray-900 capitalize">{selectedVehicle.vehicleCondition || "N/A"}</p></div>
-                      <div><p className="text-sm text-gray-500">Price:</p><p className="font-semibold text-gray-900">
-                        {selectedVehicle.buyNowPrice || selectedVehicle.MonsterBid || selectedVehicle.maxBid || "N/A"}
-                      </p></div>
+                      <div>
+                        <p className="text-sm text-gray-500">Condition:</p>
+                        <p className="font-semibold text-gray-900 capitalize">
+                          {selectedVehicle.vehicleCondition || "N/A"}
+                        </p>
+                      </div>
+                      <div>
+                        <p className="text-sm text-gray-500">Price:</p>
+                        <p className="font-semibold text-gray-900">
+                          {selectedVehicle.buyNowPrice ||
+                            selectedVehicle.MonsterBid ||
+                            selectedVehicle.maxBid ||
+                            "N/A"}
+                        </p>
+                      </div>
                     </div>
                   </div>
 
                   {/* RIGHT COLUMN – IMAGE CAROUSEL – 100% PRESERVED */}
                   <div className="flex flex-col items-center">
                     <div className="relative w-full aspect-[4/3] bg-gray-100 rounded-lg overflow-hidden mb-4">
-                      {selectedVehicle.images && selectedVehicle.images.length > 0 ? (
+                      {selectedVehicle.images &&
+                      selectedVehicle.images.length > 0 ? (
                         <>
                           <img
                             src={selectedVehicle.images[currentImageIndex]}
@@ -460,14 +613,42 @@ const AdminBidHistory = () => {
                           />
                           {selectedVehicle.images.length > 1 && (
                             <>
-                              <button onClick={handlePrevImage} className="absolute left-2 top-1/2 -translate-y-1/2 bg-red-600 text-white p-2 rounded-full shadow-lg hover:bg-red-700 transition">
-                                <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />
+                              <button
+                                onClick={handlePrevImage}
+                                className="absolute left-2 top-1/2 -translate-y-1/2 bg-red-600 text-white p-2 rounded-full shadow-lg hover:bg-red-700 transition"
+                              >
+                                <svg
+                                  xmlns="http://www.w3.org/2000/svg"
+                                  className="h-6 w-6"
+                                  fill="none"
+                                  viewBox="0 0 24 24"
+                                  stroke="currentColor"
+                                >
+                                  <path
+                                    strokeLinecap="round"
+                                    strokeLinejoin="round"
+                                    strokeWidth={2}
+                                    d="M15 19l-7-7 7-7"
+                                  />
                                 </svg>
                               </button>
-                              <button onClick={handleNextImage} className="absolute right-2 top-1/2 -translate-y-1/2 bg-red-600 text-white p-2 rounded-full shadow-lg hover:bg-red-700 transition">
-                                <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
+                              <button
+                                onClick={handleNextImage}
+                                className="absolute right-2 top-1/2 -translate-y-1/2 bg-red-600 text-white p-2 rounded-full shadow-lg hover:bg-red-700 transition"
+                              >
+                                <svg
+                                  xmlns="http://www.w3.org/2000/svg"
+                                  className="h-6 w-6"
+                                  fill="none"
+                                  viewBox="0 0 24 24"
+                                  stroke="currentColor"
+                                >
+                                  <path
+                                    strokeLinecap="round"
+                                    strokeLinejoin="round"
+                                    strokeWidth={2}
+                                    d="M9 5l7 7-7 7"
+                                  />
                                 </svg>
                               </button>
                             </>
@@ -480,21 +661,30 @@ const AdminBidHistory = () => {
                       )}
                     </div>
 
-                    {selectedVehicle.images && selectedVehicle.images.length > 1 && (
-                      <div className="flex gap-2 justify-center flex-wrap">
-                        {selectedVehicle.images.slice(0, 5).map((img, idx) => (
-                          <button
-                            key={idx}
-                            onClick={() => setCurrentImageIndex(idx)}
-                            className={`w-16 h-16 rounded-lg overflow-hidden border-2 transition ${
-                              currentImageIndex === idx ? "border-blue-600" : "border-gray-300 hover:border-gray-400"
-                            }`}
-                          >
-                            <img src={img} alt={`Thumbnail ${idx + 1}`} className="w-full h-full object-cover" />
-                          </button>
-                        ))}
-                      </div>
-                    )}
+                    {selectedVehicle.images &&
+                      selectedVehicle.images.length > 1 && (
+                        <div className="flex gap-2 justify-center flex-wrap">
+                          {selectedVehicle.images
+                            .slice(0, 5)
+                            .map((img, idx) => (
+                              <button
+                                key={idx}
+                                onClick={() => setCurrentImageIndex(idx)}
+                                className={`w-16 h-16 rounded-lg overflow-hidden border-2 transition ${
+                                  currentImageIndex === idx
+                                    ? "border-blue-600"
+                                    : "border-gray-300 hover:border-gray-400"
+                                }`}
+                              >
+                                <img
+                                  src={img}
+                                  alt={`Thumbnail ${idx + 1}`}
+                                  className="w-full h-full object-cover"
+                                />
+                              </button>
+                            ))}
+                        </div>
+                      )}
                   </div>
                 </div>
               </div>

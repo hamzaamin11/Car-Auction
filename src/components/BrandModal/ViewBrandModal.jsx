@@ -113,7 +113,7 @@ export const ViewBrandModal = ({ selectedVehicle, handleClick }) => {
               {selectedVehicle?.vehicleCondition}
             </p>
             <p>
-              <span className="font-bold">Price:</span>{" "}
+              <span className="font-bold">Reserve Price:</span>{" "}
               {selectedVehicle?.buyNowPrice}
             </p>
           </div>

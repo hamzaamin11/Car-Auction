@@ -105,6 +105,7 @@ import ViewInspectionVehicle from "./pages/ViewInspectionVehicle";
 import { Configuration } from "./pages/Configuration";
 import { AdminAccount } from "./pages/AdminAccount";
 import { CustomerProtectedRoute } from "./CustomerProtectedRoute";
+import { PastVehicle } from "./admin/pages/PastVehicle";
 
 function Layout() {
   const location = useLocation();
@@ -273,6 +274,7 @@ function Layout() {
           <Route path="/admin/awaiting" element={<AwaitingApproval />} />
           <Route path="/admin/city" element={<CitiesList />} />
           <Route path="/admin/accountsetting" element={<AccountSetting />} />
+          <Route path="/admin/pastvehicle" element={<PastVehicle />} />
 
           <Route path="/admin/configuration" element={<Configuration />} />
 

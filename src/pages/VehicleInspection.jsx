@@ -487,8 +487,10 @@ const VehicleInspection = () => {
                     PKR {vehicle.buyNowPrice}
                   </p>
                   <p className="text-xs text-gray-600">
-                    {vehicle.year || "—"} • {vehicle.fuelType || "—"} •{" "}
-                    {vehicle.transmission || "—"}
+                    {vehicle.year || "—"} •
+                    {vehicle.fuelType.charAt(0).toUpperCase() +
+                      vehicle.fuelType.slice(1)}{" "}
+                    • {vehicle.transmission || "—"} • {vehicle.cityName || "—"}
                   </p>
                   <p
                     className={`text-[8px] text-center rounded w-16 ${
@@ -748,8 +750,11 @@ const VehicleInspection = () => {
                   <div className="flex flex-wrap gap-1 text-sm text-gray-500">
                     <span>{vehicle.year || "—"}</span>|
                     <span>{vehicle.mileage || "—"}KM</span>|
-                    <span>{vehicle.fuelType || "—"}</span>|
-                    <span>{vehicle.color || "—"}</span>|
+                    <span>
+                      {vehicle.fuelType.charAt(0).toUpperCase() +
+                        vehicle.fuelType.slice(1)}
+                    </span>
+                    |<span>{vehicle.color || "—"}</span>|
                     <span>{vehicle.transmission || "—"}</span>|
                     <span>{vehicle.cityName || "—"}</span>|
                     <span
@@ -934,25 +939,6 @@ const VehicleInspection = () => {
                   >
                     {">>"}
                   </button>
-                </div>
-
-                {/* Show entries */}
-                <div className="flex items-center gap-2">
-                  {/* <select
-                    value={carsPerPage}
-                    onChange={(e) => {
-                      setCarsPerPage(Number(e.target.value));
-                      setCurrentPage(1);
-                    }}
-                    className="border rounded px-2 py-1 text-sm focus:outline-none focus:ring-2 focus:ring-blue-900"
-                  >
-                    {[10, 20, 50, 100].map((size) => (
-                      <option key={size} value={size}>
-                        {size}
-                      </option>
-                    ))}
-                  </select>
-                  <span className="text-gray-600">entries</span> */}
                 </div>
               </div>
             </div>
