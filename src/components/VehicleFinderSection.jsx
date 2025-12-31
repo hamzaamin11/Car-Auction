@@ -277,7 +277,7 @@ const VehicleFinderSection = () => {
     }
     try {
       const res = await axios.get(
-        `${BASE_URL}/getModelById/${vehicleData.make}`
+        `${BASE_URL}/getModelById/${currentUser?.role}/${vehicleData.make}`
       );
       setAllModels(res.data || []);
     } catch (err) {

@@ -139,7 +139,8 @@ export const SuggestionList = () => {
                     {sugest.name.charAt(0).toUpperCase() + sugest.name.slice(1)}
                   </td>
                   <td className="py-2 px-4 whitespace-nowrap">
-                    {sugest.email.charAt(0).toUpperCase() + sugest.email.slice(1)}
+                    {sugest.email.charAt(0).toUpperCase() +
+                      sugest.email.slice(1)}
                   </td>
                   <td className="py-2 px-4 whitespace-nowrap">
                     {sugest.contactNumber}
@@ -184,7 +185,8 @@ export const SuggestionList = () => {
                 <p className="flex justify-between">
                   <span className="font-bold text-gray-900">Email</span>
                   <span className="text-gray-700">
-                    {sugest.email.charAt(0).toUpperCase() + sugest.email.slice(1)}
+                    {sugest.email.charAt(0).toUpperCase() +
+                      sugest.email.slice(1)}
                   </span>
                 </p>
                 <p className="flex justify-between">
@@ -246,7 +248,9 @@ export const SuggestionList = () => {
                   key={page}
                   onClick={() => goToPage(page)}
                   className={`px-3 py-1 rounded border ${
-                    currentPage === page ? "bg-blue-950 text-white" : "bg-white hover:bg-gray-50"
+                    currentPage === page
+                      ? "bg-blue-950 text-white"
+                      : "bg-white hover:bg-gray-50"
                   }`}
                 >
                   {page}
@@ -282,24 +286,135 @@ export const SuggestionList = () => {
 
       {/* Modal – 100% unchanged */}
       {isModalOpen && selectedSuggestion && (
-        <div className="fixed inset-0 flex items-center justify-center z-50 backdrop-blur-sm bg-opacity-40 px-4">
-          <div className="bg-white rounded-lg shadow-xl w-full max-w-md p-4 relative animate-fadeIn">
-            <button
-              onClick={() => setIsModalOpen(false)}
-              className="absolute top-3 right-3 px-2 py-1 text-sm bg-red-600 text-white rounded-md transition"
-            >
-              X
-            </button>
-            <h3 className="text-xl sm:text-2xl font-bold text-gray-800 mb-4 border-b pb-2">
-              Suggestion Details
-            </h3>
-            <div className="space-y-4">
-              <div className="flex flex-col">
-                <span className="font-semibold text-gray-600">
-                  Customer Suggestion:
-                </span>
-                <div className="bg-gray-100 p-3 rounded-md text-gray-800 text-sm break-words overflow-y-auto">
-                  {selectedSuggestion.suggestion || "No suggestion provided."}
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-3">
+          {/* Backdrop with blur */}
+          <div
+            className="absolute inset-0 bg-black/40 backdrop-blur-sm transition-opacity"
+            onClick={() => setIsModalOpen(false)}
+          />
+
+          {/* Modal Container */}
+          <div className="relative w-full max-w-2xl animate-scaleUp">
+            {/* Modal Card */}
+            <div className="relative overflow-hidden rounded-2xl bg-white shadow-2xl">
+              {/* Header with gradient */}
+              <div className="bg-blue-950 px-6 py-5">
+                <div className="flex items-center justify-between">
+                  <div>
+                    <h3 className="text-xl font-bold text-white">
+                      Suggestion Details
+                    </h3>
+                    <p className="text-sm text-gray-300 mt-1">
+                      Customer feedback #{selectedSuggestion.id || "N/A"}
+                    </p>
+                  </div>
+
+                  {/* Close Button */}
+                  <button
+                    onClick={() => setIsModalOpen(false)}
+                    className="group rounded-lg p-2  duration-200 text-white bg-red-600 group-hover:text-white transition-colors"
+                    aria-label="Close modal"
+                  >
+                    <svg
+                      className="w-6 h-6  "
+                      fill="none"
+                      stroke="currentColor"
+                      viewBox="0 0 24 24"
+                    >
+                      <path
+                        strokeLinecap="round"
+                        strokeLinejoin="round"
+                        strokeWidth="2"
+                        d="M6 18L18 6M6 6l12 12"
+                      />
+                    </svg>
+                  </button>
+                </div>
+              </div>
+
+              {/* Content */}
+              <div className="p-6 space-y-6">
+                {/* Status Badge */}
+                <div className="flex items-center gap-3">
+                  <span className="px-3 py-1 rounded-full text-sm font-medium bg-blue-100 text-blue-800">
+                    {selectedSuggestion.status || "Submitted"}
+                  </span>
+                  <span className="text-sm text-gray-500">
+                    {selectedSuggestion.date || new Date().toLocaleDateString()}
+                  </span>
+                </div>
+
+                {/* Suggestion Box */}
+                <div className="space-y-3">
+                  <div className="flex items-center gap-2">
+                    <div className="p-2 rounded-lg bg-gray-100 ">
+                      <svg
+                        className="w-5 h-5 text-blue-900"
+                        fill="none"
+                        stroke="currentColor"
+                        viewBox="0 0 24 24"
+                      >
+                        <path
+                          strokeLinecap="round"
+                          strokeLinejoin="round"
+                          strokeWidth="2"
+                          d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"
+                        />
+                      </svg>
+                    </div>
+                    <h4 className="font-semibold text-gray-800">
+                      Customer Suggestion
+                    </h4>
+                  </div>
+
+                  <div className="relative">
+                    <div className="absolute inset-0 bg-gradient-to-b from-transparent via-white/50 to-white pointer-events-none rounded-xl" />
+                    <div className="bg-gray-50 border border-gray-200 rounded-xl p-5 max-h-64 overflow-y-auto">
+                      <p className="text-gray-700 leading-relaxed whitespace-pre-wrap">
+                        {selectedSuggestion.suggestion ||
+                          "No suggestion provided."}
+                      </p>
+                    </div>
+                  </div>
+                </div>
+
+                {/* Additional Info (if available) */}
+                {selectedSuggestion.category && (
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4 pt-4 border-t">
+                    <div>
+                      <p className="text-sm text-gray-500 mb-1">Category</p>
+                      <p className="font-medium text-gray-800">
+                        {selectedSuggestion.category}
+                      </p>
+                    </div>
+                    {selectedSuggestion.priority && (
+                      <div>
+                        <p className="text-sm text-gray-500 mb-1">Priority</p>
+                        <span
+                          className={`px-3 py-1 rounded-full text-sm font-medium ${
+                            selectedSuggestion.priority === "High"
+                              ? "bg-red-100 text-red-800"
+                              : selectedSuggestion.priority === "Medium"
+                              ? "bg-yellow-100 text-yellow-800"
+                              : "bg-green-100 text-green-800"
+                          }`}
+                        >
+                          {selectedSuggestion.priority}
+                        </span>
+                      </div>
+                    )}
+                  </div>
+                )}
+
+                {/* Footer Actions */}
+                <div className="flex justify-end gap-3 pt-6 border-t">
+                  <button
+                    onClick={() => setIsModalOpen(false)}
+                    className="px-5 py-2.5 text-sm font-medium text-white  bg-red-600 hover:opacity-95 hover:cursor-pointer rounded  transition-colors"
+                  >
+                    Close
+                  </button>
+                 
                 </div>
               </div>
             </div>

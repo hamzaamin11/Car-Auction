@@ -65,7 +65,9 @@ const CarSelector = ({ handleIsOpenToggle }) => {
   // API: Get models by brand
   const handleGetAllModelByMake = async (makeId) => {
     try {
-      const res = await axios.get(`${BASE_URL}/getModelById/${makeId}`);
+      const res = await axios.get(
+        `${BASE_URL}/getModelById/${currentUser?.role}/${makeId}`
+      );
       setCarModel(res.data);
     } catch (error) {
       console.log(error);

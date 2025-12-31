@@ -75,7 +75,7 @@ const WheelBidzAlert = () => {
 
       try {
         const res = await axios.get(
-          `${BASE_URL}/getModelById/${selectedMake.value}`
+          `${BASE_URL}/getModelById/${currentUser?.role}/${selectedMake.value}`
         );
         const modelOpts = res.data.map((m) => ({
           label: m.modelName,

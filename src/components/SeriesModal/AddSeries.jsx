@@ -29,7 +29,7 @@ export const AddSeries = ({ handleClose, handleGetAllSeries }) => {
   const handleGetAllModels = async () => {
     try {
       const res = await axios.get(
-        `${BASE_URL}/getModelById/${formData.brandId}`
+        `${BASE_URL}/getModelById/${currentUser?.role}/${formData.brandId}`
       );
       setAllModels(res.data);
     } catch (error) {

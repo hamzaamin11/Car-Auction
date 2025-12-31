@@ -52,9 +52,11 @@ const EditUserModal = ({ Open, setOpen, selectedUser, onUserUpdated }) => {
     if (value.length > 3 && value.length <= 6) {
       value = value.slice(0, 3) + "-" + value.slice(3);
     } else if (value.length > 6 && value.length <= 10) {
-      value = value.slice(0, 3) + "-" + value.slice(3, 6) + "-" + value.slice(6);
+      value =
+        value.slice(0, 3) + "-" + value.slice(3, 6) + "-" + value.slice(6);
     } else if (value.length > 10) {
-      value = value.slice(0, 3) + "-" + value.slice(3, 6) + "-" + value.slice(6, 15);
+      value =
+        value.slice(0, 3) + "-" + value.slice(3, 6) + "-" + value.slice(6, 15);
     }
     setUser({ ...user, contact: value });
   };
@@ -64,7 +66,12 @@ const EditUserModal = ({ Open, setOpen, selectedUser, onUserUpdated }) => {
     if (value.length > 5 && value.length <= 12) {
       value = value.slice(0, 5) + "-" + value.slice(5);
     } else if (value.length > 12) {
-      value = value.slice(0, 5) + "-" + value.slice(5, 12) + "-" + value.slice(12, 13);
+      value =
+        value.slice(0, 5) +
+        "-" +
+        value.slice(5, 12) +
+        "-" +
+        value.slice(12, 13);
     }
     setUser({ ...user, cnic: value });
   };
@@ -152,11 +159,11 @@ const EditUserModal = ({ Open, setOpen, selectedUser, onUserUpdated }) => {
           leaveFrom="opacity-100"
           leaveTo="opacity-0"
         >
-          <div className="fixed inset-0 bg-black/40 backdrop-blur-sm" />
+          <div className="fixed inset-0  backdrop-blur-sm" />
         </Transition.Child>
 
-        <div className="fixed inset-0 overflow-y-auto top-20">
-          <div className="flex min-h-full items-center justify-center p-4 text-center">
+        <div className="fixed inset-0 overflow-y-auto top-20 ">
+          <div className="flex min-h-full items-center justify-center p-4 text-center ">
             <Transition.Child
               as={Fragment}
               enter="ease-out duration-300"
@@ -166,7 +173,7 @@ const EditUserModal = ({ Open, setOpen, selectedUser, onUserUpdated }) => {
               leaveFrom="opacity-100 scale-100"
               leaveTo="opacity-0 scale-95"
             >
-              <Dialog.Panel className="w-full max-w-3xl transform overflow-hidden rounded-3xl bg-white p-8 text-left align-middle shadow-2xl transition-all">
+              <Dialog.Panel className="w-full max-w-3xl border transform overflow-hidden rounded-3xl bg-white p-8 text-left align-middle shadow-2xl transition-all">
                 <Dialog.Title
                   as="h3"
                   className="text-2xl flex flex-row justify-between items-center font-bold leading-6 mb-4"
@@ -281,16 +288,20 @@ const EditUserModal = ({ Open, setOpen, selectedUser, onUserUpdated }) => {
                         accept="image/*"
                         className="mt-1 w-full rounded-xl border border-gray-300 p-3 focus:outline-none focus:ring-2 focus:ring-blue-500"
                       />
-                      {user.image && typeof user.image === "string" && user.image !== "null" && (
-                        <div className="mt-3">
-                          <p className="text-xs text-gray-500 mb-1">Current Image:</p>
-                          <img
-                            src={user.image}
-                            alt="Profile"
-                            className="h-24 w-24 object-cover rounded-full border-2 border-indigo-400 shadow-sm"
-                          />
-                        </div>
-                      )}
+                      {user.image &&
+                        typeof user.image === "string" &&
+                        user.image !== "null" && (
+                          <div className="mt-3">
+                            <p className="text-xs text-gray-500 mb-1">
+                              Current Image:
+                            </p>
+                            <img
+                              src={user.image}
+                              alt="Profile"
+                              className="h-24 w-24 object-cover rounded-full border-2 border-indigo-400 shadow-sm"
+                            />
+                          </div>
+                        )}
                     </div>
                   </div>
                   <div className="flex justify-center pt-3">

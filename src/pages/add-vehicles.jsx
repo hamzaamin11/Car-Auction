@@ -774,7 +774,7 @@ const AddVehicles = () => {
 
         {formOpen && (
           <div className="fixed inset-0 z-50 flex items-center justify-center backdrop-blur-sm bg-opacity-30 px-4">
-            <div className="bg-white w-full max-w-5xl max-h-[95vh] overflow-y-auto p-6 rounded-lg relative">
+            <div className="bg-white w-full max-w-5xl max-h-[95vh] overflow-y-auto p-6 rounded-lg relative border">
               <div className="flex justify-between items-center border-b pb-3 mb-4">
                 <h2 className="text-2xl font-bold text-gray-800">
                   {editId ? "Update Vehicle" : "Add a New Vehicle"}

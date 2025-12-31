@@ -83,8 +83,8 @@ export const AdminAddBid = ({
   };
 
   return (
-    <div className="fixed inset-0 z-50 bg-black/30 backdrop-blur flex justify-center items-center">
-      <div className="bg-white w-full max-w-3xl p-6 rounded-lg shadow relative">
+    <div className="fixed inset-0 z-500 bg-black/30 backdrop-blur flex justify-center items-center">
+      <div className="bg-white w-full max-w-3xl p-6 rounded-lg shadow relative border">
         {/* Header */}
         <button
           onClick={() => setIsOpenBid(false)}
@@ -122,10 +122,10 @@ export const AdminAddBid = ({
                 <strong>Body Style:</strong> {selectedVehicle?.bodyStyle}
               </p>
               <p>
-                <strong>Location:</strong> {selectedVehicle?.locationId}
+                <strong>Location:</strong> {selectedVehicle?.cityName}
               </p>
               <p>
-                <strong>Current Bid:</strong> {selectedVehicle?.buyNowPrice}
+                <strong>Reserve Price:</strong> {selectedVehicle?.buyNowPrice}
               </p>
               <p>
                 <strong>Condition:</strong> {selectedVehicle?.vehicleCondition}

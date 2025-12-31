@@ -120,7 +120,9 @@ export const ContactList = () => {
               <th className="py-3 px-4 text-left w-[25%]">Name</th>
               <th className="py-3 px-4 text-left w-[30%]">Email</th>
               <th className="py-3 px-4 text-left w-[20%]">Contact</th>
-              <th className="py-3 px-4 text-center w-[15%] rounded-tr-lg">Action</th>
+              <th className="py-3 px-4 text-center w-[15%] rounded-tr-lg">
+                Action
+              </th>
             </tr>
           </thead>
           <tbody>
@@ -132,7 +134,9 @@ export const ContactList = () => {
                   </td>
                   <td className="py-2 px-4 capitalize">{contact?.subject}</td>
                   <td className="py-2 px-4">{contact?.email}</td>
-                  <td className="py-2 px-4 whitespace-nowrap">{contact?.contactNumber}</td>
+                  <td className="py-2 px-4 whitespace-nowrap">
+                    {contact?.contactNumber}
+                  </td>
                   <td className="py-2 px-4 text-center">
                     <CustomAdd
                       text="View"
@@ -167,21 +171,27 @@ export const ContactList = () => {
                 <p className="flex justify-between">
                   <span className="font-bold text-gray-900">Name</span>
                   <span className="text-gray-700">
-                    {contact?.subject.charAt(0).toUpperCase() + contact?.subject.slice(1)}
+                    {contact?.subject.charAt(0).toUpperCase() +
+                      contact?.subject.slice(1)}
                   </span>
                 </p>
                 <p className="flex justify-between">
                   <span className="font-bold text-gray-900">Email</span>
                   <span className="text-gray-700">
-                    {contact?.email.charAt(0).toUpperCase() + contact?.email.slice(1)}
+                    {contact?.email.charAt(0).toUpperCase() +
+                      contact?.email.slice(1)}
                   </span>
                 </p>
                 <p className="flex justify-between">
                   <span className="font-bold text-gray-900">Contact</span>
-                  <span className="text-gray-700">{contact?.contactNumber}</span>
+                  <span className="text-gray-700">
+                    {contact?.contactNumber}
+                  </span>
                 </p>
                 <p className="flex justify-between">
-                  <span className="font-bold text-gray-900">Customer Message</span>
+                  <span className="font-bold text-gray-900">
+                    Customer Message
+                  </span>
                   <span className="text-gray-700 text-xs">
                     {contact?.description?.length > 50
                       ? `${contact?.description.slice(0, 50)}...`
@@ -237,7 +247,9 @@ export const ContactList = () => {
                   key={page}
                   onClick={() => goToPage(page)}
                   className={`px-3 py-1 rounded border ${
-                    currentPage === page ? "bg-blue-950 text-white" : "bg-white hover:bg-gray-50"
+                    currentPage === page
+                      ? "bg-blue-950 text-white"
+                      : "bg-white hover:bg-gray-50"
                   }`}
                 >
                   {page}
@@ -273,24 +285,318 @@ export const ContactList = () => {
 
       {/* Modal – 100% unchanged */}
       {isModalOpen && selectedContact && (
-        <div className="fixed inset-0 flex items-center justify-center z-50 backdrop-blur-sm bg-opacity-40 px-4">
-          <div className="bg-white rounded-lg shadow-xl w-full max-w-md p-4 relative animate-fadeIn">
-            <button
-              onClick={() => setIsModalOpen(false)}
-              className="absolute top-3 right-3 px-2 py-1 text-sm bg-red-600 text-white rounded-md transition"
-            >
-              X
-            </button>
-            <h3 className="text-xl sm:text-2xl font-bold text-gray-800 mb-4 border-b pb-2">
-              Contact Details
-            </h3>
-            <div className="space-y-4">
-              <div>
-                <span className="block font-semibold text-gray-700 mb-2">
-                  Customer Message:
-                </span>
-                <div className="bg-gray-100 p-3 rounded-md text-gray-800 text-sm break-words overflow-y-auto">
-                  {selectedContact?.description || "No message provided."}
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
+          {/* Simple White Backdrop */}
+          <div
+            className="absolute inset-0 bg-black/20 backdrop-blur-sm transition-all duration-300"
+            onClick={() => setIsModalOpen(false)}
+          />
+
+          {/* Modal Container */}
+          <div className="relative w-full max-w-2xl transform transition-all duration-300">
+            <div className="relative overflow-hidden rounded-xl bg-white shadow-2xl">
+              {/* Header Section */}
+              <div className="px-6 py-5 border-b border-gray-200 bg-blue-900">
+                <div className="flex items-start justify-between">
+                  <div className="flex items-center gap-4">
+                    {/* Contact Icon */}
+                    <div className="p-3 rounded-lg bg-blue-100 border border-blue-100">
+                      <svg
+                        className="w-6 h-6 text-blue-900"
+                        fill="none"
+                        stroke="currentColor"
+                        viewBox="0 0 24 24"
+                      >
+                        <path
+                          strokeLinecap="round"
+                          strokeLinejoin="round"
+                          strokeWidth="1.5"
+                          d="M3 8l7.89 4.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"
+                        />
+                      </svg>
+                    </div>
+
+                    {/* Title and Info */}
+                    <div>
+                      <h3 className="text-xl font-bold text-white">
+                        Contact Inquiry
+                      </h3>
+                      <p className="text-white text-sm mt-1">
+                        Customer Support Request
+                      </p>
+
+                      {/* Contact Info Badges */}
+                      <div className="flex flex-wrap gap-2 mt-3">
+                        {selectedContact?.email && (
+                          <span className="px-3 py-1 bg-blue-50 rounded-md text-xs font-medium text-blue-900 border border-blue-200">
+                            {selectedContact.email}
+                          </span>
+                        )}
+                        {selectedContact?.contact && (
+                          <span className="px-3 py-1 bg-indigo-50 rounded-md text-xs font-medium text-indigo-700 border border-indigo-200">
+                            📞 {selectedContact.contact}
+                          </span>
+                        )}
+                        <span className="px-3 py-1 bg-green-500 rounded-md text-xs font-medium text-white ">
+                          New Inquiry
+                        </span>
+                      </div>
+                    </div>
+                  </div>
+
+                  {/* Simple Close Button */}
+                  <button
+                    onClick={() => setIsModalOpen(false)}
+                    className="p-2 rounded-lg hover:scale-105 transition-colors text-white bg-red-600"
+                    aria-label="Close modal"
+                  >
+                    <svg
+                      className="w-5 h-5 "
+                      fill="none"
+                      stroke="currentColor"
+                      viewBox="0 0 24 24"
+                    >
+                      <path
+                        strokeLinecap="round"
+                        strokeLinejoin="round"
+                        strokeWidth="1.5"
+                        d="M6 18L18 6M6 6l12 12"
+                      />
+                    </svg>
+                  </button>
+                </div>
+              </div>
+
+              {/* Content Area */}
+              <div className="p-6 space-y-6">
+                {/* Customer Info Section */}
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
+                  {selectedContact?.name && (
+                    <div className="space-y-2">
+                      <div className="flex items-center gap-2">
+                        <div className="p-2 bg-blue-50 rounded-lg">
+                          <svg
+                            className="w-4 h-4 text-blue-600"
+                            fill="none"
+                            stroke="currentColor"
+                            viewBox="0 0 24 24"
+                          >
+                            <path
+                              strokeLinecap="round"
+                              strokeLinejoin="round"
+                              strokeWidth="1.5"
+                              d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"
+                            />
+                          </svg>
+                        </div>
+                        <p className="text-sm font-medium text-gray-500">
+                          Customer Name
+                        </p>
+                      </div>
+                      <p className="text-gray-800 font-medium text-lg pl-10">
+                        {selectedContact.name}
+                      </p>
+                    </div>
+                  )}
+
+                  {selectedContact?.date && (
+                    <div className="space-y-2">
+                      <div className="flex items-center gap-2">
+                        <div className="p-2 bg-blue-50 rounded-lg">
+                          <svg
+                            className="w-4 h-4 text-blue-600"
+                            fill="none"
+                            stroke="currentColor"
+                            viewBox="0 0 24 24"
+                          >
+                            <path
+                              strokeLinecap="round"
+                              strokeLinejoin="round"
+                              strokeWidth="1.5"
+                              d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"
+                            />
+                          </svg>
+                        </div>
+                        <p className="text-sm font-medium text-gray-500">
+                          Submitted On
+                        </p>
+                      </div>
+                      <p className="text-gray-800 font-medium text-lg pl-10">
+                        {new Date(selectedContact.date).toLocaleDateString(
+                          "en-US",
+                          {
+                            weekday: "long",
+                            year: "numeric",
+                            month: "long",
+                            day: "numeric",
+                          }
+                        )}
+                      </p>
+                    </div>
+                  )}
+                </div>
+
+                {/* Category & Priority Row */}
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
+                  {selectedContact?.category && (
+                    <div className="space-y-2">
+                      <div className="flex items-center gap-2">
+                        <div className="p-2 bg-blue-50 rounded-lg">
+                          <svg
+                            className="w-4 h-4 text-blue-600"
+                            fill="none"
+                            stroke="currentColor"
+                            viewBox="0 0 24 24"
+                          >
+                            <path
+                              strokeLinecap="round"
+                              strokeLinejoin="round"
+                              strokeWidth="1.5"
+                              d="M7 7h.01M7 3h5c.512 0 1.024.195 1.414.586l7 7a2 2 0 010 2.828l-7 7a2 2 0 01-2.828 0l-7-7A1.994 1.994 0 013 12V7a4 4 0 014-4z"
+                            />
+                          </svg>
+                        </div>
+                        <p className="text-sm font-medium text-gray-500">
+                          Category
+                        </p>
+                      </div>
+                      <p className="text-gray-800 font-medium text-lg pl-10">
+                        {selectedContact.category}
+                      </p>
+                    </div>
+                  )}
+
+                  {/* Priority Indicator */}
+                  {selectedContact?.priority && (
+                    <div className="space-y-2">
+                      <div className="flex items-center justify-between">
+                        <div className="flex items-center gap-2">
+                          <div className="p-2 bg-blue-50 rounded-lg">
+                            <svg
+                              className="w-4 h-4 text-blue-600"
+                              fill="none"
+                              stroke="currentColor"
+                              viewBox="0 0 24 24"
+                            >
+                              <path
+                                strokeLinecap="round"
+                                strokeLinejoin="round"
+                                strokeWidth="1.5"
+                                d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z"
+                              />
+                            </svg>
+                          </div>
+                          <p className="text-sm font-medium text-gray-500">
+                            Priority
+                          </p>
+                        </div>
+                        <span
+                          className={`px-3 py-1 rounded-full text-xs font-medium ${
+                            selectedContact.priority === "High"
+                              ? "bg-red-50 text-red-700 border border-red-200"
+                              : selectedContact.priority === "Medium"
+                              ? "bg-yellow-50 text-yellow-700 border border-yellow-200"
+                              : "bg-green-50 text-green-700 border border-green-200"
+                          }`}
+                        >
+                          {selectedContact.priority}
+                        </span>
+                      </div>
+                    </div>
+                  )}
+                </div>
+
+                {/* Message Section */}
+                <div className="space-y-4">
+                  <div className="flex items-center gap-3">
+                    <div className="p-2.5 rounded-lg bg-blue-50 border border-blue-200">
+                      <svg
+                        className="w-5 h-5 text-blue-600"
+                        fill="none"
+                        stroke="currentColor"
+                        viewBox="0 0 24 24"
+                      >
+                        <path
+                          strokeLinecap="round"
+                          strokeLinejoin="round"
+                          strokeWidth="1.5"
+                          d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"
+                        />
+                      </svg>
+                    </div>
+                    <div>
+                      <h4 className="font-semibold text-gray-800 text-lg">
+                        Customer Message
+                      </h4>
+                      <p className="text-gray-500 text-sm">
+                        Detailed inquiry from customer
+                      </p>
+                    </div>
+                  </div>
+
+                  {/* Message Container */}
+                  <div className="relative">
+                    <div className="bg-gray-50 border border-gray-200 rounded-lg p-6 min-h-[180px] max-h-80 overflow-y-auto">
+                      {/* Message content */}
+                      <div className="space-y-3">
+                        <p className="text-gray-700 leading-relaxed whitespace-pre-wrap font-normal text-base">
+                          {selectedContact?.description ||
+                            "No message provided."}
+                        </p>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+
+                {/* Action Buttons */}
+                <div className="flex flex-col sm:flex-row gap-4 pt-6 border-t border-gray-200 justify-end">
+                  {/* Close Button */}
+
+                  {/* Action Buttons */}
+                  <div className="flex gap-3">
+                    <button
+                      onClick={() => setIsModalOpen(false)}
+                      className="flex-1 px-5 py-3 text-sm font-medium text-white bg-red-600 hover:bg-red-500 rounded-lg transition-all duration-200 flex items-center justify-center gap-2 border border-gray-300"
+                    >
+                      <svg
+                        className="w-4 h-4"
+                        fill="none"
+                        stroke="currentColor"
+                        viewBox="0 0 24 24"
+                      >
+                        <path
+                          strokeLinecap="round"
+                          strokeLinejoin="round"
+                          strokeWidth="1.5"
+                          d="M6 18L18 6M6 6l12 12"
+                        />
+                      </svg>
+                      Close
+                    </button>
+                    {selectedContact?.email && (
+                      <button
+                        onClick={() =>
+                          (window.location.href = `mailto:${selectedContact.email}`)
+                        }
+                        className="flex-1 px-5 py-3 text-sm font-medium bg-blue-600 hover:bg-blue-700 text-white rounded-lg transition-all duration-200 flex items-center justify-center gap-2 border border-blue-600"
+                      >
+                        <svg
+                          className="w-4 h-4"
+                          fill="none"
+                          stroke="currentColor"
+                          viewBox="0 0 24 24"
+                        >
+                          <path
+                            strokeLinecap="round"
+                            strokeLinejoin="round"
+                            strokeWidth="1.5"
+                            d="M3 8l7.89 4.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"
+                          />
+                        </svg>
+                        Reply
+                      </button>
+                    )}
+                  </div>
                 </div>
               </div>
             </div>

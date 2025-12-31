@@ -124,13 +124,15 @@ function Layout() {
   const isAdminLogin = location.pathname === "/admin-login";
   const liveAuction = location.pathname === "/seller/live-auctions";
   const upcomingAuction = location.pathname === "/seller/upcoming-auctions";
+  const bidHistory = location.pathname === "/seller/my-bids";
 
   const hideNavbarFooter =
     isAdminRoute ||
     isAdminLogin ||
     isSellerRoute ||
     liveAuction ||
-    upcomingAuction;
+    upcomingAuction ||
+    bidHistory;
 
   if (
     location.pathname === "/" ||

@@ -366,7 +366,7 @@ const FilterPriceCars = () => {
     }
     try {
       const res = await axios.get(
-        `${BASE_URL}/getModelById/${filterData.allMakes}`
+        `${BASE_URL}/getModelById/${currentUser?.role}/${filterData.allMakes}`
       );
       setFilterModel(res.data);
     } catch (error) {

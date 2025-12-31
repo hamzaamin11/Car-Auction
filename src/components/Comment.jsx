@@ -6,6 +6,7 @@ import { useParams } from "react-router-dom";
 import moment from "moment";
 import { CountdownCircleTimer } from "react-countdown-circle-timer";
 import Swal from "sweetalert2";
+import { FaMoneyCheck } from "react-icons/fa";
 
 const LiveCommentsModal = ({
   isOpen,
@@ -28,6 +29,7 @@ const LiveCommentsModal = ({
   const [loading, setLoading] = useState(false);
   const [showIncrementModal, setShowIncrementModal] = useState(false);
   const commentsEndRef = useRef(null);
+  const maxBidRef = useRef();
 
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -35,6 +37,31 @@ const LiveCommentsModal = ({
       setBidAmount({ ...bidAmount, [name]: value });
     }
   };
+
+  function convertToNumber(value) {
+    if (!value) return 0;
+
+    // Agar number hi hai
+    if (typeof value === "number") return value;
+
+    const lower = value.toLowerCase().replace(/,/g, "").trim();
+    const num = parseFloat(lower);
+
+    if (lower.includes("crore") || lower.includes("core")) {
+      return Math.round(num * 10000000);
+    }
+
+    if (lower.includes("lakh")) {
+      return Math.round(num * 100000);
+    }
+
+    if (lower.includes("thousand")) {
+      return Math.round(num * 1000);
+    }
+
+    // Agar plain number string hai
+    return Math.round(num);
+  }
 
   const numberToIndianWords = (num) => {
     if (num === 0) return "Zero";
@@ -110,7 +137,7 @@ const LiveCommentsModal = ({
       });
     }
 
-    if (bidAmount.maxBid < selectedPrice.buyNowPrice) {
+    if (bidAmount.maxBid < convertToNumber(selectedPrice.buyNowPrice)) {
       return Swal.fire({
         icon: "warning",
         title: "Invalid Bid",
@@ -148,27 +175,33 @@ const LiveCommentsModal = ({
       });
     } catch (error) {
       console.error("Bid submission error:", error);
-      const msg =
-        error.response?.data?.message ||
-        "Failed to place bid. Please try again.";
 
-      await Swal.fire({
-        icon: "error",
-        title: "Bid Failed",
-        text: msg,
-        confirmButtonColor: "#ef4444",
-      });
+      error.response?.data?.message || "Failed to place bid. Please try again.";
+      if (error.success === false) {
+        await Swal.fire({
+          icon: "error",
+          title: "Bid Failed",
+          text: error.response.data.message,
+          confirmButtonColor: "#ef4444",
+        });
+      }
     } finally {
       setLoading(false);
     }
   };
 
-  const handleIncrement = (increment) => {
-    const current = parseInt(bidAmount.maxBid) || 0;
+  const handleIncrement = (value) => {
+    const current = BigInt(maxBidRef.current || 0);
+    const increment = BigInt(value);
     const newBid = current + increment;
-    if (newBid <= 999999999) {
-      setBidAmount({ ...bidAmount, maxBid: newBid.toString() });
-    }
+
+    maxBidRef.current = newBid.toString(); // ref store as string
+
+    setBidAmount((prev) => ({
+      ...prev,
+      maxBid: newBid.toString(),
+    }));
+
     setShowIncrementModal(false);
   };
 
@@ -181,12 +214,18 @@ const LiveCommentsModal = ({
     return () => (document.body.style.overflow = "auto");
   }, []);
 
+  useEffect(() => {
+    if (bidAmount.maxBid) {
+      maxBidRef.current = bidAmount.maxBid;
+    }
+  }, [bidAmount.maxBid]);
+
   if (!isOpen) return null;
 
   return (
     <>
       {/* Main Modal */}
-      <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 backdrop-blur-sm p-3 sm:p-6 overflow-y-auto">
+      <div className="fixed inset-0 z-50 flex items-center justify-center  p-3 sm:p-6 overflow-y-auto">
         <div className="w-full max-w-sm sm:max-w-md bg-white rounded-2xl overflow-hidden shadow-2xl flex flex-col relative my-auto max-h-[95vh]">
           {/* Header with Timer */}
           <div className="relative bg-blue-950 text-white p-6 flex flex-col items-center justify-center flex-shrink-0">
@@ -198,7 +237,7 @@ const LiveCommentsModal = ({
             </button>
 
             <h2 className="text-lg font-semibold">Live Auction</h2>
-           
+
             <CountdownCircleTimer
               key={timerKey}
               isPlaying={phase !== "ended"}
@@ -236,6 +275,51 @@ const LiveCommentsModal = ({
                 );
               }}
             </CountdownCircleTimer>
+            {allCustomerBid.filter(
+              (bid) => bid.role !== "admin" && bid.role !== "seller"
+            ).length > 0 &&
+              // Current and Second Last Bid
+              (() => {
+                const filteredBids = allCustomerBid.filter(
+                  (bid) => bid.role !== "admin" && bid.role !== "seller"
+                );
+                const currentBid = filteredBids[filteredBids.length - 1];
+                const secondLastBid =
+                  filteredBids.length > 1
+                    ? filteredBids[filteredBids.length - 2]
+                    : null;
+
+                return (
+                  <div className="flex gap-14 mb-4">
+                    {secondLastBid ? (
+                      <div>
+                        <h2>Previous Bid</h2>
+                        <span className="font-bold">
+                          PKR {secondLastBid.maxBid.toLocaleString()}
+                        </span>
+                      </div>
+                    ) : (
+                      <div>
+                        <h2 className="font-bold">Previous Bid</h2>
+                        <span>PKR {0}</span>
+                      </div>
+                    )}
+                    {currentBid ? (
+                      <div>
+                        <h2 className="">Current Bid</h2>
+                        <span className="font-bold">
+                          PKR {currentBid.maxBid.toLocaleString()}
+                        </span>
+                      </div>
+                    ) : (
+                      <div>
+                        <h2 className="font-bold">Current Bid</h2>
+                        <span>PKR {0}</span>
+                      </div>
+                    )}
+                  </div>
+                );
+              })()}
           </div>
 
           {/* Bids List */}
@@ -244,7 +328,7 @@ const LiveCommentsModal = ({
               (bid) => bid.role !== "admin" && bid.role !== "seller"
             ).length === 0 ? (
               <div className="flex flex-col items-center justify-center h-48 text-gray-400">
-                <span className="text-5xl mb-3">Money</span>
+                <FaMoneyCheck />
                 <p className="text-center font-medium">No bids yet...</p>
               </div>
             ) : (
@@ -263,7 +347,7 @@ const LiveCommentsModal = ({
                         {moment(bid.bidUpdatedAt).format("hh:mm A")}
                       </p>
                     </div>
-                    <p className="text-green-600 font-bold text-lg">
+                    <p className="text-red-600 font-bold text-lg">
                       PKR {bid.maxBid.toLocaleString()}
                     </p>
                   </div>
@@ -284,21 +368,21 @@ const LiveCommentsModal = ({
                   name="maxBid"
                   value={bidAmount.maxBid}
                   onChange={(e) => {
-                    const val = e.target.value;
-                    if (
-                      (val === "" || /^[1-9][0-9]{0,8}$/.test(val)) &&
-                      val.length <= 9
-                    )
+                    const val = e.target.value.replace(/,/g, ""); // commas remove
+                    // Only numbers allowed
+                    if (val === "" || /^[0-9]+$/.test(val)) {
                       handleChange(e);
+                    }
                   }}
                   placeholder="Enter bid amount"
                   className="w-full border border-gray-300 rounded-lg px-3 py-2 pr-10 text-sm focus:outline-none focus:ring-2 focus:ring-blue-950"
                   disabled={phase !== "running" || loading}
                 />
+
                 <button
                   type="button"
                   onClick={() => setShowIncrementModal(true)}
-                  className="absolute right-1 top-1/2 -translate-y-1/2 bg-green-600 text-white rounded-md p-1.5 transition"
+                  className="absolute right-1 top-1/2 -translate-y-1/2 bg-red-600 text-white rounded-md p-1.5 transition"
                   disabled={phase !== "running" || loading}
                 >
                   <svg
