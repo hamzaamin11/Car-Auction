@@ -8,6 +8,8 @@ export const AddBrandModal = ({ handleClose, handleGetAllBrands }) => {
   const [brandName, setBrandName] = useState("");
   const [logo, setLogo] = useState(null);
 
+  console.log("logo =>", logo);
+
   const [loading, setLoading] = useState(false);
 
   const handleSubmit = async (e) => {
@@ -36,7 +38,9 @@ export const AddBrandModal = ({ handleClose, handleGetAllBrands }) => {
       setLoading(false);
       await Swal.fire({
         title: "Error!",
-        text: error.response?.data?.message || "An error occurred while adding the brand.",
+        text:
+          error.response?.data?.message ||
+          "An error occurred while adding the brand.",
         icon: "error",
         confirmButtonColor: "#9333ea",
       });

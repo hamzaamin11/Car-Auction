@@ -203,16 +203,16 @@ export const AdminAddBid = ({
                     return;
                   }
 
-                  const diffMinutes = end.diff(start, "minutes");
-                  if (diffMinutes < 30) {
-                    Swal.fire({
-                      icon: "warning",
-                      title: "Time Difference Too Short",
-                      text: "There must be at least a 30-minute difference between start and end time.",
-                      confirmButtonColor: "#6366f1",
-                    });
-                    return;
-                  }
+                  // const diffMinutes = end.diff(start, "minutes");
+                  // if (diffMinutes < 30) {
+                  //   Swal.fire({
+                  //     icon: "warning",
+                  //     title: "Time Difference Too Short",
+                  //     text: "There must be at least a 30-minute difference between start and end time.",
+                  //     confirmButtonColor: "#6366f1",
+                  //   });
+                  //   return;
+                  // }
 
                   // ✅ All good → proceed
                   handleBidSubmit(e);

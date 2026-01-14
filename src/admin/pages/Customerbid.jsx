@@ -38,8 +38,6 @@ export const Customerbid = () => {
 
   const [isOpenModal, setIsOpenModal] = useState("");
 
-  console.log("isopenmodal =>", isOpenModal);
-
   const [viewImage, setViewImage] = useState(null);
 
   const [indexImage, setIndexImage] = useState(0);
@@ -470,7 +468,7 @@ END:VCALENDAR`.trim();
                   <tr className="border-b border-gray-100 ">
                     <td className="py-2 px-2 ">City:</td>
                     <td className="py-2 font-semibold ">
-                      {selectedPrice?.locationId || "N/A"}
+                      {selectedPrice?.cityName || "N/A"}
                     </td>
                   </tr>
                   <tr className="border-b border-gray-100 ">
@@ -644,7 +642,7 @@ END:VCALENDAR`.trim();
               </tr>
 
               <tr className="border-b border-gray-100">
-                <th className="text-left p-2 font-medium ">Current Bid:</th>
+                <th className="text-left p-2 font-medium ">Reserve Price:</th>
                 <td className="p-2 font-semibold ">
                   PKR {selectedPrice?.buyNowPrice?.toLocaleString()}
                 </td>
@@ -1122,6 +1120,16 @@ END:VCALENDAR`.trim();
       )}
       <ToastContainer />
       {/* ====================== NEW TABS SECTION STARTS ====================== */}
+      <div className="bg-white max-h-full my-4 rounded p-6">
+        <div className="uppercase text-red-600 mb-2">Description:</div>
+
+        <ul className="list-disc pl-5 space-y-1">
+          {selectedPrice?.description?.split(",").map((item, index) => (
+            <li key={index}>{item.trim()}.</li>
+          ))}
+        </ul>
+      </div>
+
       <div className="mt-16">
         <div className="bg-white rounded-xl shadow-lg overflow-hidden">
           {/* Tabs */}

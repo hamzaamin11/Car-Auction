@@ -91,7 +91,7 @@ export const AdminAccount = () => {
   };
 
   return (
-    <div className="min-h-screen bg-gray-100 p-4 sm:p-6">
+    <div className="max-h-screen bg-gray-100 p-4 sm:p-6">
       {/* Header */}
       <div className="flex flex-col sm:flex-row justify-between items-center gap-4 mb-6">
         <h2 className="text-2xl sm:text-3xl font-bold text-gray-800">
@@ -142,12 +142,15 @@ export const AdminAccount = () => {
         <table className="w-full bg-white shadow rounded-lg overflow-hidden text-sm">
           <thead className="bg-blue-950 text-white">
             <tr>
-              <th className="py-3 px-4 text-left">SR#</th>
-              <th className="py-3 px-10 text-left">Vehicle Name</th>
-              <th className="py-3 px-4 text-left">Date</th>
-              <th className="py-3 px-4 text-left">Debit</th>
-              <th className="py-3 px-4 text-left">Credit</th>
-              <th className="py-3 px-4 text-left">Balance</th>
+              <th className="p-3 text-left">Sr#</th>
+              <th className="p-1 text-left">Vehicle Name</th>
+              <th className="p-1 text-left">Lot#</th>
+              <th className="p-1  text-left">Year</th>
+              <th className="p-1 text-left">City</th>
+              <th className="p-1  text-left">Date </th>
+              <th className="p-1  text-left">Debit</th>
+              <th className="p-1 text-left">Credit</th>
+              <th className="p-1 text-left">Balance</th>
             </tr>
           </thead>
 
@@ -155,12 +158,95 @@ export const AdminAccount = () => {
             {currentItems.length > 0 ? (
               currentItems.map((c, i) => (
                 <tr key={c.id} className="border-b hover:bg-gray-50 transition">
-                  <td className="py-3 px-4 text-left">{startIndex + i + 1}</td>
-                  <td className="py-3 px-10">{c.vehicleName}</td>
-                  <td className="py-3 px-4">{c.date.slice(0, 10)}</td>
-                  <td className="py-3 px-4">{c.debit} PKR</td>
-                  <td className="py-3 px-4">{c.credit} PKR</td>
-                  <td className="py-3 px-4 font-semibold">{c.balance} PKR</td>
+                  {/* Serial Number */}
+                  <td className="p-3 text-gray-600">{startIndex + i + 1}</td>
+
+                  {/* Vehicle with Image */}
+                  <td className="p-1">
+                    <div className="flex items-center gap-3">
+                      {/* Vehicle Image */}
+                      <div className="w-12 h-12 rounded-full overflow-hidden bg-gray-100 flex-shrink-0">
+                        {c.images ? (
+                          <img
+                            src={c.images[0]}
+                            alt={c.vehicleName || "Vehicle"}
+                            className="w-full h-full object-cover"
+                          />
+                        ) : (
+                          <div className="w-full h-full flex items-center justify-center bg-gray-200">
+                            <svg
+                              className="w-5 h-5 text-gray-400"
+                              fill="none"
+                              stroke="currentColor"
+                              viewBox="0 0 24 24"
+                            >
+                              <path
+                                strokeLinecap="round"
+                                strokeLinejoin="round"
+                                strokeWidth={2}
+                                d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"
+                              />
+                            </svg>
+                          </div>
+                        )}
+                      </div>
+
+                      {/* Vehicle Name and Details */}
+                      <div className="cursor-pointer min-w-0">
+                        <h2 className="text-sm font-bold text-gray-800 truncate">
+                          {c.make.charAt(0).toUpperCase() + c.make.slice(1)}{" "}
+                          {c.model.charAt(0).toUpperCase() + c.model.slice(1)}
+                        </h2>
+                        <p className="text-xs text-gray-500 truncate">
+                          {c.series.charAt(0).toUpperCase() + c.series.slice(1)}
+                        </p>
+                      </div>
+                    </div>
+                  </td>
+                  <td className="p-1 ">
+                    <span className="text-gray-700">{c.lot_number}</span>
+                  </td>
+                  <td className="p-1 ">
+                    <span className="text-gray-700">{c.year}</span>
+                  </td>
+                  <td className="p-1 ">
+                    <span className="text-gray-700">{c.cityName}</span>
+                  </td>
+                  {/* Date */}
+                  <td className="p-1">
+                    <span className="text-gray-700">{c.date.slice(0, 10)}</span>
+                  </td>
+
+                  {/* Debit */}
+                  <td className="p-1 ">
+                    <span className="text-red-600 font-medium">
+                      {c.debit ? `${c.debit.toLocaleString()} PKR` : "0 PKR"}
+                    </span>
+                  </td>
+
+                  {/* Credit */}
+                  <td className="p-1 ">
+                    <span className="text-green-600 font-medium">
+                      {c.credit ? `${c.credit.toLocaleString()} PKR` : "0 PKR"}
+                    </span>
+                  </td>
+
+                  {/* Balance */}
+                  <td className="p-1">
+                    <span
+                      className={`font-semibold ${
+                        c.balance > 0
+                          ? "text-green-700"
+                          : c.balance < 0
+                          ? "text-red-700"
+                          : "text-gray-700"
+                      }`}
+                    >
+                      {c.balance
+                        ? `${c.balance.toLocaleString()} PKR`
+                        : "0 PKR"}
+                    </span>
+                  </td>
                 </tr>
               ))
             ) : (

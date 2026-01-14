@@ -131,7 +131,7 @@ export const ModelList = () => {
   };
 
   return (
-    <div className="min-h-screen bg-gray-100 lg:p-6 p-2">
+    <div className="max-h-screen bg-gray-100 lg:p-6 p-2">
       {/* Header — YOUR ORIGINAL */}
       <div className="flex flex-col sm:flex-row justify-between items-center gap-4 mb-6">
         <h2 className="lg:text-3xl text-xl font-bold text-gray-800">Models</h2>
@@ -166,7 +166,7 @@ export const ModelList = () => {
         <table className="min-w-full">
           <thead className="bg-blue-950 text-white">
             <tr>
-              <th className="py-3 px-4 text-left">SR#</th>
+              <th className="py-3 px-4 text-left">Sr</th>
               <th className="py-3 px-4 text-left">Make Name</th>
               <th className="py-3 px-4 text-left">Model Name</th>
               <th className="px-4 py-3 text-center">Actions</th>

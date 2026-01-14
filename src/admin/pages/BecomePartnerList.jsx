@@ -78,7 +78,7 @@ export const BecomePartnerList = () => {
   };
 
   return (
-    <div className="min-h-screen bg-gray-100 p-4 sm:p-6">
+    <div className="max-h-screen bg-gray-100 p-4 ">
       <div className="flex flex-col sm:flex-row justify-between items-center gap-4 mb-3">
         <h2 className="lg:text-3xl text-xl font-bold text-gray-800">
           Partners List
@@ -112,57 +112,178 @@ export const BecomePartnerList = () => {
       </div>
 
       {/* Desktop Table – 100% unchanged */}
-      <div className="hidden md:block overflow-x-auto">
-        <table className="min-w-full bg-white shadow-md rounded-lg overflow-hidden text-xs sm:text-sm">
-          <thead className="bg-blue-950 text-white">
-            <tr>
-              <th className="py-3 px-4 text-left">SR#</th>
-              <th className="py-3 px-4 text-left">Name</th>
-              <th className="py-3 px-4 text-left">Email</th>
-              <th className="py-3 px-4 text-left">Contact</th>
-              <th className="py-3 px-4 text-left">Business Type</th>
-              <th className="py-3 px-4 text-center">Action</th>
-            </tr>
-          </thead>
-          <tbody>
-            {currentItems.length > 0 ? (
-              currentItems.map((msg, index) => (
-                <tr key={msg.id} className="border-b">
-                  <td className="py-2 px-4 whitespace-nowrap">
-                    {startIndex + index + 1}
-                  </td>
-                  <td className="py-2 px-4 whitespace-nowrap">
-                    {msg?.name.charAt(0).toUpperCase() + msg?.name.slice(1)}
-                  </td>
-                  <td className="py-2 px-4 whitespace-nowrap text-xs">
-                    {msg?.email.charAt(0).toUpperCase() + msg?.email.slice(1)}
-                  </td>
-                  <td className="py-2 px-4 whitespace-nowrap">
-                    {msg?.contact}
-                  </td>
-                  <td className="py-2 px-4 whitespace-nowrap">
-                    {msg?.bussinessType.charAt(0).toUpperCase() +
-                      msg?.bussinessType.slice(1)}
-                  </td>
-                  <td className="py-2 px-4 flex justify-center">
-                    <CustomAdd
-                      text="View"
-                      variant="view"
-                      onClick={() => handleViewBtn(msg)}
-                      className="text-xs sm:text-sm"
-                    />
+      <div className="hidden md:block">
+        <div className="overflow-hidden rounded border border-gray-600 shadow-sm">
+          <table className="min-w-full bg-white">
+            <thead className="bg-blue-950 ">
+              <tr>
+                <th className="p-3  text-left text-sm font-semibold text-white">
+                  Sr
+                </th>
+                <th className="p-1 text-left text-sm font-semibold text-white">
+                  Name
+                </th>
+                <th className="p-1 text-left text-sm font-semibold text-white">
+                  Email
+                </th>
+                <th className="p-1 text-left text-sm font-semibold text-white">
+                  Contact
+                </th>
+                <th className="p-1 text-left text-sm font-semibold text-white">
+                  Business Type
+                </th>
+                <th className="p-1 text-left text-sm font-semibold text-white">
+                  Actions
+                </th>
+              </tr>
+            </thead>
+            <tbody className="divide-y divide-gray-500">
+              {currentItems.length > 0 ? (
+                currentItems.map((msg, index) => (
+                  <tr
+                    key={msg.id}
+                    className="hover:bg-blue-50/50 transition-colors"
+                  >
+                    <td className="p-3">
+                      <div className="flex h-6 w-6 items-center justify-center rounded-ful">
+                        <span className="text-xs font-bold">
+                          {startIndex + index + 1}
+                        </span>
+                      </div>
+                    </td>
+                    <td className="p-1">
+                      <div className="flex items-center">
+                        <div className="flex h-8 w-8 flex-shrink-0 items-center justify-center rounded-full bg-blue-100">
+                          <span className="text-xs font-semibold  text-blue-900">
+                            {msg?.name?.charAt(0)?.toUpperCase() || "U"}
+                          </span>
+                        </div>
+                        <span className="ml-3 text-sm font-medium text-gray-900">
+                          {msg?.name?.charAt(0)?.toUpperCase() +
+                            msg?.name?.slice(1) || "N/A"}
+                        </span>
+                      </div>
+                    </td>
+                    <td className="p-1">
+                      <div className="flex items-center">
+                        <svg
+                          className="mr-2 h-4 w-4 text-gray-400"
+                          fill="none"
+                          stroke="currentColor"
+                          viewBox="0 0 24 24"
+                        >
+                          <path
+                            strokeLinecap="round"
+                            strokeLinejoin="round"
+                            strokeWidth={2}
+                            d="M3 8l7.89 4.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"
+                          />
+                        </svg>
+                        <span className="text-sm text-gray-700 truncate max-w-[180px]">
+                          {msg?.email?.toLowerCase() || "N/A"}
+                        </span>
+                      </div>
+                    </td>
+                    <td className="p-1">
+                      <div className="flex items-center">
+                        <svg
+                          className="mr-2 h-4 w-4 text-gray-400"
+                          fill="none"
+                          stroke="currentColor"
+                          viewBox="0 0 24 24"
+                        >
+                          <path
+                            strokeLinecap="round"
+                            strokeLinejoin="round"
+                            strokeWidth={2}
+                            d="M3 5a2 2 0 012-2h3.28a1 1 0 01.948.684l1.498 4.493a1 1 0 01-.502 1.21l-2.257 1.13a11.042 11.042 0 005.516 5.516l1.13-2.257a1 1 0 011.21-.502l4.493 1.498a1 1 0 01.684.949V19a2 2 0 01-2 2h-1C9.716 21 3 14.284 3 6V5z"
+                          />
+                        </svg>
+                        <span className="text-sm font-medium text-gray-900">
+                          {msg?.contact || "N/A"}
+                        </span>
+                      </div>
+                    </td>
+                    <td className="p-1">
+                      <span className="inline-flex items-center rounded-full bg-blue-100 px-3 py-1 text-xs font-medium text-blue-800">
+                        <svg
+                          className="mr-1 h-3 w-3"
+                          fill="none"
+                          stroke="currentColor"
+                          viewBox="0 0 24 24"
+                        >
+                          <path
+                            strokeLinecap="round"
+                            strokeLinejoin="round"
+                            strokeWidth={2}
+                            d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4"
+                          />
+                        </svg>
+                        {msg?.bussinessType?.charAt(0)?.toUpperCase() +
+                          msg?.bussinessType?.slice(1) || "N/A"}
+                      </span>
+                    </td>
+                    <td className="p-1">
+                      <div className="flex items-center space-x-2">
+                        <button
+                          onClick={() => handleViewBtn(msg)}
+                          className="inline-flex items-center px-3 py-1.5 border border-transparent text-xs font-medium rounded-md text-white bg-blue-950 hover:bg-blue-900 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 transition-colors"
+                        >
+                          <svg
+                            className="w-4 h-4 mr-1"
+                            fill="none"
+                            stroke="currentColor"
+                            viewBox="0 0 24 24"
+                          >
+                            <path
+                              strokeLinecap="round"
+                              strokeLinejoin="round"
+                              strokeWidth={2}
+                              d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"
+                            />
+                            <path
+                              strokeLinecap="round"
+                              strokeLinejoin="round"
+                              strokeWidth={2}
+                              d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"
+                            />
+                          </svg>
+                          View
+                        </button>
+                      </div>
+                    </td>
+                  </tr>
+                ))
+              ) : (
+                <tr>
+                  <td colSpan="6" className="py-12 text-center">
+                    <div className="flex flex-col items-center justify-center">
+                      <svg
+                        className="mb-3 h-12 w-12 text-gray-300"
+                        fill="none"
+                        stroke="currentColor"
+                        viewBox="0 0 24 24"
+                      >
+                        <path
+                          strokeLinecap="round"
+                          strokeLinejoin="round"
+                          strokeWidth={2}
+                          d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z"
+                        />
+                      </svg>
+                      <p className="text-sm font-medium text-gray-500">
+                        No partners found
+                      </p>
+                      <p className="text-xs text-gray-400 mt-1">
+                        Try adjusting your search or filters
+                      </p>
+                    </div>
                   </td>
                 </tr>
-              ))
-            ) : (
-              <tr>
-                <td colSpan="6" className="py-8 text-center text-gray-400">
-                  No partners found.
-                </td>
-              </tr>
-            )}
-          </tbody>
-        </table>
+              )}
+            </tbody>
+          </table>
+        </div>
       </div>
 
       {/* Mobile Cards – 100% unchanged */}

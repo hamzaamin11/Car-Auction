@@ -143,7 +143,7 @@ export const CitiesList = () => {
   };
 
   return (
-    <div className="min-h-screen bg-gray-100 p-2 lg:p-6">
+    <div className="max-h-screen bg-gray-100 p-2 lg:p-6">
       {/* YOUR ORIGINAL HEADER */}
       <div className="flex flex-col sm:flex-row justify-between items-center gap-4 mb-6">
         <h2 className="lg:text-3xl text-xl font-bold text-gray-800">Cities</h2>
@@ -162,7 +162,7 @@ export const CitiesList = () => {
         <table className="min-w-full table-auto">
           <thead className="bg-blue-950 text-white text-base">
             <tr>
-              <th className="py-3 px-6 text-left">SR#</th>
+              <th className="py-3 px-6 text-left">Sr</th>
               <th className="py-3 px-6 text-center">City Name</th>
               <th className="py-3 px-6 text-center">Action</th>
             </tr>

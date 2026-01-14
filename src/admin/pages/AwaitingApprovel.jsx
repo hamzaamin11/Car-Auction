@@ -5,11 +5,18 @@ import {
   ChevronLeft,
   ChevronRight,
   Search,
+  Eye,
+  CheckCircle,
+  XCircle,
+  Car,
+  CircleUser,
 } from "lucide-react";
 import axios from "axios";
 import { BASE_URL } from "../../components/Contant/URL";
 import Swal from "sweetalert2";
 import CustomSearch from "../../CustomSearch";
+import moment from "moment";
+import { UserDetailModal } from "../components/UserDetailModal/UserDetail";
 
 export const AwaitingApproval = () => {
   const [actionMenuOpen, setActionMenuOpen] = useState(null);
@@ -19,15 +26,54 @@ export const AwaitingApproval = () => {
   const [isViewModalOpen, setIsViewModalOpen] = useState(false);
   const [currentImageIndex, setCurrentImageIndex] = useState(0);
   const [pageNo, setPageNo] = useState(1);
+  const [loading, setLoading] = useState(false);
+  const [userDetail, setUSerDetail] = useState(null);
+  const [isOpen, setIsOpen] = useState("");
+
+  const currentDate = new Date().toISOString().split("T")[0];
+
+  const initialState = {
+    fromDate: currentDate,
+    toDate: currentDate,
+  };
+  const [dateRange, setDateRange] = useState(initialState);
 
   const menuRef = useRef(null);
   const itemsPerPage = 10;
 
   const handleGetAllUnapprovalVehicles = async () => {
+    setLoading(true);
     try {
-      const res = await axios.get(`${BASE_URL}/getawatingApprovedVehicles`);
+      const res = await axios.get(
+        `${BASE_URL}/getawatingApprovedVehiclestbyDateRange/${dateRange.fromDate}/${dateRange.toDate}`
+      );
       console.log(res.data);
-      setVehicles(res.data);
+      setVehicles(res.data || []);
+    } catch (error) {
+      console.log(error);
+      setVehicles([]);
+      Swal.fire({
+        title: "Error!",
+        text: "Failed to load vehicles. Please try again.",
+        icon: "error",
+        confirmButtonColor: "#9333ea",
+      });
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const handleIsOpen = (active) => {
+    setIsOpen((prev) => (prev === active ? "" : active));
+  };
+
+  const handleViewUserDetail = async (id) => {
+    try {
+      const res = await axios.get(
+        `${BASE_URL}/admin/getUserDetailsApprovedVehicleListById/${id}`
+      );
+
+      setUSerDetail(res.data?.data);
     } catch (error) {
       console.log(error);
     }
@@ -37,28 +83,87 @@ export const AwaitingApproval = () => {
     setActionMenuOpen((prev) => (prev === id ? null : id));
   };
 
+  const handleChangeDate = (e) => {
+    const { name, value } = e.target;
+    setDateRange((prevState) => ({ ...prevState, [name]: value }));
+    setPageNo(1); // Reset to first page when date changes
+  };
+
   const handleApprove = async (vehicle) => {
     try {
-      const res = await axios.put(`${BASE_URL}/ApprovedVehicles/${vehicle.id}`);
-      setActionMenuOpen(null);
-      console.log(res.data);
-      handleGetAllUnapprovalVehicles();
-      await Swal.fire({
-        title: "Success!",
-        text: "This vehicle has been approved successfully.",
-        icon: "success",
-        confirmButtonColor: "#9333ea",
+      const result = await Swal.fire({
+        title: "Approve Vehicle?",
+        text: `Are you sure you want to approve ${vehicle.make} ${vehicle.model}?`,
+        icon: "question",
+        showCancelButton: true,
+        confirmButtonColor: "#10b981",
+        cancelButtonColor: "#6b7280",
+        confirmButtonText: "Yes, approve it!",
+        cancelButtonText: "Cancel",
       });
+
+      if (result.isConfirmed) {
+        const res = await axios.put(
+          `${BASE_URL}/ApprovedVehicles/${vehicle.id}`
+        );
+        setActionMenuOpen(null);
+        console.log(res.data);
+        handleGetAllUnapprovalVehicles();
+        await Swal.fire({
+          title: "Success!",
+          text: "This vehicle has been approved successfully.",
+          icon: "success",
+          confirmButtonColor: "#9333ea",
+        });
+      }
     } catch (error) {
       console.error(error);
       await Swal.fire({
         title: "Error!",
-        text: "Something went wrong.",
+        text: "Something went wrong while approving the vehicle.",
         icon: "error",
         confirmButtonColor: "#9333ea",
       });
     }
   };
+
+  // const handleReject = async (vehicle) => {
+  //   try {
+  //     const result = await Swal.fire({
+  //       title: "Are you sure?",
+  //       text: `Do you want to reject ${vehicle.make} ${vehicle.model}?`,
+  //       icon: "warning",
+  //       showCancelButton: true,
+  //       confirmButtonColor: "#dc2626",
+  //       cancelButtonColor: "#6b7280",
+  //       confirmButtonText: "Yes, reject it!",
+  //       cancelButtonText: "Cancel",
+  //     });
+
+  //     if (result.isConfirmed) {
+  //       // FIXED: Added API call for reject
+  //       const res = await axios.put(`${BASE_URL}/rejectVehicle/${vehicle.id}`);
+  //       console.log(res.data);
+  //       setActionMenuOpen(null);
+  //       handleGetAllUnapprovalVehicles();
+
+  //       await Swal.fire({
+  //         title: "Rejected!",
+  //         text: `${vehicle.make} ${vehicle.model} has been rejected successfully.`,
+  //         icon: "success",
+  //         confirmButtonColor: "#9333ea",
+  //       });
+  //     }
+  //   } catch (error) {
+  //     console.error(error);
+  //     await Swal.fire({
+  //       title: "Error!",
+  //       text: "Something went wrong while rejecting the vehicle.",
+  //       icon: "error",
+  //       confirmButtonColor: "#9333ea",
+  //     });
+  //   }
+  // };
 
   const handleReject = async (vehicle) => {
     try {
@@ -138,11 +243,16 @@ export const AwaitingApproval = () => {
     };
   }, []);
 
-  const filteredVehicles = vehicles.filter((v) =>
-    `${v.make} ${v.model} ${v.series}`
-      .toLowerCase()
-      .includes(search.toLowerCase())
-  );
+  const filteredVehicles = vehicles.filter((v) => {
+    const searchTerm = search.toLowerCase();
+    return (
+      (v.make && v.make.toLowerCase().includes(searchTerm)) ||
+      (v.model && v.model.toLowerCase().includes(searchTerm)) ||
+      (v.series && v.series.toLowerCase().includes(searchTerm)) ||
+      (v.lot_number &&
+        v.lot_number.toString().toLowerCase().includes(searchTerm))
+    );
+  });
 
   const totalItems = filteredVehicles.length;
   const totalPages = Math.ceil(totalItems / itemsPerPage);
@@ -151,8 +261,10 @@ export const AwaitingApproval = () => {
   const currentPageVehicles = filteredVehicles.slice(startIndex, endIndex);
 
   const goToPage = (page) => {
-    setPageNo(page);
-    window.scrollTo({ top: 0, behavior: "smooth" });
+    if (page >= 1 && page <= totalPages) {
+      setPageNo(page);
+      window.scrollTo({ top: 0, behavior: "smooth" });
+    }
   };
 
   const getPageNumbers = () => {
@@ -171,10 +283,10 @@ export const AwaitingApproval = () => {
 
   useEffect(() => {
     handleGetAllUnapprovalVehicles();
-  }, []);
+  }, [dateRange]);
 
   return (
-    <div className="min-h-screen bg-gray-100 p-6">
+    <div className="max-h-screen bg-gray-100 p-6">
       <div className="flex flex-col sm:flex-row justify-between items-center mb-6">
         <h2 className="lg:text-3xl text-xl font-bold text-gray-800 text-center">
           Awaiting Approval Vehicles
@@ -182,7 +294,7 @@ export const AwaitingApproval = () => {
 
         <div className="relative w-full sm:w-80 mt-4 sm:mt-0">
           <CustomSearch
-            placeholder="Search by Car Name..."
+            placeholder="Search by Car Name or Lot Number..."
             value={search}
             onChange={(e) => {
               setSearch(e.target.value);
@@ -195,154 +307,277 @@ export const AwaitingApproval = () => {
         </div>
       </div>
 
-      <div className="text-gray-800 mb-4 font-semibold text-xl">
-        Total Pending: {totalItems}
+      <div className="flex flex-col lg:flex-row items-start lg:items-center justify-between mb-6 gap-4">
+        <div className="text-gray-800 font-semibold text-2xl">
+          Total Pending: {totalItems}
+        </div>
+
+        <div className="flex flex-col sm:flex-row items-center gap-4">
+          <div className="flex flex-col">
+            <label className="text-sm font-medium text-gray-800 mb-1">
+              From Date :
+            </label>
+            <input
+              type="date"
+              name="fromDate"
+              onChange={handleChangeDate}
+              value={dateRange.fromDate}
+              max={dateRange.toDate}
+              className="px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-900 focus:border-blue-900 focus:outline-none"
+            />
+          </div>
+
+          <div className="flex flex-col">
+            <label className="text-sm font-medium text-gray-800 mb-1">
+              To Date :
+            </label>
+            <input
+              type="date"
+              name="toDate"
+              onChange={handleChangeDate}
+              value={dateRange.toDate}
+              min={dateRange.fromDate}
+              max={currentDate}
+              className="px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-900 focus:border-blue-900 focus:outline-none"
+            />
+          </div>
+        </div>
       </div>
 
-      {currentPageVehicles.length > 0 ? (
-        <div className="space-y-4">
-          {currentPageVehicles.map((vehicle) => (
-            <div key={vehicle.id}>
-              <div className="hidden lg:flex flex-col md:flex-row items-start md:items-center justify-between border rounded-lg bg-white hover:shadow-md transition-all duration-200 p-4 gap-4 relative">
-                <div className="w-full md:w-48 h-32 flex-shrink-0 rounded-md overflow-hidden bg-gray-100">
-                  {vehicle.images?.length > 0 ? (
-                    <img
-                      src={vehicle.images[0]}
-                      alt={`${vehicle.make} ${vehicle.model}`}
-                      className="w-full h-full object-cover"
-                    />
-                  ) : (
-                    <div className="flex items-center justify-center h-full text-gray-400 text-sm">
-                      No Image
-                    </div>
-                  )}
-                </div>
-
-                <div className="flex-1 md:px-4">
-                  <h2 className="text-lg font-bold text-gray-800">
-                    {vehicle.make} {vehicle.model} {vehicle.series}
-                  </h2>
-                  <p className="text-md font-bold text-black mt-1">
-                    PKR {vehicle.buyNowPrice}
-                  </p>
-                  <p className="text-sm text-gray-600">
-                    {vehicle.year} |{" "}
-                    {vehicle.fuelType.charAt(0).toUpperCase() +
-                      vehicle.fuelType.slice(1)}{" "}
-                    | {vehicle.transmission} | {vehicle.mileage} KM |{" "}
-                    {vehicle.color} | {vehicle?.cityName ?? "--"}
-                  </p>
-                </div>
-
-                <div className="relative">
-                  <button
-                    onClick={() => toggleActionMenu(vehicle.id)}
-                    className="p-2 rounded-full hover:bg-gray-200 transition"
+      <div className="max-w-7xl mx-auto px-2 lg:px-0">
+        {loading ? (
+          <div className="text-center py-12">
+            <div className="inline-block animate-spin rounded-full h-12 w-12 border-b-2 border-blue-900"></div>
+            <p className="mt-4 text-gray-600">Loading vehicles...</p>
+          </div>
+        ) : currentPageVehicles?.length > 0 ? (
+          <div className="overflow-x-auto rounded-lg border border-gray-200 bg-white shadow-sm">
+            <table className="w-full">
+              <thead className="bg-blue-950 text-white">
+                <tr>
+                  <th className="p-4 text-start text-sm font-semibold">Sr</th>
+                  <th className="p-4 text-left text-sm font-semibold">
+                    Seller Name
+                  </th>
+                  <th className="p-4 text-left text-sm font-semibold">
+                    Vehicle Name
+                  </th>
+                  <th className="p-4 text-left text-sm font-semibold">Lot#</th>
+                  <th className="p-4 text-left text-sm font-semibold">Year</th>
+                  <th className="p-4 text-left text-sm font-semibold">
+                    Fuel Type
+                  </th>
+                  <th className="p-4 text-left text-sm font-semibold">Color</th>
+                  <th className="p-4 text-left text-sm font-semibold">City</th>
+                  <th className="p-4 text-left text-sm font-semibold">
+                    Date / Time
+                  </th>
+                  <th className="p-4 text-left text-sm font-semibold">
+                    Reserve Price
+                  </th>
+                  <th className="p-4 text-left text-sm font-semibold">
+                    Actions
+                  </th>
+                </tr>
+              </thead>
+              <tbody className="divide-y divide-gray-200">
+                {currentPageVehicles.map((vehicle, index) => (
+                  <tr
+                    key={vehicle.id}
+                    className="hover:bg-gray-50 transition-colors"
                   >
-                    <MoreVertical className="h-5 w-5 text-gray-600" />
-                  </button>
+                    <td className="p-3 text-start text-gray-600">
+                      {startIndex + index + 1}
+                    </td>
 
-                  {actionMenuOpen === vehicle.id && (
-                    <div className="absolute right-0 mt-2 w-48 bg-white border rounded-lg shadow-lg z-10">
-                      <button
-                        onClick={() => handleApprove(vehicle)}
-                        className="w-full px-4 py-2 text-sm text-green-600 hover:bg-green-100 text-left rounded-t-lg"
-                      >
-                        Approve
-                      </button>
-
-                      <button
-                        onClick={() => handleReject(vehicle)}
-                        className="w-full px-4 py-2 text-sm text-red-600 hover:bg-red-100 text-left"
-                      >
-                        Reject
-                      </button>
-                      <button
-                        onClick={() => handleViewDetails(vehicle)}
-                        className="w-full px-4 py-2 text-sm text-blue-600 hover:bg-blue-100 text-left rounded-b-lg"
-                      >
-                        View Details
-                      </button>
-                    </div>
-                  )}
-                </div>
-              </div>
-
-              <div className="lg:hidden border-b py-4">
-                <div className="flex items-center gap-3">
-                  <div className="w-16 h-16 flex-shrink-0 rounded-md overflow-hidden bg-gray-100">
-                    {vehicle.images && vehicle.images.length > 0 ? (
-                      <img
-                        src={vehicle.images[0]}
-                        alt={`${vehicle.make} ${vehicle.model}`}
-                        className="h-full w-full object-cover"
-                      />
-                    ) : (
-                      <div className="h-full w-full flex items-center justify-center text-gray-400 text-xs">
-                        No Img
-                      </div>
-                    )}
-                  </div>
-                  <div className="flex-1">
-                    <h2 className="text-sm font-bold text-gray-800">
-                      {vehicle.make} {vehicle.model} {vehicle.series}
-                    </h2>
-                    <p className="text-xs text-gray-700 font-semibold">
-                      PKR {vehicle.buyNowPrice}
-                    </p>
-                    <p className="text-xs text-gray-500">
-                      {vehicle.year} | {vehicle.fuelType} |{" "}
-                      {vehicle.transmission} | {vehicle.mileage} KM |{" "}
-                      {vehicle.color} | {vehicle.cityName}
-                    </p>
-                  </div>
-
-                  <div className="relative">
-                    <button
-                      onClick={() => toggleActionMenu(vehicle.id)}
-                      className="p-2 rounded-full hover:bg-gray-200 transition"
+                    <td
+                      className="p-3 text-start text-gray-600"
+                      onClick={() => {
+                        handleIsOpen("detail");
+                        handleViewUserDetail(vehicle.userId);
+                      }}
                     >
-                      <MoreVertical className="h-5 w-5 text-gray-600" />
-                    </button>
-                    {actionMenuOpen === vehicle.id && (
-                      <div className="absolute right-0 mt-2 w-40 bg-white border rounded-lg shadow-lg z-10">
-                        <button
-                          onClick={() => handleApprove(vehicle)}
-                          className="w-full px-4 py-2 text-sm text-green-600 hover:bg-green-100 text-left rounded-t-lg"
-                        >
-                          Approve
-                        </button>
-                        <button
-                          onClick={() => handleReject(vehicle)}
-                          className="w-full px-4 py-2 text-sm text-red-600 hover:bg-red-100 text-left"
-                        >
-                          Reject
-                        </button>
-                        <button
-                          onClick={() => handleViewDetails(vehicle)}
-                          className="w-full px-4 py-2 text-sm text-blue-600 hover:bg-blue-100 text-left rounded-b-lg"
-                        >
-                          View Details
-                        </button>
+                      <div className="flex items-center gap-1 hover:cursor-pointer">
+                        <CircleUser
+                          size={"30"}
+                          style={{
+                            color: "gray",
+                          }}
+                        />
+                        <span className="text-sm text-gray-600 font-medium capitalize">
+                          {vehicle.username || "--"}
+                        </span>
                       </div>
-                    )}
-                  </div>
-                </div>
-              </div>
-            </div>
-          ))}
-        </div>
-      ) : (
-        <p className="text-center text-gray-500 py-10">
-          No vehicles pending approval.
-        </p>
-      )}
+                    </td>
 
-      {/* PAGINATION WITH ARROWS ONLY (<< < > >>) */}
+                    <td className="p-1">
+                      <div className="flex items-center gap-3">
+                        <div
+                          className="w-12 h-12 rounded-full overflow-hidden bg-gray-100 flex-shrink-0 cursor-pointer border border-gray-200"
+                          onClick={() => handleViewDetails(vehicle)}
+                        >
+                          {vehicle.images?.length > 0 ? (
+                            <img
+                              src={vehicle.images[0]}
+                              alt={`${vehicle.make} ${vehicle.model}`}
+                              className="h-full w-full object-cover"
+                              loading="lazy"
+                            />
+                          ) : (
+                            <div className="h-full w-full flex items-center justify-center text-gray-400">
+                              <Car className="h-6 w-6" />
+                            </div>
+                          )}
+                        </div>
+                        <div
+                          className="cursor-pointer min-w-0"
+                          onClick={() => handleViewDetails(vehicle)}
+                        >
+                          <h2 className="text-sm font-bold text-gray-800 truncate">
+                            {vehicle.make} {vehicle.model}
+                          </h2>
+                          <p className="text-xs text-gray-500 truncate">
+                            {vehicle.series
+                              ? vehicle.series.charAt(0).toUpperCase() +
+                                vehicle.series.slice(1)
+                              : "No series"}
+                          </p>
+                        </div>
+                      </div>
+                    </td>
+
+                    <td className="p-1">
+                      <span className="text-sm text-gray-600 font-medium">
+                        {vehicle.lot_number || "N/A"}
+                      </span>
+                    </td>
+
+                    <td className="p-1">
+                      <span className="text-sm text-gray-600">
+                        {vehicle.year || "--"}
+                      </span>
+                    </td>
+
+                    <td className="p-1">
+                      <span className="text-sm text-gray-600">
+                        {vehicle.fuelType
+                          ? vehicle.fuelType.charAt(0).toUpperCase() +
+                            vehicle.fuelType.slice(1)
+                          : "--"}
+                      </span>
+                    </td>
+
+                    <td className="p-1">
+                      <div className="flex items-center gap-2">
+                        <span className="text-sm text-gray-600">
+                          {vehicle.color
+                            ? vehicle.color.charAt(0).toUpperCase() +
+                              vehicle.color.slice(1)
+                            : "--"}
+                        </span>
+                      </div>
+                    </td>
+
+                    <td className="p-1">
+                      <span className="text-sm text-gray-600 capitalize">
+                        {vehicle.cityName || "--"}
+                      </span>
+                    </td>
+
+                    <td className="p-1">
+                      <div className="flex flex-col">
+                        <span className="text-sm text-gray-700">
+                          {vehicle?.VehicleCreatedAt
+                            ? new Date(
+                                vehicle.VehicleCreatedAt
+                              ).toLocaleDateString("en-GB")
+                            : "N/A"}
+                        </span>
+                        <span className="text-xs text-gray-500">
+                          {vehicle?.VehicleCreatedAt
+                            ? moment(vehicle.VehicleCreatedAt)
+                                .local()
+                                .format("hh:mm A")
+                            : "--"}
+                        </span>
+                      </div>
+                    </td>
+
+                    <td className="p-1">
+                      <span className="text-sm font-semibold text-gray-700">
+                        PKR {vehicle.buyNowPrice?.toLocaleString() || "0"}
+                      </span>
+                    </td>
+
+                    <td className="p-1">
+                      <div className="relative">
+                        <button
+                          onClick={() => toggleActionMenu(vehicle.id)}
+                          className="p-2 rounded-lg hover:bg-gray-200 transition"
+                          aria-label="Actions"
+                          type="button"
+                        >
+                          <MoreVertical className="h-5 w-5 text-gray-600" />
+                        </button>
+
+                        {actionMenuOpen === vehicle.id && (
+                          <div className="absolute right-0 top-full mt-1 w-48 bg-white border border-gray-200 rounded-lg shadow-lg z-50">
+                            <button
+                              onClick={() => handleApprove(vehicle)}
+                              className="w-full px-4 py-2.5 text-sm text-green-600 hover:bg-green-50 hover:text-green-700 text-left flex items-center gap-2 rounded-t-lg transition"
+                              type="button"
+                            >
+                              <CheckCircle className="h-4 w-4" />
+                              Approve
+                            </button>
+
+                            <button
+                              onClick={() => handleReject(vehicle)}
+                              className="w-full px-4 py-2.5 text-sm text-red-600 hover:bg-red-50 hover:text-red-700 text-left flex items-center gap-2 transition"
+                              type="button"
+                            >
+                              <XCircle className="h-4 w-4" />
+                              Reject
+                            </button>
+
+                            <button
+                              onClick={() => handleViewDetails(vehicle)}
+                              className="w-full px-4 py-2.5 text-sm text-blue-600 hover:bg-blue-50 hover:text-blue-700 text-left flex items-center gap-2 rounded-b-lg transition"
+                              type="button"
+                            >
+                              <Eye className="h-4 w-4" />
+                              View Details
+                            </button>
+                          </div>
+                        )}
+                      </div>
+                    </td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
+        ) : (
+          <div className="text-center py-12 px-4 bg-white rounded-lg border border-gray-200 shadow-sm">
+            <div className="mx-auto w-16 h-16 bg-gray-100 rounded-full flex items-center justify-center mb-4">
+              <Car className="w-8 h-8 text-gray-400" />
+            </div>
+            <h3 className="text-lg font-semibold text-gray-900 mb-2">
+              No vehicles pending approval
+            </h3>
+            <p className="text-sm text-gray-500">
+              All vehicles have been processed or there are no pending
+              approvals.
+            </p>
+          </div>
+        )}
+      </div>
+
+      {/* Pagination */}
       {totalItems > 0 && (
-        <div className="bg-white rounded-lg shadow-sm p-4 mt-6">
-          <div className="flex flex-col sm:flex-row justify-between items-center gap-4 text-sm text-gray-700">
-            <div className="text-gray-600">
+        <div className="bg-white rounded-lg shadow-sm p-4 mt-6 border border-gray-200">
+          <div className="flex flex-col sm:flex-row justify-between items-center gap-4">
+            <div className="text-sm text-gray-600">
               Showing <span className="font-medium">{startIndex + 1}</span> to{" "}
               <span className="font-medium">{endIndex}</span> of{" "}
               <span className="font-medium">{totalItems}</span> entries
@@ -352,22 +587,24 @@ export const AwaitingApproval = () => {
               <button
                 onClick={() => goToPage(1)}
                 disabled={pageNo === 1}
-                className={`px-3 py-1 rounded border ${
+                className={`px-3 py-2 rounded-lg border ${
                   pageNo === 1
                     ? "bg-gray-100 text-gray-400 cursor-not-allowed"
-                    : "bg-white hover:bg-gray-50"
+                    : "bg-white hover:bg-gray-50 hover:border-gray-300"
                 }`}
+                aria-label="First page"
               >
                 {"<<"}
               </button>
               <button
                 onClick={() => goToPage(pageNo - 1)}
                 disabled={pageNo === 1}
-                className={`px-3 py-1 rounded border ${
+                className={`px-3 py-2 rounded-lg border ${
                   pageNo === 1
                     ? "bg-gray-100 text-gray-400 cursor-not-allowed"
-                    : "bg-white hover:bg-gray-50"
+                    : "bg-white hover:bg-gray-50 hover:border-gray-300"
                 }`}
+                aria-label="Previous page"
               >
                 {"<"}
               </button>
@@ -376,10 +613,10 @@ export const AwaitingApproval = () => {
                 <button
                   key={page}
                   onClick={() => goToPage(page)}
-                  className={`px-3 py-1 rounded border ${
+                  className={`px-3 py-2 min-w-[40px] rounded-lg border ${
                     pageNo === page
-                      ? "bg-blue-950 text-white"
-                      : "bg-white hover:bg-gray-50"
+                      ? "bg-blue-950 text-white border-blue-950"
+                      : "bg-white hover:bg-gray-50 hover:border-gray-300"
                   }`}
                 >
                   {page}
@@ -389,22 +626,24 @@ export const AwaitingApproval = () => {
               <button
                 onClick={() => goToPage(pageNo + 1)}
                 disabled={pageNo >= totalPages}
-                className={`px-3 py-1 rounded border ${
+                className={`px-3 py-2 rounded-lg border ${
                   pageNo >= totalPages
                     ? "bg-gray-100 text-gray-400 cursor-not-allowed"
-                    : "bg-white hover:bg-gray-50"
+                    : "bg-white hover:bg-gray-50 hover:border-gray-300"
                 }`}
+                aria-label="Next page"
               >
                 {">"}
               </button>
               <button
                 onClick={() => goToPage(totalPages)}
                 disabled={pageNo >= totalPages}
-                className={`px-3 py-1 rounded border ${
+                className={`px-3 py-2 rounded-lg border ${
                   pageNo >= totalPages
                     ? "bg-gray-100 text-gray-400 cursor-not-allowed"
-                    : "bg-white hover:bg-gray-50"
+                    : "bg-white hover:bg-gray-50 hover:border-gray-300"
                 }`}
+                aria-label="Last page"
               >
                 {">>"}
               </button>
@@ -413,141 +652,150 @@ export const AwaitingApproval = () => {
         </div>
       )}
 
-      {/* View Modal - 100% unchanged */}
+      {/* View Modal */}
       {isViewModalOpen && selectedVehicle && (
-        <div className="fixed inset-0 z-500 flex items-center justify-center backdrop-blur-sm p-4">
-          <div className="bg-white rounded-lg shadow-2xl w-full max-w-4xl max-h-[90vh] overflow-y-auto relative border">
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-50 backdrop-blur-sm p-4">
+          <div className="bg-white rounded-xl shadow-2xl w-full max-w-4xl max-h-[90vh] overflow-hidden relative">
             <button
               onClick={handleCloseModal}
               className="absolute top-4 right-4 z-10 bg-white rounded-full p-2 shadow-lg hover:bg-gray-100 transition"
+              aria-label="Close"
             >
               <X className="h-6 w-6 text-gray-700" />
             </button>
 
             <div className="p-6">
               <h2 className="text-2xl font-bold text-gray-800 mb-6">
-                View Vehicle
+                {selectedVehicle.make} {selectedVehicle.model}
               </h2>
 
-              <div className="grid md:grid-cols-2 gap-6">
-                <div className="space-y-4">
+              <div className="grid md:grid-cols-2 gap-8">
+                <div className="space-y-6">
                   <div className="grid grid-cols-2 gap-4">
                     <div>
-                      <p className="text-sm font-bold text-gray-900">
+                      <p className="text-sm font-medium text-gray-500">
+                        Lot Number:
+                      </p>
+                      <p className="text-base font-semibold text-gray-900">
+                        {selectedVehicle.lot_number || "—"}
+                      </p>
+                    </div>
+                    <div>
+                      <p className="text-sm font-medium text-gray-500">
                         Location:
                       </p>
-                      <p className="text-base text-gray-900">
+                      <p className="text-base font-semibold text-gray-900">
                         {selectedVehicle.cityName || "—"}
                       </p>
                     </div>
                     <div>
-                      <p className="text-sm font-bold text-gray-900">Make:</p>
-                      <p className="text-base text-gray-900">
+                      <p className="text-sm font-medium text-gray-500">Make:</p>
+                      <p className="text-base font-semibold text-gray-900">
                         {selectedVehicle.make || "—"}
                       </p>
                     </div>
-                  </div>
-
-                  <div className="grid grid-cols-2 gap-4">
                     <div>
-                      <p className="text-sm font-bold text-gray-900">Model:</p>
-                      <p className="text-base text-gray-900">
+                      <p className="text-sm font-medium text-gray-500">
+                        Model:
+                      </p>
+                      <p className="text-base font-semibold text-gray-900">
                         {selectedVehicle.model || "—"}
                       </p>
                     </div>
-                    <div>
-                      <p className="text-sm font-bold text-gray-900">Series:</p>
-                      <p className="text-base text-gray-900">
-                        {selectedVehicle.series || "—"}
-                      </p>
-                    </div>
                   </div>
 
                   <div className="grid grid-cols-2 gap-4">
                     <div>
-                      <p className="text-sm font-bold text-gray-900">Color:</p>
-                      <p className="text-base text-gray-900">
+                      <p className="text-sm font-medium text-gray-500">
+                        Series:
+                      </p>
+                      <p className="text-base font-semibold text-gray-900">
+                        {selectedVehicle.series || "—"}
+                      </p>
+                    </div>
+                    <div>
+                      <p className="text-sm font-medium text-gray-500">
+                        Color:
+                      </p>
+                      <p className="text-base font-semibold text-gray-900">
                         {selectedVehicle.color || "—"}
                       </p>
                     </div>
                     <div>
-                      <p className="text-sm font-bold text-gray-900">
+                      <p className="text-sm font-medium text-gray-500">
                         Transmission:
                       </p>
-                      <p className="text-base text-gray-900">
+                      <p className="text-base font-semibold text-gray-900">
                         {selectedVehicle.transmission || "—"}
                       </p>
                     </div>
-                  </div>
-
-                  <div className="grid grid-cols-2 gap-4">
                     <div>
-                      <p className="text-sm font-bold text-gray-900">
+                      <p className="text-sm font-medium text-gray-500">
                         Fuel Type:
                       </p>
-                      <p className="text-base text-gray-900 capitalize">
+                      <p className="text-base font-semibold text-gray-900 capitalize">
                         {selectedVehicle.fuelType || "—"}
                       </p>
                     </div>
-                    <div>
-                      <p className="text-sm font-bold text-gray-900">
-                        Body Style:
-                      </p>
-                      <p className="text-base text-gray-900">
-                        {selectedVehicle.bodyStyle || "—"}
-                      </p>
-                    </div>
                   </div>
 
                   <div className="grid grid-cols-2 gap-4">
                     <div>
-                      <p className="text-sm font-bold text-gray-900">
+                      <p className="text-sm font-medium text-gray-500">
+                        Body Style:
+                      </p>
+                      <p className="text-base font-semibold text-gray-900">
+                        {selectedVehicle.bodyStyle || "—"}
+                      </p>
+                    </div>
+                    <div>
+                      <p className="text-sm font-medium text-gray-500">
                         Certify Status:
                       </p>
-                      <p className="text-base text-gray-900">
+                      <p className="text-base font-semibold text-gray-900">
                         {selectedVehicle.certifyStatus || "—"}
                       </p>
                     </div>
                     <div>
-                      <p className="text-sm font-bold text-gray-900">
+                      <p className="text-sm font-medium text-gray-500">
                         Drive Type:
                       </p>
-                      <p className="text-base text-gray-900 uppercase">
+                      <p className="text-base font-semibold text-gray-900 uppercase">
                         {selectedVehicle.driveType || "—"}
                       </p>
                     </div>
+                    <div>
+                      <p className="text-sm font-medium text-gray-500">
+                        Mileage:
+                      </p>
+                      <p className="text-base font-semibold text-gray-900">
+                        {selectedVehicle.mileage?.toLocaleString() || "—"}
+                      </p>
+                    </div>
                   </div>
 
                   <div className="grid grid-cols-2 gap-4">
                     <div>
-                      <p className="text-sm font-bold text-gray-900">
-                        Meter Reading:
-                      </p>
-                      <p className="text-base text-gray-900">
-                        {selectedVehicle.mileage || "—"}
-                      </p>
-                    </div>
-                    <div>
-                      <p className="text-sm font-bold text-gray-900">Year:</p>
-                      <p className="text-base text-gray-900">
+                      <p className="text-sm font-medium text-gray-500">Year:</p>
+                      <p className="text-base font-semibold text-gray-900">
                         {selectedVehicle.year || "—"}
                       </p>
                     </div>
-                  </div>
-
-                  <div className="grid grid-cols-2 gap-4">
                     <div>
-                      <p className="text-sm font-bold text-gray-900">
+                      <p className="text-sm font-medium text-gray-500">
                         Condition:
                       </p>
-                      <p className="text-base text-gray-900 capitalize">
+                      <p className="text-base font-semibold text-gray-900 capitalize">
                         {selectedVehicle.vehicleCondition || "—"}
                       </p>
                     </div>
                     <div>
-                      <p className="text-sm font-bold text-gray-900">Price:</p>
-                      <p className="text-base text-gray-700 font-semibold">
-                        {selectedVehicle.buyNowPrice}
+                      <p className="text-sm font-medium text-gray-500">
+                        Price:
+                      </p>
+                      <p className="text-lg font-bold text-blue-900">
+                        PKR{" "}
+                        {selectedVehicle.buyNowPrice?.toLocaleString() || "0"}
                       </p>
                     </div>
                   </div>
@@ -557,48 +805,65 @@ export const AwaitingApproval = () => {
                   {selectedVehicle.images &&
                   selectedVehicle.images.length > 0 ? (
                     <>
-                      <div className="w-full h-64 rounded-lg overflow-hidden bg-gray-100 mb-4">
+                      <div className="w-full h-72 rounded-xl overflow-hidden bg-gray-100 mb-6">
                         <img
                           src={selectedVehicle.images[currentImageIndex]}
                           alt={`${selectedVehicle.make} ${selectedVehicle.model}`}
-                          className="w-full h-full object-cover"
+                          className="w-full h-full object-contain"
                         />
                       </div>
 
-                      <div className="flex items-center justify-center gap-4 w-full">
+                      <div className="flex items-center justify-between w-full mb-4">
                         <button
                           onClick={handlePrevImage}
-                          className="bg-red-500 hover:bg-red-600 text-white rounded-full p-3 shadow-lg transition disabled:opacity-50 disabled:cursor-not-allowed"
+                          className="bg-blue-900 hover:bg-blue-800 text-white rounded-full p-3 shadow-lg transition disabled:opacity-50 disabled:cursor-not-allowed"
                           disabled={selectedVehicle.images.length <= 1}
+                          aria-label="Previous image"
                         >
                           <ChevronLeft className="h-5 w-5" />
                         </button>
 
-                        <div className="w-20 h-20 rounded-lg overflow-hidden border-2 border-blue-500 bg-gray-100">
-                          <img
-                            src={selectedVehicle.images[currentImageIndex]}
-                            alt="Thumbnail"
-                            className="w-full h-full object-cover"
-                          />
+                        <div className="flex-1 text-center">
+                          <p className="text-sm font-medium text-gray-700">
+                            Image {currentImageIndex + 1} of{" "}
+                            {selectedVehicle.images.length}
+                          </p>
                         </div>
 
                         <button
                           onClick={handleNextImage}
-                          className="bg-red-500 hover:bg-red-600 text-white rounded-full p-3 shadow-lg transition disabled:opacity-50 disabled:cursor-not-allowed"
+                          className="bg-blue-900 hover:bg-blue-800 text-white rounded-full p-3 shadow-lg transition disabled:opacity-50 disabled:cursor-not-allowed"
                           disabled={selectedVehicle.images.length <= 1}
+                          aria-label="Next image"
                         >
                           <ChevronRight className="h-5 w-5" />
                         </button>
                       </div>
 
-                      <p className="text-sm text-gray-600 mt-2">
-                        {currentImageIndex + 1} /{" "}
-                        {selectedVehicle.images.length}
-                      </p>
+                      <div className="flex gap-2 overflow-x-auto pb-2 w-full">
+                        {selectedVehicle.images.map((img, index) => (
+                          <button
+                            key={index}
+                            onClick={() => setCurrentImageIndex(index)}
+                            className={`flex-shrink-0 w-20 h-20 rounded-lg overflow-hidden border-2 ${
+                              index === currentImageIndex
+                                ? "border-blue-900"
+                                : "border-gray-300"
+                            }`}
+                          >
+                            <img
+                              src={img}
+                              alt={`Thumbnail ${index + 1}`}
+                              className="w-full h-full object-cover"
+                            />
+                          </button>
+                        ))}
+                      </div>
                     </>
                   ) : (
-                    <div className="w-full h-64 rounded-lg bg-gray-100 flex items-center justify-center">
-                      <p className="text-gray-400">No images available</p>
+                    <div className="w-full h-72 rounded-xl bg-gray-100 flex flex-col items-center justify-center">
+                      <Car className="w-16 h-16 text-gray-400 mb-4" />
+                      <p className="text-gray-500">No images available</p>
                     </div>
                   )}
                 </div>
@@ -606,6 +871,14 @@ export const AwaitingApproval = () => {
             </div>
           </div>
         </div>
+      )}
+
+      {isOpen === "detail" && (
+        <UserDetailModal
+          isOpen={isOpen}
+          closeModal={() => handleIsOpen("")}
+          userDetail={userDetail}
+        />
       )}
     </div>
   );

@@ -144,7 +144,7 @@ export const BrandList = () => {
   };
 
   return (
-    <div className="min-h-screen bg-gray-100 lg:p-6 p-2">
+    <div className="max-h-screen bg-gray-100 lg:p-6 p-2">
       <div className="flex flex-col sm:flex-row justify-between items-center gap-4 mb-6">
         <h2 className="lg:text-3xl text-xl font-bold text-gray-800">Makes</h2>
         <div className="relative w-full max-w-md">
@@ -173,11 +173,11 @@ export const BrandList = () => {
         <CustomAdd text="Add Makes" onClick={() => handleToggleModal("Add")} />
       </div>
 
-      <div className="bg-white shadow-md rounded-lg overflow-hidden">
+      <div className="bg-white shadow-md rounded overflow-hidden border border-gray-600">
         <table className="min-w-full">
           <thead className="bg-blue-950 text-white">
             <tr>
-              <th className="py-3 px-4 text-left">SR#</th>
+              <th className="py-3 px-4 text-left">Sr</th>
               <th className="py-3 px-4 text-left">Makes Image</th>
               <th className="py-3 px-4 text-left">Makes</th>
               <th className="px-4 py-3 text-center">Actions</th>

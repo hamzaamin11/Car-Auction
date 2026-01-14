@@ -145,7 +145,7 @@ export const SeriesList = () => {
   };
 
   return (
-    <div className="min-h-screen bg-gray-100 lg:p-6 p-2">
+    <div className="max-h-screen bg-gray-100 lg:p-6 p-2">
       {/* YOUR ORIGINAL HEADER — UNTOUCHED */}
       <div className="flex flex-col gap-3 sm:gap-4 mb-6">
         <div className="md:hidden flex flex-col gap-3">
@@ -186,7 +186,7 @@ export const SeriesList = () => {
         <table className="min-w-full">
           <thead className="bg-blue-950 text-white">
             <tr>
-              <th className="py-3 px-4 text-left">SR#</th>
+              <th className="py-3 px-4 text-left">Sr</th>
               <th className="py-3 px-4 text-left">Make Name</th>
               <th className="py-3 px-4 text-left">Model Name</th>
               <th className="py-3 px-4 text-left">Model Series</th>

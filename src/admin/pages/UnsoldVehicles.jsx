@@ -19,9 +19,11 @@ import Swal from "sweetalert2";
 import CustomSearch from "../../CustomSearch";
 import EditAdminVehicle from "./EditAdminVehicle";
 import moment from "moment";
+import { useSelector } from "react-redux";
 import { UserDetailModal } from "../components/UserDetailModal/UserDetail";
 
-export const VehicleApproval = () => {
+export const UnsoldVehicles = () => {
+  const { currentUser } = useSelector((state) => state?.auth);
   const [actionMenuOpen, setActionMenuOpen] = useState(null);
   const [search, setSearch] = useState("");
   const [vehicles, setVehicles] = useState([]);
@@ -54,7 +56,7 @@ export const VehicleApproval = () => {
     setLoading(true);
     try {
       const res = await axios.get(
-        `${BASE_URL}/getUnApprovedVehiclesbyDateRange/${dateRange.fromDate}/${dateRange.toDate}`
+        `${BASE_URL}/UnsoldVehicleListbyDateRange/${currentUser.role}/${dateRange.fromDate}/${dateRange.toDate}/${currentUser?.id}`
       );
       console.log(res.data);
       setVehicles(res.data || []);
@@ -194,14 +196,6 @@ export const VehicleApproval = () => {
     }
   };
 
-  const handleViewDetails = (vehicle) => {
-    console.log("View Details Clicked!", vehicle);
-    setSelectedVehicle(vehicle);
-    setCurrentImageIndex(0);
-    setIsViewModalOpen(true);
-    setActionMenuOpen(null);
-  };
-
   const handleViewUserDetail = async (id) => {
     try {
       const res = await axios.get(
@@ -212,6 +206,14 @@ export const VehicleApproval = () => {
     } catch (error) {
       console.log(error);
     }
+  };
+
+  const handleViewDetails = (vehicle) => {
+    console.log("View Details Clicked!", vehicle);
+    setSelectedVehicle(vehicle);
+    setCurrentImageIndex(0);
+    setIsViewModalOpen(true);
+    setActionMenuOpen(null);
   };
 
   const handleUpdateVehicle = (vehicle, openModel) => {
@@ -301,7 +303,7 @@ export const VehicleApproval = () => {
     <div className="max-h-screen bg-gray-100 p-6">
       <div className="flex flex-col sm:flex-row justify-between items-center mb-6">
         <h2 className="lg:text-3xl text-xl font-bold text-gray-800 text-center">
-          Pending Vehicle Approvals
+          UnSold Vehicles
         </h2>
 
         <div className="relative w-full sm:w-80 mt-4 sm:mt-0">
@@ -321,7 +323,7 @@ export const VehicleApproval = () => {
 
       <div className="flex flex-col lg:flex-row items-start lg:items-center justify-between mb-6 gap-4">
         <div className="text-gray-800 font-semibold text-2xl">
-          Total Pending: {totalItems}
+          Total Vehicle: {totalItems}
         </div>
 
         <div className="flex flex-col sm:flex-row items-center gap-4">
@@ -368,7 +370,7 @@ export const VehicleApproval = () => {
               <thead className="bg-blue-950 text-white">
                 <tr>
                   <th className="p-4 text-start text-sm font-semibold">Sr</th>
-                  <th className="p-1 text-left text-sm font-semibold">
+                  <th className="p-4 text-left text-sm font-semibold">
                     Seller Name
                   </th>
                   <th className="p-4 text-left text-sm font-semibold">
@@ -398,12 +400,12 @@ export const VehicleApproval = () => {
                     key={vehicle.id}
                     className="hover:bg-gray-50 transition-colors"
                   >
-                    <td className="px-4 text-start text-gray-600">
+                    <td className="p-3 text-start text-gray-600">
                       {startIndex + index + 1}
                     </td>
 
                     <td
-                      className="p-1 hover:cursor-pointer"
+                      className="hover:cursor-pointer"
                       onClick={() => {
                         handleIsOpen("detail");
                         handleViewUserDetail(vehicle.userId);
@@ -499,15 +501,15 @@ export const VehicleApproval = () => {
                     <td className="p-1">
                       <div className="flex flex-col">
                         <span className="text-sm text-gray-700">
-                          {vehicle?.VehicleCreatedAt
-                            ? new Date(
-                                vehicle.VehicleCreatedAt
-                              ).toLocaleDateString("en-GB")
+                          {vehicle?.bidCreatedAt
+                            ? new Date(vehicle.bidCreatedAt).toLocaleDateString(
+                                "en-GB"
+                              )
                             : "N/A"}
                         </span>
                         <span className="text-xs text-gray-500">
-                          {vehicle?.VehicleCreatedAt
-                            ? moment(vehicle.VehicleCreatedAt)
+                          {vehicle?.bidCreatedAt
+                            ? moment(vehicle.bidCreatedAt)
                                 .local()
                                 .format("hh:mm A")
                             : "--"}
@@ -913,7 +915,6 @@ export const VehicleApproval = () => {
           onVehicleUpdated={handleGetAllUnapprovalVehicles}
         />
       )}
-
       {isOpen === "detail" && (
         <UserDetailModal
           isOpen={isOpen}

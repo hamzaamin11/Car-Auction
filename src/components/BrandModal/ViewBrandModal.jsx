@@ -41,9 +41,7 @@ export const ViewBrandModal = ({ selectedVehicle, handleClick }) => {
         </button>
 
         {/* Header */}
-        <h2 className="text-xl font-bold text-gray-800 mb-6">
-          View Vehicle
-        </h2>
+        <h2 className="text-xl font-bold text-gray-800 mb-6">View Vehicle</h2>
 
         {/* Grid Layout */}
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
@@ -153,6 +151,10 @@ export const ViewBrandModal = ({ selectedVehicle, handleClick }) => {
               </button>
             </div>
           </div>
+        </div>
+        <div className="space-y-2 mt-2 text-sm text-gray-800">
+          <span className="font-bold ">Description:</span>{" "}
+          {selectedVehicle?.description || "--"}
         </div>
       </div>
     </div>

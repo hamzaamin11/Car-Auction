@@ -81,7 +81,7 @@ const SoldVehicles = () => {
   return (
     <>
     
-      <div className="min-h-screen bg-gray-50 p-1 md:p-6">
+      <div className="max-h-screen bg-gray-50 p-1 md:p-6">
         <div className="flex flex-col sm:flex-row justify-between items-center gap-4 mb-6 px-3">
           <h1 className="text-2xl md:text-3xl font-bold text-gray-800 px-5">
             Sold Vehicles

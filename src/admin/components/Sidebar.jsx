@@ -40,14 +40,17 @@ const Sidebar = () => {
         { name: "Approved Vehicles", path: "/admin/vehicles" },
         { name: "Pending Vehicles", path: "/admin/approval" },
         { name: "Awaiting Approval", path: "/admin/awaiting" },
-        { name: "Past Auction Vehicles", path: "/admin/pastvehicle" },
+        { name: "Un-Sold Vehicles", path: "/admin/unsold" },
+        { name: "Sold Vehicles", path: "/admin/pastvehicle" },
       ],
     },
     {
       name: "Auctions",
       icon: <FaGavel />,
       children: [
-        { name: "Auction Event", path: "/admin/auctionevent" },
+        // { name: "Auction Event", path: "/admin/auctionevent" },
+        { name: "Event Auction", path: "/admin/eventauction" },
+        { name: "Assign Event", path: "/admin/assignevent" },
         { name: "Live Auctions", path: "/admin/live-auctions" },
         { name: "Upcoming Auctions", path: "/admin/upcoming-auctions" },
         { name: "Auction History", path: "/admin/bid-history" },
@@ -182,7 +185,6 @@ const Sidebar = () => {
                               }
                             >
                               <div className="flex items-center">
-                                <FaChevronRight className="mr-2 text-xs" />
                                 {child.name}
                               </div>
                             </NavLink>

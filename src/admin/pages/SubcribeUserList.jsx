@@ -78,7 +78,7 @@ export const SubcribeUserList = () => {
   };
 
   return (
-    <div className="min-h-screen bg-gray-100 p-4 sm:p-6">
+    <div className="max-h-screen bg-gray-100 p-4 ">
       <div className="flex flex-col sm:flex-row justify-between items-center gap-4 mb-3">
         <h2 className="lg:text-3xl text-xl font-bold text-gray-800">
           Subcribe Users List
@@ -113,32 +113,99 @@ export const SubcribeUserList = () => {
 
       {/* Desktop Table – 100% unchanged */}
       <div className="hidden md:block">
-        <table className="w-full bg-white shadow-md rounded-lg overflow-hidden text-sm">
-          <thead className="bg-blue-950 text-white rounded-t-lg">
-            <tr>
-              <th className="py-3 px-4 text-left rounded-tl-lg">SR#</th>
-              <th className="py-3 px-85 text-left">Email</th>
-            </tr>
-          </thead>
-          <tbody>
-            {currentItems.length > 0 ? (
-              currentItems.map((contact, index) => (
-                <tr key={contact.id} className="border-b">
-                  <td className="py-2 px-4 whitespace-nowrap">
-                    {startIndex + index + 1}
-                  </td>
-                  <td className="py-2 px-75">{contact?.email}</td>
-                </tr>
-              ))
-            ) : (
-              <tr>
-                <td colSpan="2" className="py-8 text-center text-gray-400">
-                  No Emails found.
-                </td>
+        <div className="bg-white shadow-lg rounded overflow-hidden border border-gray-600">
+          <table className="w-full">
+            <thead>
+              <tr className="bg-blue-950">
+                <th className="p-3 text-left text-sm font-semibold text-white">
+                  Sr
+                </th>
+                <th className="p-1 text-center text-sm font-semibold text-white">
+                  <div className="flex items-center space-x-2">
+                    <svg
+                      className="w-4 h-4"
+                      fill="none"
+                      stroke="currentColor"
+                      viewBox="0 0 24 24"
+                      xmlns="http://www.w3.org/2000/svg"
+                    >
+                      <path
+                        strokeLinecap="round"
+                        strokeLinejoin="round"
+                        strokeWidth="2"
+                        d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"
+                      ></path>
+                    </svg>
+                    <span>Email Address</span>
+                  </div>
+                </th>
               </tr>
-            )}
-          </tbody>
-        </table>
+            </thead>
+            <tbody className="divide-y divide-gray-600">
+              {currentItems.length > 0 ? (
+                currentItems.map((contact, index) => (
+                  <tr
+                    key={contact.id}
+                    className="hover:bg-blue-50 transition-colors duration-150"
+                  >
+                    <td className="p-3">{startIndex + index + 1}</td>
+                    <td className="p-1 capitalize">
+                      <div className="flex items-center space-x-2">
+                        <div className="w-8 h-8 flex items-center justify-center rounded-full bg-gray-100 text-gray-600">
+                          <svg
+                            className="w-5 h-5"
+                            fill="none"
+                            stroke="currentColor"
+                            viewBox="0 0 24 24"
+                            xmlns="http://www.w3.org/2000/svg"
+                          >
+                            <path
+                              strokeLinecap="round"
+                              strokeLinejoin="round"
+                              strokeWidth="2"
+                              d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"
+                            ></path>
+                          </svg>
+                        </div>
+                        <div>
+                          <p className=" text-sm text-gray-900">
+                            {contact?.email}
+                          </p>
+                        </div>
+                      </div>
+                    </td>
+                  </tr>
+                ))
+              ) : (
+                <tr>
+                  <td colSpan="2" className="py-16 text-center">
+                    <div className="flex flex-col items-center justify-center">
+                      <div className="w-16 h-16 bg-gray-100 rounded-full flex items-center justify-center mb-4">
+                        <svg
+                          className="w-8 h-8 text-gray-400"
+                          fill="none"
+                          stroke="currentColor"
+                          viewBox="0 0 24 24"
+                          xmlns="http://www.w3.org/2000/svg"
+                        >
+                          <path
+                            strokeLinecap="round"
+                            strokeLinejoin="round"
+                            strokeWidth="2"
+                            d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"
+                          ></path>
+                        </svg>
+                      </div>
+                      <h3 className="text-lg font-medium text-gray-700 mb-2">
+                        No emails found
+                      </h3>
+                    </div>
+                  </td>
+                </tr>
+              )}
+            </tbody>
+          </table>
+        </div>
       </div>
 
       {/* Mobile Cards – 100% unchanged */}
@@ -154,7 +221,8 @@ export const SubcribeUserList = () => {
                 <p className="flex justify-between">
                   <span className="font-bold text-gray-900">Email</span>
                   <span className="text-gray-700">
-                    {contact?.email.charAt(0).toUpperCase() + contact?.email.slice(1)}
+                    {contact?.email.charAt(0).toUpperCase() +
+                      contact?.email.slice(1)}
                   </span>
                 </p>
               </div>
@@ -206,7 +274,9 @@ export const SubcribeUserList = () => {
                   key={page}
                   onClick={() => goToPage(page)}
                   className={`px-3 py-1 rounded border ${
-                    currentPage === page ? "bg-blue-950 text-white" : "bg-white hover:bg-gray-50"
+                    currentPage === page
+                      ? "bg-blue-950 text-white"
+                      : "bg-white hover:bg-gray-50"
                   }`}
                 >
                   {page}
@@ -250,7 +320,9 @@ export const SubcribeUserList = () => {
             >
               X
             </button>
-            <h3 className="text-xl font-bold text-gray-800 mb-4">Subscribed Email</h3>
+            <h3 className="text-xl font-bold text-gray-800 mb-4">
+              Subscribed Email
+            </h3>
             <p className="text-gray-700">{selectedContact?.email}</p>
           </div>
         </div>

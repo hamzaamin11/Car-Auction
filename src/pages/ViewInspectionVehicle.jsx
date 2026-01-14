@@ -20,11 +20,20 @@ import Select from "react-select";
 import Dropdown from "../Dropdown"; // <-- Your custom dropdown
 import { InspectionDoc } from "../admin/components/InspectionModal/InspectionDoc";
 import { AdminVehicleInspectionDocsView } from "../components/AdminVehicleInspectionDocsView";
+import moment from "moment";
+
+const currentDate = new Date().toISOString().split("T")[0];
+
+const initialState = {
+  fromDate: currentDate,
+  toDate: currentDate,
+};
 
 const ViewInspectionVehicle = () => {
   const { user } = useAuth();
   const isCustomer = user?.role === "customer";
   const { currentUser } = useSelector((state) => state?.auth);
+  const [dateRange, setDateRange] = useState(initialState);
   const [isSellerBidModalOpen, setIsSellerBidModalOpen] = useState(false);
   const [sellerBidData, setSellerBidData] = useState(null);
   const [isCustomerBidModalOpen, setIsCustomerBidModalOpen] = useState(false);
@@ -177,6 +186,11 @@ const ViewInspectionVehicle = () => {
     }
   };
 
+  const handleChangeDate = (e) => {
+    const { name, value } = e.target;
+    setDateRange((prevState) => ({ ...prevState, [name]: value }));
+  };
+
   const handlePrevPage = () => {
     setPageNo(pageNo > 1 ? pageNo - 1 : 0);
   };
@@ -194,8 +208,10 @@ const ViewInspectionVehicle = () => {
   const handleGetAllVehicleById = async () => {
     try {
       const res = await axios.get(
-        `${BASE_URL}/getVehiclesByUserInspection/${currentUser?.id}/${
-          currentUser?.role
+        `${BASE_URL}/getVehiclesByUserInspectionbyDateRange/${
+          currentUser?.id
+        }/${currentUser?.role}/${dateRange.fromDate}/${
+          dateRange.toDate
         }?search=${search}&Entry=${10}&page=${pageNo}`
       );
       setAllVehicles(res.data);
@@ -357,7 +373,7 @@ const ViewInspectionVehicle = () => {
 
   return (
     <div
-      className="min-h-screen lg:p-6 px-2 bg-gradient-to-br from-gray-100 to-blue-50"
+      className="max-h-screen lg:p-6 px-2 bg-gradient-to-br from-gray-100 to-blue-50"
       onClick={handleDropdownClose}
     >
       <div className="max-w-7xl mx-auto">
@@ -393,13 +409,45 @@ const ViewInspectionVehicle = () => {
           </div>
         </header>
 
+        <div className="flex items-center justify-end mb-2">
+          <div className="flex items-center gap-4">
+            <div className="flex flex-col">
+              <label className="text-sm font-medium text-gray-800 mb-1">
+                From Date :
+              </label>
+              <input
+                type="date"
+                name="fromDate"
+                onChange={handleChangeDate}
+                value={dateRange.fromDate}
+                className="px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-900 focus:border-blue-900 focus:outline-none"
+              />
+            </div>
+
+            <div className="flex flex-col">
+              <label className="text-sm font-medium text-gray-800 mb-1">
+                To Date :
+              </label>
+              <input
+                type="date"
+                name="toDate"
+                onChange={handleChangeDate}
+                value={dateRange.toDate}
+                className="px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-900 focus:border-blue-900 focus:outline-none"
+              />
+            </div>
+          </div>
+        </div>
+
         <section className="lg:mt-6 mt-3 space-y-4 max-h-[55vh] overflow-y-auto md:hidden block">
           {loading ? (
             <p className="text-center text-indigo-600 font-semibold">
               Loading vehicles...
             </p>
           ) : currentCars.length === 0 ? (
-            <p className="text-center text-gray-600">No vehicles found.</p>
+            <p className="text-center text-gray-600">
+              No vehicles found or Please change your date range.
+            </p>
           ) : (
             currentCars?.map((vehicle) => (
               <div
@@ -673,149 +721,293 @@ const ViewInspectionVehicle = () => {
               Loading vehicles...
             </p>
           ) : currentCars.length === 0 ? (
-            <p className="text-center text-gray-600">No vehicles found.</p>
+            <p className="text-center text-gray-600">
+              No vehicles found or Please change your date range.
+            </p>
           ) : (
-            currentCars?.map((vehicle) => (
-              <div
-                key={vehicle.newVehicleId}
-                className="bg-white border rounded-xl shadow-sm hover:shadow-md transition p-4 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4"
-              >
-                <div className="w-full sm:w-40 sm:h-28 rounded-lg overflow-hidden bg-gray-100">
-                  <img
-                    src={vehicle.images[0]}
-                    alt={`${vehicle.make} ${vehicle.model}`}
-                    className="w-full h-full object-cover hover:cursor-pointer"
-                    onClick={() => (
-                      setSelectVehicle(vehicle), handleIsOpenToggle("View")
-                    )}
-                  />
-                </div>
-                <div className="flex-1 min-w-0 space-y-1">
-                  <h2 className="font-bold text-gray-800">
-                    {vehicle.make || "—"} {vehicle.model || "—"}{" "}
-                    {vehicle.series || "—"}
-                  </h2>
-                  <p className="text-lg font-bold text-gray-800">
-                    PKR {vehicle.buyNowPrice}
-                  </p>
-                  <div className="flex flex-wrap gap-1 text-sm text-gray-500">
-                    <span>{vehicle.year || "—"}</span>|
-                    <span>{vehicle.mileage || "—"}KM</span>|
-                    <span>
-                      {vehicle?.fuelType
-                        ? vehicle.fuelType.charAt(0).toUpperCase() +
-                          vehicle.fuelType.slice(1)
-                        : "—"}
-                    </span>
-                    |<span>{vehicle.color || "—"}</span>|
-                    <span>{vehicle.transmission || "—"}</span>|
-                    <span>{vehicle.cityName || "—"}</span>|
-                    <span
-                      className={`text-xs text-center rounded p-1 ${
-                        vehicle.approval === "Y"
-                          ? "bg-green-500 text-white"
-                          : "bg-red-500 text-white"
-                      }`}
-                    >
-                      {vehicle.approval === "Y" ? "Approved" : "Not Approved"}
-                    </span>
-                  </div>
-                </div>
-                <div className="relative flex-shrink-0">
-                  <button
-                    onClick={(e) => {
-                      e.stopPropagation();
-                      toggleDropdown(vehicle.newVehicleId);
-                    }}
-                    className="px-3 py-1 text-gray-600 text-xl"
-                  >
-                    <BsThreeDotsVertical />
-                  </button>
-                  {isDropdownOpen === vehicle.newVehicleId && (
-                    <div className="absolute right-0 mt-2 w-32 bg-white border rounded-lg shadow-lg z-10">
-                      {!isCustomer ? (
-                        <>
-                          <button
-                            onClick={(e) => {
-                              e.stopPropagation();
-                              handleIsOpenToggle("ViewDocsInpsection");
-                              setSelectVehicle(vehicle);
-                            }}
-                            className="block w-full text-left px-4 py-2 text-sm text-yellow-600 hover:bg-yellow-100 rounded-t-lg"
-                          >
-                            View Docs
-                          </button>
-                          {vehicle.bidId ? (
-                            <button
-                              onClick={(e) => {
-                                e.stopPropagation();
-                                handleEndBidding(vehicle.bidId);
-                                handleIsOpenToggle("bid");
+            <div className="max-w-7xl mx-auto px-2 lg:px-0">
+              <div className="overflow-x-auto rounded">
+                <table className="w-full border-collapse border overflow-hidden">
+                  <thead className="bg-blue-950 text-white">
+                    <tr>
+                      <th className="p-3 text-start text-sm font-semibold">
+                        Sr
+                      </th>
+                      <th className="p-1 text-left text-sm font-semibold">
+                        Vehicle Name
+                      </th>
+
+                      <th className="p-1 text-left text-sm font-semibold">
+                        Lot#
+                      </th>
+                      <th className="p-1 text-left text-sm font-semibold">
+                        Year
+                      </th>
+                      <th className="p-1 text-left text-sm font-semibold">
+                        Fuel Type
+                      </th>
+                      <th className="p-1 text-left text-sm font-semibold">
+                        Color
+                      </th>
+                      <th className="p-1 text-left text-sm font-semibold">
+                        City
+                      </th>
+                      <th className="p-1 text-left text-sm font-semibold">
+                        Date / Time
+                      </th>
+                      <th className="p-1 text-left text-sm font-semibold">
+                        Reserve Price
+                      </th>
+                      <th className="p-1 text-left text-sm font-semibold">
+                        Status
+                      </th>
+                      <th className="p-1 text-left text-sm font-semibold">
+                        Actions
+                      </th>
+                    </tr>
+                  </thead>
+                  <tbody className="divide-y">
+                    {currentCars.map((vehicle, index) => (
+                      <tr
+                        key={vehicle.newVehicleId}
+                        className="hover:bg-gray-50 transition-colors"
+                      >
+                        {/* Serial Number */}
+                        <td className="p-1">
+                          <span className="text-sm text-gray-600 px-2">
+                            {index + 1}
+                          </span>
+                        </td>
+
+                        {/* Vehicle with Image */}
+                        <td className="p-1">
+                          <div className="flex items-center gap-3">
+                            <div
+                              className="w-12 h-12 rounded-full overflow-hidden bg-gray-100 cursor-pointer"
+                              onClick={() => {
+                                setSelectVehicle(vehicle);
+                                handleIsOpenToggle("View");
                               }}
-                              className="block w-full text-left px-4 py-2 text-sm text-green-500 hover:bg-green-500 hover:text-white"
                             >
-                              Bid Added
-                            </button>
-                          ) : (
-                            <button
-                              onClick={(e) => {
-                                e.stopPropagation();
-                                handleUpdateInspectionStatus(
-                                  "approved",
-                                  vehicle?.inspectionId
-                                );
-                                handleIsOpenToggle("");
+                              <img
+                                src={vehicle.images[0]}
+                                alt={`${vehicle.make} ${vehicle.model}`}
+                                className="w-full h-full object-cover"
+                              />
+                            </div>
+                            <div
+                              className="cursor-pointer"
+                              onClick={() => {
+                                setSelectVehicle(vehicle);
+                                handleIsOpenToggle("View");
                               }}
-                              className={`block w-full text-left px-4 py-2 text-sm text-green-600 hover:bg-green-100 rounded ${
-                                vehicle?.inspectionStatus === "approved" ||
-                                vehicle?.inspectionStatus === "rejected"
-                                  ? "text-green-300 bg-gray-100 cursor-not-allowed"
-                                  : "text-green-600 hover:bg-green-100"
-                              }`}
                             >
-                              Approved
-                            </button>
-                          )}
-                          <button
-                            onClick={(e) => {
-                              e.stopPropagation();
-                              handleUpdateInspectionStatus(
-                                "rejected",
-                                vehicle?.inspectionId
-                              );
-                            }}
-                            className={`block w-full text-left px-4 py-2 text-sm text-red-600 hover:bg-red-100 rounded-b-lg ${
-                              vehicle?.inspectionStatus === "approved" ||
-                              vehicle?.inspectionStatus === "rejected"
-                                ? "text-red-300 bg-gray-100 cursor-not-allowed"
-                                : "text-red-600 hover:bg-green-100"
+                              <div
+                                className="cursor-pointer min-w-0"
+                                onClick={() => handleViewClick(vehicle)}
+                              >
+                                <h2 className="text-sm font-bold text-gray-800 truncate">
+                                  {vehicle.make.charAt(0).toUpperCase() +
+                                    vehicle.make.slice(1)}{" "}
+                                  {vehicle.model.charAt(0).toUpperCase() +
+                                    vehicle.model.slice(1)}
+                                </h2>
+                                <p className="text-xs text-gray-500 truncate">
+                                  {vehicle.series.charAt(0).toUpperCase() +
+                                    vehicle.series.slice(1)}
+                                </p>
+                              </div>
+                            </div>
+                          </div>
+                        </td>
+
+                        {/* Year */}
+                        <td className="p-1">
+                          <span className="text-sm text-gray-600">
+                            {vehicle.lot_number || "—"}
+                          </span>
+                        </td>
+
+                        {/* Mileage */}
+                        <td className="p-1">
+                          <span className="text-sm text-gray-600">
+                            {vehicle.year || "—"}
+                          </span>
+                        </td>
+
+                        {/* Fuel Type */}
+                        <td className="p-1">
+                          <span className="text-sm text-gray-600">
+                            {vehicle?.fuelType
+                              ? vehicle.fuelType.charAt(0).toUpperCase() +
+                                vehicle.fuelType.slice(1)
+                              : "—"}
+                          </span>
+                        </td>
+
+                        {/* Color */}
+                        <td className="p-1">
+                          <span className="text-sm text-gray-600">
+                            {vehicle.color || "—"}
+                          </span>
+                        </td>
+
+                        {/* City */}
+                        <td className="p-1">
+                          <span className="text-sm text-gray-600">
+                            {vehicle.cityName || "—"}
+                          </span>
+                        </td>
+
+                        {/* Time Stamp */}
+                        <td className="p-1 text-gray-700">
+                          <div className="flex flex-col">
+                            <span>
+                              {vehicle?.createdAt
+                                ? new Date(
+                                    vehicle?.createdAt
+                                  ).toLocaleDateString("en-GB")
+                                : "N/A"}
+                            </span>
+                            <span className="text-xs text-gray-500">
+                              {vehicle?.createdAt
+                                ? moment(vehicle?.createdAt)
+                                    .local()
+                                    .format("hh:mm A")
+                                : "--"}
+                            </span>
+                          </div>
+                        </td>
+
+                        {/* Price */}
+                        <td className="p-1">
+                          <p className="text-sm font-bold text-gray-800">
+                            PKR {vehicle.buyNowPrice}
+                          </p>
+                        </td>
+
+                        {/* Status */}
+                        <td className="p-1">
+                          <span
+                            className={`text-xs text-center rounded p-1 ${
+                              vehicle.approval === "Y"
+                                ? "bg-green-500 text-white"
+                                : "bg-red-500 text-white"
                             }`}
                           >
-                            Reject
-                          </button>
-                        </>
-                      ) : (
-                        <button
-                          onClick={(e) => {
-                            e.stopPropagation();
-                            setCustomerBidData({
-                              userId: user?.id,
-                              vehicleId: vehicle.id,
-                              maxBid: "",
-                              monsterBid: "",
-                            });
-                            setIsCustomerBidModalOpen(true);
-                          }}
-                          className="block w-full text-left px-4 py-2 text-sm text-blue-500 hover:bg-blue-500 hover:text-white"
-                        >
-                          Create Bid
-                        </button>
-                      )}
-                    </div>
-                  )}
-                </div>
+                            {vehicle.approval === "Y"
+                              ? "Approved"
+                              : "Not Approved"}
+                          </span>
+                        </td>
+
+                        {/* Actions */}
+                        <td className="p-1">
+                          <div className="relative">
+                            <button
+                              onClick={(e) => {
+                                e.stopPropagation();
+                                toggleDropdown(vehicle.newVehicleId);
+                              }}
+                              className="px-3 py-1 text-gray-600 text-xl"
+                            >
+                              <BsThreeDotsVertical />
+                            </button>
+                            {isDropdownOpen === vehicle.newVehicleId && (
+                              <div className="absolute right-0 mt-2 w-32 bg-white border rounded-lg shadow-lg z-10">
+                                {!isCustomer ? (
+                                  <>
+                                    <button
+                                      onClick={(e) => {
+                                        e.stopPropagation();
+                                        handleIsOpenToggle(
+                                          "ViewDocsInpsection"
+                                        );
+                                        setSelectVehicle(vehicle);
+                                      }}
+                                      className="block w-full text-left px-4 py-2 text-sm text-yellow-600 hover:bg-yellow-100 rounded-t-lg"
+                                    >
+                                      View Docs
+                                    </button>
+                                    {vehicle.bidId ? (
+                                      <button
+                                        onClick={(e) => {
+                                          e.stopPropagation();
+                                          handleEndBidding(vehicle.bidId);
+                                          handleIsOpenToggle("bid");
+                                        }}
+                                        className="block w-full text-left px-4 py-2 text-sm text-green-500 hover:bg-green-500 hover:text-white"
+                                      >
+                                        Bid Added
+                                      </button>
+                                    ) : (
+                                      <button
+                                        onClick={(e) => {
+                                          e.stopPropagation();
+                                          handleUpdateInspectionStatus(
+                                            "approved",
+                                            vehicle?.inspectionId
+                                          );
+                                          handleIsOpenToggle("");
+                                        }}
+                                        className={`block w-full text-left px-4 py-2 text-sm text-green-600 hover:bg-green-100 rounded ${
+                                          vehicle?.inspectionStatus ===
+                                            "approved" ||
+                                          vehicle?.inspectionStatus ===
+                                            "rejected"
+                                            ? "text-green-300 bg-gray-100 cursor-not-allowed"
+                                            : "text-green-600 hover:bg-green-100"
+                                        }`}
+                                      >
+                                        Approved
+                                      </button>
+                                    )}
+                                    <button
+                                      onClick={(e) => {
+                                        e.stopPropagation();
+                                        handleUpdateInspectionStatus(
+                                          "rejected",
+                                          vehicle?.inspectionId
+                                        );
+                                      }}
+                                      className={`block w-full text-left px-4 py-2 text-sm text-red-600 hover:bg-red-100 rounded-b-lg ${
+                                        vehicle?.inspectionStatus ===
+                                          "approved" ||
+                                        vehicle?.inspectionStatus === "rejected"
+                                          ? "text-red-300 bg-gray-100 cursor-not-allowed"
+                                          : "text-red-600 hover:bg-green-100"
+                                      }`}
+                                    >
+                                      Reject
+                                    </button>
+                                  </>
+                                ) : (
+                                  <button
+                                    onClick={(e) => {
+                                      e.stopPropagation();
+                                      setCustomerBidData({
+                                        userId: user?.id,
+                                        vehicleId: vehicle.id,
+                                        maxBid: "",
+                                        monsterBid: "",
+                                      });
+                                      setIsCustomerBidModalOpen(true);
+                                    }}
+                                    className="block w-full text-left px-4 py-2 text-sm text-blue-500 hover:bg-blue-500 hover:text-white"
+                                  >
+                                    Create Bid
+                                  </button>
+                                )}
+                              </div>
+                            )}
+                          </div>
+                        </td>
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
               </div>
-            ))
+            </div>
           )}
           {/* ✅ Pagination OUTSIDE the map */}
           {currentCars.length > 0 && (

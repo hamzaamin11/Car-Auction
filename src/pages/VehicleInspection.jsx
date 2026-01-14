@@ -53,6 +53,13 @@ const VehicleInspection = () => {
     image: [],
   };
 
+  const currentDate = new Date().toISOString().split("T")[0];
+
+  const initialState = {
+    fromDate: currentDate,
+    toDate: currentDate,
+  };
+
   const [vehicleData, setVehicleData] = useState(initialFields);
   const selected = useSelector((state) => state.carSelector);
   const [vehicles, setVehicles] = useState([]);
@@ -63,6 +70,7 @@ const VehicleInspection = () => {
   const [preview, setPreview] = useState([]);
   const [isOpen, setIsOpen] = useState("");
   const [search, setSearch] = useState("");
+  const [dateRange, setDateRange] = useState(initialState);
   const [formOpen, setFormOpen] = useState(false);
   const [loading, setLoading] = useState(false);
   const [editId, setEditId] = useState(null);
@@ -208,6 +216,11 @@ const VehicleInspection = () => {
     setPageNo(pageNo + 1);
   };
 
+  const handleChangeDate = (e) => {
+    const { name, value } = e.target;
+    setDateRange((prevState) => ({ ...prevState, [name]: value }));
+  };
+
   const totalPages = Math.ceil(allVehicles.length / carsPerPage);
   const startIndex = (currentPage - 1) * carsPerPage;
   const endIndex = Math.min(startIndex + carsPerPage, allVehicles.length);
@@ -246,9 +259,11 @@ const VehicleInspection = () => {
   const handleGetAllVehicleById = async () => {
     try {
       const res = await axios.get(
-        `${BASE_URL}/getVehiclesByUserInspection/${currentUser?.id}/${
-          currentUser?.role
-        }?search=${search}&Entry=${10}&page=${pageNo}`
+        `${BASE_URL}/getVehiclesByUserInspectionbyDateRange/${
+          currentUser?.id
+        }/${currentUser?.role}/${dateRange.fromDate}/${
+          dateRange.toDate
+        }/?search=${search}&Entry=${10}&page=${pageNo}`
       );
       setAllVehicles(res.data);
     } catch (error) {
@@ -258,7 +273,7 @@ const VehicleInspection = () => {
 
   useEffect(() => {
     handleGetAllVehicleById();
-  }, [search, pageNo]);
+  }, [search, pageNo, dateRange]);
   // Auto-select the user's saved city when "Add Vehicle" form opens
   useEffect(() => {
     if (formOpen && currentUser?.city && allCities.length > 0) {
@@ -419,7 +434,7 @@ const VehicleInspection = () => {
 
   return (
     <div
-      className="min-h-screen lg:p-6 px-2 bg-gradient-to-br from-gray-100 to-blue-50"
+      className="max-h-screen lg:p-6 px-2 bg-gradient-to-br from-gray-100 to-blue-50"
       onClick={handleDropdownClose}
     >
       <div className="max-w-7xl mx-auto">
@@ -454,6 +469,36 @@ const VehicleInspection = () => {
             />
           </div>
         </header>
+
+        <div className="flex items-center justify-end mb-2">
+          <div className="flex items-center gap-4">
+            <div className="flex flex-col">
+              <label className="text-sm font-medium text-gray-800 mb-1">
+                From Date :
+              </label>
+              <input
+                type="date"
+                name="fromDate"
+                onChange={handleChangeDate}
+                value={dateRange.fromDate}
+                className="px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-900 focus:border-blue-900 focus:outline-none"
+              />
+            </div>
+
+            <div className="flex flex-col">
+              <label className="text-sm font-medium text-gray-800 mb-1">
+                To Date :
+              </label>
+              <input
+                type="date"
+                name="toDate"
+                onChange={handleChangeDate}
+                value={dateRange.toDate}
+                className="px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-900 focus:border-blue-900 focus:outline-none"
+              />
+            </div>
+          </div>
+        </div>
 
         <section className="lg:mt-6 mt-3 space-y-4 max-h-[55vh] overflow-y-auto md:hidden block">
           {loading ? (
@@ -714,234 +759,518 @@ const VehicleInspection = () => {
         </section>
 
         <section
-          className="lg:mt-6  overflow-y-auto md:block hidden pb-10 space-y-2"
+          className="lg:mt-6 overflow-y-auto md:block hidden pb-10"
           style={{ maxHeight: "calc(100vh - 210px)" }}
         >
           {loading ? (
-            <p className="text-center text-indigo-600 font-semibold">
-              Loading vehicles...
-            </p>
-          ) : currentCars.length === 0 ? (
-            <p className="text-center text-gray-600">No vehicles found.</p>
-          ) : (
-            currentCars?.map((vehicle) => (
-              <div
-                key={vehicle.newVehicleId}
-                className="bg-white border rounded-xl shadow-sm hover:shadow-md transition p-4 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4"
-              >
-                <div className="w-full sm:w-40 sm:h-28 rounded-lg overflow-hidden bg-gray-100">
-                  <img
-                    src={vehicle.images[0]}
-                    alt={`${vehicle.make} ${vehicle.model}`}
-                    className="w-full h-full object-cover hover:cursor-pointer"
-                    onClick={() => (
-                      setSelectVehicle(vehicle), handleIsOpenToggle("View")
-                    )}
-                  />
-                </div>
-                <div className="flex-1 min-w-0 space-y-1 ">
-                  <h2 className="font-bold text-gray-800">
-                    {vehicle.make || "—"} {vehicle.model || "—"}{" "}
-                    {vehicle.series || "—"}
-                  </h2>
-                  <p className="text-lg font-bold text-gray-800">
-                    PKR {vehicle.buyNowPrice}
-                  </p>
-                  <div className="flex flex-wrap gap-1 text-sm text-gray-500">
-                    <span>{vehicle.year || "—"}</span>|
-                    <span>{vehicle.mileage || "—"}KM</span>|
-                    <span>
-                      {vehicle.fuelType.charAt(0).toUpperCase() +
-                        vehicle.fuelType.slice(1)}
-                    </span>
-                    |<span>{vehicle.color || "—"}</span>|
-                    <span>{vehicle.transmission || "—"}</span>|
-                    <span>{vehicle.cityName || "—"}</span>|
-                    <span
-                      className={`text-xs text-center rounded p-1 ${
-                        vehicle.inspectionStatus === "approved"
-                          ? "bg-green-500 text-white"
-                          : "bg-red-500 text-white"
-                      }`}
-                    >
-                      {vehicle.approval === "Y" ? "Approved" : "Not Approved"}
-                    </span>
-                  </div>
-                </div>
-                <div className="relative flex-shrink-0">
-                  <button
-                    onClick={(e) => {
-                      e.stopPropagation();
-                      toggleDropdown(vehicle.newVehicleId);
-                    }}
-                    className="px-3 py-1 text-gray-600 text-xl"
-                  >
-                    <BsThreeDotsVertical />
-                  </button>
-                  {isDropdownOpen === vehicle.newVehicleId && (
-                    <div className="absolute right-0 mt-2 w-32 bg-white border rounded-lg shadow-lg z-10">
-                      {!isCustomer ? (
-                        <>
-                          <button
-                            onClick={(e) => {
-                              e.stopPropagation();
-                              handleIsOpenToggle("inspection");
-                              setSelectVehicle(vehicle);
-                            }}
-                            className={`block w-full text-left px-4 py-2 text-sm text-yellow-600 hover:bg-yellow-100 rounded-t-lg ${
-                              vehicle?.inspectionStatus === "approved" ||
-                              vehicle?.inspectionStatus === "rejected"
-                                ? "text-yellow-300 bg-gray-100 cursor-not-allowed"
-                                : "text-yellow-600 hover:bg-yellow-100"
-                            }`}
-                          >
-                            Upload Docs
-                          </button>
-                          {vehicle.bidId ? (
-                            <button
-                              onClick={(e) => {
-                                e.stopPropagation();
-                                handleEndBidding(vehicle.bidId);
-                                handleIsOpenToggle("bid");
-                              }}
-                              className="block w-full text-left px-4 py-2 text-sm text-green-500 hover:bg-green-500 hover:text-white"
-                            >
-                              Bid Added
-                            </button>
-                          ) : (
-                            <button
-                              onClick={(e) => {
-                                e.stopPropagation();
-                                setSelectVehicle(vehicle);
-                                handleIsOpenToggle("View");
-                              }}
-                              className="block w-full text-left px-4 py-2 text-sm text-green-600 hover:bg-green-100 rounded"
-                            >
-                              View Vehicle
-                            </button>
-                          )}
-                        </>
-                      ) : (
-                        <button
-                          onClick={(e) => {
-                            e.stopPropagation();
-                            setCustomerBidData({
-                              userId: user?.id,
-                              vehicleId: vehicle.id,
-                              maxBid: "",
-                              monsterBid: "",
-                            });
-                            setIsCustomerBidModalOpen(true);
-                          }}
-                          className="block w-full text-left px-4 py-2 text-sm text-blue-500 hover:bg-blue-500 hover:text-white"
-                        >
-                          Create Bid
-                        </button>
-                      )}
-                    </div>
-                  )}
-                </div>
-              </div>
-            ))
-          )}
-          {/* ✅ Pagination OUTSIDE the map */}
-          {currentCars.length > 0 && (
-            <div className="bg-white rounded-lg shadow-sm p-4 mt-6">
-              <div className="flex flex-col sm:flex-row justify-between items-center gap-4 text-sm text-gray-700">
-                {/* Showing X to Y of Z */}
-                <div className="text-gray-600">
-                  Showing{" "}
-                  <span className="font-medium">
-                    {startIndex + 1} to {endIndex}
-                  </span>{" "}
-                  of <span className="font-medium">{allVehicles.length}</span>{" "}
-                  entries
-                </div>
-
-                {/* Page Buttons */}
-                <div className="flex items-center gap-1">
-                  <button
-                    onClick={() => {
-                      setCurrentPage(1);
-                      window.scrollTo({ top: 0, behavior: "smooth" });
-                    }}
-                    disabled={currentPage === 1}
-                    className={`px-3 py-1 rounded border ${
-                      currentPage === 1
-                        ? "bg-gray-100 text-gray-400 cursor-not-allowed"
-                        : "bg-white text-gray-700 hover:bg-gray-50"
-                    }`}
-                  >
-                    {"<<"}
-                  </button>
-
-                  <button
-                    onClick={goToPrevPage}
-                    disabled={currentPage === 1}
-                    className={`px-3 py-1 rounded border ${
-                      currentPage === 1
-                        ? "bg-gray-100 text-gray-400 cursor-not-allowed"
-                        : "bg-white text-gray-700 hover:bg-gray-50"
-                    }`}
-                  >
-                    {"<"}
-                  </button>
-
-                  {Array.from({ length: Math.min(5, totalPages) }, (_, i) => {
-                    let pageNum;
-                    if (totalPages <= 5) pageNum = i + 1;
-                    else if (currentPage <= 3) pageNum = i + 1;
-                    else if (currentPage >= totalPages - 2)
-                      pageNum = totalPages - 4 + i;
-                    else pageNum = currentPage - 2 + i;
-
-                    return (
-                      <button
-                        key={pageNum}
-                        onClick={() => {
-                          setCurrentPage(pageNum);
-                          window.scrollTo({ top: 0, behavior: "smooth" });
-                        }}
-                        className={`px-3 py-1 rounded border ${
-                          currentPage === pageNum
-                            ? "bg-blue-950 text-white"
-                            : "bg-white text-gray-700 hover:bg-gray-50"
-                        }`}
-                      >
-                        {pageNum}
-                      </button>
-                    );
-                  })}
-
-                  <button
-                    onClick={goToNextPage}
-                    disabled={currentPage === totalPages}
-                    className={`px-3 py-1 rounded border ${
-                      currentPage === totalPages
-                        ? "bg-gray-100 text-gray-400 cursor-not-allowed"
-                        : "bg-white text-gray-700 hover:bg-gray-50"
-                    }`}
-                  >
-                    {">"}
-                  </button>
-
-                  <button
-                    onClick={() => {
-                      setCurrentPage(totalPages);
-                      window.scrollTo({ top: 0, behavior: "smooth" });
-                    }}
-                    disabled={currentPage === totalPages}
-                    className={`px-3 py-1 rounded border ${
-                      currentPage === totalPages
-                        ? "bg-gray-100 text-gray-400 cursor-not-allowed"
-                        : "bg-white text-gray-700 hover:bg-gray-50"
-                    }`}
-                  >
-                    {">>"}
-                  </button>
-                </div>
-              </div>
+            <div className="flex justify-center items-center h-32">
+              <p className="text-center text-indigo-600 font-semibold">
+                Loading vehicles...
+              </p>
             </div>
+          ) : currentCars.length === 0 ? (
+            <div className="flex justify-center items-center h-32">
+              <p className="text-center text-gray-600">No vehicles found.</p>
+            </div>
+          ) : (
+            <>
+              {/* Table Container - Matching your desired style */}
+              <div className="bg-white rounded-lg shadow-sm overflow-hidden border">
+                <div className="overflow-x-auto">
+                  <table className="w-full border-collapse">
+                    <thead className="bg-blue-950 text-white">
+                      <tr>
+                        <th className="p-3 text-start text-sm font-semibold">
+                          Sr
+                        </th>
+                        <th className="p-1 text-left text-sm font-semibold">
+                          Vehicle Name
+                        </th>
+                        <th className="p-1 text-left text-sm font-semibold">
+                          Lot#
+                        </th>
+                        <th className="p-1 text-left text-sm font-semibold">
+                          Year
+                        </th>
+                        <th className="p-1 text-left text-sm font-semibold">
+                          Fuel Type
+                        </th>
+
+                        <th className="p-1 text-left text-sm font-semibold">
+                          City
+                        </th>
+                        <th className="p-1 text-left text-sm font-semibold">
+                          Reserve Price
+                        </th>
+                        <th className="p-1 text-left text-sm font-semibold">
+                          Inspection Status
+                        </th>
+                        <th className="p-1 text-left text-sm font-semibold">
+                          Actions
+                        </th>
+                      </tr>
+                    </thead>
+
+                    <tbody className="divide-y border-gray-600 border-b">
+                      {currentCars?.map((vehicle, index) => (
+                        <tr
+                          key={vehicle.newVehicleId}
+                          className="hover:bg-gray-50 transition-colors"
+                        >
+                          {/* Serial Number */}
+                          <td className="p-3 text-start text-gray-600">
+                            {index + 1}
+                          </td>
+
+                          {/* Vehicle with Image and Details */}
+                          <td className="p-1">
+                            <div className="flex items-center gap-3">
+                              <div
+                                className="w-12 h-12 rounded-full overflow-hidden bg-gray-100 flex-shrink-0 cursor-pointer"
+                                onClick={() => {
+                                  setSelectVehicle(vehicle);
+                                  handleIsOpenToggle("View");
+                                }}
+                              >
+                                <img
+                                  src={vehicle.images[0]}
+                                  alt={`${vehicle.make} ${vehicle.model}`}
+                                  className="h-full w-full object-cover"
+                                />
+                              </div>
+                              <div
+                                className="cursor-pointer min-w-0"
+                                onClick={() => {
+                                  setSelectVehicle(vehicle);
+                                  handleIsOpenToggle("View");
+                                }}
+                              >
+                                <h2 className="text-sm font-bold text-gray-800 truncate">
+                                  {vehicle.make || "—"} {vehicle.model || "—"}
+                                </h2>
+                                <p className="text-sm text-gray-500 truncate">
+                                  {vehicle.series?.charAt(0)?.toUpperCase() +
+                                    vehicle.series?.slice(1) || "—"}
+                                </p>
+                              </div>
+                            </div>
+                          </td>
+
+                          {/* Price */}
+                          <td className="p-1">
+                            <span className="text-sm">
+                              {vehicle.lot_number || "—"}
+                            </span>
+                          </td>
+
+                          {/* Details in a compact format */}
+                          <td className="p-1">
+                            <span className=" text-sm">
+                              {vehicle.year || "—"}
+                            </span>
+                          </td>
+
+                          <td className="p-1">
+                            <span className="text-sm">
+                              {vehicle.fuelType?.charAt(0)?.toUpperCase() +
+                                vehicle.fuelType?.slice(1) || "—"}
+                            </span>
+                          </td>
+
+                          <td className="p-1">
+                            <span className="  text-sm">
+                              {vehicle.cityName?.charAt(0)?.toUpperCase() +
+                                vehicle.cityName?.slice(1) || "—"}
+                            </span>
+                          </td>
+
+                          <td className="p-1">
+                            <span className="  text-sm">
+                              PKR {vehicle.buyNowPrice || "—"}
+                            </span>
+                          </td>
+
+                          {/* Inspection Status */}
+                          <td className="p-1">
+                            <div className="flex flex-col gap-1">
+                              <span
+                                className={`inline-flex items-center px-3 py-1 rounded-full text-xs font-medium ${
+                                  vehicle.approval === "Y"
+                                    ? "bg-green-100 text-green-800"
+                                    : vehicle.approval === "P"
+                                    ? "bg-yellow-100 text-yellow-800"
+                                    : "bg-red-100 text-red-800"
+                                }`}
+                              >
+                                {vehicle.approval === "Y"
+                                  ? "Approved"
+                                  : vehicle.approval === "P"
+                                  ? "Pending"
+                                  : "Rejected"}
+                              </span>
+                              <span
+                                className={`text-xs text-center rounded px-2 py-1 ${
+                                  vehicle.inspectionStatus === "approved"
+                                    ? "bg-green-500 text-white"
+                                    : vehicle.inspectionStatus === "pending"
+                                    ? "bg-yellow-500 text-white"
+                                    : "bg-red-500 text-white"
+                                }`}
+                              >
+                                {vehicle.inspectionStatus === "approved"
+                                  ? "Docs Approved"
+                                  : vehicle.inspectionStatus === "pending"
+                                  ? "Docs Pending"
+                                  : "Docs Required"}
+                              </span>
+                            </div>
+                          </td>
+
+                          {/* Actions */}
+                          <td className="p-1">
+                            <div className="relative">
+                              <button
+                                onClick={(e) => {
+                                  e.stopPropagation();
+                                  toggleDropdown(vehicle.newVehicleId);
+                                }}
+                                className="p-2 rounded-full hover:bg-gray-200 transition"
+                              >
+                                <BsThreeDotsVertical className="h-5 w-5 text-gray-600" />
+                              </button>
+
+                              {isDropdownOpen === vehicle.newVehicleId && (
+                                <div className="absolute right-0 mt-2 w-48 bg-white border rounded-lg shadow-lg z-10">
+                                  {!isCustomer ? (
+                                    <>
+                                      {/* Upload Docs Button - Conditional */}
+                                      <button
+                                        onClick={(e) => {
+                                          e.stopPropagation();
+                                          handleIsOpenToggle("inspection");
+                                          setSelectVehicle(vehicle);
+                                          toggleDropdown(null);
+                                        }}
+                                        disabled={
+                                          vehicle?.inspectionStatus ===
+                                            "approved" ||
+                                          vehicle?.inspectionStatus ===
+                                            "rejected"
+                                        }
+                                        className={`w-full px-4 py-2 text-sm text-left flex items-center gap-2 rounded-t-lg ${
+                                          vehicle?.inspectionStatus ===
+                                            "approved" ||
+                                          vehicle?.inspectionStatus ===
+                                            "rejected"
+                                            ? "text-gray-400 bg-gray-100 cursor-not-allowed"
+                                            : "text-yellow-600 hover:bg-yellow-100"
+                                        }`}
+                                      >
+                                        <svg
+                                          className="w-4 h-4"
+                                          fill="none"
+                                          stroke="currentColor"
+                                          viewBox="0 0 24 24"
+                                        >
+                                          <path
+                                            strokeLinecap="round"
+                                            strokeLinejoin="round"
+                                            strokeWidth={2}
+                                            d="M7 16a4 4 0 01-.88-7.903A5 5 0 1115.9 6L16 6a5 5 0 011 9.9M15 13l-3-3m0 0l-3 3m3-3v12"
+                                          />
+                                        </svg>
+                                        Upload Docs
+                                      </button>
+
+                                      {/* Bid Status / View Vehicle */}
+                                      {vehicle.bidId ? (
+                                        <button
+                                          onClick={(e) => {
+                                            e.stopPropagation();
+                                            handleEndBidding(vehicle.bidId);
+                                            handleIsOpenToggle("bid");
+                                            toggleDropdown(null);
+                                          }}
+                                          className="w-full px-4 py-2 text-sm text-green-600 hover:bg-green-100 text-left flex items-center gap-2"
+                                        >
+                                          <svg
+                                            className="w-4 h-4"
+                                            fill="none"
+                                            stroke="currentColor"
+                                            viewBox="0 0 24 24"
+                                          >
+                                            <path
+                                              strokeLinecap="round"
+                                              strokeLinejoin="round"
+                                              strokeWidth={2}
+                                              d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"
+                                            />
+                                          </svg>
+                                          Bid Added
+                                        </button>
+                                      ) : (
+                                        <button
+                                          onClick={(e) => {
+                                            e.stopPropagation();
+                                            setSelectVehicle(vehicle);
+                                            handleIsOpenToggle("View");
+                                            toggleDropdown(null);
+                                          }}
+                                          className="w-full px-4 py-2 text-sm text-blue-600 hover:bg-blue-100 text-left flex items-center gap-2"
+                                        >
+                                          <svg
+                                            className="w-4 h-4"
+                                            fill="none"
+                                            stroke="currentColor"
+                                            viewBox="0 0 24 24"
+                                          >
+                                            <path
+                                              strokeLinecap="round"
+                                              strokeLinejoin="round"
+                                              strokeWidth={2}
+                                              d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"
+                                            />
+                                            <path
+                                              strokeLinecap="round"
+                                              strokeLinejoin="round"
+                                              strokeWidth={2}
+                                              d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"
+                                            />
+                                          </svg>
+                                          View Vehicle
+                                        </button>
+                                      )}
+
+                                      {/* Approve/Reject based on status */}
+                                      {vehicle.approval !== "Y" && (
+                                        <button
+                                          onClick={(e) => {
+                                            e.stopPropagation();
+                                            // Handle approve function here
+                                            toggleDropdown(null);
+                                          }}
+                                          className="w-full px-4 py-2 text-sm text-green-600 hover:bg-green-100 text-left flex items-center gap-2"
+                                        >
+                                          <svg
+                                            className="w-4 h-4"
+                                            fill="none"
+                                            stroke="currentColor"
+                                            viewBox="0 0 24 24"
+                                          >
+                                            <path
+                                              strokeLinecap="round"
+                                              strokeLinejoin="round"
+                                              strokeWidth={2}
+                                              d="M5 13l4 4L19 7"
+                                            />
+                                          </svg>
+                                          Approve Vehicle
+                                        </button>
+                                      )}
+
+                                      {vehicle.approval !== "N" && (
+                                        <button
+                                          onClick={(e) => {
+                                            e.stopPropagation();
+                                            // Handle reject function here
+                                            toggleDropdown(null);
+                                          }}
+                                          className="w-full px-4 py-2 text-sm text-red-600 hover:bg-red-100 text-left flex items-center gap-2"
+                                        >
+                                          <svg
+                                            className="w-4 h-4"
+                                            fill="none"
+                                            stroke="currentColor"
+                                            viewBox="0 0 24 24"
+                                          >
+                                            <path
+                                              strokeLinecap="round"
+                                              strokeLinejoin="round"
+                                              strokeWidth={2}
+                                              d="M6 18L18 6M6 6l12 12"
+                                            />
+                                          </svg>
+                                          Reject Vehicle
+                                        </button>
+                                      )}
+
+                                      {/* Delete */}
+                                      <button
+                                        onClick={(e) => {
+                                          e.stopPropagation();
+                                          handleDelete(
+                                            vehicle.newVehicleId,
+                                            vehicle.approval
+                                          );
+                                          toggleDropdown(null);
+                                        }}
+                                        className="w-full px-4 py-2 text-sm text-red-600 hover:bg-red-100 text-left flex items-center gap-2 rounded-b-lg"
+                                      >
+                                        <svg
+                                          className="w-4 h-4"
+                                          fill="none"
+                                          stroke="currentColor"
+                                          viewBox="0 0 24 24"
+                                        >
+                                          <path
+                                            strokeLinecap="round"
+                                            strokeLinejoin="round"
+                                            strokeWidth={2}
+                                            d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"
+                                          />
+                                        </svg>
+                                        Delete Vehicle
+                                      </button>
+                                    </>
+                                  ) : (
+                                    /* Customer View - Create Bid */
+                                    <button
+                                      onClick={(e) => {
+                                        e.stopPropagation();
+                                        setCustomerBidData({
+                                          userId: user?.id,
+                                          vehicleId: vehicle.id,
+                                          maxBid: "",
+                                          monsterBid: "",
+                                        });
+                                        setIsCustomerBidModalOpen(true);
+                                        toggleDropdown(null);
+                                      }}
+                                      className="w-full px-4 py-2 text-sm text-blue-600 hover:bg-blue-100 text-left flex items-center gap-2 rounded-lg"
+                                    >
+                                      <svg
+                                        className="w-4 h-4"
+                                        fill="none"
+                                        stroke="currentColor"
+                                        viewBox="0 0 24 24"
+                                      >
+                                        <path
+                                          strokeLinecap="round"
+                                          strokeLinejoin="round"
+                                          strokeWidth={2}
+                                          d="M12 4v16m8-8H4"
+                                        />
+                                      </svg>
+                                      Create Bid
+                                    </button>
+                                  )}
+                                </div>
+                              )}
+                            </div>
+                          </td>
+                        </tr>
+                      ))}
+                    </tbody>
+                  </table>
+                </div>
+
+                {currentCars.length > 0 && (
+                  <div className="bg-white shadow-sm p-4 mt-4 ">
+                    <div className="flex flex-col sm:flex-row justify-between items-center gap-4 text-sm text-gray-700">
+                      <div className="text-gray-600">
+                        Showing{" "}
+                        <span className="font-medium">
+                          {startIndex + 1} to {endIndex}
+                        </span>{" "}
+                        of{" "}
+                        <span className="font-medium">
+                          {allVehicles.length}
+                        </span>{" "}
+                        entries
+                      </div>
+
+                      <div className="flex items-center gap-1">
+                        <button
+                          onClick={() => {
+                            setCurrentPage(1);
+                            window.scrollTo({ top: 0, behavior: "smooth" });
+                          }}
+                          disabled={currentPage === 1}
+                          className={`px-3 py-1 rounded border ${
+                            currentPage === 1
+                              ? "bg-gray-100 text-gray-400 cursor-not-allowed"
+                              : "bg-white text-gray-700 hover:bg-gray-50"
+                          }`}
+                        >
+                          {"<<"}
+                        </button>
+
+                        <button
+                          onClick={goToPrevPage}
+                          disabled={currentPage === 1}
+                          className={`px-3 py-1 rounded border ${
+                            currentPage === 1
+                              ? "bg-gray-100 text-gray-400 cursor-not-allowed"
+                              : "bg-white text-gray-700 hover:bg-gray-50"
+                          }`}
+                        >
+                          {"<"}
+                        </button>
+
+                        {Array.from(
+                          { length: Math.min(5, totalPages) },
+                          (_, i) => {
+                            let pageNum;
+                            if (totalPages <= 5) pageNum = i + 1;
+                            else if (currentPage <= 3) pageNum = i + 1;
+                            else if (currentPage >= totalPages - 2)
+                              pageNum = totalPages - 4 + i;
+                            else pageNum = currentPage - 2 + i;
+
+                            return (
+                              <button
+                                key={pageNum}
+                                onClick={() => {
+                                  setCurrentPage(pageNum);
+                                  window.scrollTo({
+                                    top: 0,
+                                    behavior: "smooth",
+                                  });
+                                }}
+                                className={`px-3 py-1 rounded border ${
+                                  currentPage === pageNum
+                                    ? "bg-blue-950 text-white"
+                                    : "bg-white text-gray-700 hover:bg-gray-50"
+                                }`}
+                              >
+                                {pageNum}
+                              </button>
+                            );
+                          }
+                        )}
+
+                        <button
+                          onClick={goToNextPage}
+                          disabled={currentPage === totalPages}
+                          className={`px-3 py-1 rounded border ${
+                            currentPage === totalPages
+                              ? "bg-gray-100 text-gray-400 cursor-not-allowed"
+                              : "bg-white text-gray-700 hover:bg-gray-50"
+                          }`}
+                        >
+                          {">"}
+                        </button>
+
+                        <button
+                          onClick={() => {
+                            setCurrentPage(totalPages);
+                            window.scrollTo({ top: 0, behavior: "smooth" });
+                          }}
+                          disabled={currentPage === totalPages}
+                          className={`px-3 py-1 rounded border ${
+                            currentPage === totalPages
+                              ? "bg-gray-100 text-gray-400 cursor-not-allowed"
+                              : "bg-white text-gray-700 hover:bg-gray-50"
+                          }`}
+                        >
+                          {">>"}
+                        </button>
+                      </div>
+                    </div>
+                  </div>
+                )}
+              </div>
+            </>
           )}
         </section>
       </div>

@@ -1,4 +1,5 @@
-export const LiveBidModal = ({ vehicle, onClose }) => {
+export const LiveBidModal = ({ vehicle, onClose, handleGetVehicleBid }) => {
+  console.log("=>", vehicle);
   const formatPrice = (price) => {
     if (!price) return "0";
 

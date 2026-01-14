@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { MoreVertical } from "lucide-react";
+import { CircleUser, MoreVertical } from "lucide-react";
 import { useDispatch, useSelector } from "react-redux";
 import CustomSearch from "../../CustomSearch";
 import Dropdown from "../../Dropdown";
@@ -24,6 +24,9 @@ import {
 import EditAdminVehicle from "./EditAdminVehicle";
 import { ViewAdminCar } from "../../components/ViewAdminCar";
 import { BASE_URL } from "../../components/Contant/URL";
+import moment from "moment";
+import ViewUserModal from "./ViewUserModal";
+import { UserDetailModal } from "../components/UserDetailModal/UserDetail";
 
 const bodyStyles = [
   "Convertible",
@@ -37,6 +40,154 @@ const bodyStyles = [
   "SUV",
   "Van",
   "Truck",
+];
+
+const initialAutoDescription = [
+  {
+    id: 1,
+    label: "Bumper-to-Bumper Original",
+    value: "Everything is in genuine condition",
+  },
+  {
+    id: 2,
+    label: "Like New",
+    value: "As good as a brand new car",
+  },
+  {
+    id: 3,
+    label: "Authorized Workshop Maintained",
+    value: "100% maintained by dealership",
+  },
+  {
+    id: 4,
+    label: "Minor Accidental Cars",
+    value: "Minor Accidental Cars",
+  },
+  {
+    id: 5,
+    label: "Complete Service History",
+    value: "All service history log maintained",
+  },
+  {
+    id: 6,
+    label: "Fresh Import",
+    value: "Just imported",
+  },
+  {
+    id: 7,
+    label: "Price Negotiable",
+    value: "Price is flexible",
+  },
+  {
+    id: 8,
+    label: "Alloy Rims",
+    value: "Alloy Rims",
+  },
+  {
+    id: 9,
+    label: "Original Book",
+    value: "Original book of this car is also available",
+  },
+  {
+    id: 10,
+    label: "Duplicate Book",
+    value: "Original book not available",
+  },
+  {
+    id: 11,
+    label: "Complete Original File",
+    value: "All service history log maintained",
+  },
+  {
+    id: 12,
+    label: "Duplicate File",
+    value: "Original book not available",
+  },
+  {
+    id: 13,
+    label: "Duplicate Number Plate",
+    value: "Original book not available",
+  },
+  {
+    id: 14,
+    label: "Non Accidental Car",
+    value: "Never been into any accident",
+  },
+  {
+    id: 15,
+    label: "New Tires",
+    value: "Brand new tires installed",
+  },
+  {
+    id: 16,
+    label: "Auction Sheet Available",
+    value: "Complete auction sheet available",
+  },
+  {
+    id: 17,
+    label: "Token or Tax Up to Date",
+    value: "All taxes paid",
+  },
+  {
+    id: 18,
+    label: "Lifetime Token Paid",
+    value: "All token taxes are paid for life",
+  },
+  {
+    id: 19,
+    label: "Urgent Sale",
+    value: "Need to sell the car urgently",
+  },
+  {
+    id: 20,
+    label: "Driven on Petrol",
+    value: "Driven on petrol throughout",
+  },
+  {
+    id: 21,
+    label: "Factory Fitted CNG",
+    value: "Factory Fitted CNG",
+  },
+  {
+    id: 22,
+    label: "Army Officer Car",
+    value: "The car was in the use of an Army Officer",
+  },
+  {
+    id: 23,
+    label: "Minor Touch Ups",
+    value: "Minor Accidental Cars",
+  },
+  {
+    id: 24,
+    label: "Engine Repaired",
+    value: "Engine is repaired",
+  },
+  {
+    id: 25,
+    label: "Sealed Engine",
+    value: "Sealed and powerful engine",
+  },
+  {
+    id: 26,
+    label: "Engine Swapped",
+    value: "Engine is repaired",
+  },
+  {
+    id: 27,
+    label: "Contact During Office Hours",
+    value: "No call/SMS will be answered after office hours",
+  },
+  {
+    id: 28,
+    label: "Exchange Possible",
+    value: "Willing to exchange with another car",
+  },
+  {
+    id: 29,
+    label: "Missing File",
+    value: "Missing File",
+  },
 ];
 
 const carColors = [
@@ -74,19 +225,29 @@ function AddAdminVehicle({ open, setOpen, onVehicleUpdated }) {
     locationId: "",
     buyNowPrice: "",
     certifyStatus: "",
+    description: [],
     image: [],
   };
 
   const { currentUser } = useSelector((state) => state?.auth);
   const selected = useSelector((state) => state.carSelector);
   const [vehicle, setVehicle] = useState(initialVehicleState);
+
+  console.log("Add a New Vehicle =>", vehicle);
+  const [autoDescription, setAutoDescription] = useState(
+    initialAutoDescription
+  );
+
   const [allCities, setAllCities] = useState([]);
   const [allVehicles, setAllVehicles] = useState([]);
   const [filteredVehicles, setFilteredVehicles] = useState([]);
   const [previewImages, setPreviewImages] = useState([]);
-
+  const [showMore, setShowMore] = useState(false);
+  const [userDetail, setUSerDetail] = useState(null);
+  console.log("=>>", userDetail);
   const [isOpenBid, setIsOpenBid] = useState(false);
   const [isOpen, setIsOpen] = useState("");
+  console.log("isOpen =>", isOpen);
   const [viewBider, setViewBider] = useState(false);
   const [loading, setLoading] = useState(false);
   const [getVehicleId, setGetVehicleId] = useState(null);
@@ -101,6 +262,14 @@ function AddAdminVehicle({ open, setOpen, onVehicleUpdated }) {
   const [price, setPrice] = useState("");
   const [showModal, setShowModal] = useState(false);
   const [totalVehicles, setTotalVehicles] = useState([]);
+
+  const currentDate = new Date().toISOString().split("T")[0];
+
+  const initialState = {
+    fromDate: currentDate,
+    toDate: currentDate,
+  };
+  const [dateRange, setDateRange] = useState(initialState);
 
   const dispatch = useDispatch();
 
@@ -215,13 +384,27 @@ function AddAdminVehicle({ open, setOpen, onVehicleUpdated }) {
   const handleGetVehicles = async () => {
     try {
       const res = await axios.get(
-        `${BASE_URL}/ApprovedVehicleList/${currentUser?.role}`
+        `${BASE_URL}/ApprovedVehicleListbyDateRange/${currentUser?.role}/${dateRange.fromDate}/${dateRange.toDate}`
       );
       setAllVehicles(res.data || []);
       setTotalVehicles(res.data || []);
     } catch (error) {
       console.log(error);
     }
+  };
+
+  const handleChangeDate = (e) => {
+    const { name, value } = e.target;
+    setDateRange((prevState) => ({ ...prevState, [name]: value }));
+  };
+
+  const handleSelectDescription = (id, value) => {
+    setAutoDescription((prev) => prev.filter((desc) => desc.id !== id));
+
+    setVehicle((prev) => ({
+      ...prev,
+      description: [...prev.description, value],
+    }));
   };
 
   const handleGetAllCities = async () => {
@@ -327,10 +510,23 @@ function AddAdminVehicle({ open, setOpen, onVehicleUpdated }) {
       console.error(error);
       await Swal.fire({
         title: "Error!",
-        text: "Something went wrong while deleting the vehicle.",
+        text:
+          "Something went wrong while deleting the vehicle" ||
+          error.response.data.message,
         icon: "error",
         confirmButtonColor: "#9333ea",
       });
+    }
+  };
+  const handleViewUserDetail = async (id) => {
+    try {
+      const res = await axios.get(
+        `${BASE_URL}/admin/getUserDetailsApprovedVehicleListById/${id}`
+      );
+
+      setUSerDetail(res.data?.data);
+    } catch (error) {
+      console.log(error);
     }
   };
 
@@ -506,13 +702,13 @@ function AddAdminVehicle({ open, setOpen, onVehicleUpdated }) {
 
   useEffect(() => {
     handleGetVehicles();
-  }, []);
+  }, [dateRange]);
 
   return (
-    <div className="min-h-screen bg-white p-4 sm:p-6">
+    <div className="max-h-screen bg-white p-4 sm:p-6">
       <div className="flex flex-col sm:flex-row justify-between lg:items-start items-center w-full gap-4 mb-6">
         <h2 className="lg:text-3xl text-xl font-bold text-gray-800 ">
-          Vehicle List
+          Vehicle Lists
         </h2>
 
         <div className="relative w-full max-w-md">
@@ -552,8 +748,39 @@ function AddAdminVehicle({ open, setOpen, onVehicleUpdated }) {
           }}
         />
       </div>
-      <div className="text-gray-800 mb-2 font-semibold text-2xl">
-        Total Approval Vehicles: {allVehicles.length}
+
+      <div className="flex items-center justify-between mb-2">
+        <div className="text-gray-800 mb-2 font-semibold text-2xl">
+          Total Approval Vehicles: {allVehicles.length}
+        </div>
+
+        <div className="flex items-center gap-4">
+          <div className="flex flex-col">
+            <label className="text-sm font-medium text-gray-800 mb-1">
+              From Date :
+            </label>
+            <input
+              type="date"
+              name="fromDate"
+              onChange={handleChangeDate}
+              value={dateRange.fromDate}
+              className="px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-900 focus:border-blue-900 focus:outline-none"
+            />
+          </div>
+
+          <div className="flex flex-col">
+            <label className="text-sm font-medium text-gray-800 mb-1">
+              To Date :
+            </label>
+            <input
+              type="date"
+              name="toDate"
+              onChange={handleChangeDate}
+              value={dateRange.toDate}
+              className="px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-900 focus:border-blue-900 focus:outline-none"
+            />
+          </div>
+        </div>
       </div>
 
       {showModal && (
@@ -824,6 +1051,72 @@ function AddAdminVehicle({ open, setOpen, onVehicleUpdated }) {
                 />
               </div>
 
+              <div className="mt-4">
+                <label className="block text-sm  text-gray-700 mb-2">
+                  Add Description <span className="text-red-500">*</span>
+                </label>
+
+                <textarea
+                  placeholder="Describe your vehicle condition, features, registration details, reason for sale etc."
+                  value={vehicle.description}
+                  onChange={(e) =>
+                    setVehicle((prev) => ({
+                      ...prev,
+                      description: e.target.value,
+                    }))
+                  }
+                  maxLength={995}
+                  rows={6}
+                  className="w-full resize-none rounded-lg border border-gray-400 p-3 text-sm text-gray-800 placeholder-gray-400 focus:ring-1 focus:ring-indigo-500 outline-none transition"
+                />
+
+                <div className="mt-2 flex items-center justify-between text-xs text-gray-700">
+                  You can also use these suggestions
+                  <span
+                    className={`font-medium ${
+                      vehicle.description.length < 50
+                        ? "text-red-500"
+                        : "text-gray-600"
+                    }`}
+                  >
+                    Remaining character:({995 - vehicle.description.length})
+                  </span>
+                </div>
+              </div>
+              <div className="w-full">
+                <div
+                  className={`flex flex-wrap gap-3 w-full border border-gray-300 rounded-lg px-4 py-3 overflow-hidden transition-all duration-700 ease-in-out ${
+                    showMore ? "max-h-[500px]" : "max-h-24"
+                  }`}
+                >
+                  {autoDescription.map((desc, index) => (
+                    <button
+                      key={desc.id}
+                      type="button"
+                      onClick={() =>
+                        handleSelectDescription(desc.id, desc.value)
+                      }
+                      className="rounded-full border border-blue-900 px-4 py-1.5 text-sm font-medium text-blue-900 transition hover:bg-blue-900 hover:text-white"
+                    >
+                      {desc.label}
+                    </button>
+                  ))}
+                </div>
+
+                {/* Show more / less button */}
+                <div className="mt-2 text-center">
+                  <button
+                    type="button"
+                    onClick={() => setShowMore((prev) => !prev)}
+                    className="text-sm font-medium text-blue-900 hover:underline"
+                  >
+                    {showMore
+                      ? "Show less suggestions"
+                      : "Show more suggestions"}
+                  </button>
+                </div>
+              </div>
+
               <div className="col-span-1 sm:col-span-2 mt-4">
                 <div className="mb-6">
                   <label className="block text-sm font-medium text-gray-700 mb-2">
@@ -951,212 +1244,265 @@ function AddAdminVehicle({ open, setOpen, onVehicleUpdated }) {
       )}
 
       {/* Vehicle List */}
-      <div className="max-w-7xl mx-auto space-y-4 px-2 lg:px-0">
+      <div className="max-w-7xl mx-auto px-2 lg:px-0 ">
         {filteredVehicles?.length > 0 ? (
-          filteredVehicles.map((vehicle, index) => (
-            <div
-              key={index}
-              onClick={(e) => handleOutsideClick(e, vehicle.id)}
-              className="relative"
-            >
-              {/* Desktop View */}
-              <div className="hidden lg:flex flex-col lg:flex-row items-start lg:items-center justify-between border rounded-lg hover:shadow-md transition-all duration-200 p-4 gap-4">
-                <div
-                  className="relative w-full lg:w-40 h-40 lg:h-24 flex-shrink-0 rounded-md overflow-hidden"
-                  onClick={() => handleViewClick(vehicle)}
-                >
-                  {vehicle.images ? (
-                    <img
-                      src={vehicle.images[0]}
-                      alt={`${vehicle.make} ${vehicle.model}`}
-                      className="h-full w-full object-cover"
-                    />
-                  ) : (
-                    <div className="h-full w-full flex items-center justify-center bg-gray-100 text-gray-400 text-sm">
-                      No Image
-                    </div>
-                  )}
-                </div>
-                <div
-                  className="flex-1 px-0 lg:px-4"
-                  onClick={() => handleViewClick(vehicle)}
-                >
-                  <h2 className="text-base font-bold text-gray-800">
-                    {vehicle.make.charAt(0).toUpperCase() +
-                      vehicle.make.slice(1)}{" "}
-                    {vehicle.model.charAt(0).toUpperCase() +
-                      vehicle.model.slice(1)}{" "}
-                    {vehicle.series.charAt(0).toUpperCase() +
-                      vehicle.series.slice(1)}
-                  </h2>
-                  <p className="text-lg font-bold text-gray-800">
-                    PKR {vehicle.buyNowPrice}
-                  </p>
-                  <p className="text-sm text-gray-500">
-                    {vehicle.year} |{" "}
-                    {vehicle.fuelType.charAt(0).toUpperCase() +
-                      vehicle.fuelType.slice(1)}{" "}
-                    |{" "}
-                    {vehicle.transmission.charAt(0).toUpperCase() +
-                      vehicle.transmission.slice(1)}{" "}
-                    | {vehicle.mileage || "--"} KM |{" "}
-                    {vehicle.color.charAt(0).toUpperCase() +
-                      vehicle.color.slice(1)}{" "}
-                    |{" "}
-                    {vehicle.cityName?.charAt(0)?.toUpperCase() +
-                      vehicle.cityName?.slice(1) || "--"}
-                  </p>
-                </div>
-                <div className="w-full lg:w-auto text-left lg:text-right relative action-menu">
-                  <button
-                    onClick={() => toggleActionMenu(vehicle.id)}
-                    className="p-2 rounded-full hover:bg-gray-200 transition"
-                  >
-                    <MoreVertical className="h-5 w-5 text-gray-600" />
-                  </button>
-                  {actionMenuOpen === vehicle.id && (
-                    <div className="absolute right-0 mt-2 w-48 bg-white border rounded-lg shadow-lg z-10">
-                      <button
-                        onClick={() => {
-                          setSelectedVehicle(vehicle);
-                          setEditModalOpen(true);
-                          setActionMenuOpen(null);
-                        }}
-                        className="w-full px-4 py-2 text-sm text-yellow-600 hover:bg-yellow-100 text-left rounded-t-lg"
-                      >
-                        Edit
-                      </button>
+          <div className="overflow-x-auto rounded">
+            <table className="w-full border-collapse border  overflow-hidden">
+              <thead className="bg-blue-950 text-white">
+                <tr>
+                  <th className="p-3 text-center text-sm font-semibold text-white">
+                    Sr
+                  </th>
+                  <th className="p-1 text-left text-sm font-semibold ">
+                    Seller Name
+                  </th>
+                  <th className="p-1 text-left text-sm font-semibold ">
+                    Vehicle Name
+                  </th>
+                  <th className="p-1 text-left text-sm font-semibold ">Lot#</th>
+                  <th className="p-1 text-left text-sm font-semibold ">Year</th>
+                  <th className="p-1 text-left text-sm font-semibold ">
+                    Fuel Type
+                  </th>
 
-                      <button
-                        onClick={() => handleViewClick(vehicle)}
-                        className="w-full px-4 py-2 text-sm text-indigo-600 hover:bg-indigo-100 text-left"
-                      >
-                        View
-                      </button>
-                      <button
-                        onClick={() => {
-                          handleDeleteVehicle(vehicle.id);
-                          setActionMenuOpen(null);
-                        }}
-                        className="w-full px-4 py-2 text-sm text-red-600 hover:bg-red-100 text-left rounded-b-lg"
-                      >
-                        Delete
-                      </button>
-                    </div>
-                  )}
-                </div>
-              </div>
+                  <th className="p-1 text-left text-sm font-semibold ">
+                    Color
+                  </th>
+                  <th className="p-1 text-left text-sm font-semibold ">City</th>
+                  <th className="p-1 text-left text-sm font-semibold ">
+                    Date / Time
+                  </th>
+                  <th className="p-1 text-left text-sm font-semibold">
+                    Resverse Price
+                  </th>
+                  <th className="p-1 text-left text-sm font-semibold ">
+                    Actions
+                  </th>
+                </tr>
+              </thead>
+              <tbody className="divide-y">
+                {filteredVehicles.map((vehicle, index) => (
+                  <tr
+                    key={index}
+                    className="hover:bg-gray-50 transition-colors"
+                    onClick={(e) => handleOutsideClick(e, vehicle.id)}
+                  >
+                    <p className="  text-center pt-4  text-gray-600">
+                      {index + 1}
+                    </p>
 
-              {/* Mobile View */}
-              <div className="lg:hidden border-b py-4">
-                <div className="flex items-center gap-3">
-                  <div
-                    className="w-16 h-16 flex-shrink-0 rounded-md overflow-hidden bg-gray-100"
-                    onClick={() => handleViewClick(vehicle)}
-                  >
-                    {vehicle.images && vehicle.images.length > 0 ? (
-                      <img
-                        src={vehicle.images[0]}
-                        alt={`${vehicle.make} ${vehicle.model}`}
-                        className="h-full w-full object-cover"
-                      />
-                    ) : (
-                      <div className="h-full w-full flex items-center justify-center text-gray-400 text-xs">
-                        No Img
-                      </div>
-                    )}
-                  </div>
-                  <div
-                    className="flex-1"
-                    onClick={() => handleViewClick(vehicle)}
-                  >
-                    <h2 className="text-sm font-bold text-gray-800">
-                      {vehicle.make.charAt(0).toUpperCase() +
-                        vehicle.make.slice(1)}{" "}
-                      {vehicle.model.charAt(0).toUpperCase() +
-                        vehicle.model.slice(1)}{" "}
-                      {vehicle.series.charAt(0).toUpperCase() +
-                        vehicle.series.slice(1)}
-                    </h2>
-                    <p className="text-xs text-gray-700 font-semibold">
-                      PKR {vehicle.buyNowPrice}
-                    </p>
-                    <p className="text-xs text-gray-500">
-                      {vehicle.year} |{" "}
-                      {vehicle.fuelType.charAt(0).toUpperCase() +
-                        vehicle.fuelType.slice(1)}{" "}
-                      |{" "}
-                      {vehicle.transmission.charAt(0).toUpperCase() +
-                        vehicle.transmission.slice(1)}{" "}
-                      | {vehicle.mileage || "--"} KM |{" "}
-                      {vehicle.color.charAt(0).toUpperCase() +
-                        vehicle.color.slice(1)}{" "}
-                      |{" "}
-                      {vehicle.cityName?.charAt(0)?.toUpperCase() +
-                        vehicle.cityName?.slice(1) || "--"}
-                    </p>
-                  </div>
-                  <div className="relative action-menu">
-                    <button
-                      onClick={() => toggleActionMenu(vehicle.id)}
-                      className="p-2 rounded-full hover:bg-gray-200 transition"
+                    <td
+                      className="p-1 hover:cursor-pointer"
+                      onClick={() => {
+                        handleIsOpenToggle("detail");
+                        handleViewUserDetail(vehicle.userId);
+                      }}
                     >
-                      <MoreVertical className="h-5 w-5 text-gray-600" />
-                    </button>
-                    {actionMenuOpen === vehicle.id && (
-                      <div className="absolute right-0 mt-2 w-48 bg-white border rounded-lg shadow-lg z-10">
-                        <button
-                          onClick={() => {
-                            setSelectedVehicle(vehicle);
-                            setEditModalOpen(true);
-                            setActionMenuOpen(null);
+                      <div className="flex items-center gap-1">
+                        <CircleUser
+                          size={"30"}
+                          style={{
+                            color: "gray",
                           }}
-                          className="w-full px-4 py-2 text-sm text-yellow-600 hover:bg-yellow-100 text-left"
-                        >
-                          Edit
-                        </button>
-                        {vehicle.saleStatus === "upcoming" ||
-                        vehicle.saleStatus === "sold" ? (
-                          <button className="w-full px-4 py-2 text-sm text-green-600 hover:bg-green-100 text-left opacity-50 cursor-not-allowed">
-                            Bid Added
-                          </button>
-                        ) : (
-                          <button
-                            onClick={() => {
-                              setSelectedVehicle(vehicle);
-                              setIsOpenBid(true);
-                              setActionMenuOpen(null);
-                            }}
-                            className="w-full px-4 py-2 text-sm text-green-600 hover:bg-green-100 text-left"
-                          >
-                            Add Bid
-                          </button>
-                        )}
-                        <button
-                          onClick={() => handleViewClick(vehicle)}
-                          className="w-full px-4 py-2 text-sm text-indigo-600 hover:bg-indigo-100 text-left"
-                        >
-                          View
-                        </button>
-                        <button
-                          onClick={() => {
-                            handleDeleteVehicle(vehicle.id);
-                            setActionMenuOpen(null);
-                          }}
-                          className="w-full px-4 py-2 text-sm text-red-600 hover:bg-red-100 text-left"
-                        >
-                          Delete
-                        </button>
+                        />
+                        <span className="text-sm text-gray-600 capitalize">
+                          {vehicle?.username}
+                        </span>
                       </div>
-                    )}
-                  </div>
-                </div>
-              </div>
-            </div>
-          ))
+                    </td>
+
+                    {/* Vehicle Column with Image and Name */}
+                    <td className="p-1">
+                      <div className="flex items-center gap-3">
+                        <div
+                          className="w-12 h-12 rounded-md overflow-hidden bg-gray-100 flex-shrink-0 cursor-pointer"
+                          onClick={() => handleViewClick(vehicle)}
+                        >
+                          {vehicle.images && vehicle.images.length > 0 ? (
+                            <img
+                              src={vehicle.images[0]}
+                              alt={`${vehicle.make} ${vehicle.model}`}
+                              className="h-full w-full object-cover rounded-full"
+                            />
+                          ) : (
+                            <div className="h-full w-full flex items-center justify-center text-gray-400 text-xs">
+                              No Image
+                            </div>
+                          )}
+                        </div>
+                        <div
+                          className="cursor-pointer min-w-0"
+                          onClick={() => handleViewClick(vehicle)}
+                        >
+                          <h2 className="text-sm font-bold text-gray-800 truncate">
+                            {vehicle.make.charAt(0).toUpperCase() +
+                              vehicle.make.slice(1)}{" "}
+                            {vehicle.model.charAt(0).toUpperCase() +
+                              vehicle.model.slice(1)}
+                          </h2>
+                          <p className="text-xs text-gray-500 truncate">
+                            {vehicle.series.charAt(0).toUpperCase() +
+                              vehicle.series.slice(1)}
+                          </p>
+                        </div>
+                      </div>
+                    </td>
+                    <td className="p-1">
+                      <span className="text-sm text-gray-600">
+                        {vehicle.lot_number}
+                      </span>
+                    </td>
+                    {/* Year */}
+                    <td className="p-1">
+                      <span className="text-sm text-gray-600">
+                        {vehicle.year}
+                      </span>
+                    </td>
+
+                    {/* Fuel Type */}
+                    <td className="p-1">
+                      <span className="text-sm text-gray-600">
+                        {vehicle.fuelType.charAt(0).toUpperCase() +
+                          vehicle.fuelType.slice(1)}
+                      </span>
+                    </td>
+
+                    {/* Color */}
+                    <td className="p-1">
+                      <span className="text-sm text-gray-600">
+                        {vehicle.color.charAt(0).toUpperCase() +
+                          vehicle.color.slice(1)}
+                      </span>
+                    </td>
+
+                    {/* City */}
+                    <td className="p-1">
+                      <span className="text-sm text-gray-600">
+                        {vehicle.cityName?.charAt(0)?.toUpperCase() +
+                          vehicle.cityName?.slice(1) || "--"}
+                      </span>
+                    </td>
+                    {/* Time Stamp */}
+                    <td className="px-4 py-3 text-gray-700">
+                      <div className="flex flex-col">
+                        <span>
+                          {vehicle?.VehicleCreatedAt
+                            ? new Date(
+                                vehicle?.VehicleCreatedAt
+                              ).toLocaleDateString("en-GB")
+                            : "N/A"}
+                        </span>
+                        <span className="text-xs text-gray-500">
+                          {vehicle?.VehicleCreatedAt
+                            ? moment(vehicle?.VehicleCreatedAt)
+                                .local()
+                                .format("hh:mm A")
+                            : "--"}
+                        </span>
+                      </div>
+                    </td>
+
+                    {/* Price */}
+                    <td className="p-1">
+                      <span className="text-sm font-semibold text-gray-700">
+                        PKR {vehicle.buyNowPrice}
+                      </span>
+                    </td>
+
+                    {/* Actions */}
+                    <td className="p-1">
+                      <div className="relative">
+                        <button
+                          onClick={() => toggleActionMenu(vehicle.id)}
+                          className="p-2 rounded-full hover:bg-gray-200 transition"
+                        >
+                          <MoreVertical className="h-5 w-5 text-gray-600" />
+                        </button>
+
+                        {actionMenuOpen === vehicle.id && (
+                          <div className="absolute right-0 mt-4 -translate-y-full w-32 bg-white border rounded-lg shadow-lg z-50">
+                            <button
+                              onClick={() => {
+                                setSelectedVehicle(vehicle);
+                                setEditModalOpen(true);
+                                setActionMenuOpen(null);
+                              }}
+                              className="w-full px-4 py-2 text-sm text-yellow-600 hover:bg-yellow-100 text-left flex items-center gap-2 rounded-t-lg"
+                            >
+                              <svg
+                                className="w-4 h-4"
+                                fill="none"
+                                stroke="currentColor"
+                                viewBox="0 0 24 24"
+                              >
+                                <path
+                                  strokeLinecap="round"
+                                  strokeLinejoin="round"
+                                  strokeWidth={2}
+                                  d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"
+                                />
+                              </svg>
+                              Edit
+                            </button>
+                            <button
+                              onClick={() => handleViewClick(vehicle)}
+                              className="w-full px-4 py-2 text-sm text-indigo-600 hover:bg-indigo-100 text-left flex items-center gap-2"
+                            >
+                              <svg
+                                className="w-4 h-4"
+                                fill="none"
+                                stroke="currentColor"
+                                viewBox="0 0 24 24"
+                              >
+                                <path
+                                  strokeLinecap="round"
+                                  strokeLinejoin="round"
+                                  strokeWidth={2}
+                                  d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"
+                                />
+                                <path
+                                  strokeLinecap="round"
+                                  strokeLinejoin="round"
+                                  strokeWidth={2}
+                                  d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"
+                                />
+                              </svg>
+                              View
+                            </button>
+                            <button
+                              onClick={() => {
+                                handleDeleteVehicle(vehicle.id);
+                                setActionMenuOpen(null);
+                              }}
+                              className="w-full px-4 py-2 text-sm text-red-600 hover:bg-red-100 text-left flex items-center gap-2 rounded-b-lg"
+                            >
+                              <svg
+                                className="w-4 h-4"
+                                fill="none"
+                                stroke="currentColor"
+                                viewBox="0 0 24 24"
+                              >
+                                <path
+                                  strokeLinecap="round"
+                                  strokeLinejoin="round"
+                                  strokeWidth={2}
+                                  d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"
+                                />
+                              </svg>
+                              Delete
+                            </button>
+                          </div>
+                        )}
+                      </div>
+                    </td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
         ) : (
           <p className="text-center text-gray-500 py-6">
-            No vehicles found. Please add a vehicle or adjust your search.
+            No vehicles found. Please add a vehicle or change your date range.
           </p>
         )}
       </div>
@@ -1279,6 +1625,14 @@ function AddAdminVehicle({ open, setOpen, onVehicleUpdated }) {
           getAllVehicles={handleGetVehicles}
         />
       )}
+      {isOpen === "detail" && (
+        <UserDetailModal
+          isOpen={isOpen}
+          closeModal={() => handleIsOpenToggle("")}
+          userDetail={userDetail}
+        />
+      )}
+
       <ToastContainer />
     </div>
   );

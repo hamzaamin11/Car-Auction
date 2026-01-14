@@ -160,6 +160,7 @@ export default function ManageUsers() {
     } else if (currentPage >= totalPages - 2) {
       for (let i = totalPages - 4; i <= totalPages; i++) pages.push(i);
     } else {
+      maxBidRef;
       for (let i = currentPage - 2; i <= currentPage + 2; i++) pages.push(i);
     }
     return pages;
@@ -233,69 +234,148 @@ export default function ManageUsers() {
         </div>
       </div>
 
-      <div className="hidden md:block overflow-hidden rounded-2xl border border-gray-200 shadow-lg">
-        <div className="overflow-x-auto">
-          <table className="min-w-full divide-y divide-gray-200 text-sm">
-            <thead className="bg-blue-950 text-white ">
+      <div className="max-w-7xl mx-auto px-2 lg:px-0">
+        <div className="overflow-x-auto rounded">
+          <table className="w-full border-collapse border overflow-hidden">
+            <thead className="bg-blue-950 text-white">
               <tr>
-                <th className="px-6 py-4 text-left font-semibold">User</th>
-                <th className="px-6 py-4 text-left font-semibold">Email</th>
-                <th className="px-6 py-4 text-left font-semibold">Phone</th>
-                <th className="px-6 py-4 text-left font-semibold">Role</th>
-                <th className="px-6 py-4 text-center font-semibold">Actions</th>
+                <th className="p-3 text-start text-sm font-semibold">Sr</th>
+                <th className="p-1 text-left text-sm font-semibold">User</th>
+                <th className="p-1 text-left text-sm font-semibold">Email</th>
+                <th className="p-1 text-left text-sm font-semibold">Phone</th>
+                <th className="p-1 text-left text-sm font-semibold">Role</th>
+                <th className="p-1 text-left text-sm font-semibold">Actions</th>
               </tr>
             </thead>
-            <tbody className="divide-y divide-gray-100 bg-white">
-              {currentDisplay.map((user) => (
-                <tr key={user.id} className="">
-                  <td className="px-6 ">
+            <tbody className="divide-y">
+              {currentDisplay.map((user, index) => (
+                <tr
+                  key={user.id}
+                  className="hover:bg-gray-50 transition-colors"
+                >
+                  {/* Serial Number */}
+                  <td className="p-1">
+                    <span className="text-sm text-gray-600 px-2">
+                      {index + 1}
+                    </span>
+                  </td>
+
+                  {/* User with Image */}
+                  <td className="p-1">
                     <div className="flex items-center gap-3">
                       <UserImage user={user} size="md" />
-                      <span className="font-medium text-gray-900">
+                      <span className="text-sm font-medium text-gray-900">
                         {user?.name?.charAt(0)?.toUpperCase() +
                           user?.name?.slice(1)}
                       </span>
                     </div>
                   </td>
-                  <td className="px-6 py-4 text-gray-700">
-                    {user?.email?.charAt(0)?.toUpperCase() +
-                      user?.email?.slice(1)}
+
+                  {/* Email */}
+                  <td className="p-1">
+                    <span className="text-sm text-gray-600">
+                      {user?.email?.charAt(0)?.toUpperCase() +
+                        user?.email?.slice(1)}
+                    </span>
                   </td>
-                  <td className="px-6 py-4 text-left text-gray-700">
-                    {user?.contact?.slice(0, 15)}
+
+                  {/* Phone */}
+                  <td className="p-1">
+                    <span className="text-sm text-gray-600">
+                      {user?.contact?.slice(0, 15) || "--"}
+                    </span>
                   </td>
-                  <td>
+
+                  {/* Role */}
+                  <td className="p-1">
                     <span
-                      className={`px-2 py-1 text-xs font-bold rounded-full ${
+                      className={`inline-flex items-center px-3 py-1 text-xs font-medium rounded-full ${
                         user.role === "admin"
-                          ? "bg-blue-100 text-blue-500"
+                          ? "bg-blue-100 text-blue-800"
                           : user.role === "customer"
-                          ? "bg-yellow-100 text-yellow-500"
-                          : "bg-green-100 text-green-500"
+                          ? "bg-yellow-100 text-yellow-800"
+                          : "bg-green-100 text-green-800"
                       }`}
                     >
                       {user.role.charAt(0).toUpperCase() + user.role.slice(1)}
                     </span>
                   </td>
-                  <td className="px-6 py-4 flex items-center justify-center gap-2">
-                    <CustomAdd
-                      text="Edit"
-                      variant="edit"
-                      onClick={() => {
-                        setSelectedUser(user);
-                        setIsModalOpen(true);
-                      }}
-                    />
-                    <CustomAdd
-                      text="View"
-                      variant="view"
-                      onClick={() => handleView(user)}
-                    />
-                    <CustomAdd
-                      text="Delete"
-                      variant="delete"
-                      onClick={() => handleDeleteUser(user.id)}
-                    />
+
+                  {/* Actions - Three Buttons */}
+                  <td className="p-1">
+                    <div className="flex gap-2">
+                      {/* Edit Button */}
+                      <button
+                        onClick={() => {
+                          setSelectedUser(user);
+                          setIsModalOpen(true);
+                        }}
+                        className="px-3 py-1.5 text-xs font-medium text-yellow-600 bg-yellow-100  hover:bg-yellow-200 rounded transition-colors flex items-center gap-1"
+                      >
+                        <svg
+                          className="w-3 h-3"
+                          fill="none"
+                          stroke="currentColor"
+                          viewBox="0 0 24 24"
+                        >
+                          <path
+                            strokeLinecap="round"
+                            strokeLinejoin="round"
+                            strokeWidth={2}
+                            d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"
+                          />
+                        </svg>
+                        Edit
+                      </button>
+
+                      {/* View Button */}
+                      <button
+                        onClick={() => handleView(user)}
+                        className="px-3 py-1.5 text-xs font-medium text-white bg-blue-950 hover:bg-indigo-900 rounded transition-colors flex items-center gap-1"
+                      >
+                        <svg
+                          className="w-3 h-3"
+                          fill="none"
+                          stroke="currentColor"
+                          viewBox="0 0 24 24"
+                        >
+                          <path
+                            strokeLinecap="round"
+                            strokeLinejoin="round"
+                            strokeWidth={2}
+                            d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"
+                          />
+                          <path
+                            strokeLinecap="round"
+                            strokeLinejoin="round"
+                            strokeWidth={2}
+                            d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"
+                          />
+                        </svg>
+                        View
+                      </button>
+
+                      {/* Delete Button */}
+                      <button
+                        onClick={() => handleDeleteUser(user.id)}
+                        className="px-3 py-1.5 text-xs font-medium text-white bg-red-600 hover:bg-red-700 rounded transition-colors flex items-center gap-1"
+                      >
+                        <svg
+                          className="w-3 h-3"
+                          fill="none"
+                          stroke="currentColor"
+                          viewBox="0 0 24 24"
+                        >
+                          <path
+                            strokeLinecap="round"
+                            strokeLinejoin="round"
+                            strokeWidth={2}
+                            d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"
+                          />
+                        </svg>
+                        Delete
+                      </button>
+                    </div>
                   </td>
                 </tr>
               ))}

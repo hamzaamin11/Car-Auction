@@ -78,7 +78,7 @@ export const ContactList = () => {
   };
 
   return (
-    <div className="min-h-screen bg-gray-100 p-4 sm:p-6">
+    <div className="max-h-screen bg-gray-100 p-4">
       <div className="flex flex-col sm:flex-row justify-between items-center gap-4 mb-3">
         <h2 className="lg:text-3xl text-xl font-bold text-gray-800">
           Contact List
@@ -113,37 +113,56 @@ export const ContactList = () => {
 
       {/* Desktop Table – 100% unchanged */}
       <div className="hidden md:block">
-        <table className="w-full bg-white shadow-md rounded-lg overflow-hidden text-xs sm:text-sm">
+        <table className="w-full bg-white shadow-md rounded border border-gray-600 overflow-hidden text-xs sm:text-sm">
           <thead className="bg-blue-950 text-white rounded-t-lg">
             <tr>
-              <th className="py-3 px-4 text-left w-[10%] rounded-tl-lg">SR#</th>
-              <th className="py-3 px-4 text-left w-[25%]">Name</th>
-              <th className="py-3 px-4 text-left w-[30%]">Email</th>
-              <th className="py-3 px-4 text-left w-[20%]">Contact</th>
-              <th className="py-3 px-4 text-center w-[15%] rounded-tr-lg">
-                Action
-              </th>
+              <th className="p-3 text-left text-sm font-semibold">Sr</th>
+              <th className="p-1 text-left text-sm font-semibold">Name</th>
+              <th className="p-1 text-left text-sm font-semibold">Email</th>
+              <th className="p-1 text-left text-sm font-semibold">Contact</th>
+              <th className="p-1 text-left text-sm font-semibold">Action</th>
             </tr>
           </thead>
           <tbody>
             {currentItems.length > 0 ? (
               currentItems.map((contact, index) => (
                 <tr key={contact.id} className="border-b">
-                  <td className="py-2 px-4 whitespace-nowrap">
+                  <td className="p-3 whitespace-nowrap">
                     {startIndex + index + 1}
                   </td>
-                  <td className="py-2 px-4 capitalize">{contact?.subject}</td>
-                  <td className="py-2 px-4">{contact?.email}</td>
-                  <td className="py-2 px-4 whitespace-nowrap">
+                  <td className="p-1 capitalize">{contact?.subject}</td>
+                  <td className="p-1 capitalize">{contact?.email}</td>
+                  <td className="p-1 whitespace-nowrap">
                     {contact?.contactNumber}
                   </td>
-                  <td className="py-2 px-4 text-center">
-                    <CustomAdd
-                      text="View"
-                      variant="view"
-                      onClick={() => handleView(contact)}
-                      className="text-xs sm:text-sm"
-                    />
+                  <td className="p-1">
+                    <div className="flex items-center space-x-2">
+                      <button
+                        onClick={() => handleView(contact)}
+                        className="inline-flex items-center px-3 py-1.5 border border-transparent text-xs font-medium rounded-md text-white bg-blue-950 hover:bg-blue-900 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 transition-colors"
+                      >
+                        <svg
+                          className="w-4 h-4 mr-1"
+                          fill="none"
+                          stroke="currentColor"
+                          viewBox="0 0 24 24"
+                        >
+                          <path
+                            strokeLinecap="round"
+                            strokeLinejoin="round"
+                            strokeWidth={2}
+                            d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"
+                          />
+                          <path
+                            strokeLinecap="round"
+                            strokeLinejoin="round"
+                            strokeWidth={2}
+                            d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"
+                          />
+                        </svg>
+                        View
+                      </button>
+                    </div>
                   </td>
                 </tr>
               ))

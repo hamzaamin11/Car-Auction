@@ -7,6 +7,13 @@ import axios from "axios";
 import { BASE_URL } from "../../components/Contant/URL";
 import CustomSearch from "../../CustomSearch";
 
+const currentDate = new Date().toISOString().split("T")[0];
+
+const initialState = {
+  fromDate: currentDate,
+  toDate: currentDate,
+};
+
 const AdminBidHistory = () => {
   const { aucHistory } = useContext(AuctionsContext);
   const [allBiders, setAllBiders] = useState([]);
@@ -14,6 +21,7 @@ const AdminBidHistory = () => {
   const [currentPage, setCurrentPage] = useState(1);
   const [search, setSearch] = useState("");
   const [loading, setLoading] = useState(false);
+  const [dateRange, setDateRange] = useState(initialState);
   const itemsPerPage = 10;
 
   // modal states
@@ -29,10 +37,17 @@ const AdminBidHistory = () => {
     []
   );
 
+  const handleChangeDate = (e) => {
+    const { name, value } = e.target;
+    setDateRange((prevState) => ({ ...prevState, [name]: value }));
+  };
+
   const handleGetAllBiders = async () => {
     setLoading(true);
     try {
-      const res = await axios.get(`${BASE_URL}/admin/bidsForAdmin`);
+      const res = await axios.get(
+        `${BASE_URL}/admin/bidsForAdminbyDateRange/${dateRange?.fromDate}/${dateRange?.toDate}`
+      );
       setAllBiders(res.data || []);
     } catch (error) {
       console.log("Error:", error);
@@ -43,7 +58,7 @@ const AdminBidHistory = () => {
 
   useEffect(() => {
     handleGetAllBiders();
-  }, []);
+  }, [dateRange]);
 
   useEffect(() => {
     const filtered = allBiders.filter(
@@ -94,7 +109,7 @@ const AdminBidHistory = () => {
 
   return (
     <>
-      <div className="min-h-screen bg-gray-50 p-1 md:p-6">
+      <div className="max-h-screen bg-gray-50 p-1 md:p-6">
         <div className="flex flex-col sm:flex-row justify-between items-center gap-4 mb-3 px-3">
           <h1 className="lg:text-3xl text-xl font-bold text-gray-800">
             Auction History
@@ -127,504 +142,241 @@ const AdminBidHistory = () => {
           </div>
         </div>
 
-        {/* DESKTOP TABLE – 100% YOUR ORIGINAL */}
-        <div className="hidden md:block overflow-hidden max-w-7xl mx-auto">
-          {/* Modern Table Container */}
-          <div className="bg-white rounded-2xl shadow-xl border border-gray-100 overflow-hidden">
-            {/* Elegant Header */}
-            <div className="px-8 py-6 border-b border-gray-200 bg-gradient-to-r from-slate-50 to-gray-50">
-              <div className="flex items-center justify-between">
-                <div>
-                  <h2 className="text-2xl font-bold text-gray-800">
-                    Bids Overview
-                  </h2>
-                  <p className="text-gray-600 text-sm mt-1">
-                    All active and completed bids at a glance
-                  </p>
-                </div>
-                <div className="flex items-center gap-3">
-                  <span className="px-4 py-2 bg-blue-50 text-blue-700 text-sm font-medium rounded-lg border border-blue-200">
-                    Total: {currentItems?.length || 0}
-                  </span>
-                </div>
-              </div>
+        <div className="flex items-center justify-end mb-2">
+          <div className="flex items-center gap-4">
+            <div className="flex flex-col">
+              <label className="text-sm font-medium text-gray-800 mb-1">
+                From Date :
+              </label>
+              <input
+                type="date"
+                name="fromDate"
+                onChange={handleChangeDate}
+                value={dateRange.fromDate}
+                className="px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-900 focus:border-blue-900 focus:outline-none"
+              />
             </div>
 
-            {/* Modern Table */}
-            <div className="overflow-x-auto">
-              <table className="w-full">
-                <thead>
-                  <tr className="border-b border-gray-200">
-                    <th className="px-8 py-4 text-left">
-                      <div className="flex items-center gap-2">
-                        <div className="w-3 h-3 bg-gradient-to-br from-blue-500 to-blue-600 rounded-full"></div>
-                        <span className="text-xs font-semibold text-gray-700 uppercase tracking-wider">
-                          #
-                        </span>
-                      </div>
-                    </th>
-                    <th className="px-8 py-4 text-left">
-                      <div className="flex items-center gap-2">
-                        <svg
-                          className="w-4 h-4 text-gray-600"
-                          fill="none"
-                          stroke="currentColor"
-                          viewBox="0 0 24 24"
-                        >
-                          <path
-                            strokeLinecap="round"
-                            strokeLinejoin="round"
-                            strokeWidth={2}
-                            d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"
-                          />
-                        </svg>
-                        <span className="text-xs font-semibold text-gray-700 uppercase tracking-wider">
-                          Customer
-                        </span>
-                      </div>
-                    </th>
-                    <th className="px-8 py-4 text-left">
-                      <div className="flex items-center gap-2">
-                        <svg
-                          className="w-4 h-4 text-gray-600"
-                          fill="none"
-                          stroke="currentColor"
-                          viewBox="0 0 24 24"
-                        >
-                          <path
-                            strokeLinecap="round"
-                            strokeLinejoin="round"
-                            strokeWidth={2}
-                            d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z"
-                          />
-                        </svg>
-                        <span className="text-xs font-semibold text-gray-700 uppercase tracking-wider">
-                          Vehicle
-                        </span>
-                      </div>
-                    </th>
-                    <th className="px-8 py-4 text-left">
-                      <div className="flex items-center gap-2">
-                        <svg
-                          className="w-4 h-4 text-gray-600"
-                          fill="none"
-                          stroke="currentColor"
-                          viewBox="0 0 24 24"
-                        >
-                          <path
-                            strokeLinecap="round"
-                            strokeLinejoin="round"
-                            strokeWidth={2}
-                            d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z"
-                          />
-                        </svg>
-                        <span className="text-xs font-semibold text-gray-700 uppercase tracking-wider">
-                          Bid Amount
-                        </span>
-                      </div>
-                    </th>
-                    <th className="px-8 py-4 text-left">
-                      <div className="flex items-center gap-2">
-                        <svg
-                          className="w-4 h-4 text-gray-600"
-                          fill="none"
-                          stroke="currentColor"
-                          viewBox="0 0 24 24"
-                        >
-                          <path
-                            strokeLinecap="round"
-                            strokeLinejoin="round"
-                            strokeWidth={2}
-                            d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"
-                          />
-                        </svg>
-                        <span className="text-xs font-semibold text-gray-700 uppercase tracking-wider">
-                          Date
-                        </span>
-                      </div>
-                    </th>
-                    <th className="px-8 py-4 text-left">
-                      <div className="flex items-center gap-2">
-                        <svg
-                          className="w-4 h-4 text-gray-600"
-                          fill="none"
-                          stroke="currentColor"
-                          viewBox="0 0 24 24"
-                        >
-                          <path
-                            strokeLinecap="round"
-                            strokeLinejoin="round"
-                            strokeWidth={2}
-                            d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"
-                          />
-                        </svg>
-                        <span className="text-xs font-semibold text-gray-700 uppercase tracking-wider">
-                          Status
-                        </span>
-                      </div>
-                    </th>
-                  </tr>
-                </thead>
-
-                <tbody>
-                  {currentItems?.length > 0 ? (
-                    currentItems.map((item, index) => {
-                      const isEven = (startIndex + index + 1) % 2 === 0;
-
-                      return (
-                        <tr
-                          key={index}
-                          className={`border-b border-gray-100 last:border-0 group transition-colors duration-200 ${
-                            isEven
-                              ? "bg-gray-50/50 hover:bg-gray-100"
-                              : "hover:bg-gray-50"
-                          }`}
-                        >
-                          {/* Serial Number */}
-                          <td className="px-8 py-5">
-                            <div className="flex items-center justify-center w-10 h-10 bg-white border border-gray-200 rounded-lg group-hover:border-blue-300 transition-colors duration-200">
-                              <span className="font-bold text-gray-700">
-                                {startIndex + index + 1}
-                              </span>
-                            </div>
-                          </td>
-
-                          {/* Customer Name */}
-                          <td className="px-8 py-5">
-                            <div
-                              onClick={() =>
-                                setSelectedCustomer({
-                                  name: item.name,
-                                  contact: item.contact,
-                                  cnic: item.cnic,
-                                  address: item.address,
-                                  email: item.email,
-                                })
-                              }
-                              className="cursor-pointer group/customer"
-                            >
-                              <div className="flex items-center gap-3">
-                                <div className="w-10 h-10 bg-gradient-to-br from-blue-100 to-blue-200 rounded-lg flex items-center justify-center border border-blue-200">
-                                  <span className="font-bold text-blue-700">
-                                    {item.name?.charAt(0).toUpperCase()}
-                                  </span>
-                                </div>
-                                <div>
-                                  <p className="font-medium text-gray-900 group-hover/customer:text-blue-600 transition-colors duration-200">
-                                    {item.name}
-                                  </p>
-                                  <p className="text-sm text-gray-500 mt-0.5">
-                                    {item.contact || "No contact"}
-                                  </p>
-                                </div>
-                              </div>
-                            </div>
-                          </td>
-
-                          {/* Vehicle */}
-                          <td className="px-8 py-5">
-                            <div
-                              onClick={() => {
-                                setSelectedVehicle({
-                                  make: item.make,
-                                  model: item.model,
-                                  year: item.year,
-                                  engine: item.engine,
-                                  transmission: item.transmission,
-                                  color: item.color,
-                                  images: [],
-                                  ...item,
-                                });
-                                setCurrentImageIndex(0);
-                              }}
-                              className="cursor-pointer group/vehicle"
-                            >
-                              <div className="space-y-2">
-                                <p className="font-medium text-gray-900 group-hover/vehicle:text-blue-600 transition-colors duration-200">
-                                  {item.make} {item.model}
-                                </p>
-                                <div className="flex items-center gap-2">
-                                  <span className="text-xs px-2 py-1 bg-gray-100 text-gray-600 rounded">
-                                    {item.year || "N/A"}
-                                  </span>
-                                  <span className="text-xs px-2 py-1 bg-gray-100 text-gray-600 rounded">
-                                    {item.color || "N/A"}
-                                  </span>
-                                </div>
-                              </div>
-                            </div>
-                          </td>
-
-                          {/* Bid Amount */}
-                          <td className="px-8 py-5">
-                            <div className="space-y-1">
-                              <div className="flex items-baseline gap-1">
-                                <span className="text-sm font-medium text-gray-600">
-                                  PKR
-                                </span>
-                                <span className="text-xl font-bold text-gray-900">
-                                  {item.MonsterBid || item.maxBid || "0"}
-                                </span>
-                              </div>
-                              <div className="flex items-center gap-1">
-                                <div className="w-2 h-2 bg-green-500 rounded-full"></div>
-                                <span className="text-xs text-green-600 font-medium">
-                                  Active
-                                </span>
-                              </div>
-                            </div>
-                          </td>
-
-                          {/* Date */}
-                          <td className="px-8 py-5">
-                            <div className="space-y-1">
-                              <p className="font-medium text-gray-900">
-                                {item.bidCreatedAt
-                                  ? new Date(
-                                      item.bidCreatedAt
-                                    ).toLocaleDateString("en-GB")
-                                  : "N/A"}
-                              </p>
-                              <p className="text-sm text-gray-500">
-                                {item.bidCreatedAt
-                                  ? new Date(
-                                      item.bidCreatedAt
-                                    ).toLocaleTimeString("en-US", {
-                                      hour: "2-digit",
-                                      minute: "2-digit",
-                                      hour12: true,
-                                    })
-                                  : ""}
-                              </p>
-                            </div>
-                          </td>
-
-                          {/* Status */}
-                          <td className="px-8 py-5">
-                            <div className="flex justify-start">
-                              <span
-                                className={`inline-flex items-center justify-center px-4 py-2 rounded-lg text-sm font-medium transition-all duration-200 ${
-                                  item.status === "Highest"
-                                    ? "bg-gradient-to-r from-red-50 to-red-100 text-red-700 border border-red-200 hover:border-red-300"
-                                    : "bg-gradient-to-r from-green-50 to-green-100 text-green-700 border border-green-200 hover:border-green-300"
-                                }`}
-                              >
-                                {item.status === "Y" ? (
-                                  <div className="flex items-center gap-2">
-                                    <TiTick
-                                      size={18}
-                                      className="text-green-600"
-                                    />
-                                    <span>Sold</span>
-                                  </div>
-                                ) : (
-                                  <div className="flex items-center gap-2">
-                                    <svg
-                                      className="w-4 h-4"
-                                      fill="none"
-                                      stroke="currentColor"
-                                      viewBox="0 0 24 24"
-                                    >
-                                      <path
-                                        strokeLinecap="round"
-                                        strokeLinejoin="round"
-                                        strokeWidth={2}
-                                        d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"
-                                      />
-                                    </svg>
-                                    <span>Active</span>
-                                  </div>
-                                )}
-                              </span>
-                            </div>
-                          </td>
-                        </tr>
-                      );
-                    })
-                  ) : (
-                    <tr>
-                      <td colSpan="6" className="px-8 py-16">
-                        <div className="text-center">
-                          <div className="w-16 h-16 mx-auto mb-4 bg-gray-100 rounded-full flex items-center justify-center">
-                            <svg
-                              className="w-8 h-8 text-gray-400"
-                              fill="none"
-                              stroke="currentColor"
-                              viewBox="0 0 24 24"
-                            >
-                              <path
-                                strokeLinecap="round"
-                                strokeLinejoin="round"
-                                strokeWidth={1}
-                                d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"
-                              />
-                            </svg>
-                          </div>
-                          <h3 className="text-lg font-semibold text-gray-600 mb-2">
-                            No bids available
-                          </h3>
-                          <p className="text-gray-500 text-sm">
-                            Start accepting bids to see them listed here
-                          </p>
-                        </div>
-                      </td>
-                    </tr>
-                  )}
-                </tbody>
-              </table>
+            <div className="flex flex-col">
+              <label className="text-sm font-medium text-gray-800 mb-1">
+                To Date :
+              </label>
+              <input
+                type="date"
+                name="toDate"
+                onChange={handleChangeDate}
+                value={dateRange.toDate}
+                className="px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-900 focus:border-blue-900 focus:outline-none"
+              />
             </div>
-
-            {/* Table Footer */}
-            {currentItems?.length > 0 && (
-              <div className="px-8 py-4 border-t border-gray-200 bg-gray-50">
-                <div className="flex items-center justify-between">
-                  <div className="text-sm text-gray-600">
-                    Showing{" "}
-                    <span className="font-semibold text-gray-900">
-                      {startIndex + 1}
-                    </span>{" "}
-                    to{" "}
-                    <span className="font-semibold text-gray-900">
-                      {Math.min(
-                        startIndex + itemsPerPage,
-                        currentItems?.length || 0
-                      )}
-                    </span>{" "}
-                    of{" "}
-                    <span className="font-semibold text-gray-900">
-                      {currentItems?.length || 0}
-                    </span>{" "}
-                    bids
-                  </div>
-                  <div className="flex items-center gap-4">
-                    <div className="flex items-center gap-2">
-                      <div className="w-2 h-2 bg-blue-500 rounded-full"></div>
-                      <span className="text-sm text-gray-600">
-                        {
-                          currentItems.filter((item) => item.status !== "Y")
-                            .length
-                        }{" "}
-                        active
-                      </span>
-                    </div>
-                    <div className="flex items-center gap-2">
-                      <div className="w-2 h-2 bg-green-500 rounded-full"></div>
-                      <span className="text-sm text-gray-600">
-                        {
-                          currentItems.filter((item) => item.status === "Y")
-                            .length
-                        }{" "}
-                        sold
-                      </span>
-                    </div>
-                  </div>
-                </div>
-              </div>
-            )}
           </div>
         </div>
 
-        {/* MOBILE CARDS – 100% YOUR ORIGINAL */}
-        <div className="md:hidden space-y-4 px-3">
-          {currentItems?.length > 0 ? (
-            currentItems.map(
-              (
-                {
-                  id,
-                  name,
-                  model,
-                  MonsterBid,
-                  maxBid,
-                  date,
-                  status,
-                  make,
-                  contact,
-                  cnic,
-                  address,
-                  year,
-                  engine,
-                  transmission,
-                  color,
-                  email,
-                },
-                index
-              ) => (
-                <div
-                  key={index}
-                  className="bg-white rounded-xl shadow-md border border-gray-200 p-4"
-                >
-                  <div className="flex justify-end items-center mb-3">
-                    <span
-                      className={`inline-flex items-center justify-center px-3 py-1 text-xs rounded-full font-semibold ${
-                        status === "Highest"
-                          ? "bg-red-100 text-red-700"
-                          : "bg-green-100 text-green-800"
-                      }`}
+        {/* DESKTOP TABLE – 100% YOUR ORIGINAL */}
+        <div className="max-w-7xl mx-auto px-2 lg:px-0">
+          <div className="overflow-x-auto rounded">
+            <table className="w-full border-collapse border overflow-hidden">
+              <thead className="bg-blue-950 text-white">
+                <tr>
+                  <th className="p-3 text-start text-sm font-semibold">Sr</th>
+                  <th className="p-1 text-left text-sm font-semibold">
+                    Customer Name
+                  </th>
+                  <th className="p-1 text-left text-sm font-semibold">
+                    Vehicle Name
+                  </th>
+                  <th className="p-1 text-left text-sm font-semibold">
+                    Bid Amount
+                  </th>
+                  <th className="p-1 text-left text-sm font-semibold">Date</th>
+                  <th className="p-1 text-left text-sm font-semibold">
+                    Status
+                  </th>
+                </tr>
+              </thead>
+              <tbody className="divide-y">
+                {currentItems?.length > 0 ? (
+                  currentItems.map((item, index) => (
+                    <tr
+                      key={index}
+                      className="hover:bg-gray-50 transition-colors"
                     >
-                      {status === "Y" ? <TiTick size={20} /> : "Sold"}
-                    </span>
-                  </div>
-                  <div className="space-y-2 text-sm">
-                    <p className="flex justify-between">
-                      <span className="text-gray-900 font-bold">Customer</span>
-                      <span
-                        onClick={() =>
-                          setSelectedCustomer({
-                            name,
-                            contact,
-                            cnic,
-                            address,
-                          })
-                        }
-                        className="text-gray-800 cursor-pointer underline"
-                      >
-                        {name}
-                      </span>
-                    </p>
-                    <p className="flex justify-between">
-                      <span className="text-gray-900 font-bold">Vehicle</span>
-                      <span
-                        onClick={() => {
-                          setSelectedVehicle({
-                            make,
-                            model,
-                            year,
-                            engine,
-                            transmission,
-                            color,
-                            images: [],
-                            ...currentItems[index],
-                          });
-                          setCurrentImageIndex(0);
-                        }}
-                        className="text-gray-800 cursor-pointer underline"
-                      >
-                        {make}/{model}
-                      </span>
-                    </p>
-                    <p className="flex justify-between">
-                      <span className="text-gray-900 font-bold">
-                        Bid Amount
-                      </span>
-                      <span className="text-[#191970] font-semibold">
-                        PKR {MonsterBid || maxBid || "0000"}
-                      </span>
-                    </p>
-                    <p className="flex justify-between">
-                      <span className="text-gray-900 font-bold">Date</span>
-                      <span className="text-gray-500">
-                        {date
-                          ? new Date(date).toLocaleDateString("en-GB")
-                          : "N/A"}
-                      </span>
-                    </p>
-                  </div>
-                </div>
-              )
-            )
-          ) : (
-            <div className="text-center py-8 text-gray-400">No bids yet.</div>
-          )}
+                      {/* Serial Number */}
+                      <td className="p-1">
+                        <span className="text-sm text-gray-600 px-2">
+                          {startIndex + index + 1}
+                        </span>
+                      </td>
+
+                      {/* Customer Name */}
+                      <td className="p-1">
+                        <div
+                          className="cursor-pointer"
+                          onClick={() =>
+                            setSelectedCustomer({
+                              name: item.name,
+                              contact: item.contact,
+                              cnic: item.cnic,
+                              address: item.address,
+                              email: item.email,
+                            })
+                          }
+                        >
+                          <div className="flex items-center gap-3">
+                            <div className="w-10 h-10 bg-blue-100 rounded-lg flex items-center justify-center">
+                              <span className="font-bold text-blue-700">
+                                {item.name?.charAt(0).toUpperCase()}
+                              </span>
+                            </div>
+                            <div>
+                              <p className="text-sm font-medium text-gray-900">
+                                {item.name}
+                              </p>
+                              <p className="text-xs text-gray-500">
+                                {item.contact || "No contact"}
+                              </p>
+                            </div>
+                          </div>
+                        </div>
+                      </td>
+
+                      {/* Vehicle */}
+                      <td className="p-1">
+                        <div
+                          className="cursor-pointer"
+                          onClick={() => {
+                            setSelectedVehicle({
+                              make: item.make,
+                              model: item.model,
+                              year: item.year,
+                              engine: item.engine,
+                              transmission: item.transmission,
+                              color: item.color,
+                              images: [],
+                              ...item,
+                            });
+                            setCurrentImageIndex(0);
+                          }}
+                        >
+                          <p className="text-sm font-medium text-gray-900">
+                            {item.make} {item.model}
+                          </p>
+                          <div className="flex items-center gap-2 mt-1">
+                            <span className="text-xs px-2 py-0.5 bg-gray-100 text-gray-600 rounded">
+                              {item.year || "N/A"}
+                            </span>
+                            <span className="text-xs px-2 py-0.5 bg-gray-100 text-gray-600 rounded">
+                              {item.color || "N/A"}
+                            </span>
+                          </div>
+                        </div>
+                      </td>
+
+                      {/* Bid Amount */}
+                      <td className="p-1">
+                        <div className="space-y-1">
+                          <div className="flex items-baseline gap-1">
+                            <span className="text-sm font-medium text-gray-600">
+                              PKR
+                            </span>
+                            <span className="text-sm font-bold text-gray-900">
+                              {item.MonsterBid || item.maxBid || "0"}
+                            </span>
+                          </div>
+                        </div>
+                      </td>
+
+                      {/* Date */}
+                      <td className="p-1">
+                        <div className="space-y-1">
+                          <p className="text-sm text-gray-900">
+                            {item.bidCreatedAt
+                              ? new Date(item.bidCreatedAt).toLocaleDateString(
+                                  "en-GB"
+                                )
+                              : "N/A"}
+                          </p>
+                          <p className="text-xs text-gray-500">
+                            {item.bidCreatedAt
+                              ? new Date(item.bidCreatedAt).toLocaleTimeString(
+                                  "en-US",
+                                  {
+                                    hour: "2-digit",
+                                    minute: "2-digit",
+                                    hour12: true,
+                                  }
+                                )
+                              : ""}
+                          </p>
+                        </div>
+                      </td>
+
+                      {/* Status */}
+                      <td className="p-1">
+                        <span
+                          className={`inline-flex items-center justify-center px-3 py-1 rounded text-xs font-medium ${
+                            item.status === "Y"
+                              ? "bg-green-100 text-green-700"
+                              : "bg-red-100 text-red-700"
+                          }`}
+                        >
+                          {item.status === "Y" ? (
+                            <div className="flex items-center gap-1">
+                              <TiTick size={14} className="text-green-600" />
+                              <span>Sold</span>
+                            </div>
+                          ) : (
+                            <div className="flex items-center gap-1">
+                              <svg
+                                className="w-3 h-3"
+                                fill="none"
+                                stroke="currentColor"
+                                viewBox="0 0 24 24"
+                              >
+                                <path
+                                  strokeLinecap="round"
+                                  strokeLinejoin="round"
+                                  strokeWidth={2}
+                                  d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"
+                                />
+                              </svg>
+                              <span>Active</span>
+                            </div>
+                          )}
+                        </span>
+                      </td>
+                    </tr>
+                  ))
+                ) : (
+                  <tr>
+                    <td colSpan="6" className="text-center py-16">
+                      <div className="w-16 h-16 mx-auto mb-4 bg-gray-100 rounded-full flex items-center justify-center">
+                        <svg
+                          className="w-8 h-8 text-gray-400"
+                          fill="none"
+                          stroke="currentColor"
+                          viewBox="0 0 24 24"
+                        >
+                          <path
+                            strokeLinecap="round"
+                            strokeLinejoin="round"
+                            strokeWidth={1}
+                            d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"
+                          />
+                        </svg>
+                      </div>
+                      <h3 className="text-lg font-semibold text-gray-600 mb-2">
+                        No bids available
+                      </h3>
+                      <p className="text-sm text-gray-500">
+                        Please change the date filter
+                      </p>
+                    </td>
+                  </tr>
+                )}
+              </tbody>
+            </table>
+          </div>
         </div>
 
         {/* PAGINATION */}
@@ -879,7 +631,7 @@ const AdminBidHistory = () => {
                       {/* Personal Information Card */}
                       <div className="bg-white rounded-2xl border border-slate-200 p-7 shadow-sm">
                         <div className="flex items-center justify-between mb-6">
-                          <h3 className="text-xl font-bold text-slate-900 flex items-center gap-3">
+                          <h3 className="text-xl font-bold text-gray-900 flex items-center gap-3">
                             <div className="w-10 h-10 bg-blue-50 rounded-xl flex items-center justify-center">
                               <svg
                                 className="w-5 h-5 text-blue-600"
@@ -1254,10 +1006,10 @@ const AdminBidHistory = () => {
         )}
         {selectedVehicle && (
           <div className="fixed inset-0 z-50 flex items-center justify-center bg-blur backdrop-blur-md p-4">
-            <div className="bg-white rounded-2xl shadow-2xl w-full max-w-5xl max-h-[90vh] overflow-y-auto relative">
+            <div className="bg-white rounded-xl  w-full max-w-5xl max-h-[90vh] overflow-y-auto relative border">
               <div className="sticky top-0 bg-white z-10 px-6 py-4 border-b flex justify-between items-center">
-                <h2 className="text-2xl md:text-3xl font-bold text-[#191970]">
-                  View Vehicles
+                <h2 className="text-2xl md:text-3xl font-bold text-gray-800">
+                  Vehicle Detail
                 </h2>
                 <button
                   className="text-black hover:text-red-500 p-2 rounded-full shadow-md"
@@ -1271,111 +1023,102 @@ const AdminBidHistory = () => {
               </div>
 
               <div className="p-6">
-                <div className="grid md:grid-cols-2 gap-6">
+                <div className="grid md:grid-cols-2 gap-6 text-sm">
                   {/* LEFT COLUMN – FULLY PRESERVED */}
                   <div className="space-y-4">
                     <div className="grid grid-cols-2 gap-4">
                       <div>
-                        <p className="text-sm text-gray-500">Location:</p>
-                        <p className="font-semibold text-gray-900">
-                          {selectedVehicle.cityName || "N/A"}
-                        </p>
+                        <p className="text-sm text-gray-700">Location:</p>
+                        <p className="">{selectedVehicle.cityName || "N/A"}</p>
                       </div>
                       <div>
-                        <p className="text-sm text-gray-500">Make:</p>
-                        <p className="font-semibold text-gray-900">
-                          {selectedVehicle.make}
-                        </p>
+                        <p className="text-sm text-gray-700">Make:</p>
+                        <p className="">{selectedVehicle.make}</p>
                       </div>
                     </div>
                     <div className="grid grid-cols-2 gap-4">
                       <div>
-                        <p className="text-sm text-gray-500">Model:</p>
-                        <p className="font-semibold text-gray-900">
-                          {selectedVehicle.model}
-                        </p>
+                        <p className="text-sm text-gray-700">Model:</p>
+                        <p className="">{selectedVehicle.model}</p>
                       </div>
                       <div>
-                        <p className="text-sm text-gray-500">Series:</p>
-                        <p className="font-semibold text-gray-900">
-                          {selectedVehicle.series || "N/A"}
-                        </p>
+                        <p className="text-sm text-gray-700">Series:</p>
+                        <p className="">{selectedVehicle.series || "N/A"}</p>
                       </div>
                     </div>
                     <div className="grid grid-cols-2 gap-4">
                       <div>
-                        <p className="text-sm text-gray-500">Color:</p>
-                        <p className="font-semibold text-gray-900">
-                          {selectedVehicle.color || "N/A"}
-                        </p>
+                        <p className="text-sm text-gray-700">Color:</p>
+                        <p className="">{selectedVehicle.color || "N/A"}</p>
                       </div>
                       <div>
-                        <p className="text-sm text-gray-500">Transmission:</p>
-                        <p className="font-semibold text-gray-900">
+                        <p className="text-sm text-gray-700">Transmission:</p>
+                        <p className="">
                           {selectedVehicle.transmission || "N/A"}
                         </p>
                       </div>
                     </div>
                     <div className="grid grid-cols-2 gap-4">
                       <div>
-                        <p className="text-sm text-gray-500">Fuel Type:</p>
-                        <p className="font-semibold text-gray-900 capitalize">
+                        <p className="text-sm text-gray-700">Fuel Type:</p>
+                        <p className=" capitalize">
                           {selectedVehicle.fuelType || "N/A"}
                         </p>
                       </div>
                       <div>
-                        <p className="text-sm text-gray-500">Body Style:</p>
-                        <p className="font-semibold text-gray-900">
-                          {selectedVehicle.bodyStyle || "N/A"}
-                        </p>
+                        <p className="text-sm text-gray-700">Body Style:</p>
+                        <p className="">{selectedVehicle.bodyStyle || "N/A"}</p>
                       </div>
                     </div>
                     <div className="grid grid-cols-2 gap-4">
                       <div>
-                        <p className="text-sm text-gray-500">
+                        <p className="text-sm text-gray-700">
                           Certification Status:
                         </p>
-                        <p className="font-semibold text-gray-900">
+                        <p className="">
                           {selectedVehicle.certifyStatus || "N/A"}
                         </p>
                       </div>
                       <div>
-                        <p className="text-sm text-gray-500">Drive Type:</p>
-                        <p className="font-semibold text-gray-900 uppercase">
+                        <p className="text-sm text-gray-700">Drive Type:</p>
+                        <p className="uppercase">
                           {selectedVehicle.driveType || "N/A"}
                         </p>
                       </div>
                     </div>
                     <div className="grid grid-cols-2 gap-4">
                       <div>
-                        <p className="text-sm text-gray-500">Meter Reading:</p>
-                        <p className="font-semibold text-gray-900">
-                          {selectedVehicle.mileage || "N/A"}
-                        </p>
+                        <p className="text-sm text-gray-700">Meter Reading:</p>
+                        <p className="">{selectedVehicle.mileage || "N/A"}</p>
                       </div>
                       <div>
-                        <p className="text-sm text-gray-500">Year:</p>
-                        <p className="font-semibold text-gray-900">
-                          {selectedVehicle.year || "N/A"}
-                        </p>
+                        <p className="text-sm text-gray-700">Year:</p>
+                        <p className="">{selectedVehicle.year || "N/A"}</p>
                       </div>
                     </div>
                     <div className="grid grid-cols-2 gap-4">
                       <div>
-                        <p className="text-sm text-gray-500">Condition:</p>
-                        <p className="font-semibold text-gray-900 capitalize">
+                        <p className="text-sm text-gray-700">Condition:</p>
+                        <p className=" capitalize">
                           {selectedVehicle.vehicleCondition || "N/A"}
                         </p>
                       </div>
                       <div>
-                        <p className="text-sm text-gray-500">Price:</p>
-                        <p className="font-semibold text-gray-900">
+                        <p className="text-sm text-gray-700">Price:</p>
+                        <p className="">
                           {selectedVehicle.buyNowPrice ||
                             selectedVehicle.MonsterBid ||
                             selectedVehicle.maxBid ||
                             "N/A"}
                         </p>
                       </div>
+                    </div>
+
+                    <div>
+                      <p className="text-sm text-gray-700">Description:</p>
+                      <p className="text-sm capitalize">
+                        {selectedVehicle.description || "N/A"}
+                      </p>
                     </div>
                   </div>
 

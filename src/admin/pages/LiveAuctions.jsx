@@ -127,6 +127,10 @@ export default function LiveAuctions() {
     }
   };
 
+  const handleViewDetails = (acution) => {
+    setselectedVehicle(acution);
+  };
+
   const handleGetAllLivebySeller = async () => {
     setLoading(true);
     try {
@@ -193,7 +197,7 @@ export default function LiveAuctions() {
 
   return (
     <>
-      <div className="min-h-screen bg-gray-100 p-3 lg:p-6">
+      <div className="max-h-screen bg-gray-100 p-3 lg:p-6">
         <div className="flex flex-col sm:flex-row justify-between items-center gap-4 mb-3">
           <h1 className="lg:text-3xl text-xl font-bold text-gray-900">
             Live Auctions
@@ -230,190 +234,214 @@ export default function LiveAuctions() {
           Total Live Auctions: {totalItems}
         </div>
 
-        <div className="overflow-x-auto rounded-lg">
-          <div className="hidden md:block">
-            <table className="min-w-full divide-y divide-gray-200">
-              <thead className="bg-blue-950 text-white">
-                <tr>
-                  {currentUser.role === "admin" && (
-                    <th className="px-4 py-3 text-left text-sm font-semibold">
-                      Owner Name
+        <div className="max-w-7xl mx-auto px-2 lg:px-0">
+          {filteredAuctions?.length > 0 ? (
+            <div className="overflow-x-auto rounded">
+              <table className="w-full border-collapse border overflow-hidden">
+                <thead className="bg-blue-950 text-white">
+                  <tr>
+                    <th className="p-3 text-left text-sm font-semibold">Sr</th>
+                    {currentUser.role === "admin" && (
+                      <th className="p-1 text-start text-sm font-semibold">
+                        Owner Name
+                      </th>
+                    )}
+                    <th className="p-1 text-left text-sm font-semibold">
+                      Vehicle Name
                     </th>
-                  )}
-                  <th className="px-4 py-3 text-left text-sm font-semibold">
-                    Image
-                  </th>
-                  <th className="px-4 py-3 text-left text-sm font-semibold">
-                    Make
-                  </th>
-                  <th className="px-4 py-3 text-left text-sm font-semibold">
-                    Model
-                  </th>
-                  <th className="px-4 py-3 text-left text-sm font-semibold">
-                    Condition
-                  </th>
-                  <th className="px-4 py-3 text-left text-sm font-semibold">
-                    Reserve Price
-                  </th>
-                  <th className="px-4 py-3 text-left text-sm font-semibold">
-                    End Time
-                  </th>
-                  <th className="px-4 py-3 text-left text-sm font-semibold">
-                    Date
-                  </th>
-                  <th className="px-4 py-3 text-left text-sm font-semibold">
-                    Actions
-                  </th>
-                </tr>
-              </thead>
-              <tbody className="bg-white divide-y divide-gray-100">
-                {filteredAuctions?.length > 0 ? (
-                  filteredAuctions.map((user, idx) => (
+                    <th className="p-1 text-left text-sm font-semibold">
+                      Lot#
+                    </th>
+                    <th className="p-1 text-left text-sm font-semibold">
+                      Year
+                    </th>
+                    <th className="p-1 text-left text-sm font-semibold">
+                      City
+                    </th>
+                    <th className="p-1 text-left text-sm font-semibold">
+                      Date
+                    </th>
+                    <th className="p-1 text-left text-sm font-semibold">
+                      Time Range
+                    </th>
+                    <th className="p-1 text-left text-sm font-semibold">
+                      Reverse Price
+                    </th>
+                    <th className="p-1 text-left text-sm font-semibold">
+                      Actions
+                    </th>
+                  </tr>
+                </thead>
+                <tbody className="divide-y">
+                  {filteredAuctions.map((auction, index) => (
                     <tr
-                      key={user.id}
-                      className={`${
-                        idx % 2 === 0 ? "bg-gray-50" : ""
-                      } cursor-pointer hover:bg-gray-100`}
+                      key={auction.id}
+                      className="hover:bg-gray-50 transition-colors"
                     >
+                      <td className="p-3 text-left text-sm text-gray-600">
+                        {index + 1}
+                      </td>
+
+                      {/* Owner Name (Admin only) */}
                       {currentUser.role === "admin" && (
-                        <td className="px-4 py-3 font-medium text-gray-900">
-                          {user?.name?.charAt(0)?.toUpperCase() +
-                            user?.name.slice(1) || "--"}
+                        <td className="p-1">
+                          <span className="text-sm text-gray-600">
+                            {auction?.name?.charAt(0)?.toUpperCase() +
+                              auction?.name?.slice(1) || "--"}
+                          </span>
                         </td>
                       )}
-                      <td className="px-4 py-3">
-                        <img
-                          src={user?.images?.[0] || "/placeholder.jpg"}
-                          alt={user?.make || "Vehicle"}
-                          className="w-16 h-16 object-cover rounded"
-                          onClick={() => setselectedVehicle(user)}
-                        />
+
+                      {/* Vehicle Name with Image */}
+                      <td className="p-1">
+                        <div className="flex items-center gap-3">
+                          <div className="w-12 h-12 rounded-full overflow-hidden bg-gray-100 flex-shrink-0 cursor-pointer">
+                            {auction.images?.length > 0 ? (
+                              <img
+                                src={auction.images[0]}
+                                alt={`${auction.make} ${auction.model}`}
+                                className="h-full w-full object-cover"
+                              />
+                            ) : (
+                              <div className="h-full w-full flex items-center justify-center text-gray-400 text-xs">
+                                No Image
+                              </div>
+                            )}
+                          </div>
+                          <div
+                            className="cursor-pointer min-w-0"
+                            onClick={() => handleViewDetails(auction)}
+                          >
+                            <h2 className="text-sm font-bold text-gray-800 truncate">
+                              {auction.make} {auction.model}
+                            </h2>
+                            <p className="text-xs text-gray-500 truncate">
+                              {auction.series?.charAt(0)?.toUpperCase() +
+                                auction.series?.slice(1) || "--"}
+                            </p>
+                          </div>
+                        </div>
                       </td>
-                      <td
-                        onClick={() => setselectedVehicle(user)}
-                        className="px-4 py-3 text-gray-700"
-                      >
-                        {user?.make || "--"}
+
+                      {/* Lot Number */}
+                      <td className="p-1">
+                        <span className="text-sm text-gray-600">
+                          {auction.lot_number || "--"}
+                        </span>
                       </td>
-                      <td
-                        onClick={() => setselectedVehicle(user)}
-                        className="px-4 py-3 text-gray-700"
-                      >
-                        {user?.model || "--"}
+
+                      {/* Year */}
+                      <td className="p-1">
+                        <span className="text-sm text-gray-600">
+                          {auction.year || "--"}
+                        </span>
                       </td>
-                      <td className="px-4 py-3 text-gray-700">
-                        {user?.vehicleCondition.charAt(0).toUpperCase() +
-                          user?.vehicleCondition.slice(1) || "--"}
+
+                      {/* City */}
+                      <td className="p-1">
+                        <span className="text-sm text-gray-600">
+                          {auction.locationId || "--"}
+                        </span>
                       </td>
-                      <td className="px-4 py-3 text-gray-700">
-                        {user?.sellerOffer || "--"}
+
+                      {/* Date */}
+                      <td className="p-1">
+                        <span className="text-sm text-gray-600">
+                          {auction?.endTime
+                            ? new Date(auction.endTime).toLocaleDateString(
+                                "en-GB"
+                              )
+                            : "N/A"}
+                        </span>
                       </td>
-                      <td className="px-4 py-3 text-gray-700">
-                        {user.endTime
-                          ? moment(user.endTime).local().format("hh:mm A")
-                          : "--"}
+
+                      {/* Time Range */}
+                      <td className="p-1">
+                        <div className="flex flex-col">
+                          <span className="text-sm text-gray-600">
+                            {auction.startTime
+                              ? moment(auction.startTime)
+                                  .local()
+                                  .format("hh:mm A")
+                              : "--"}
+                          </span>
+                          <span className="text-xs text-gray-500">to</span>
+                          <span className="text-sm text-gray-600">
+                            {auction.endTime
+                              ? moment(auction.endTime)
+                                  .local()
+                                  .format("hh:mm A")
+                              : "--"}
+                          </span>
+                        </div>
                       </td>
-                      <td className="px-4 py-3 text-gray-700">
-                        {user?.endTime
-                          ? new Date(user.endTime).toLocaleDateString("en-GB")
-                          : "N/A"}
+
+                      {/* Reverse Price */}
+                      <td className="p-1">
+                        <span className="text-sm font-semibold text-gray-700">
+                          PKR {auction.sellerOffer || "--"}
+                        </span>
                       </td>
-                      <td className="">
+
+                      {/* Actions */}
+                      <td className="p-1">
                         <div className="flex gap-2">
-                          <CustomAdd
-                            text="View Bid"
-                            variant="view"
-                            onClick={() => {
-                              handleGetVehicleBid(user?.vehicleId),
-                                handleIsOpenModal("liveBid");
+                          {/* View Bid Button */}
+                          <button
+                            onClick={(e) => {
+                              e.stopPropagation();
+                              handleGetVehicleBid(auction?.vehicleId);
+                              handleIsOpenModal("liveBid");
                             }}
-                          />
+                            className="px-3 py-1.5 text-xs font-medium text-white bg-blue-950 hover:bg-blue-900 rounded transition-colors"
+                          >
+                            View Bid
+                          </button>
+
+                          {/* End Bid Button (Admin only) */}
                           {currentUser.role === "admin" && (
-                            <CustomAdd
-                              text="End Bid"
-                              variant="delete"
-                              onClick={() => handleStopAuction(user?.vehicleId)}
-                            />
+                            <button
+                              onClick={(e) => {
+                                e.stopPropagation();
+                                handleStopAuction(auction?.vehicleId);
+                              }}
+                              className="px-3 py-1.5 text-xs font-medium text-white bg-red-600 hover:bg-red-700 rounded transition-colors"
+                            >
+                              End Bid
+                            </button>
                           )}
                         </div>
                       </td>
                     </tr>
-                  ))
-                ) : (
-                  <tr>
-                    <td colSpan="9" className="text-center py-10 text-gray-500">
-                      No live auctions found.
-                    </td>
-                  </tr>
-                )}
-              </tbody>
-            </table>
-          </div>
-
-          <div className="block md:hidden space-y-2">
-            {filteredAuctions?.length > 0 ? (
-              filteredAuctions.map((user) => (
-                <div
-                  key={user.id}
-                  onClick={() => setselectedVehicle(user)}
-                  className="bg-white rounded shadow-md border border-gray-200 p-4 cursor-pointer hover:shadow-lg hover:border-indigo-300 hover:bg-indigo-50/30 transition-all duration-300"
+                  ))}
+                </tbody>
+              </table>
+            </div>
+          ) : (
+            <div className="text-center py-12 px-4">
+              <div className="mx-auto w-16 h-16 bg-gray-100 rounded-full flex items-center justify-center mb-4">
+                <svg
+                  className="w-8 h-8 text-gray-400"
+                  fill="none"
+                  stroke="currentColor"
+                  viewBox="0 0 24 24"
                 >
-                  <div className="space-y-2 text-sm">
-                    {currentUser.role === "admin" && (
-                      <p className="flex justify-between items-center">
-                        <p className="text-gray-900 font-bold">Owner Name</p>
-                        <span className="text-gray-500">
-                          {user?.name || "--"}
-                        </span>
-                      </p>
-                    )}
-                    <p className="flex justify-between">
-                      <span className="text-gray-900 font-bold">
-                        Vehicle Model
-                      </span>
-                      <span className="text-gray-500">
-                        {user?.make || "--"} / {user?.model || "--"}
-                      </span>
-                    </p>
-                    <p className="flex justify-between">
-                      <span className="text-gray-900 font-bold">Condition</span>
-                      <span className="text-gray-500">
-                        {user?.vehicleCondition || "--"}
-                      </span>
-                    </p>
-                    <p className="flex justify-between">
-                      <span className="text-gray-900 font-bold">
-                        Reserve Price
-                      </span>
-                      <span className="text-gray-500">
-                        {user?.sellerOffer || "--"}
-                      </span>
-                    </p>
-                    <p className="flex justify-between">
-                      <span className="text-gray-900 font-bold">End Time</span>
-                      <span className="text-gray-500">
-                        {user.endTime
-                          ? moment(user.endTime).local().format("hh:mm A")
-                          : "--"}
-                      </span>
-                    </p>
-                    <p className="flex justify-between">
-                      <span className="text-gray-900 font-bold">Date</span>
-                      <span className="text-gray-500">
-                        {user?.endTime
-                          ? new Date(user.endTime).toLocaleDateString("en-GB")
-                          : "N/A"}
-                      </span>
-                    </p>
-                  </div>
-                </div>
-              ))
-            ) : (
-              <div className="text-center py-10 text-gray-500">
-                No live auctions found.
+                  <path
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    strokeWidth={1.5}
+                    d="M9.172 16.172a4 4 0 015.656 0M9 10h.01M15 10h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"
+                  />
+                </svg>
               </div>
-            )}
-          </div>
+              <h3 className="text-lg font-semibold text-gray-900 mb-2">
+                No live auctions found
+              </h3>
+              <p className="text-sm text-gray-500">
+                There are currently no live auctions to display.
+              </p>
+            </div>
+          )}
         </div>
 
         {/* CLEAN ARROW PAGINATION */}
@@ -509,6 +537,7 @@ export default function LiveAuctions() {
           <LiveBidModal
             vehicle={bidData}
             onClose={() => handleIsOpenModal("")}
+            handleGetVehicleBid={handleGetVehicleBid}
           />
         )}
       </div>

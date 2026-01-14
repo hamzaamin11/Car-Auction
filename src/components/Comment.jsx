@@ -24,11 +24,14 @@ const LiveCommentsModal = ({
   const userId = currentUser?.id;
   const { id: vehicleId } = useParams();
 
+  console.log("id =>", vehicleId);
+
   const initialState = { vehicleId, userId, maxBid: "" };
   const [bidAmount, setBidAmount] = useState(initialState);
   const [loading, setLoading] = useState(false);
   const [showIncrementModal, setShowIncrementModal] = useState(false);
   const commentsEndRef = useRef(null);
+  const [currentAmount, setCurrentAmount] = useState(null);
   const maxBidRef = useRef();
 
   const handleChange = (e) => {
@@ -125,6 +128,17 @@ const LiveCommentsModal = ({
     return words.trim();
   };
 
+  const handleGetCurrentBid = async () => {
+    try {
+      const res = await axios.get(
+        `${BASE_URL}/customer/getLatestBidAmount/${vehicleId}`
+      );
+      setCurrentAmount(res.data);
+    } catch (error) {
+      console.log(error);
+    }
+  };
+
   const handleSubmit = async (e) => {
     e.preventDefault();
 
@@ -137,14 +151,14 @@ const LiveCommentsModal = ({
       });
     }
 
-    if (bidAmount.maxBid < convertToNumber(selectedPrice.buyNowPrice)) {
-      return Swal.fire({
-        icon: "warning",
-        title: "Invalid Bid",
-        text: `Your bid must be at least PKR${selectedPrice.buyNowPrice}`,
-        confirmButtonColor: "#f59e0b",
-      });
-    }
+    // if (bidAmount.maxBid < convertToNumber(selectedPrice.buyNowPrice)) {
+    //   return Swal.fire({
+    //     icon: "warning",
+    //     title: "Invalid Bid",
+    //     text: `Your bid must be at least PKR${selectedPrice.buyNowPrice}`,
+    //     confirmButtonColor: "#f59e0b",
+    //   });
+    // }
 
     if (phase !== "running") {
       return Swal.fire({
@@ -191,11 +205,11 @@ const LiveCommentsModal = ({
   };
 
   const handleIncrement = (value) => {
-    const current = BigInt(maxBidRef.current || 0);
-    const increment = BigInt(value);
-    const newBid = current + increment;
+    const current = BigInt(currentAmount?.yourOffer || 0);
 
-    maxBidRef.current = newBid.toString(); // ref store as string
+    const increment = BigInt(value);
+
+    const newBid = current + increment;
 
     setBidAmount((prev) => ({
       ...prev,
@@ -221,6 +235,10 @@ const LiveCommentsModal = ({
   }, [bidAmount.maxBid]);
 
   if (!isOpen) return null;
+
+  useEffect(() => {
+    handleGetCurrentBid();
+  }, []);
 
   return (
     <>
@@ -488,10 +506,7 @@ const LiveCommentsModal = ({
             <div className="mt-4 text-center text-xs text-gray-500">
               Current Bid:{" "}
               <span className="font-bold text-blue-950">
-                PKR{" "}
-                {bidAmount.maxBid
-                  ? parseInt(bidAmount.maxBid).toLocaleString()
-                  : "0"}
+                PKR {currentAmount ? parseInt(currentAmount.yourOffer) : "0"}
               </span>
             </div>
           </div>

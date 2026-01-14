@@ -10,6 +10,7 @@ import { MoreVertical } from "lucide-react";
 import { ViewAdminCar } from "../../components/ViewAdminCar";
 import { AdminAddBid } from "../../components/AdminAddBidComponent/AdminAddBid";
 import { useSelector } from "react-redux";
+import moment from "moment";
 
 export const AuctionEvent = () => {
   const { currentUser } = useSelector((state) => state?.auth);
@@ -256,237 +257,367 @@ export const AuctionEvent = () => {
       </div>
 
       {/* LIST */}
-      <div className="max-w-7xl mx-auto space-y-4 px-2 lg:px-0">
+      <div className="max-w-7xl mx-auto px-2 lg:px-0">
         {filteredVehicles?.length > 0 ? (
-          filteredVehicles.map((vehicle, index) => {
-            const key = vehicle?.id ?? index;
-            const make = (vehicle?.make || "").toString();
-            const model = (vehicle?.model || "").toString();
-            const series = (vehicle?.series || "").toString();
-            const fuelType = (vehicle?.fuelType || "").toString();
-            const transmission = (vehicle?.transmission || "").toString();
-            const color = (vehicle?.color || "").toString();
-            const cityName = (vehicle?.cityName || "").toString();
+          <div className="overflow-x-auto rounded">
+            <table className="w-full border-collapse border overflow-hidden">
+              <thead className="bg-blue-950 text-white">
+                <tr>
+                  <th className="p-3 text-start text-sm font-semibold">Sr</th>
+                  <th className="p-1 text-left text-sm font-semibold">
+                    Vehicle Name
+                  </th>
+                  <th className="p-1 text-left text-sm font-semibold">Lot#</th>
+                  <th className="p-1 text-left text-sm font-semibold">Year</th>
+                  <th className="p-1 text-left text-sm font-semibold">
+                    Fuel Type
+                  </th>
 
-            return (
-              <div
-                key={key}
-                // onClick={() => setActionMenuOpen(null)}
-                className="relative"
-              >
-                {/* Desktop View */}
-                <div className="hidden lg:flex flex-col lg:flex-row items-start lg:items-center justify-between border rounded-lg hover:shadow-md transition-all duration-200 p-4 gap-4">
-                  <div
-                    className="relative w-full lg:w-40 h-40 lg:h-24 flex-shrink-0 rounded-md overflow-hidden cursor-pointer"
-                    onClick={() => handleViewClick(vehicle)}
-                  >
-                    {vehicle?.images && vehicle.images.length > 0 ? (
-                      <img
-                        src={vehicle.images[0]}
-                        alt={`${make} ${model}`}
-                        className="h-full w-full object-cover"
-                      />
-                    ) : (
-                      <div className="h-full w-full flex items-center justify-center bg-gray-100 text-gray-400 text-sm">
-                        No Image
-                      </div>
-                    )}
-                  </div>
+                  <th className="p-1 text-left text-sm font-semibold">Color</th>
+                  <th className="p-1 text-left text-sm font-semibold">City</th>
 
-                  <div
-                    className="flex-1 px-0 lg:px-4 cursor-pointer"
-                    onClick={() => handleViewClick(vehicle)}
-                  >
-                    <h2 className="text-base font-bold text-gray-800">
-                      {make.charAt(0).toUpperCase() + make.slice(1)}{" "}
-                      {model.charAt(0).toUpperCase() + model.slice(1)}{" "}
-                      {series.charAt(0).toUpperCase() + series.slice(1)}
-                    </h2>
+                  <th className="p-1 text-left text-sm font-semibold">
+                    Date / Time
+                  </th>
+                  <th className="p-1 text-left text-sm font-semibold">
+                    Reserve Price
+                  </th>
+                  <th className="p-1 text-left text-sm font-semibold">
+                    Status
+                  </th>
+                  <th className="p-1 text-left text-sm font-semibold">
+                    Actions
+                  </th>
+                </tr>
+              </thead>
+              <tbody className="divide-y">
+                {filteredVehicles.map((vehicle, index) => {
+                  const key = vehicle?.id ?? index;
+                  const make = (vehicle?.make || "").toString();
+                  const model = (vehicle?.model || "").toString();
+                  const series = (vehicle?.series || "").toString();
+                  const fuelType = (vehicle?.fuelType || "").toString();
+                  const transmission = (vehicle?.transmission || "").toString();
+                  const color = (vehicle?.color || "").toString();
+                  const cityName = (vehicle?.cityName || "").toString();
 
-                    <p className="text-lg font-bold text-gray-800">
-                      PKR {vehicle?.buyNowPrice ?? "--"}
-                    </p>
-
-                    <p className="text-sm text-gray-500">
-                      {vehicle?.year ?? "--"} |{" "}
-                      {fuelType.charAt(0).toUpperCase() + fuelType.slice(1)} |{" "}
-                      {transmission.charAt(0).toUpperCase() +
-                        transmission.slice(1)}{" "}
-                      | {vehicle?.mileage ?? "--"} KM |{" "}
-                      {color.charAt(0).toUpperCase() + color.slice(1)} |{" "}
-                      {cityName.charAt(0).toUpperCase() + cityName.slice(1) ||
-                        "--"}{" "}
-                      {vehicle?.saleStatus === "upcoming" && (
-                        <span className="text-xs bg-red-500 text-white px-2 py-1 rounded ml-2">
-                          Live
-                        </span>
-                      )}
-                    </p>
-                  </div>
-
-                  <div className="w-full lg:w-auto text-left lg:text-right relative action-menu">
-                    <button
-                      onClick={() => toggleActionMenu(vehicle?.id)}
-                      className="p-2 rounded-full hover:bg-gray-200 transition"
+                  return (
+                    <tr
+                      key={key}
+                      className="hover:bg-gray-50 transition-colors"
                     >
-                      <MoreVertical className="h-5 w-5 text-gray-600" />
-                    </button>
+                      {/* Serial Number */}
+                      <td className="p-3 text-start text-gray-600">
+                        {index + 1}
+                      </td>
 
-                    {actionMenuOpen === vehicle?.id && (
-                      <div className="absolute right-0 mt-2 w-48 bg-white border rounded-lg shadow-lg z-10">
-                        {vehicle?.saleStatus === "upcoming" ||
-                        vehicle?.saleStatus === "sold" ? (
-                          <button className="w-full px-4 py-2 text-sm text-green-600 hover:bg-green-100 text-left opacity-50 cursor-not-allowed">
-                            Auction Event Added
-                          </button>
-                        ) : (
-                          <button
-                            onClick={() => {
-                              setSelectedVehicle(vehicle);
-                              setIsOpenBid(true);
-                              setActionMenuOpen(null);
-                            }}
-                            className="w-full px-4 py-2 text-sm text-green-600 hover:bg-green-100 text-left"
+                      {/* Vehicle Column with Image and Name */}
+                      <td className="p-1">
+                        <div className="flex items-center gap-3">
+                          <div
+                            className="w-12 h-12 rounded-full overflow-hidden bg-gray-100 flex-shrink-0 cursor-pointer"
+                            onClick={() => handleViewClick(vehicle)}
                           >
-                            Add Auction Event
-                          </button>
-                        )}
-
-                        <button
-                          onClick={() => handleStopEventAuction(vehicle?.id)}
-                          className="w-full px-4 py-2 text-sm text-orange-600 hover:bg-orange-100 text-left"
-                        >
-                          Stop Event Auction
-                        </button>
-                        <button
-                          onClick={() => handleViewClick(vehicle)}
-                          className="w-full px-4 py-2 text-sm text-blue-900 hover:bg-blue-100 text-left"
-                        >
-                          View Auction Event
-                        </button>
-                      </div>
-                    )}
-                  </div>
-                </div>
-
-                {/* Mobile View */}
-                <div className="lg:hidden border-b py-4">
-                  <div className="flex items-center gap-3">
-                    <div
-                      className="w-16 h-16 flex-shrink-0 rounded-md overflow-hidden bg-gray-100 cursor-pointer"
-                      onClick={() => handleViewClick(vehicle)}
-                    >
-                      {vehicle?.images && vehicle.images.length > 0 ? (
-                        <img
-                          src={vehicle.images[0]}
-                          alt={`${make} ${model}`}
-                          className="h-full w-full object-cover"
-                        />
-                      ) : (
-                        <div className="h-full w-full flex items-center justify-center text-gray-400 text-xs">
-                          No Img
+                            {vehicle?.images && vehicle.images.length > 0 ? (
+                              <img
+                                src={vehicle.images[0]}
+                                alt={`${make} ${model}`}
+                                className="h-full w-full object-cover"
+                              />
+                            ) : (
+                              <div className="h-full w-full flex items-center justify-center text-gray-400 text-xs">
+                                No Image
+                              </div>
+                            )}
+                          </div>
+                          <div
+                            className="cursor-pointer min-w-0"
+                            onClick={() => handleViewClick(vehicle)}
+                          >
+                            <h2 className="text-sm font-bold text-gray-800 truncate">
+                              {make.charAt(0).toUpperCase() + make.slice(1)}{" "}
+                              {model.charAt(0).toUpperCase() + model.slice(1)}
+                            </h2>
+                            <p className="text-xs text-gray-500 truncate">
+                              {series.charAt(0).toUpperCase() + series.slice(1)}
+                            </p>
+                          </div>
                         </div>
-                      )}
-                    </div>
+                      </td>
 
-                    <div
-                      className="flex-1"
-                      onClick={() => handleViewClick(vehicle)}
-                    >
-                      <h2 className="text-sm font-bold text-gray-800">
-                        {make.charAt(0).toUpperCase() + make.slice(1)}{" "}
-                        {model.charAt(0).toUpperCase() + model.slice(1)}{" "}
-                        {series.charAt(0).toUpperCase() + series.slice(1)}
-                      </h2>
-                      <p className="text-xs text-gray-700 font-semibold">
-                        PKR {vehicle?.buyNowPrice ?? "--"}
-                      </p>
-                      <p className="text-xs text-gray-500">
-                        {vehicle?.year ?? "--"} |{" "}
-                        {fuelType.charAt(0).toUpperCase() + fuelType.slice(1)} |{" "}
-                        {transmission.charAt(0).toUpperCase() +
-                          transmission.slice(1)}{" "}
-                        | {vehicle?.mileage ?? "--"} KM |{" "}
-                        {color.charAt(0).toUpperCase() + color.slice(1)} |{" "}
-                        {cityName.charAt(0).toUpperCase() + cityName.slice(1) ||
-                          "--"}
-                        {vehicle?.saleStatus === "upcoming" && (
-                          <span className="text-xs bg-red-500 text-white py-[1px] px-2 rounded ml-2">
+                      {/* Year */}
+                      <td className="p-1">
+                        <span className="text-sm text-gray-600">
+                          {vehicle?.lot_number ?? "--"}
+                        </span>
+                      </td>
+
+                      {/* Year */}
+                      <td className="p-1">
+                        <span className="text-sm text-gray-600">
+                          {vehicle?.year ?? "--"}
+                        </span>
+                      </td>
+
+                      {/* Fuel Type */}
+                      <td className="p-1">
+                        <span className="text-sm text-gray-600">
+                          {fuelType.charAt(0).toUpperCase() + fuelType.slice(1)}
+                        </span>
+                      </td>
+
+                     
+
+                      {/* Color */}
+                      <td className="p-1">
+                        <span className="text-sm text-gray-600">
+                          {color.charAt(0).toUpperCase() + color.slice(1)}
+                        </span>
+                      </td>
+
+                      {/* City */}
+                      <td className="p-1">
+                        <span className="text-sm text-gray-600">
+                          {cityName.charAt(0).toUpperCase() +
+                            cityName.slice(1) || "--"}
+                        </span>
+                      </td>
+
+                       {/* Time Stamp */}
+                    <td className="p-1">
+                      <span className="text-sm text-gray-600">
+                        {vehicle?.VehicleCreatedAt
+                          ? new Date(
+                              vehicle?.VehicleCreatedAt
+                            ).toLocaleDateString("en-GB")
+                          : "N/A"}{" "}
+                        /{" "}
+                        {vehicle?.VehicleCreatedAt
+                          ? moment(vehicle?.VehicleCreatedAt)
+                              .local()
+                              .format("hh:mm A")
+                          : "--"}
+                      </span>
+                    </td>
+
+                      {/* Price */}
+                      <td className="p-1">
+                        <span className="text-sm font-bold text-gray-800">
+                          PKR {vehicle?.buyNowPrice ?? "--"}
+                        </span>
+                      </td>
+
+                      {/* Status */}
+                      <td className="p-1">
+                        {vehicle?.saleStatus === "upcoming" ? (
+                          <span className="inline-flex items-center px-2 py-1 text-xs font-medium bg-red-100 text-red-800 rounded-full">
                             Live
                           </span>
+                        ) : vehicle?.saleStatus === "sold" ? (
+                          <span className="inline-flex items-center px-2 py-1 text-xs font-medium bg-green-100 text-green-800 rounded-full">
+                            Sold
+                          </span>
+                        ) : (
+                          <span className="inline-flex items-center px-2 py-1 text-xs font-medium bg-gray-100 text-gray-800 rounded-full">
+                            Available
+                          </span>
                         )}
-                      </p>
-                    </div>
+                      </td>
 
-                    <div className="relative action-menu">
-                      <button
-                        onClick={() => toggleActionMenu(vehicle?.id)}
-                        className="p-2 rounded-full hover:bg-gray-200 transition"
-                      >
-                        <MoreVertical className="h-5 w-5 text-gray-600" />
-                      </button>
-
-                      {actionMenuOpen === vehicle?.id && (
-                        <div className="absolute right-0 mt-2 w-48 bg-white border rounded-lg shadow-lg z-10">
+                      {/* Actions */}
+                      <td className="p-1">
+                        <div className="relative">
                           <button
-                            onClick={() => {
-                              setSelectedVehicle(vehicle);
-                              setEditModalOpen(true);
-                              setActionMenuOpen(null);
-                            }}
-                            className="w-full px-4 py-2 text-sm text-yellow-600 hover:bg-yellow-100 text-left"
+                            onClick={() => toggleActionMenu(vehicle?.id)}
+                            className="p-2 rounded-full hover:bg-gray-200 transition"
                           >
-                            Edit
+                            <MoreVertical className="h-5 w-5 text-gray-600" />
                           </button>
 
-                          {vehicle?.saleStatus === "upcoming" ||
-                          vehicle?.saleStatus === "sold" ? (
-                            <button className="w-full px-4 py-2 text-sm text-green-600 hover:bg-green-100 text-left opacity-50 cursor-not-allowed">
-                              Bid Added
-                            </button>
-                          ) : (
-                            <button
-                              onClick={() => {
-                                setSelectedVehicle(vehicle);
-                                setIsOpenBid(true);
-                                setActionMenuOpen(null);
-                              }}
-                              className="w-full px-4 py-2 text-sm text-green-600 hover:bg-green-100 text-left"
-                            >
-                              Add Bid
-                            </button>
+                          {actionMenuOpen === vehicle?.id && (
+                            <div className="absolute right-0 mt-2 w-48 bg-white border rounded-lg shadow-lg z-10">
+                              {/* Auction Event Button */}
+                              {vehicle?.saleStatus === "upcoming" ||
+                              vehicle?.saleStatus === "sold" ? (
+                                <button className="w-full px-4 py-2 text-sm text-green-600 hover:bg-green-100 text-left flex items-center gap-2 opacity-50 cursor-not-allowed rounded-t-lg">
+                                  <svg
+                                    className="w-4 h-4"
+                                    fill="none"
+                                    stroke="currentColor"
+                                    viewBox="0 0 24 24"
+                                  >
+                                    <path
+                                      strokeLinecap="round"
+                                      strokeLinejoin="round"
+                                      strokeWidth={2}
+                                      d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"
+                                    />
+                                  </svg>
+                                  Auction Event Added
+                                </button>
+                              ) : (
+                                <button
+                                  onClick={() => {
+                                    setSelectedVehicle(vehicle);
+                                    setIsOpenBid(true);
+                                    setActionMenuOpen(null);
+                                  }}
+                                  className="w-full px-4 py-2 text-sm text-green-600 hover:bg-green-100 text-left flex items-center gap-2 rounded-t-lg"
+                                >
+                                  <svg
+                                    className="w-4 h-4"
+                                    fill="none"
+                                    stroke="currentColor"
+                                    viewBox="0 0 24 24"
+                                  >
+                                    <path
+                                      strokeLinecap="round"
+                                      strokeLinejoin="round"
+                                      strokeWidth={2}
+                                      d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2"
+                                    />
+                                  </svg>
+                                  Add Auction Event
+                                </button>
+                              )}
+
+                              {/* Stop Event Auction Button */}
+                              <button
+                                onClick={() =>
+                                  handleStopEventAuction(vehicle?.id)
+                                }
+                                className="w-full px-4 py-2 text-sm text-orange-600 hover:bg-orange-100 text-left flex items-center gap-2"
+                              >
+                                <svg
+                                  className="w-4 h-4"
+                                  fill="none"
+                                  stroke="currentColor"
+                                  viewBox="0 0 24 24"
+                                >
+                                  <path
+                                    strokeLinecap="round"
+                                    strokeLinejoin="round"
+                                    strokeWidth={2}
+                                    d="M10 14l2-2m0 0l2-2m-2 2l-2-2m2 2l2 2m7-2a9 9 0 11-18 0 9 9 0 0118 0z"
+                                  />
+                                </svg>
+                                Stop Event Auction
+                              </button>
+
+                              {/* View Auction Event Button */}
+                              <button
+                                onClick={() => handleViewClick(vehicle)}
+                                className="w-full px-4 py-2 text-sm text-blue-900 hover:bg-blue-100 text-left flex items-center gap-2 rounded-b-lg"
+                              >
+                                <svg
+                                  className="w-4 h-4"
+                                  fill="none"
+                                  stroke="currentColor"
+                                  viewBox="0 0 24 24"
+                                >
+                                  <path
+                                    strokeLinecap="round"
+                                    strokeLinejoin="round"
+                                    strokeWidth={2}
+                                    d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"
+                                  />
+                                  <path
+                                    strokeLinecap="round"
+                                    strokeLinejoin="round"
+                                    strokeWidth={2}
+                                    d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"
+                                  />
+                                </svg>
+                                View Auction Event
+                              </button>
+
+                              {/* Separator */}
+                              <div className="border-t border-gray-100 my-1"></div>
+
+                              {/* Edit Button (for mobile view in original) */}
+                              <button
+                                onClick={() => {
+                                  setSelectedVehicle(vehicle);
+                                  setEditModalOpen(true);
+                                  setActionMenuOpen(null);
+                                }}
+                                className="w-full px-4 py-2 text-sm text-yellow-600 hover:bg-yellow-100 text-left flex items-center gap-2"
+                              >
+                                <svg
+                                  className="w-4 h-4"
+                                  fill="none"
+                                  stroke="currentColor"
+                                  viewBox="0 0 24 24"
+                                >
+                                  <path
+                                    strokeLinecap="round"
+                                    strokeLinejoin="round"
+                                    strokeWidth={2}
+                                    d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"
+                                  />
+                                </svg>
+                                Edit Vehicle
+                              </button>
+
+                              {/* Delete Button (for mobile view in original) */}
+                              <button
+                                onClick={() => {
+                                  handleDeleteVehicle(vehicle?.id);
+                                  setActionMenuOpen(null);
+                                }}
+                                className="w-full px-4 py-2 text-sm text-red-600 hover:bg-red-100 text-left flex items-center gap-2 rounded-b-lg"
+                              >
+                                <svg
+                                  className="w-4 h-4"
+                                  fill="none"
+                                  stroke="currentColor"
+                                  viewBox="0 0 24 24"
+                                >
+                                  <path
+                                    strokeLinecap="round"
+                                    strokeLinejoin="round"
+                                    strokeWidth={2}
+                                    d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"
+                                  />
+                                </svg>
+                                Delete Vehicle
+                              </button>
+                            </div>
                           )}
-
-                          <button
-                            onClick={() => handleViewClick(vehicle)}
-                            className="w-full px-4 py-2 text-sm text-indigo-600 hover:bg-indigo-100 text-left"
-                          >
-                            View
-                          </button>
-
-                          <button
-                            onClick={() => {
-                              handleDeleteVehicle(vehicle?.id);
-                              setActionMenuOpen(null);
-                            }}
-                            className="w-full px-4 py-2 text-sm text-red-600 hover:bg-red-100 text-left"
-                          >
-                            Delete
-                          </button>
                         </div>
-                      )}
-                    </div>
-                  </div>
-                </div>
-              </div>
-            );
-          })
+                      </td>
+                    </tr>
+                  );
+                })}
+              </tbody>
+            </table>
+          </div>
         ) : (
-          <p className="text-center text-gray-500 py-6">
-            {loading
-              ? "Loading..."
-              : "No vehicles found. Please add a vehicle or adjust your search."}
-          </p>
+          <div className="text-center py-12 px-4">
+            <div className="mx-auto w-16 h-16 bg-gray-100 rounded-full flex items-center justify-center mb-4">
+              <svg
+                className="w-8 h-8 text-gray-400"
+                fill="none"
+                stroke="currentColor"
+                viewBox="0 0 24 24"
+              >
+                <path
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  strokeWidth={1.5}
+                  d="M9.172 16.172a4 4 0 015.656 0M9 10h.01M15 10h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"
+                />
+              </svg>
+            </div>
+            <h3 className="text-lg font-semibold text-gray-900 mb-2">
+              {loading ? "Loading vehicles..." : "No vehicles found"}
+            </h3>
+            <p className="text-sm text-gray-500">
+              {loading
+                ? "Please wait while we fetch vehicle data..."
+                : "Please add a vehicle or adjust your search criteria."}
+            </p>
+          </div>
         )}
       </div>
 

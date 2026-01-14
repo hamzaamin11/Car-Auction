@@ -49,10 +49,15 @@ export const ViewAdminCar = ({ selectedVehicle, handleClick }) => {
           {/* Left: Car Details */}
           <div className="space-y-2 text-sm text-gray-800 grid grid-cols-2 gap-5 w-[100%] ">
             <p>
+              <span className="font-bold">Lot Number :</span>{" "}
+              {selectedVehicle?.lot_number || "--"}
+            </p>
+            <p>
               <span className="font-bold">Location:</span>{" "}
               {selectedVehicle?.cityName.charAt(0).toUpperCase() +
                 selectedVehicle?.cityName.slice(1) || "--"}
             </p>
+
             <p>
               <span className="font-bold">Make:</span>{" "}
               {selectedVehicle?.make.charAt(0).toUpperCase() +
@@ -156,6 +161,10 @@ export const ViewAdminCar = ({ selectedVehicle, handleClick }) => {
                 <FaArrowRight size={20} />
               </button>
             </div>
+          </div>
+          <div className="space-y-2 text-sm text-gray-800">
+            <span className="font-bold ">Description:</span>{" "}
+            {selectedVehicle?.description || "--"}
           </div>
         </div>
       </div>

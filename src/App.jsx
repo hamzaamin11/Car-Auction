@@ -106,6 +106,9 @@ import { Configuration } from "./pages/Configuration";
 import { AdminAccount } from "./pages/AdminAccount";
 import { CustomerProtectedRoute } from "./CustomerProtectedRoute";
 import { PastVehicle } from "./admin/pages/PastVehicle";
+import { SetEventAuction } from "./admin/pages/SetEventAuction";
+import { AssignEvent } from "./admin/pages/AssignEvent";
+import { UnsoldVehicles } from "./admin/pages/UnsoldVehicles";
 
 function Layout() {
   const location = useLocation();
@@ -123,6 +126,8 @@ function Layout() {
   const isSellerRoute = location.pathname.startsWith("/seller/dashboard");
   const isAdminLogin = location.pathname === "/admin-login";
   const liveAuction = location.pathname === "/seller/live-auctions";
+  const vehicleList = location.pathname === "/seller/addVehicle";
+  const unsoldVehicle = location.pathname === "/seller/unsold";
   const upcomingAuction = location.pathname === "/seller/upcoming-auctions";
   const bidHistory = location.pathname === "/seller/my-bids";
 
@@ -132,6 +137,8 @@ function Layout() {
     isSellerRoute ||
     liveAuction ||
     upcomingAuction ||
+    vehicleList ||
+    unsoldVehicle ||
     bidHistory;
 
   if (
@@ -268,7 +275,9 @@ function Layout() {
           }
         >
           <Route index element={<AdminDashboard />} />
+
           <Route path="vehicles" element={<AddAdminVehicle />} />
+          <Route path="eventauction" element={<SetEventAuction />} />
           <Route path="/admin/addbrand" element={<BrandList />} />
           <Route path="/admin/addmodel" element={<ModelList />} />
           <Route path="/admin/addseries" element={<SeriesList />} />
@@ -283,6 +292,8 @@ function Layout() {
           <Route path="/admin/account" element={<AdminAccount />} />
 
           <Route path="/admin/auctionevent" element={<AuctionEvent />} />
+
+          <Route path="/admin/assignevent" element={<AssignEvent />} />
 
           <Route path="/admin/uploaddocs" element={<AdminInspection />} />
 
@@ -301,6 +312,7 @@ function Layout() {
           <Route path="vehicle-spects" element={<AddVehicleSpects />} />
           <Route path="vehicle-details" element={<VehicleDetailsViewer />} />
           <Route path="live-auctions" element={<LiveAuctions />} />
+          <Route path="/admin/unsold" element={<UnsoldVehicles />} />
           <Route path="upcoming-auctions" element={<UpcomingAuctions />} />
           <Route path="bid-history" element={<AdminBidHistory />} />
           <Route path="manage-users" element={<ManageUsers />} />
@@ -334,6 +346,7 @@ function Layout() {
             path="/seller/upcoming-auctions"
             element={<UpcomingAuctions />}
           />
+          <Route path="/seller/unsold" element={<UnsoldVehicles />} />
           <Route path="/seller/accountsetting" element={<AccountSetting />} />
           {/* Bids */}
           <Route path="my-bids" element={<MyBids />} />

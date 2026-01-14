@@ -2,7 +2,10 @@ import { useEffect, useState } from "react";
 import axios from "axios";
 import { useSelector } from "react-redux";
 import { ChevronLeft, ChevronRight, User } from "lucide-react";
-import { BASE_URL } from "../components/Contant/URL";
+import { BASE_URL } from "../../components/Contant/URL";
+import { AddEvent } from "../../components/EventModal/AddEvent";
+import { EditEvent } from "../../components/EventModal/EditEvent";
+import Swal from "sweetalert2";
 
 const currentDate = new Date().toISOString().split("T")[0];
 
@@ -11,34 +14,25 @@ const initialState = {
   toDate: currentDate,
 };
 
-const MyBids = () => {
+export const SetEventAuction = () => {
   const { currentUser } = useSelector((state) => state?.auth);
-  const [allBiders, setAllBiders] = useState([]);
+  const [allEvents, setAllEvents] = useState([]);
   const [currentPage, setCurrentPage] = useState(1);
+  const [isOpen, setIsOpen] = useState("");
   const [dateRange, setDateRange] = useState(initialState);
+  const [selectEvent, setSelectEvent] = useState(null);
   const itemsPerPage = 10;
 
-  const handleGetBidersHistory = async () => {
-    try {
-      const res = await axios.get(
-        `${BASE_URL}/customer/myBidsbyDateRange/${currentUser?.id}/${dateRange.fromDate}/${dateRange.toDate}`
-      );
-      setAllBiders(res.data);
-    } catch (error) {
-      console.error("Error fetching bids:", error);
-    }
+  const handleIsOpenModal = (option) => {
+    setIsOpen((prev) => (prev == option ? "" : option));
   };
 
-  useEffect(() => {
-    handleGetBidersHistory();
-  }, [dateRange]);
-
   // Pagination Logic
-  const totalItems = allBiders.length;
+  const totalItems = allEvents.length;
   const totalPages = Math.ceil(totalItems / itemsPerPage);
   const startIndex = (currentPage - 1) * itemsPerPage;
   const endIndex = Math.min(startIndex + itemsPerPage, totalItems);
-  const currentItems = allBiders.slice(startIndex, endIndex);
+  const currentItems = allEvents.slice(startIndex, endIndex);
 
   const goToPage = (page) => {
     if (page >= 1 && page <= totalPages) {
@@ -51,6 +45,59 @@ const MyBids = () => {
     const { name, value } = e.target;
     setDateRange((prevState) => ({ ...prevState, [name]: value }));
   };
+
+  const handleGetAuctionEvent = async () => {
+    try {
+      const res = await axios.get(`${BASE_URL}/admin/getEvents`, {
+        params: {
+          fromDate: dateRange.fromDate || undefined,
+          toDate: dateRange.toDate || undefined,
+        },
+      });
+      setAllEvents(res.data);
+      console.log(res.data);
+    } catch (error) {
+      console.error("Error fetching bids:", error);
+    }
+  };
+
+  const handleDeleteEvent = async (id) => {
+    const result = await Swal.fire({
+      title: "Are you sure?",
+      text: "This event will be deleted.",
+      icon: "warning",
+      showCancelButton: true,
+      confirmButtonColor: "#9333ea",
+      cancelButtonColor: "#d33",
+      confirmButtonText: "Yes, delete it!",
+    });
+
+    if (!result.isConfirmed) return;
+
+    try {
+      const res = await axios.delete(`${BASE_URL}/admin/deleteEvent/${id}`);
+      console.log(res.data);
+      handleGetAuctionEvent();
+      await Swal.fire({
+        title: "Deleted!",
+        text: "The event has been deleted successfully.",
+        icon: "success",
+        confirmButtonColor: "#9333ea",
+      });
+    } catch (error) {
+      console.log(error);
+      await Swal.fire({
+        title: "Error!",
+        text: error.response.data.message,
+        icon: "error",
+        confirmButtonColor: "#9333ea",
+      });
+    }
+  };
+
+  useEffect(() => {
+    handleGetAuctionEvent();
+  }, [dateRange]);
 
   const getPageNumbers = () => {
     const pages = [];
@@ -72,35 +119,41 @@ const MyBids = () => {
       <div className="max-w-7xl mx-auto mb-20">
         <div className="flex items-center justify-between mb-2">
           <h1 className="lg:text-3xl text-xl font-bold mb-2 text-gray-800 lg:text-start text-center">
-            Auction History
+            Event Auction
           </h1>
 
-          <div className="flex items-center gap-4">
-            <div className="flex flex-col">
-              <label className="text-sm font-medium text-gray-800 mb-1">
-                From Date :
-              </label>
-              <input
-                type="date"
-                name="fromDate"
-                onChange={handleChangeDate}
-                value={dateRange.fromDate}
-                className="px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-900 focus:border-blue-900 focus:outline-none"
-              />
-            </div>
+          <button
+            className="py-2 px-2 text-white bg-blue-950 rounded hover:cursor-pointer hover:opacity-90"
+            onClick={() => handleIsOpenModal("add")}
+          >
+            Add Event
+          </button>
+        </div>
+        <div className="flex items-center justify-end my-2 gap-4">
+          <div className="flex flex-col">
+            <label className="text-sm font-medium text-gray-800 mb-1">
+              From Date :
+            </label>
+            <input
+              type="date"
+              name="fromDate"
+              onChange={handleChangeDate}
+              value={dateRange.fromDate}
+              className="px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-900 focus:border-blue-900 focus:outline-none"
+            />
+          </div>
 
-            <div className="flex flex-col">
-              <label className="text-sm font-medium text-gray-800 mb-1">
-                To Date :
-              </label>
-              <input
-                type="date"
-                name="toDate"
-                onChange={handleChangeDate}
-                value={dateRange.toDate}
-                className="px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-900 focus:border-blue-900 focus:outline-none"
-              />
-            </div>
+          <div className="flex flex-col">
+            <label className="text-sm font-medium text-gray-800 mb-1">
+              To Date :
+            </label>
+            <input
+              type="date"
+              name="toDate"
+              onChange={handleChangeDate}
+              value={dateRange.toDate}
+              className="px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-900 focus:border-blue-900 focus:outline-none"
+            />
           </div>
         </div>
 
@@ -111,77 +164,103 @@ const MyBids = () => {
               <thead className="bg-blue-950 text-white">
                 <tr>
                   <th className="p-3 text-left font-semibold">Sr</th>
-                  <th className="p-1 text-left font-semibold">Customer Name</th>
-                  <th className="p-1 text-left font-semibold">Vehicle Name</th>
-                  <th className="p-1  text-left  font-semibold">Bid Amount</th>
                   <th className="p-1 text-left font-semibold">Date</th>
-                  <th className="p-1 text-center font-semibold">Status</th>
+                  <th className="p-1 text-left font-semibold">Event Name</th>
+                  <th className="p-1  text-left  font-semibold">Actions</th>
                 </tr>
               </thead>
               <tbody className="divide-y divide-gray-600">
                 {currentItems && currentItems.length > 0 ? (
-                  currentItems.map((bid, index) => (
+                  currentItems.map((event, index) => (
                     <tr key={index} className="transition duration-200">
                       <td className="p-3">{startIndex + index + 1}</td>
                       <td className="p-1">
                         <div className="flex items-center gap-3">
                           <span className="text-sm font-medium text-gray-900">
-                            {bid?.buyerDetails?.name}
+                            {event?.eventDate &&
+                              (() => {
+                                const date = new Date(event?.eventDate);
+                                const day = String(date.getDate()).padStart(
+                                  2,
+                                  "0"
+                                );
+                                const month = String(
+                                  date.getMonth() + 1
+                                ).padStart(2, "0"); // Month is 0-indexed
+                                const year = date.getFullYear();
+                                return `${day}-${month}-${year}`;
+                              })()}
                           </span>
                         </div>
                       </td>
 
                       <td className="p-1">
                         <div className="flex items-center gap-3">
-                          <div className="w-10 h-10 rounded-md overflow-hidden bg-gray-100 flex-shrink-0 cursor-pointer">
-                            {bid.vehicleDetails?.images &&
-                            bid.vehicleDetails?.images.length > 0 ? (
-                              <img
-                                src={bid.vehicleDetails?.images[0]}
-                                alt={`${bid.vehicleDetails?.make} ${bid.vehicleDetails?.model}`}
-                                className="h-full w-full object-cover rounded-full"
-                              />
-                            ) : (
-                              <div className="h-full w-full flex items-center justify-center text-gray-400 text-xs">
-                                No Image
-                              </div>
-                            )}
-                          </div>
                           <div className="cursor-pointer min-w-0">
-                            <h2 className="text-sm font-bold text-gray-800 truncate">
-                              {bid.vehicleDetails?.make
-                                .charAt(0)
-                                .toUpperCase() +
-                                bid.vehicleDetails?.make.slice(1)}{" "}
-                              {bid.vehicleDetails?.model
-                                .charAt(0)
-                                .toUpperCase() +
-                                bid.vehicleDetails?.model.slice(1)}
+                            <h2 className="text-sm font-bold text-gray-800 truncate capitalize">
+                              {event?.eventName}
                             </h2>
                             <p className="text-xs text-gray-500 truncate">
-                              {bid.vehicleDetails?.series
-                                .charAt(0)
-                                .toUpperCase() +
-                                bid.vehicleDetails?.series.slice(1)}
+                              {event?.date}
                             </p>
                           </div>
                         </div>
                       </td>
 
-                      <td className="p-1 font-semibold text-[#191970]">
-                        PKR {bid?.bidDetails?.yourOffer || "0"}
-                      </td>
-                      <td className="p-1 text-gray-500">
-                        {bid?.bidDetails?.bidCreatedAt
-                          ? new Date(
-                              bid.bidDetails.bidCreatedAt
-                            ).toLocaleDateString("en-GB")
-                          : "N/A"}
-                      </td>
-                      <td className="p-1text-center">
-                        <span className="inline-flex items-center px-3 py-1 text-xs font-semibold text-green-700 bg-green-100 rounded-full">
-                          Sold
-                        </span>
+                      <td className="p-1">
+                        <div className="flex gap-2">
+                          {/* Edit Button */}
+                          <button
+                            onClick={() => {
+                              handleIsOpenModal("edit"), setSelectEvent(event);
+                            }}
+                            className="px-3 py-1.5 text-xs font-medium text-yellow-600 bg-yellow-100  hover:bg-yellow-200 rounded transition-colors flex items-center gap-1"
+                          >
+                            <svg
+                              className="w-3 h-3"
+                              fill="none"
+                              stroke="currentColor"
+                              viewBox="0 0 24 24"
+                            >
+                              <path
+                                strokeLinecap="round"
+                                strokeLinejoin="round"
+                                strokeWidth={2}
+                                d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"
+                              />
+                            </svg>
+                            Edit
+                          </button>
+
+                          {/* Delete Button */}
+
+                          <button
+                            onClick={() => handleDeleteEvent(event.id)}
+                            disabled={event.totalBids > 0}
+                            className={`px-3 py-1.5 text-xs font-medium text-white rounded transition-colors flex items-center gap-1
+    ${
+      event.totalBids > 0
+        ? "bg-red-400 cursor-not-allowed"
+        : "bg-red-600 hover:bg-red-700"
+    }
+  `}
+                          >
+                            <svg
+                              className="w-3 h-3"
+                              fill="none"
+                              stroke="currentColor"
+                              viewBox="0 0 24 24"
+                            >
+                              <path
+                                strokeLinecap="round"
+                                strokeLinejoin="round"
+                                strokeWidth={2}
+                                d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"
+                              />
+                            </svg>
+                            Delete
+                          </button>
+                        </div>
                       </td>
                     </tr>
                   ))
@@ -197,59 +276,6 @@ const MyBids = () => {
                 )}
               </tbody>
             </table>
-          </div>
-
-          {/* Mobile Card View */}
-          <div className="md:hidden p-4 space-y-4">
-            {currentItems && currentItems.length > 0 ? (
-              currentItems.map((bid, index) => (
-                <div
-                  key={index}
-                  className="bg-white rounded-xl shadow-md border border-gray-200 p-4"
-                >
-                  <div className="flex justify-end items-center mb-3">
-                    <span className="inline-flex items-center justify-center px-3 py-1 text-xs rounded-full font-semibold bg-green-100 text-green-800">
-                      Sold
-                    </span>
-                  </div>
-                  <div className="space-y-2 text-sm">
-                    <p className="flex justify-between">
-                      <span className="text-gray-900 font-bold">Customer</span>
-                      <span className="text-gray-800 cursor-pointer underline">
-                        {bid?.buyerDetails?.name}
-                      </span>
-                    </p>
-                    <p className="flex justify-between">
-                      <span className="text-gray-900 font-bold">Vehicle</span>
-                      <span className="text-gray-800 cursor-pointer underline">
-                        {bid?.vehicleDetails?.make}/{bid?.vehicleDetails?.model}
-                        /{bid?.vehicleDetails?.series}
-                      </span>
-                    </p>
-                    <p className="flex justify-between">
-                      <span className="text-gray-900 font-bold">
-                        Bid Amount
-                      </span>
-                      <span className="text-[#191970] font-semibold">
-                        PKR {bid?.bidDetails.yourOffer || "0"}
-                      </span>
-                    </p>
-                    <p className="flex justify-between">
-                      <span className="text-gray-900 font-bold">Date</span>
-                      <span className="text-gray-500">
-                        {bid?.bidDetails?.bidCreatedAt
-                          ? new Date(
-                              bid.bidDetails.bidCreatedAt
-                            ).toLocaleDateString("en-GB")
-                          : "N/A"}
-                      </span>
-                    </p>
-                  </div>
-                </div>
-              ))
-            ) : (
-              <div className="text-center py-8 text-gray-400">No bids yet.</div>
-            )}
           </div>
 
           {/* PAGINATION –  */}
@@ -338,9 +364,22 @@ const MyBids = () => {
             </div>
           )}
         </div>
+        {isOpen === "add" && (
+          <AddEvent
+            Open={isOpen}
+            setOpen={() => handleIsOpenModal("")}
+            handleGetEvent={handleGetAuctionEvent}
+          />
+        )}
+        {isOpen === "edit" && (
+          <EditEvent
+            Open={isOpen}
+            setOpen={() => handleIsOpenModal("")}
+            selectEvent={selectEvent}
+            handleGetEvent={handleGetAuctionEvent}
+          />
+        )}
       </div>
     </div>
   );
 };
-
-export default MyBids;

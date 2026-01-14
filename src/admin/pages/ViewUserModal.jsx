@@ -129,7 +129,6 @@ const ViewUserModal = ({ isOpen, closeModal }) => {
 
                               {/* Quick Stats */}
                               <div className=" gap-4 w-full mt-6">
-                               
                                 <div className="text-center p-3 bg-indigo-50 rounded-xl">
                                   <div className="text-sm text-blue-900 mb-1">
                                     Status
@@ -195,8 +194,6 @@ const ViewUserModal = ({ isOpen, closeModal }) => {
                               value={userbyId?.cnic || "N/A"}
                               copyable
                             />
-
-                           
                           </div>
 
                           {/* ADDRESS FIELD - SPECIAL WIDE DESIGN */}
@@ -263,7 +260,6 @@ const ViewUserModal = ({ isOpen, closeModal }) => {
 
                 {/* Footer Actions */}
                 <div className="bg-gray-50 px-8 py-6 border-t border-gray-200 rounded-b-3xl flex justify-end items-center">
-                 
                   <div className="flex gap-3">
                     <button
                       onClick={closeModal}

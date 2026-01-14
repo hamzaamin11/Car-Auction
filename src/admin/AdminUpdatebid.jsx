@@ -25,6 +25,8 @@ export const AdminUpdatebid = ({
 
   const [formData, setFormData] = useState(initialState);
 
+  console.log(selectedVehicle, "<=discription");
+
   const [loading, setLoading] = useState(false);
 
   const handleChange = (e) => {
@@ -43,25 +45,24 @@ export const AdminUpdatebid = ({
     });
   };
 
-useEffect(() => {
-  if (selectedVehicle?.images?.length > 0) {
-    setViewImage(selectedVehicle.images[0]);
-  }
+  useEffect(() => {
+    if (selectedVehicle?.images?.length > 0) {
+      setViewImage(selectedVehicle.images[0]);
+    }
 
-  if (selectedVehicle) {
-    setFormData((prev) => ({
-      ...prev,
-      startTime: selectedVehicle?.startTime || "",
-      endTime: selectedVehicle?.endTime || "",
-      vehicleId:
-        selectedVehicle?.id ||
-        selectedVehicle?.newVehicleId ||
-        selectedVehicle?.vehicleId,
-      userId: selectedVehicle?.userId,
-    }));
-  }
-}, [selectedVehicle]);
-
+    if (selectedVehicle) {
+      setFormData((prev) => ({
+        ...prev,
+        startTime: selectedVehicle?.startTime || "",
+        endTime: selectedVehicle?.endTime || "",
+        vehicleId:
+          selectedVehicle?.id ||
+          selectedVehicle?.newVehicleId ||
+          selectedVehicle?.vehicleId,
+        userId: selectedVehicle?.userId,
+      }));
+    }
+  }, [selectedVehicle]);
 
   const handleBidSubmit = async (e) => {
     e.preventDefault();
@@ -113,6 +114,9 @@ useEffect(() => {
           {/* Left Side */}
           <div className="space-y-2 text-sm">
             <div className="grid grid-cols-2 space-y-2">
+              <p>
+                <strong>Lot Number:</strong> {selectedVehicle?.lot_number}
+              </p>
               <p>
                 <strong>Model:</strong> {selectedVehicle?.model}
               </p>
@@ -216,7 +220,11 @@ useEffect(() => {
             </div>
           </div>
         </div>
-        <ToastContainer />
+        <div className="space-y-2 mt-2 text-sm text-gray-800">
+          <span className="font-bold ">Description:</span>{" "}
+          {selectedVehicle?.description || "--"}
+        </div>
+      
       </div>
     </div>
   );

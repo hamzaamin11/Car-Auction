@@ -31,7 +31,10 @@ const SellerSidebar = () => {
     {
       name: "Vehicles",
       icon: <FaCar />,
-      children: [{ name: "Vehicle List", path: "/seller/addVehicle" }],
+      children: [
+        { name: "Vehicle List", path: "/seller/addVehicle" },
+        { name: "Un-Sold Vehicle", path: "/seller/unsold" },
+      ],
     },
     {
       name: "Auctions",
@@ -172,7 +175,6 @@ const SellerSidebar = () => {
                       {item.icon}
                     </span>
                     <span>{item.name}</span>
-                   
                   </NavLink>
                 )}
               </div>
