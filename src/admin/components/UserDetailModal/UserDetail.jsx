@@ -16,19 +16,17 @@ export const UserDetailModal = ({ isOpen, closeModal, userDetail }) => {
 
   return (
     <div className="fixed inset-0 z-50 backdrop-blur-sm flex items-start justify-center pt-20">
-      <div className="bg-white md:w-[60%] lg:w-[50%] w-full max-w-2xl rounded-lg shadow-lg p-6 relative max-h-[80vh] overflow-auto border">
+      <div className="bg-white md:w-[60%] lg:w-[50%] w-full max-w-2xl rounded-lg shadow-lg  relative max-h-[80vh] overflow-auto border">
         {/* Close Icon */}
-        <button
-          onClick={closeModal}
-          className="absolute top-4 right-4 text-gray-600 hover:text-rose-600"
-        >
-          <MdClose size={24} />
-        </button>
 
-        {/* Header */}
-        <h2 className="text-2xl font-bold text-gray-800 mb-6 border-b pb-3">
-          User Details
-        </h2>
+        <div className=" flex items-center justify-between bg-blue-950 text-white p-4">
+          <h2 className="text-2xl font-bold ">
+            User Details
+          </h2>
+          <button onClick={closeModal} className="hover:cursor-pointer">
+            <MdClose size={24} />
+          </button>
+        </div>
         {userDetail.images && userDetail.images.length > 0 && (
           <div className="flex flex-col items-center mb-4">
             <img
@@ -39,7 +37,7 @@ export const UserDetailModal = ({ isOpen, closeModal, userDetail }) => {
           </div>
         )}
         {/* Grid Layout */}
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-6 p-6">
           {/* Left Column */}
           <div className="space-y-4">
             {/* Personal Information */}
@@ -160,7 +158,7 @@ export const UserDetailModal = ({ isOpen, closeModal, userDetail }) => {
         </div>
 
         {/* Action Buttons */}
-        <div className="flex justify-end gap-3 mt-6 pt-4 border-t">
+        <div className="flex justify-end gap-3 m-6 pt-4 border-t">
           <button
             onClick={closeModal}
             className="px-4 py-2 text-sm font-medium text-white bg-red-600 hover:bg-red-700 rounded-md transition-colors"

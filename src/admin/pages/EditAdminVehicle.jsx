@@ -228,7 +228,7 @@ function EditAdminVehicle({
   const [selectedCount, setSelectedCount] = useState(0);
   const [price, setPrice] = useState("");
   const [autoDescription, setAutoDescription] = useState(
-    initialAutoDescription
+    initialAutoDescription,
   );
   const [showMore, setShowMore] = useState(false);
 
@@ -624,17 +624,17 @@ function EditAdminVehicle({
     if (existingImages.length > 0) {
       formData.append(
         "existingImages",
-        JSON.stringify(existingImages.filter((img) => typeof img === "string"))
+        JSON.stringify(existingImages.filter((img) => typeof img === "string")),
       );
     }
 
     try {
       const res = await fetch(
-        `${BASE_URL}/seller/updateVehicle/${selectedVehicle?.id}`,
+        `${BASE_URL}/admin/updateVehicleForAdmin/${selectedVehicle?.id}`,
         {
           method: "PUT",
           body: formData,
-        }
+        },
       );
 
       if (!res.ok) {
@@ -729,7 +729,7 @@ function EditAdminVehicle({
               options={cityData}
               value={
                 cityData.find(
-                  (o) => String(o.value) === String(vehicle?.locationId)
+                  (o) => String(o.value) === String(vehicle?.locationId),
                 ) || null
               }
               onChange={(selectedOption) => handleSearchable(selectedOption)}
@@ -810,7 +810,7 @@ function EditAdminVehicle({
                 options={transmissionOptions}
                 value={
                   transmissionOptions.find(
-                    (o) => o.value === vehicle.transmission
+                    (o) => o.value === vehicle.transmission,
                   ) || null
                 }
                 onChange={(opt) =>
@@ -886,7 +886,7 @@ function EditAdminVehicle({
                 options={conditionOptions}
                 value={
                   conditionOptions.find(
-                    (o) => o.value === vehicle.vehicleCondition
+                    (o) => o.value === vehicle.vehicleCondition,
                   ) || null
                 }
                 onChange={(opt) =>

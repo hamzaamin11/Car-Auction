@@ -4,6 +4,8 @@ import { debounce } from "lodash";
 
 import CustomSearch from "../CustomSearch";
 import { BASE_URL } from "../components/Contant/URL";
+import { CircleUser } from "lucide-react";
+import { UserDetailModal } from "../admin/components/UserDetailModal/UserDetail";
 
 const currentDate = new Date().toISOString().split("T")[0];
 
@@ -19,7 +21,9 @@ export const AdminAccount = () => {
   const [selectedContact, setSelectedContact] = useState(null);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [search, setSearch] = useState("");
-  const [loading, setLoading] = useState(false);
+  const [userDetail, setUSerDetail] = useState(null);
+  const [isOpen, setIsOpen] = useState("");
+
   const [currentPage, setCurrentPage] = useState(1);
 
   const itemsPerPage = 10;
@@ -37,6 +41,10 @@ export const AdminAccount = () => {
     setFilterDate({ ...filterDate, [name]: value });
   };
 
+  const handleIsOpen = (active) => {
+    setIsOpen((prev) => (prev === active ? "" : active));
+  };
+
   const handleGetAccount = async () => {
     try {
       const res = await axios.get(
@@ -44,6 +52,18 @@ export const AdminAccount = () => {
       );
 
       setAllContacts(res?.data?.data || []);
+    } catch (error) {
+      console.log(error);
+    }
+  };
+
+  const handleViewUserDetail = async (id) => {
+    try {
+      const res = await axios.get(
+        `${BASE_URL}/admin/getUserDetailsApprovedVehicleListById/${id}`
+      );
+
+      setUSerDetail(res.data?.data);
     } catch (error) {
       console.log(error);
     }
@@ -143,11 +163,13 @@ export const AdminAccount = () => {
           <thead className="bg-blue-950 text-white">
             <tr>
               <th className="p-3 text-left">Sr#</th>
+              <th className="p-1 text-left">Customer Name</th>
               <th className="p-1 text-left">Vehicle Name</th>
               <th className="p-1 text-left">Lot#</th>
               <th className="p-1  text-left">Year</th>
               <th className="p-1 text-left">City</th>
               <th className="p-1  text-left">Date </th>
+              <th className="p-1  text-left">Sold Price </th>
               <th className="p-1  text-left">Debit</th>
               <th className="p-1 text-left">Credit</th>
               <th className="p-1 text-left">Balance</th>
@@ -160,6 +182,26 @@ export const AdminAccount = () => {
                 <tr key={c.id} className="border-b hover:bg-gray-50 transition">
                   {/* Serial Number */}
                   <td className="p-3 text-gray-600">{startIndex + i + 1}</td>
+
+                  <td
+                    className="hover:cursor-pointer"
+                    onClick={() => {
+                      handleIsOpen("detail");
+                      handleViewUserDetail(c?.winnerUserId);
+                    }}
+                  >
+                    <div className="flex items-center gap-1">
+                      <CircleUser
+                        size={"30"}
+                        style={{
+                          color: "gray",
+                        }}
+                      />
+                      <span className="text-sm text-gray-600 capitalize">
+                        {c?.winnerUserName}
+                      </span>
+                    </div>
+                  </td>
 
                   {/* Vehicle with Image */}
                   <td className="p-1">
@@ -214,7 +256,17 @@ export const AdminAccount = () => {
                   </td>
                   {/* Date */}
                   <td className="p-1">
-                    <span className="text-gray-700">{c.date.slice(0, 10)}</span>
+                    <span className="text-gray-700">
+                      {c.date.slice(0, 10).split("-").reverse().join("-")}
+                    </span>
+                  </td>
+
+                  <td className="p-1">
+                    <span className="text-gray-700">
+                      {c.winningBid
+                        ? `${c.winningBid.toLocaleString()} PKR`
+                        : "0 PKR"}
+                    </span>
                   </td>
 
                   {/* Debit */}
@@ -385,6 +437,13 @@ export const AdminAccount = () => {
             </div>
           </div>
         </div>
+      )}
+      {isOpen === "detail" && (
+        <UserDetailModal
+          isOpen={isOpen}
+          closeModal={() => handleIsOpen("")}
+          userDetail={userDetail}
+        />
       )}
     </div>
   );

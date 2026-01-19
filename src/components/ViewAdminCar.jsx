@@ -1,170 +1,221 @@
+import { X, ChevronLeft, ChevronRight } from "lucide-react";
 import { useEffect, useState } from "react";
-import { FaArrowLeft, FaArrowRight } from "react-icons/fa";
-import { MdClose } from "react-icons/md";
 
-export const ViewAdminCar = ({ selectedVehicle, handleClick }) => {
-  const [viewImage, setViewImage] = useState(null);
-  const [indexImage, setIndexImage] = useState(0);
-
-  console.log(indexImage);
-
-  const ImageLength = selectedVehicle?.images?.length - 1;
+export const ViewAdminCar = ({
+  selectedVehicle,
+  handleClick,
+  isViewModalOpen,
+}) => {
+  const [currentImageIndex, setCurrentImageIndex] = useState(0);
 
   useEffect(() => {
     if (selectedVehicle?.images?.length > 0) {
-      setViewImage(selectedVehicle.images[0]);
+      setCurrentImageIndex(0);
     }
   }, [selectedVehicle]);
 
-  useEffect(() => {
-    if (selectedVehicle?.images?.length > 0) {
-      return setViewImage(selectedVehicle.images[indexImage]);
-    }
-  }, [indexImage]);
+  const handleNextImage = () => {
+    const images = selectedVehicle?.images || [];
+    setCurrentImageIndex((prev) => (prev < images.length - 1 ? prev + 1 : 0));
+  };
 
-  const handleNextImage = () =>
-    setIndexImage((prev) => (ImageLength > prev ? prev + 1 : 0));
+  const handlePrevImage = () => {
+    const images = selectedVehicle?.images || [];
+    setCurrentImageIndex((prev) => (prev > 0 ? prev - 1 : images.length - 1));
+  };
 
-  const handlePreviousImage = () =>
-    setIndexImage((prev) => (prev > 0 ? prev - 1 : 0));
+  if (!isViewModalOpen || !selectedVehicle) return null;
 
   return (
-    <div className="fixed inset-0 z-50 backdrop-blur-sm flex items-start justify-center pt-20 ">
-      <div className="bg-white  md:w-[70%] lg:w-[60%]  w-full rounded-lg shadow-lg p-6 relative max-h-[80vh] overflow-auto border">
-        {/* Close Icon */}
-        <button
-          onClick={handleClick}
-          className="absolute top-4 right-4 text-gray-600 hover:text-rose-600"
-        >
-          <MdClose size={24} />
-        </button>
+    <div className="fixed inset-0 z-50 flex items-center justify-center backdrop-blur-sm p-4">
+      <div className="bg-white rounded-lg shadow-2xl w-full max-w-4xl max-h-[90vh] overflow-y-auto relative border">
+        <div className="flex items-center justify-between bg-blue-950 p-4">
+          <h2 className="text-2xl font-bold text-white">Vehicle Details</h2>
+          <button onClick={handleClick} className="">
+            <X className="h-6 w-6 text-white hover:cursor-pointer" />
+          </button>
+        </div>
+        <div className="p-6 ">
+          <div className="grid md:grid-cols-2 gap-8">
+            {/* Left Column - Vehicle Details */}
+            <div>
+              <div className="grid grid-cols-2 gap-4 mb-4">
+                <div>
+                  <p className="text-sm font-bold text-gray-700">Lot Number:</p>
+                  <p className="text-base text-gray-900 border-b pb-1">
+                    {selectedVehicle.lot_number || "—"}
+                  </p>
+                </div>
+                <div>
+                  <p className="text-sm font-bold text-gray-700">Location:</p>
+                  <p className="text-base text-gray-900 border-b pb-1">
+                    {selectedVehicle.cityName || "—"}
+                  </p>
+                </div>
+              </div>
+              <div>
+                <div className="grid grid-cols-2 gap-4 ">
+                  <div className="mb-4">
+                    <p className="text-sm font-bold text-gray-700">Make:</p>
+                    <p className="text-base text-gray-900 border-b pb-1">
+                      {selectedVehicle.make || "—"}
+                    </p>
+                  </div>
 
-        {/* Header */}
-        <h2 className="text-xl font-bold text-gray-800 mb-6">
-          Vehicle Details
-        </h2>
+                  <div className="mb-4">
+                    <p className="text-sm font-bold text-gray-700">Model:</p>
+                    <p className="text-base text-gray-900 border-b pb-1">
+                      {selectedVehicle.model || "—"}
+                    </p>
+                  </div>
 
-        {/* Grid Layout */}
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-          {/* Left: Car Details */}
-          <div className="space-y-2 text-sm text-gray-800 grid grid-cols-2 gap-5 w-[100%] ">
-            <p>
-              <span className="font-bold">Lot Number :</span>{" "}
-              {selectedVehicle?.lot_number || "--"}
-            </p>
-            <p>
-              <span className="font-bold">Location:</span>{" "}
-              {selectedVehicle?.cityName.charAt(0).toUpperCase() +
-                selectedVehicle?.cityName.slice(1) || "--"}
-            </p>
+                  <div className="mb-4">
+                    <p className="text-sm font-bold text-gray-700">Series:</p>
+                    <p className="text-base text-gray-900 border-b pb-1">
+                      {selectedVehicle.series || "—"}
+                    </p>
+                  </div>
 
-            <p>
-              <span className="font-bold">Make:</span>{" "}
-              {selectedVehicle?.make.charAt(0).toUpperCase() +
-                selectedVehicle?.make.slice(1) || "--"}
-            </p>
-            <p>
-              <span className="font-bold">Model:</span>{" "}
-              {selectedVehicle?.model.charAt(0).toUpperCase() +
-                selectedVehicle?.model.slice(1) || "--"}
-            </p>
+                  <div className="mb-4">
+                    <p className="text-sm font-bold text-gray-700">Color:</p>
+                    <p className="text-base text-gray-900 border-b pb-1">
+                      {selectedVehicle.color || "—"}
+                    </p>
+                  </div>
+                </div>
+              </div>
+              <div className="grid grid-cols-2 gap-4 mb-4">
+                <div>
+                  <p className="text-sm font-bold text-gray-700">
+                    Transmission:
+                  </p>
+                  <p className="text-base text-gray-900 border-b pb-1">
+                    {selectedVehicle.transmission || "—"}
+                  </p>
+                </div>
+                <div>
+                  <p className="text-sm font-bold text-gray-700">Fuel Type:</p>
+                  <p className="text-base text-gray-900 border-b pb-1">
+                    {selectedVehicle.fuelType || "—"}
+                  </p>
+                </div>
+              </div>
 
-            <p>
-              <span className="font-bold">Series:</span>{" "}
-              {selectedVehicle?.series.charAt(0).toUpperCase() +
-                selectedVehicle?.series.slice(1) || "--"}
-            </p>
-            <p>
-              <span className="font-bold">Color:</span>{" "}
-              {selectedVehicle?.color.charAt(0).toUpperCase() +
-                selectedVehicle?.color.slice(1) || "--"}
-            </p>
+              <div className="grid grid-cols-2 gap-4 mb-4">
+                <div>
+                  <p className="text-sm font-bold text-gray-700">Body Style:</p>
+                  <p className="text-base text-gray-900 border-b pb-1">
+                    {selectedVehicle.bodyStyle || "—"}
+                  </p>
+                </div>
+                <div>
+                  <p className="text-sm font-bold text-gray-700">
+                    Certify Status:
+                  </p>
+                  <p className="text-base text-gray-900 border-b pb-1">
+                    {selectedVehicle.certifyStatus || "—"}
+                  </p>
+                </div>
+              </div>
 
-            <p>
-              <span className="font-bold">Transmission:</span>{" "}
-              {selectedVehicle?.transmission.charAt(0).toUpperCase() +
-                selectedVehicle?.transmission.slice(1) || "--"}
-            </p>
-            <p>
-              <span className="font-bold">Fuel Type:</span>
-              {selectedVehicle?.fuelType.charAt(0).toUpperCase() +
-                selectedVehicle?.fuelType.slice(1) || "--"}
-            </p>
+              <div className="grid grid-cols-2 gap-4 mb-4">
+                <div>
+                  <p className="text-sm font-bold text-gray-700">Drive Type:</p>
+                  <p className="text-base text-gray-900 border-b pb-1 uppercase">
+                    {selectedVehicle.driveType || "—"}
+                  </p>
+                </div>
+                <div>
+                  <p className="text-sm font-bold text-gray-700">Mileage:</p>
+                  <p className="text-base text-gray-900 border-b pb-1">
+                    {selectedVehicle.mileage || "—"}
+                  </p>
+                </div>
+              </div>
 
-            <p>
-              <span className="font-bold">Body Style:</span>{" "}
-              {selectedVehicle?.bodyStyle.charAt(0).toUpperCase() +
-                selectedVehicle?.bodyStyle.slice(1) || "--"}
-            </p>
+              <div className="grid grid-cols-2 gap-4 mb-4">
+                <div>
+                  <p className="text-sm font-bold text-gray-700">Year:</p>
+                  <p className="text-base text-gray-900 border-b pb-1">
+                    {selectedVehicle.year || "—"}
+                  </p>
+                </div>
+                <div>
+                  <p className="text-sm font-bold text-gray-700">Condition:</p>
+                  <p className="text-base text-gray-900 border-b pb-1">
+                    {selectedVehicle.vehicleCondition || "—"}
+                  </p>
+                </div>
+              </div>
 
-            <p>
-              <span className="font-bold">Certification Status:</span>{" "}
-              {selectedVehicle?.certifyStatus.charAt(0).toUpperCase() +
-                selectedVehicle?.certifyStatus.slice(1) || "--"}
-            </p>
+              <div className="mb-4">
+                <p className="text-sm font-bold text-gray-700">Price:</p>
+                <p className="text-base text-gray-900 border-b pb-1">
+                  {selectedVehicle.buyNowPrice
+                    ? `PKR ${selectedVehicle.buyNowPrice}`
+                    : "—"}
+                </p>
+              </div>
 
-            <p>
-              <span className="font-bold">Drive Type:</span>{" "}
-              {selectedVehicle?.driveType.charAt(0).toUpperCase() +
-                selectedVehicle?.driveType.slice(1) || "--"}
-            </p>
-
-            <p>
-              <span className="font-bold">Meter Reading:</span>{" "}
-              {selectedVehicle?.mileage || "--"}
-            </p>
-            <p>
-              <span className="font-bold">Year:</span> {selectedVehicle?.year}
-            </p>
-            <p>
-              <span className="font-bold">Condition:</span>{" "}
-              {selectedVehicle?.vehicleCondition.charAt(0).toUpperCase() +
-                selectedVehicle?.vehicleCondition.slice(1) || "--"}
-            </p>
-            <p>
-              <span className="font-bold">Reserve Price:</span>{" "}
-              {selectedVehicle?.buyNowPrice || "--"}
-            </p>
-          </div>
-
-          {/* Right: Car Image + Thumbnails */}
-          <div className="">
-            <img
-              src={viewImage}
-              alt="Vehicle"
-              className="w-full h-[250px] object-cover rounded shadow"
-            />
-            <div className="flex items-center justify-center mt-6 gap-2">
-              <button
-                onClick={handlePreviousImage}
-                className="w-8 h-8 flex items-center justify-center rounded-full bg-red-500 text-white shadow-lg hover:scale-110 transition-transform duration-200"
-              >
-                <FaArrowLeft size={20} />
-              </button>
-              {selectedVehicle?.images?.map((img, idx) => (
-                <img
-                  key={idx}
-                  src={img}
-                  alt={`Thumbnail-${idx}`}
-                  onClick={() => setViewImage(img)}
-                  className={`w-[50px] h-[50px] object-cover rounded cursor-pointer border ${
-                    viewImage === img
-                      ? "border-blue-600 border-4"
-                      : "border-gray-300"
-                  }`}
-                />
-              ))}
-              <button
-                onClick={handleNextImage}
-                className="w-8 h-8 flex items-center justify-center rounded-full bg-red-500 text-white shadow-lg hover:scale-110 transition-transform duration-200"
-              >
-                <FaArrowRight size={20} />
-              </button>
+              <div className="">
+                <p className="text-sm font-bold text-gray-700 mb-2">
+                  Description:
+                </p>
+                <p className="text-base text-gray-700">
+                  {selectedVehicle.description ||
+                    "100% maintained by dealership"}
+                </p>
+              </div>
             </div>
-          </div>
-          <div className="space-y-2 text-sm text-gray-800">
-            <span className="font-bold ">Description:</span>{" "}
-            {selectedVehicle?.description || "--"}
+
+            {/* Right Column - Image Gallery */}
+            <div className="flex flex-col items-center">
+              {selectedVehicle.images && selectedVehicle.images.length > 0 ? (
+                <>
+                  <div className="w-full h-72 rounded-lg overflow-hidden bg-gray-100 mb-4">
+                    <img
+                      src={selectedVehicle.images[currentImageIndex]}
+                      alt={`${selectedVehicle.make} ${selectedVehicle.model}`}
+                      className="w-full h-full object-contain"
+                    />
+                  </div>
+
+                  <div className="flex items-center justify-center gap-4 w-full">
+                    <button
+                      onClick={handlePrevImage}
+                      className="bg-gray-800 hover:bg-gray-900 text-white rounded-full p-3 shadow-lg transition disabled:opacity-50 disabled:cursor-not-allowed"
+                      disabled={selectedVehicle.images.length <= 1}
+                    >
+                      <ChevronLeft className="h-5 w-5" />
+                    </button>
+
+                    <div className="w-20 h-20 rounded-lg overflow-hidden bg-gray-100">
+                      <img
+                        src={selectedVehicle.images[currentImageIndex]}
+                        alt="Thumbnail"
+                        className="w-full h-full object-cover"
+                      />
+                    </div>
+
+                    <button
+                      onClick={handleNextImage}
+                      className="bg-gray-800 hover:bg-gray-900 text-white rounded-full p-3 shadow-lg transition disabled:opacity-50 disabled:cursor-not-allowed"
+                      disabled={selectedVehicle.images.length.length <= 1}
+                    >
+                      <ChevronRight className="h-5 w-5" />
+                    </button>
+                  </div>
+
+                  <p className="text-sm text-gray-600 mt-2">
+                    {currentImageIndex + 1} / {selectedVehicle.images.length}
+                  </p>
+                </>
+              ) : (
+                <div className="w-full h-72 rounded-lg bg-gray-100 flex items-center justify-center">
+                  <p className="text-gray-400">No images available</p>
+                </div>
+              )}
+            </div>
           </div>
         </div>
       </div>

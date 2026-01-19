@@ -90,6 +90,7 @@ const Sidebar = () => {
       icon: <IoIosSettings />,
       children: [
         { name: "Configure Commission ", path: "/admin/configuration" },
+        { name: "Configure Increment ", path: "/admin/increment" },
         { name: "Makes", path: "/admin/addbrand" },
         { name: "Models", path: "/admin/addmodel" },
         { name: "Series", path: "/admin/addseries" },

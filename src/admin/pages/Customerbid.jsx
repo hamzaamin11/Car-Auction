@@ -101,7 +101,7 @@ export const Customerbid = () => {
   const handleGetallBid = async () => {
     try {
       const res = await axios.get(
-        `${BASE_URL}/admin/bidsPlacedById/${vehicleId}`
+        `${BASE_URL}/admin/bidsPlacedById/${vehicleId}`,
       );
       console.log("Fetched bids:", res.data);
       setAllCustomerBid(res.data);
@@ -114,7 +114,7 @@ export const Customerbid = () => {
     try {
       const response = await axios.post(
         `${BASE_URL}/customer/startBidding`,
-        bidAmount
+        bidAmount,
       );
       console.log("Bid submitted:", response.data);
 
@@ -167,7 +167,7 @@ export const Customerbid = () => {
               bid.id === data.latestBid.id ||
               (bid.createdAt === data.latestBid.createdAt &&
                 bid.maxBid === data.latestBid.maxBid &&
-                bid.userId === data.latestBid.userId)
+                bid.userId === data.latestBid.userId),
           );
 
           if (bidExists) {
@@ -661,7 +661,7 @@ END:VCALENDAR`.trim();
                 <td className="p-2 font-semibold  ">
                   {selectedPrice?.startTime
                     ? new Date(selectedPrice.startTime).toLocaleDateString(
-                        "en-GB"
+                        "en-GB",
                       )
                     : "Coming Soon"}
                 </td>
@@ -743,8 +743,8 @@ END:VCALENDAR`.trim();
                               {phase === "before"
                                 ? "Auction start in"
                                 : phase === "running"
-                                ? "Time Left"
-                                : "Ended"}
+                                  ? "Time Left"
+                                  : "Ended"}
                             </div>
                             <div className="text-xl font-bold">{formatted}</div>
                           </>
@@ -992,7 +992,7 @@ END:VCALENDAR`.trim();
                 <td className="p-2  font-semibold text-right ">
                   {selectedPrice?.startTime
                     ? new Date(selectedPrice.startTime).toLocaleDateString(
-                        "en-GB"
+                        "en-GB",
                       )
                     : "Coming Soon"}
                 </td>
@@ -1070,8 +1070,8 @@ END:VCALENDAR`.trim();
                               {phase === "before"
                                 ? "Auction start in"
                                 : phase === "running"
-                                ? "Time Left"
-                                : "Ended"}
+                                  ? "Time Left"
+                                  : "Ended"}
                             </div>
                             <div className="text-xl font-bold">{formatted}</div>
                           </>
@@ -1283,7 +1283,7 @@ const CarCard = ({ car }) => {
           <span className="font-medium">Model Year:</span> {car.year}
         </p>
         <p className="text-sm text-black text-[13px]">
-          <span className="font-medium">Location:</span> {car.cityName}
+          <span className="font-medium">Location:</span> {car.cityName || "--"}
         </p>
 
         <button
@@ -1314,12 +1314,12 @@ const SimilarVehicles = ({ currentVehicle }) => {
 
       console.log(
         "Fetching similar vehicles for vehicleId:",
-        currentVehicle.vehicleId
+        currentVehicle.vehicleId,
       );
 
       try {
         const res = await axios.get(
-          `${BASE_URL}/getSimilarVehicles/${currentVehicle.vehicleId}`
+          `${BASE_URL}/getSimilarVehicles/${currentVehicle.vehicleId}`,
         );
 
         console.log("Similar vehicles loaded:", res.data);
@@ -1327,7 +1327,7 @@ const SimilarVehicles = ({ currentVehicle }) => {
       } catch (error) {
         console.error(
           "Failed to fetch similar vehicles:",
-          error.response || error
+          error.response || error,
         );
         setCars([]);
       } finally {
@@ -1342,13 +1342,13 @@ const SimilarVehicles = ({ currentVehicle }) => {
   // Navigation handlers
   const goToPrevious = () => {
     setCurrentIndex((prev) =>
-      prev === 0 ? Math.max(0, cars.length - carsPerPage) : prev - carsPerPage
+      prev === 0 ? Math.max(0, cars.length - carsPerPage) : prev - carsPerPage,
     );
   };
 
   const goToNext = () => {
     setCurrentIndex((prev) =>
-      prev + carsPerPage >= cars.length ? 0 : prev + carsPerPage
+      prev + carsPerPage >= cars.length ? 0 : prev + carsPerPage,
     );
   };
 
@@ -1420,7 +1420,7 @@ const SimilarVehicles = ({ currentVehicle }) => {
                   <div key={`empty-${i}`} className="invisible">
                     <CarCard car={{}} /> {/* Invisible placeholder */}
                   </div>
-                )
+                ),
               )}
             </>
           )}

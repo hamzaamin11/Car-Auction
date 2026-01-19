@@ -1,7 +1,13 @@
 import { useEffect, useState } from "react";
 import axios from "axios";
 import { useSelector } from "react-redux";
-import { ChevronLeft, ChevronRight, User } from "lucide-react";
+import {
+  ChevronLeft,
+  ChevronRight,
+  CircleUser,
+  Clock,
+  User,
+} from "lucide-react";
 import { BASE_URL } from "../../components/Contant/URL";
 import { AddEvent } from "../../components/EventModal/AddEvent";
 import { EditEvent } from "../../components/EventModal/EditEvent";
@@ -9,6 +15,9 @@ import { AddAssignEvent } from "../../components/AssignEventModal/AddAssignEvent
 import moment from "moment";
 import { EditAssignEvent } from "../../components/AssignEventModal/EditAssignModal";
 import Swal from "sweetalert2";
+import { Reauction } from "../../components/AssignEventModal/ReAuctionModal";
+import { ViewAdminCar } from "../../components/ViewAdminCar";
+import { UserDetailModal } from "../components/UserDetailModal/UserDetail";
 
 const currentDate = new Date().toISOString().split("T")[0];
 
@@ -24,6 +33,10 @@ export const AssignEvent = () => {
   const [isOpen, setIsOpen] = useState("");
   const [dateRange, setDateRange] = useState(initialState);
   const [selectEvent, setSelectEvent] = useState(null);
+  const [selectReauction, setSelectReauction] = useState(null);
+  const [selectVehicle, setSelectVehicle] = useState(null);
+  const [userDetail, setUSerDetail] = useState(null);
+
   const itemsPerPage = 10;
 
   const handleIsOpenModal = (option) => {
@@ -59,7 +72,7 @@ export const AssignEvent = () => {
 
     try {
       const res = await axios.delete(
-        `${BASE_URL}/admin/deleteAssignedEvents/${id}`
+        `${BASE_URL}/admin/deleteAssignedEvents/${id}`,
       );
       await Swal.fire({
         title: "Deleted!",
@@ -96,9 +109,33 @@ export const AssignEvent = () => {
     }
   };
 
+  const handleViewUserDetail = async (id) => {
+    try {
+      const res = await axios.get(
+        `${BASE_URL}/admin/getUserDetailsApprovedVehicleListById/${id}`,
+      );
+
+      setUSerDetail(res.data?.data);
+    } catch (error) {
+      console.log(error);
+    }
+  };
+
   const handleChangeDate = (e) => {
     const { name, value } = e.target;
     setDateRange((prevState) => ({ ...prevState, [name]: value }));
+  };
+
+  const handleSelectVehicleforReauction = async (vehicleId) => {
+    try {
+      const res = await axios.get(
+        `${BASE_URL}/admin/getVehicleNameById/${vehicleId}`,
+      );
+
+      setSelectReauction(res.data);
+    } catch (error) {
+      console.log(error);
+    }
   };
 
   const getPageNumbers = () => {
@@ -168,6 +205,7 @@ export const AssignEvent = () => {
                   <th className="p-3 text-left font-semibold">Sr</th>
                   <th className="p-1 text-left font-semibold">Date</th>
                   <th className="p-1 text-left font-semibold">Event Name</th>
+                  <th className="p-1 text-left font-semibold">Customer Name</th>
                   <th className="p-1 text-left font-semibold">Vehicle Name</th>
                   <th className="p-1 text-left font-semibold">Lot#</th>
                   <th className="p-1 text-left font-semibold">Year</th>
@@ -192,10 +230,10 @@ export const AssignEvent = () => {
                                 const date = new Date(bid.eventDate);
                                 const day = String(date.getDate()).padStart(
                                   2,
-                                  "0"
+                                  "0",
                                 );
                                 const month = String(
-                                  date.getMonth() + 1
+                                  date.getMonth() + 1,
                                 ).padStart(2, "0"); // Month is 0-indexed
                                 const year = date.getFullYear();
                                 return `${day}-${month}-${year}`;
@@ -210,7 +248,33 @@ export const AssignEvent = () => {
                         </span>
                       </td>
 
-                      <td className="p-1">
+                      <td
+                        className="p-1 hover:cursor-pointer"
+                        onClick={() => {
+                          handleIsOpenModal("detail");
+                          handleViewUserDetail(bid?.userId);
+                        }}
+                      >
+                        <div className="flex items-center gap-1">
+                          <CircleUser
+                            size={"30"}
+                            style={{
+                              color: "gray",
+                            }}
+                          />
+                          <span className="text-sm text-gray-600 capitalize">
+                            {bid?.userName || ""}
+                          </span>
+                        </div>
+                      </td>
+
+                      <td
+                        className="p-1"
+                        onClick={() => {
+                          setSelectVehicle(bid);
+                          handleIsOpenModal("view");
+                        }}
+                      >
                         <div className="flex items-center gap-3">
                           <div className="w-10 h-10 rounded-md overflow-hidden bg-gray-100 flex-shrink-0 cursor-pointer">
                             {bid?.images && bid?.images.length > 0 ? (
@@ -239,6 +303,7 @@ export const AssignEvent = () => {
                           </div>
                         </div>
                       </td>
+
                       <td className="p-1 ">
                         <span className="inline-flex items-center p-1 text-sm capitalize  ">
                           {bid?.lot_number}
@@ -296,9 +361,9 @@ export const AssignEvent = () => {
                           {/* Edit Button */}
                           <button
                             onClick={() => {
-                              handleIsOpenModal("edit"), setSelectEvent(bid);
+                              (handleIsOpenModal("edit"), setSelectEvent(bid));
                             }}
-                            className="px-3 py-1.5 text-xs font-medium text-white bg-blue-950  hover:bg-blue-900 rounded transition-colors flex items-center gap-1"
+                            className="px-3 py-1.5 text-xs font-medium text-white bg-blue-950  hover:bg-blue-900 rounded transition-colors flex items-center gap-1 hover:cursor-pointer"
                           >
                             <svg
                               className="w-3 h-3"
@@ -316,10 +381,32 @@ export const AssignEvent = () => {
                             Edit
                           </button>
 
+                          <button
+                            disabled={bid?.saleStatus !== "Unsold"}
+                            onClick={() => {
+                              handleIsOpenModal("reauction");
+                              handleSelectVehicleforReauction(bid?.vehicle_id);
+                            }}
+                            className="
+    px-3 py-1.5 text-xs font-medium text-white rounded
+    flex items-center gap-1 transition-colors
+
+    bg-orange-500 hover:bg-orange-600 cursor-pointer
+
+    disabled:bg-gray-400
+    disabled:cursor-not-allowed
+    disabled:opacity-60
+    disabled:hover:bg-gray-400
+  "
+                          >
+                            <Clock size={12} />
+                            Re-Auction
+                          </button>
+
                           {/* Delete Button */}
                           <button
                             onClick={() => handleDeleteAssignEvent(bid?.id)}
-                            className="px-3 py-1.5 text-xs font-medium text-white bg-red-600 hover:bg-red-700 rounded transition-colors flex items-center gap-1"
+                            className="px-3 py-1.5 text-xs font-medium text-white bg-red-600 hover:bg-red-700 rounded transition-colors flex items-center gap-1 hover:cursor-pointer"
                           >
                             <svg
                               className="w-3 h-3"
@@ -453,6 +540,31 @@ export const AssignEvent = () => {
             setOpen={() => handleIsOpenModal("")}
             selectEvent={selectEvent}
             handleGetAssignEvent={handleGetAssignEvent}
+          />
+        )}
+
+        {isOpen === "view" && (
+          <ViewAdminCar
+            handleClick={() => handleIsOpenModal("")}
+            selectedVehicle={selectVehicle}
+            isViewModalOpen={isOpen}
+          />
+        )}
+
+        {isOpen === "reauction" && (
+          <Reauction
+            Open={isOpen}
+            setOpen={() => handleIsOpenModal("")}
+            handleGetAssignEvent={handleGetAssignEvent}
+            selectReauction={selectReauction}
+          />
+        )}
+
+        {isOpen === "detail" && (
+          <UserDetailModal
+            isOpen={isOpen}
+            closeModal={() => handleIsOpenModal("")}
+            userDetail={userDetail}
           />
         )}
       </div>

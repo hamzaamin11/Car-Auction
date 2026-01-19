@@ -109,6 +109,7 @@ import { PastVehicle } from "./admin/pages/PastVehicle";
 import { SetEventAuction } from "./admin/pages/SetEventAuction";
 import { AssignEvent } from "./admin/pages/AssignEvent";
 import { UnsoldVehicles } from "./admin/pages/UnsoldVehicles";
+import { IncrementConfig } from "./admin/pages/IncrementConfig";
 
 function Layout() {
   const location = useLocation();
@@ -289,6 +290,8 @@ function Layout() {
 
           <Route path="/admin/configuration" element={<Configuration />} />
 
+          <Route path="/admin/increment" element={<IncrementConfig />} />
+
           <Route path="/admin/account" element={<AdminAccount />} />
 
           <Route path="/admin/auctionevent" element={<AuctionEvent />} />
@@ -347,6 +350,7 @@ function Layout() {
             element={<UpcomingAuctions />}
           />
           <Route path="/seller/unsold" element={<UnsoldVehicles />} />
+          <Route path="/seller/pastvehicle" element={<PastVehicle />} />
           <Route path="/seller/accountsetting" element={<AccountSetting />} />
           {/* Bids */}
           <Route path="my-bids" element={<MyBids />} />

@@ -21,6 +21,7 @@ import EditAdminVehicle from "./EditAdminVehicle";
 import moment from "moment";
 import { useSelector } from "react-redux";
 import { UserDetailModal } from "../components/UserDetailModal/UserDetail";
+import { ViewAdminCar } from "../../components/ViewAdminCar";
 
 export const UnsoldVehicles = () => {
   const { currentUser } = useSelector((state) => state?.auth);
@@ -52,11 +53,11 @@ export const UnsoldVehicles = () => {
     setPageNo(1);
   };
 
-  const handleGetAllUnapprovalVehicles = async () => {
+  const handleGetAllUnsoldVehicles = async () => {
     setLoading(true);
     try {
       const res = await axios.get(
-        `${BASE_URL}/UnsoldVehicleListbyDateRange/${currentUser.role}/${dateRange.fromDate}/${dateRange.toDate}/${currentUser?.id}`
+        `${BASE_URL}/UnsoldVehicleListbyDateRange/${currentUser.role}/${dateRange.fromDate}/${dateRange.toDate}/${currentUser?.id}`,
       );
       console.log(res.data);
       setVehicles(res.data || []);
@@ -78,120 +79,38 @@ export const UnsoldVehicles = () => {
     setIsOpen((prev) => (prev === active ? "" : active));
   };
 
-  const toggleActionMenu = (id) => {
-    setActionMenuOpen((prev) => (prev === id ? null : id));
-  };
-
-  const handleApprove = async (vehicle) => {
-    try {
-      const result = await Swal.fire({
-        title: "Approve Vehicle?",
-        text: `Are you sure you want to approve ${vehicle.make} ${vehicle.model}?`,
-        icon: "question",
-        showCancelButton: true,
-        confirmButtonColor: "#10b981",
-        cancelButtonColor: "#6b7280",
-        confirmButtonText: "Yes, approve it!",
-        cancelButtonText: "Cancel",
-      });
-
-      if (result.isConfirmed) {
-        const res = await axios.put(
-          `${BASE_URL}/ApprovedVehicles/${vehicle.id}`
-        );
-        setActionMenuOpen(null);
-        console.log(res.data);
-        handleGetAllUnapprovalVehicles();
-        await Swal.fire({
-          title: "Success!",
-          text: "This vehicle has been approved successfully.",
-          icon: "success",
-          confirmButtonColor: "#9333ea",
-        });
-      }
-    } catch (error) {
-      console.error(error);
-      await Swal.fire({
-        title: "Error!",
-        text: "Something went wrong while approving the vehicle.",
-        icon: "error",
-        confirmButtonColor: "#9333ea",
-      });
-    }
-  };
-
-  const handleAwaiting = async (vehicle) => {
+  const handleWanttoSoldVehicle = async (VehicleId) => {
     try {
       const result = await Swal.fire({
         title: "Move to Awaiting?",
-        text: `Are you sure you want to move ${vehicle.make} ${vehicle.model} to awaiting approval?`,
+        text: `Are you sure you want to Sold this Vehicle?`,
         icon: "question",
         showCancelButton: true,
-        confirmButtonColor: "#f59e0b",
-        cancelButtonColor: "#6b7280",
-        confirmButtonText: "Yes, move it!",
-        cancelButtonText: "Cancel",
+        confirmButtonColor: "#172554",
+        cancelButtonColor: "#dc2626",
+        confirmButtonText: "Yes, Sold it!",
+        cancelButtonText: "No",
       });
 
       if (result.isConfirmed) {
-        const res = await axios.put(
-          `${BASE_URL}/AwaitingApprovedVehicles/${vehicle.id}`
+        const res = await axios.post(
+          `${BASE_URL}/markVehicleAsSold/${VehicleId}`,
         );
-        setActionMenuOpen(null);
-        console.log(res.data);
-        handleGetAllUnapprovalVehicles();
-        await Swal.fire({
-          title: "Success!",
-          text: "This vehicle has been added in awaiting approval.",
-          icon: "success",
-          confirmButtonColor: "#9333ea",
-        });
       }
+      console.log(res.data);
+      handleGetAllUnsoldVehicles();
+      await Swal.fire({
+        title: "Success!",
+        text: "This vehicle has been Sold successfully.",
+        icon: "success",
+        confirmButtonColor: "#172554",
+      });
     } catch (error) {
-      console.error(error);
       await Swal.fire({
         title: "Error!",
-        text: "Something went wrong.",
+        text: error?.response?.data?.message || "Something want Wrong",
         icon: "error",
-        confirmButtonColor: "#9333ea",
-      });
-    }
-  };
-
-  const handleReject = async (vehicle) => {
-    try {
-      const result = await Swal.fire({
-        title: "Are you sure?",
-        text: `Do you want to reject ${vehicle.make} ${vehicle.model}?`,
-        icon: "warning",
-        showCancelButton: true,
         confirmButtonColor: "#dc2626",
-        cancelButtonColor: "#6b7280",
-        confirmButtonText: "Yes, reject it!",
-        cancelButtonText: "Cancel",
-      });
-
-      if (result.isConfirmed) {
-        // FIXED: Added API call for reject
-        const res = await axios.put(`${BASE_URL}/rejectVehicle/${vehicle.id}`);
-        console.log(res.data);
-        setActionMenuOpen(null);
-        handleGetAllUnapprovalVehicles();
-
-        await Swal.fire({
-          title: "Rejected!",
-          text: `${vehicle.make} ${vehicle.model} has been rejected successfully.`,
-          icon: "success",
-          confirmButtonColor: "#9333ea",
-        });
-      }
-    } catch (error) {
-      console.error(error);
-      await Swal.fire({
-        title: "Error!",
-        text: "Something went wrong while rejecting the vehicle.",
-        icon: "error",
-        confirmButtonColor: "#9333ea",
       });
     }
   };
@@ -199,7 +118,7 @@ export const UnsoldVehicles = () => {
   const handleViewUserDetail = async (id) => {
     try {
       const res = await axios.get(
-        `${BASE_URL}/admin/getUserDetailsApprovedVehicleListById/${id}`
+        `${BASE_URL}/admin/getUserDetailsApprovedVehicleListById/${id}`,
       );
 
       setUSerDetail(res.data?.data);
@@ -231,7 +150,7 @@ export const UnsoldVehicles = () => {
   const handlePrevImage = () => {
     if (selectedVehicle?.images) {
       setCurrentImageIndex((prev) =>
-        prev === 0 ? selectedVehicle.images.length - 1 : prev - 1
+        prev === 0 ? selectedVehicle.images.length - 1 : prev - 1,
       );
     }
   };
@@ -239,7 +158,7 @@ export const UnsoldVehicles = () => {
   const handleNextImage = () => {
     if (selectedVehicle?.images) {
       setCurrentImageIndex((prev) =>
-        prev === selectedVehicle.images.length - 1 ? 0 : prev + 1
+        prev === selectedVehicle.images.length - 1 ? 0 : prev + 1,
       );
     }
   };
@@ -281,6 +200,15 @@ export const UnsoldVehicles = () => {
     }
   };
 
+  const handleViewReason = (reason) => {
+    Swal.fire({
+      title: "Info",
+      text: reason || "No Reason",
+      icon: "info",
+      confirmButtonColor: "#172554",
+    });
+  };
+
   const getPageNumbers = () => {
     const pages = [];
     if (totalPages <= 5) {
@@ -296,7 +224,7 @@ export const UnsoldVehicles = () => {
   };
 
   useEffect(() => {
-    handleGetAllUnapprovalVehicles();
+    handleGetAllUnsoldVehicles();
   }, [dateRange]);
 
   return (
@@ -370,26 +298,36 @@ export const UnsoldVehicles = () => {
               <thead className="bg-blue-950 text-white">
                 <tr>
                   <th className="p-4 text-start text-sm font-semibold">Sr</th>
-                  <th className="p-4 text-left text-sm font-semibold">
-                    Seller Name
-                  </th>
-                  <th className="p-4 text-left text-sm font-semibold">
+                  {currentUser.role === "admin" && (
+                    <>
+                      <th className="p-1 text-left text-sm font-semibold">
+                        Seller Name
+                      </th>
+                      <th className="p-1 text-left text-sm font-semibold">
+                        Customer Name
+                      </th>{" "}
+                    </>
+                  )}
+                  <th className="p-1 text-left text-sm font-semibold">
                     Vehicle Name
                   </th>
-                  <th className="p-4 text-left text-sm font-semibold">Lot#</th>
-                  <th className="p-4 text-left text-sm font-semibold">Year</th>
-                  <th className="p-4 text-left text-sm font-semibold">
+                  <th className="p-1 text-left text-sm font-semibold">Lot#</th>
+                  <th className="p-1 text-left text-sm font-semibold">Year</th>
+                  <th className="p-1 text-left text-sm font-semibold">
                     Fuel Type
                   </th>
-                  <th className="p-4 text-left text-sm font-semibold">Color</th>
-                  <th className="p-4 text-left text-sm font-semibold">City</th>
-                  <th className="p-4 text-left text-sm font-semibold">
+                  <th className="p-1 text-left text-sm font-semibold">Color</th>
+                  <th className="p-1 text-left text-sm font-semibold">City</th>
+                  <th className="p-1 text-left text-sm font-semibold">
                     Date / Time
                   </th>
-                  <th className="p-4 text-left text-sm font-semibold">
+                  <th className="p-1 text-left text-sm font-semibold">
                     Reserve Price
                   </th>
-                  <th className="p-4 text-left text-sm font-semibold">
+                  <th className="p-1 text-left text-sm font-semibold">
+                    Status
+                  </th>
+                  <th className="p-1 text-left text-sm font-semibold">
                     Actions
                   </th>
                 </tr>
@@ -403,27 +341,55 @@ export const UnsoldVehicles = () => {
                     <td className="p-3 text-start text-gray-600">
                       {startIndex + index + 1}
                     </td>
-
-                    <td
-                      className="hover:cursor-pointer"
-                      onClick={() => {
-                        handleIsOpen("detail");
-                        handleViewUserDetail(vehicle.userId);
-                      }}
-                    >
-                      <div className="flex items-center gap-1">
-                        <CircleUser
-                          size={"30"}
-                          style={{
-                            color: "gray",
+                    {currentUser.role === "admin" && (
+                      <>
+                        <td
+                          className="hover:cursor-pointer"
+                          onClick={() => {
+                            handleIsOpen("detail");
+                            handleViewUserDetail(vehicle.userId);
                           }}
-                        />
-                        <span className="text-sm text-gray-600 font-medium capitalize">
-                          {vehicle.username || "--"}
-                        </span>
-                      </div>
-                    </td>
+                        >
+                          <div className="flex items-center gap-1">
+                            <CircleUser
+                              size={"30"}
+                              style={{
+                                color: "gray",
+                              }}
+                            />
+                            <span className="text-sm text-gray-600 font-medium capitalize">
+                              {vehicle.username || "--"}
+                            </span>
+                          </div>
+                        </td>
 
+                        <td
+                          className="hover:cursor-pointer"
+                          onClick={() => {
+                            handleIsOpen("detail");
+                            handleViewUserDetail(vehicle.highestUserId);
+                          }}
+                        >
+                          {vehicle?.highestUserName ? (
+                            <div className="flex items-center gap-1">
+                              <CircleUser
+                                size={"30"}
+                                style={{
+                                  color: "gray",
+                                }}
+                              />
+                              <span className="text-sm text-gray-600 font-medium capitalize">
+                                {vehicle?.highestUserName || "--"}
+                              </span>
+                            </div>
+                          ) : (
+                            <div className="flex items-center justify-center text-gray-400 text-xs">
+                              {"NIL"}
+                            </div>
+                          )}
+                        </td>
+                      </>
+                    )}
                     <td className="p-1">
                       <div className="flex items-center gap-3">
                         <div
@@ -501,15 +467,15 @@ export const UnsoldVehicles = () => {
                     <td className="p-1">
                       <div className="flex flex-col">
                         <span className="text-sm text-gray-700">
-                          {vehicle?.bidCreatedAt
-                            ? new Date(vehicle.bidCreatedAt).toLocaleDateString(
-                                "en-GB"
-                              )
+                          {vehicle?.vehicleCreatedAt
+                            ? new Date(
+                                vehicle.vehicleCreatedAt,
+                              ).toLocaleDateString("en-GB")
                             : "N/A"}
                         </span>
                         <span className="text-xs text-gray-500">
-                          {vehicle?.bidCreatedAt
-                            ? moment(vehicle.bidCreatedAt)
+                          {vehicle?.vehicleCreatedAt
+                            ? moment(vehicle.vehicleCreatedAt)
                                 .local()
                                 .format("hh:mm A")
                             : "--"}
@@ -524,67 +490,24 @@ export const UnsoldVehicles = () => {
                     </td>
 
                     <td className="p-1">
-                      <div className="relative">
-                        <button
-                          onClick={() => toggleActionMenu(vehicle.id)}
-                          className="p-2 rounded-lg hover:bg-gray-200 transition"
-                          aria-label="Actions"
-                          type="button"
-                        >
-                          <MoreVertical className="h-5 w-5 text-gray-600" />
-                        </button>
+                      <span className="text-xs text-orange-500 bg-orange-50 rounded-full p-2 uppercase">
+                        {vehicle.saleStatus}
+                      </span>
+                    </td>
 
-                        {actionMenuOpen === vehicle.id && (
-                          <div className="absolute right-0 top-full mt-2 w-48 bg-white border border-gray-200 rounded-lg shadow-lg z-50">
-                            <button
-                              onClick={() =>
-                                handleUpdateVehicle(vehicle, "edit")
-                              }
-                              className="w-full px-4 py-2.5 text-sm text-orange-600 hover:bg-orange-50 hover:text-orange-700 text-left flex items-center gap-2 rounded-t-lg transition"
-                              type="button"
-                            >
-                              <Edit className="h-4 w-4" />
-                              Edit
-                            </button>
-
-                            <button
-                              onClick={() => handleApprove(vehicle)}
-                              className="w-full px-4 py-2.5 text-sm text-green-600 hover:bg-green-50 hover:text-green-700 text-left flex items-center gap-2 transition"
-                              type="button"
-                            >
-                              <CheckCircle className="h-4 w-4" />
-                              Approve
-                            </button>
-
-                            <button
-                              onClick={() => handleAwaiting(vehicle)}
-                              className="w-full px-4 py-2.5 text-sm text-yellow-600 hover:bg-yellow-50 hover:text-yellow-700 text-left flex items-center gap-2 transition"
-                              type="button"
-                            >
-                              <Clock className="h-4 w-4" />
-                              Awaiting
-                            </button>
-
-                            <button
-                              onClick={() => handleReject(vehicle)}
-                              className="w-full px-4 py-2.5 text-sm text-red-600 hover:bg-red-50 hover:text-red-700 text-left flex items-center gap-2 transition"
-                              type="button"
-                            >
-                              <XCircle className="h-4 w-4" />
-                              Reject
-                            </button>
-
-                            <button
-                              onClick={() => handleViewDetails(vehicle)}
-                              className="w-full px-4 py-2.5 text-sm text-blue-600 hover:bg-blue-50 hover:text-blue-700 text-left flex items-center gap-2 rounded-b-lg transition"
-                              type="button"
-                            >
-                              <Eye className="h-4 w-4" />
-                              View Details
-                            </button>
-                          </div>
-                        )}
-                      </div>
+                    <td className="p-1 flex gap-1">
+                      <button
+                        onClick={() => handleViewReason(vehicle?.reason)}
+                        className="p-1.5 text-white bg-red-600 rounded hover:cursor-pointer"
+                      >
+                        Reason
+                      </button>
+                      <button
+                        onClick={() => handleWanttoSoldVehicle(vehicle?.id)}
+                        className="p-1.5 text-white bg-blue-950 rounded hover:cursor-pointer"
+                      >
+                        Sell Car
+                      </button>
                     </td>
                   </tr>
                 ))}
@@ -686,225 +609,12 @@ export const UnsoldVehicles = () => {
         </div>
       )}
 
-      {/* View Modal */}
-      {isViewModalOpen && selectedVehicle && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center  bg-opacity-50 backdrop-blur p-4">
-          <div className="bg-white rounded-xl shadow-2xl w-full max-w-4xl max-h-[90vh] overflow-hidden relative border border-gray-500">
-            <button
-              onClick={handleCloseModal}
-              className="absolute top-4 right-4 z-10 bg-white rounded-full p-2 shadow-lg hover:bg-gray-100 transition"
-              aria-label="Close"
-            >
-              <X className="h-6 w-6 text-gray-700" />
-            </button>
-
-            <div className="p-6">
-              <h2 className="text-2xl font-bold text-gray-800 mb-6">
-                Vehicle Details
-              </h2>
-
-              <div className="grid md:grid-cols-2 gap-8">
-                <div className="space-y-6">
-                  <div className="grid grid-cols-2 gap-4">
-                    <div>
-                      <p className="text-sm font-medium text-gray-500">
-                        Lot Number:
-                      </p>
-                      <p className="text-base font-semibold text-gray-900">
-                        {selectedVehicle.lot_number || "—"}
-                      </p>
-                    </div>
-                    <div>
-                      <p className="text-sm font-medium text-gray-500">
-                        Location:
-                      </p>
-                      <p className="text-base font-semibold text-gray-900">
-                        {selectedVehicle.cityName || "—"}
-                      </p>
-                    </div>
-                    <div>
-                      <p className="text-sm font-medium text-gray-500">Make:</p>
-                      <p className="text-base font-semibold text-gray-900">
-                        {selectedVehicle.make || "—"}
-                      </p>
-                    </div>
-                    <div>
-                      <p className="text-sm font-medium text-gray-500">
-                        Model:
-                      </p>
-                      <p className="text-base font-semibold text-gray-900">
-                        {selectedVehicle.model || "—"}
-                      </p>
-                    </div>
-                  </div>
-
-                  <div className="grid grid-cols-2 gap-4">
-                    <div>
-                      <p className="text-sm font-medium text-gray-500">
-                        Series:
-                      </p>
-                      <p className="text-base font-semibold text-gray-900">
-                        {selectedVehicle.series || "—"}
-                      </p>
-                    </div>
-                    <div>
-                      <p className="text-sm font-medium text-gray-500">
-                        Color:
-                      </p>
-                      <p className="text-base font-semibold text-gray-900">
-                        {selectedVehicle.color || "—"}
-                      </p>
-                    </div>
-                    <div>
-                      <p className="text-sm font-medium text-gray-500">
-                        Transmission:
-                      </p>
-                      <p className="text-base font-semibold text-gray-900">
-                        {selectedVehicle.transmission || "—"}
-                      </p>
-                    </div>
-                    <div>
-                      <p className="text-sm font-medium text-gray-500">
-                        Fuel Type:
-                      </p>
-                      <p className="text-base font-semibold text-gray-900 capitalize">
-                        {selectedVehicle.fuelType || "—"}
-                      </p>
-                    </div>
-                  </div>
-
-                  <div className="grid grid-cols-2 gap-4">
-                    <div>
-                      <p className="text-sm font-medium text-gray-500">
-                        Body Style:
-                      </p>
-                      <p className="text-base font-semibold text-gray-900">
-                        {selectedVehicle.bodyStyle || "—"}
-                      </p>
-                    </div>
-                    <div>
-                      <p className="text-sm font-medium text-gray-500">
-                        Certify Status:
-                      </p>
-                      <p className="text-base font-semibold text-gray-900">
-                        {selectedVehicle.certifyStatus || "—"}
-                      </p>
-                    </div>
-                    <div>
-                      <p className="text-sm font-medium text-gray-500">
-                        Drive Type:
-                      </p>
-                      <p className="text-base font-semibold text-gray-900 uppercase">
-                        {selectedVehicle.driveType || "—"}
-                      </p>
-                    </div>
-                    <div>
-                      <p className="text-sm font-medium text-gray-500">
-                        Mileage:
-                      </p>
-                      <p className="text-base font-semibold text-gray-900">
-                        {selectedVehicle.mileage?.toLocaleString() || "—"}
-                      </p>
-                    </div>
-                  </div>
-
-                  <div className="grid grid-cols-2 gap-4">
-                    <div>
-                      <p className="text-sm font-medium text-gray-500">Year:</p>
-                      <p className="text-base font-semibold text-gray-900">
-                        {selectedVehicle.year || "—"}
-                      </p>
-                    </div>
-                    <div>
-                      <p className="text-sm font-medium text-gray-500">
-                        Condition:
-                      </p>
-                      <p className="text-base font-semibold text-gray-900 capitalize">
-                        {selectedVehicle.vehicleCondition || "—"}
-                      </p>
-                    </div>
-                    <div>
-                      <p className="text-sm font-medium text-gray-500">
-                        Price:
-                      </p>
-                      <p className="text-lg font-bold text-blue-900">
-                        PKR{" "}
-                        {selectedVehicle.buyNowPrice?.toLocaleString() || "0"}
-                      </p>
-                    </div>
-                  </div>
-                </div>
-
-                <div className="flex flex-col items-center">
-                  {selectedVehicle.images &&
-                  selectedVehicle.images.length > 0 ? (
-                    <>
-                      <div className="w-full h-72 rounded-xl overflow-hidden bg-gray-100 mb-6">
-                        <img
-                          src={selectedVehicle.images[currentImageIndex]}
-                          alt={`${selectedVehicle.make} ${selectedVehicle.model}`}
-                          className="w-full h-full object-contain"
-                        />
-                      </div>
-
-                      <div className="flex items-center justify-between w-full mb-4">
-                        <button
-                          onClick={handlePrevImage}
-                          className="bg-blue-900 hover:bg-blue-800 text-white rounded-full p-3 shadow-lg transition disabled:opacity-50 disabled:cursor-not-allowed"
-                          disabled={selectedVehicle.images.length <= 1}
-                          aria-label="Previous image"
-                        >
-                          <ChevronLeft className="h-5 w-5" />
-                        </button>
-
-                        <div className="flex-1 text-center">
-                          <p className="text-sm font-medium text-gray-700">
-                            Image {currentImageIndex + 1} of{" "}
-                            {selectedVehicle.images.length}
-                          </p>
-                        </div>
-
-                        <button
-                          onClick={handleNextImage}
-                          className="bg-blue-900 hover:bg-blue-800 text-white rounded-full p-3 shadow-lg transition disabled:opacity-50 disabled:cursor-not-allowed"
-                          disabled={selectedVehicle.images.length <= 1}
-                          aria-label="Next image"
-                        >
-                          <ChevronRight className="h-5 w-5" />
-                        </button>
-                      </div>
-
-                      <div className="flex gap-2 overflow-x-auto pb-2 w-full">
-                        {selectedVehicle.images.map((img, index) => (
-                          <button
-                            key={index}
-                            onClick={() => setCurrentImageIndex(index)}
-                            className={`flex-shrink-0 w-20 h-20 rounded-lg overflow-hidden border-2 ${
-                              index === currentImageIndex
-                                ? "border-blue-900"
-                                : "border-gray-300"
-                            }`}
-                          >
-                            <img
-                              src={img}
-                              alt={`Thumbnail ${index + 1}`}
-                              className="w-full h-full object-cover"
-                            />
-                          </button>
-                        ))}
-                      </div>
-                    </>
-                  ) : (
-                    <div className="w-full h-72 rounded-xl bg-gray-100 flex flex-col items-center justify-center">
-                      <Car className="w-16 h-16 text-gray-400 mb-4" />
-                      <p className="text-gray-500">No images available</p>
-                    </div>
-                  )}
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
+      {isViewModalOpen && (
+        <ViewAdminCar
+          handleClick={() => setIsViewModalOpen(false)}
+          selectedVehicle={selectedVehicle}
+          isViewModalOpen={isViewModalOpen}
+        />
       )}
 
       {isOpen === "edit" && (
@@ -912,7 +622,7 @@ export const UnsoldVehicles = () => {
           open={() => handleIsOpen("edit")}
           setOpen={() => handleIsOpen("")}
           selectedVehicle={selectedVehicle}
-          onVehicleUpdated={handleGetAllUnapprovalVehicles}
+          onVehicleUpdated={handleGetAllUnsoldVehicles}
         />
       )}
       {isOpen === "detail" && (

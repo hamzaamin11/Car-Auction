@@ -34,6 +34,7 @@ const SellerSidebar = () => {
       children: [
         { name: "Vehicle List", path: "/seller/addVehicle" },
         { name: "Un-Sold Vehicle", path: "/seller/unsold" },
+        { name: "Sold Vehicles", path: "/seller/pastvehicle" },
       ],
     },
     {
@@ -42,7 +43,7 @@ const SellerSidebar = () => {
       children: [
         { name: "Live Auctions", path: "/seller/live-auctions" },
         { name: "Upcoming Auctions", path: "/seller/upcoming-auctions" },
-        { name: "Auction History", path: "/seller/my-bids" },
+        // { name: "Auction History", path: "/seller/my-bids" },
       ],
     },
     {

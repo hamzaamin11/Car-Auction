@@ -256,7 +256,7 @@ const AddVehicles = () => {
   const [dateRange, setDateRange] = useState(initialState);
 
   const [autoDescription, setAutoDescription] = useState(
-    initialAutoDescription
+    initialAutoDescription,
   );
   const [customerBidData, setCustomerBidData] = useState({
     userId: "",
@@ -581,7 +581,7 @@ const AddVehicles = () => {
       const res = await axios.get(
         `${BASE_URL}/getVehiclesByUserbyDateRange/${currentUser?.id}/${
           dateRange.fromDate
-        }/${dateRange.toDate}?search=${search}&Entry=${10}&page=${pageNo}`
+        }/${dateRange.toDate}?search=${search}&Entry=${10}&page=${pageNo}`,
       );
       setAllVehicles(res.data);
     } catch (error) {
@@ -597,7 +597,8 @@ const AddVehicles = () => {
   useEffect(() => {
     if (formOpen && currentUser?.city && allCities.length > 0) {
       const userCity = allCities.find(
-        (city) => city.cityName.toLowerCase() === currentUser.city.toLowerCase()
+        (city) =>
+          city.cityName.toLowerCase() === currentUser.city.toLowerCase(),
       );
 
       if (userCity) {
@@ -728,7 +729,6 @@ const AddVehicles = () => {
       vehicleCondition: "Vehicle Condition",
       locationId: "Location",
       buyNowPrice: "Buy Now Price",
-      certifyStatus: "Certify Status",
     };
 
     for (let field in requiredFields) {
@@ -848,7 +848,7 @@ const AddVehicles = () => {
   const handleViewUserDetail = async (id) => {
     try {
       const res = await axios.get(
-        `${BASE_URL}/admin/getUserDetailsApprovedVehicleListById/${id}`
+        `${BASE_URL}/admin/getUserDetailsApprovedVehicleListById/${id}`,
       );
 
       setUSerDetail(res.data?.data);
@@ -1131,7 +1131,7 @@ const AddVehicles = () => {
                       cityData.find(
                         (option) =>
                           String(option.value) ===
-                          String(vehicleData?.locationId)
+                          String(vehicleData?.locationId),
                       ) || null
                     }
                     onChange={(option) => handleSearchable(option)}
@@ -1164,7 +1164,7 @@ const AddVehicles = () => {
                       options={driveTypeOptions}
                       value={
                         driveTypeOptions.find(
-                          (o) => o.value === vehicleData.driveType
+                          (o) => o.value === vehicleData.driveType,
                         ) || null
                       }
                       onChange={(opt) =>
@@ -1189,7 +1189,7 @@ const AddVehicles = () => {
                       options={bodyStyleOptions}
                       value={
                         bodyStyleOptions.find(
-                          (o) => o.value === vehicleData.bodyStyle
+                          (o) => o.value === vehicleData.bodyStyle,
                         ) || null
                       }
                       onChange={(opt) =>
@@ -1215,7 +1215,7 @@ const AddVehicles = () => {
                       options={transmissionOptions}
                       value={
                         transmissionOptions.find(
-                          (o) => o.value === vehicleData.transmission
+                          (o) => o.value === vehicleData.transmission,
                         ) || null
                       }
                       onChange={(opt) =>
@@ -1258,7 +1258,7 @@ const AddVehicles = () => {
                       options={colorOptions}
                       value={
                         colorOptions.find(
-                          (o) => o.value === vehicleData.color
+                          (o) => o.value === vehicleData.color,
                         ) || null
                       }
                       onChange={(opt) =>
@@ -1281,7 +1281,7 @@ const AddVehicles = () => {
                       options={fuelTypeOptions}
                       value={
                         fuelTypeOptions.find(
-                          (o) => o.value === vehicleData.fuelType
+                          (o) => o.value === vehicleData.fuelType,
                         ) || null
                       }
                       onChange={(opt) =>
@@ -1304,7 +1304,7 @@ const AddVehicles = () => {
                       options={conditionOptions}
                       value={
                         conditionOptions.find(
-                          (o) => o.value === vehicleData.vehicleCondition
+                          (o) => o.value === vehicleData.vehicleCondition,
                         ) || null
                       }
                       onChange={(opt) =>
@@ -1339,31 +1339,6 @@ const AddVehicles = () => {
                       </p>
                     )}
                   </div>
-                </div>
-                <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-1">
-                    Certification Status <span className="text-red-500">*</span>
-                  </label>
-                  <Dropdown
-                    options={certifyOptions}
-                    value={
-                      certifyOptions.find(
-                        (o) => o.value === vehicleData.certifyStatus
-                      ) || null
-                    }
-                    onChange={(opt) =>
-                      setVehicleData((p) => ({
-                        ...p,
-                        certifyStatus: opt?.value || "",
-                      }))
-                    }
-                    placeholder="Please Select Certification Status"
-                    className={
-                      vehicleData.certifyStatus
-                        ? "text-gray-900"
-                        : "text-gray-400"
-                    }
-                  />
                 </div>
 
                 <div className="mt-4">
@@ -1571,8 +1546,8 @@ const AddVehicles = () => {
                 </div>
               </form>
               {isOpen === "selector" && (
-                <div className="fixed inset-0 bg-black bg-opacity-40 flex items-center justify-center z-50 p-4">
-                  <div className="w-full max-w-5xl bg-white p-6 rounded-lg shadow-lg relative">
+                <div className="fixed inset-0 flex items-center justify-center z-50  ">
+                  <div className="w-full max-w-5xl  rounded-lg  relative">
                     <CarSelector
                       handleIsOpenToggle={() => handleIsOpenToggle("")}
                     />
@@ -1602,7 +1577,8 @@ const AddVehicles = () => {
                     alt={`${vehicle.make} ${vehicle.model}`}
                     className="w-full h-full object-cover hover:cursor-pointer"
                     onClick={() => (
-                      setSelectVehicle(vehicle), handleIsOpenToggle("View")
+                      setSelectVehicle(vehicle),
+                      handleIsOpenToggle("View")
                     )}
                   />
                 </div>
@@ -1681,7 +1657,7 @@ const AddVehicles = () => {
                               e.stopPropagation();
                               handleDelete(
                                 vehicle.newVehicleId,
-                                vehicle.approval
+                                vehicle.approval,
                               );
                             }}
                             className="block w-full text-left px-4 py-2 text-sm text-red-600 hover:bg-red-100 rounded-b-lg"
@@ -1751,7 +1727,7 @@ const AddVehicles = () => {
                     {
                       length: Math.min(
                         window.innerWidth < 640 ? 3 : 5,
-                        totalPages
+                        totalPages,
                       ),
                     },
                     (_, i) => {
@@ -1780,7 +1756,7 @@ const AddVehicles = () => {
                           {pageNum}
                         </button>
                       );
-                    }
+                    },
                   )}
 
                   {/* Next */}
@@ -1873,9 +1849,7 @@ const AddVehicles = () => {
                         <th className="p-3 text-start text-sm font-semibold">
                           Sr
                         </th>
-                        <th className="p-1 text-left text-sm font-semibold">
-                          Seller Name
-                        </th>
+
                         <th className="p-1 text-left text-sm font-semibold">
                           Vehicle Name
                         </th>
@@ -1917,21 +1891,9 @@ const AddVehicles = () => {
                         >
                           {/* Serial Number */}
                           <td className="p-3 text-start text-gray-600">
-                            {index + 1}
+                            {(currentPage - 1) * carsPerPage + index + 1}
                           </td>
-                          <td>
-                            <div className="flex items-center gap-1">
-                              <CircleUser
-                                size={"30"}
-                                style={{
-                                  color: "gray",
-                                }}
-                              />
-                              <span className="text-sm text-gray-600 font-medium capitalize">
-                                {vehicle.username || "--"}
-                              </span>
-                            </div>
-                          </td>
+
                           {/* Vehicle with Image and Details */}
                           <td className="p-1">
                             <div className="flex items-center gap-3">
@@ -2009,14 +1971,14 @@ const AddVehicles = () => {
                               <span className="text-sm">
                                 {vehicle?.createdAt
                                   ? new Date(
-                                      vehicle?.createdAt
+                                      vehicle?.createdAt,
                                     ).toLocaleDateString("en-GB")
                                   : "N/A"}
                               </span>
                               <span className="text-xs text-gray-500">
                                 {vehicle?.createdAt
                                   ? new Date(
-                                      vehicle?.createdAt
+                                      vehicle?.createdAt,
                                     ).toLocaleTimeString("en-US", {
                                       hour: "2-digit",
                                       minute: "2-digit",
@@ -2041,15 +2003,19 @@ const AddVehicles = () => {
                                 vehicle.approval === "Y"
                                   ? "bg-green-100 text-green-800"
                                   : vehicle.approval === "P"
-                                  ? "bg-yellow-100 text-yellow-800"
-                                  : "bg-red-100 text-red-800"
+                                    ? "bg-yellow-100 text-yellow-800"
+                                    : vehicle.approval === "R"
+                                      ? "bg-red-100 text-red-800"
+                                      : "bg-yellow-100 text-yellow-800"
                               }`}
                             >
                               {vehicle.approval === "Y"
                                 ? "Approved"
                                 : vehicle.approval === "P"
-                                ? "Pending"
-                                : "Pending"}
+                                  ? "Pending"
+                                  : vehicle.approval === "R"
+                                    ? "Reject"
+                                    : "Pending"}
                             </span>
                           </td>
 
@@ -2155,6 +2121,7 @@ const AddVehicles = () => {
                                       )}
 
                                       {/* Delete */}
+                                      {/*  
                                       <button
                                         onClick={(e) => {
                                           e.stopPropagation();
@@ -2181,6 +2148,7 @@ const AddVehicles = () => {
                                         </svg>
                                         Delete
                                       </button>
+                                      */}
                                     </>
                                   ) : (
                                     /* Customer View - Create Bid */
@@ -2295,7 +2263,7 @@ const AddVehicles = () => {
                                 {pageNum}
                               </button>
                             );
-                          }
+                          },
                         )}
 
                         <button

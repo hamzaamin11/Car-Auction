@@ -54,7 +54,7 @@ export const SellerDashboard = () => {
   const handleGetDashboardData = async () => {
     try {
       const res = await axios.get(
-        `${BASE_URL}/SellerDashBoardStats/${currentUser?.id}/${currentUser?.role}`
+        `${BASE_URL}/SellerDashBoardStats/${currentUser?.id}/${currentUser?.role}`,
       );
       setRecords(res.data);
     } catch (error) {
@@ -82,11 +82,6 @@ export const SellerDashboard = () => {
             <div className="flex items-center gap-3">
               <div className="relative">
                 <div className="absolute -inset-1 bg-gradient-to-r from-blue-600 to-blue-400 rounded-full blur opacity-20"></div>
-                <div className="relative bg-white px-4 py-2 rounded-full shadow-md border border-blue-100">
-                  <span className="text-sm font-medium text-blue-950">
-                    Real-time Analytics
-                  </span>
-                </div>
               </div>
             </div>
           </div>
@@ -132,7 +127,7 @@ export const SellerDashboard = () => {
                   style={{
                     width: `${Math.min(
                       (vehicle?.totalApproved || 0) * 10,
-                      100
+                      100,
                     )}%`,
                   }}
                 ></div>

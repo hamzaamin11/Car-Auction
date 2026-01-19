@@ -19,8 +19,9 @@ import { ViewBrandModal } from "../../components/BrandModal/ViewBrandModal";
 import moment from "moment";
 import { AdminAddBid } from "../../components/AdminAddBidComponent/AdminAddBid";
 import { AdminUpdatebid } from "../AdminUpdatebid";
-import { X, ChevronLeft, ChevronRight } from "lucide-react";
+import { X, ChevronLeft, ChevronRight, CircleUser } from "lucide-react";
 import CustomSearch from "../../CustomSearch";
+import { UserDetailModal } from "../components/UserDetailModal/UserDetail";
 
 const currentDate = new Date().toISOString().split("T")[0];
 
@@ -41,7 +42,7 @@ export default function UpcomingAuctions() {
   const [search, setSearch] = useState("");
   const [loading, setLoading] = useState(false);
   const [dateRange, setDateRange] = useState(initialState);
-
+  const [userDetail, setUSerDetail] = useState(null);
   // NEW: Modal states
   const [isViewModalOpen, setIsViewModalOpen] = useState(false);
   const [currentImageIndex, setCurrentImageIndex] = useState(0);
@@ -162,6 +163,18 @@ export default function UpcomingAuctions() {
       setCurrentImageIndex((prev) =>
         prev === selectedVehicle.images.length - 1 ? 0 : prev + 1
       );
+    }
+  };
+
+  const handleViewUserDetail = async (id) => {
+    try {
+      const res = await axios.get(
+        `${BASE_URL}/admin/getUserDetailsApprovedVehicleListById/${id}`
+      );
+
+      setUSerDetail(res.data?.data);
+    } catch (error) {
+      console.log(error);
     }
   };
 
@@ -292,7 +305,7 @@ export default function UpcomingAuctions() {
                           currentUser?.role === "seller" && "hidden"
                         }`}
                       >
-                        Owner Name
+                        Seller Name
                       </th>
                       <th className="p-1 text-left text-sm font-semibold">
                         Vehicle Name
@@ -333,7 +346,6 @@ export default function UpcomingAuctions() {
                       <tr
                         key={auction.id}
                         className="hover:bg-gray-50 transition-colors cursor-pointer"
-                        onClick={() => handleViewDetails(auction)}
                       >
                         <td className="p-3">
                           <span className="text-sm text-gray-700">
@@ -343,20 +355,32 @@ export default function UpcomingAuctions() {
 
                         {/* Owner Name */}
                         <td
+                          onClick={() => {
+                            handleToggleModel("detail");
+                            handleViewUserDetail(auction.userId);
+                          }}
                           className={`p-3 text-sm text-gray-700 capitalize ${
                             currentUser?.role === "seller" && "hidden"
                           }`}
                         >
-                          {auction?.name || "--"}
+                          <div className="flex items-center gap-1">
+                            <CircleUser
+                              size={"30"}
+                              style={{
+                                color: "gray",
+                              }}
+                            />
+                            {auction?.name || "--"}
+                          </div>
                         </td>
 
                         {/* Vehicle Column with Image and Name */}
-                        <td className="p-1">
+                        <td
+                          className="p-1"
+                          onClick={() => handleViewDetails(auction)}
+                        >
                           <div className="flex items-center gap-3">
-                            <div
-                              className="w-12 h-12 rounded-md overflow-hidden bg-gray-100 flex-shrink-0 cursor-pointer"
-                              onClick={() => handleViewClick(auction)}
-                            >
+                            <div className="w-12 h-12 rounded-md overflow-hidden bg-gray-100 flex-shrink-0 cursor-pointer">
                               {auction?.images && auction?.images.length > 0 ? (
                                 <img
                                   src={auction?.images[0]}
@@ -869,8 +893,13 @@ export default function UpcomingAuctions() {
             </div>
           </div>
         )}
-
-        <ToastContainer />
+        {isOpen === "detail" && (
+          <UserDetailModal
+            isOpen={isOpen}
+            closeModal={() => handleToggleModel("")}
+            userDetail={userDetail}
+          />
+        )}
       </div>
     </>
   );

@@ -19,6 +19,8 @@ import CustomSearch from "../../CustomSearch";
 import CustomAdd from "../../CustomAdd";
 import Swal from "sweetalert2";
 import { LiveBidModal } from "../components/ViewAdminBidModal/LiveBidModal";
+import { CircleUser } from "lucide-react";
+import { UserDetailModal } from "../components/UserDetailModal/UserDetail";
 
 export default function LiveAuctions() {
   const [selectedVehicle, setselectedVehicle] = useState(null);
@@ -32,6 +34,7 @@ export default function LiveAuctions() {
   const [search, setSearch] = useState("");
   const [loading, setLoading] = useState(false);
   const [bidData, setBiddata] = useState([]);
+  const [userDetail, setUSerDetail] = useState(null);
 
   const id = currentUser?.id;
   const [pageNo, setPageNo] = useState(1);
@@ -124,6 +127,18 @@ export default function LiveAuctions() {
         icon: "error",
         confirmButtonColor: "#9333ea",
       });
+    }
+  };
+
+  const handleViewUserDetail = async (id) => {
+    try {
+      const res = await axios.get(
+        `${BASE_URL}/admin/getUserDetailsApprovedVehicleListById/${id}`
+      );
+
+      setUSerDetail(res.data?.data);
+    } catch (error) {
+      console.log(error);
     }
   };
 
@@ -243,7 +258,7 @@ export default function LiveAuctions() {
                     <th className="p-3 text-left text-sm font-semibold">Sr</th>
                     {currentUser.role === "admin" && (
                       <th className="p-1 text-start text-sm font-semibold">
-                        Owner Name
+                        Seller Name
                       </th>
                     )}
                     <th className="p-1 text-left text-sm font-semibold">
@@ -284,16 +299,34 @@ export default function LiveAuctions() {
 
                       {/* Owner Name (Admin only) */}
                       {currentUser.role === "admin" && (
-                        <td className="p-1">
-                          <span className="text-sm text-gray-600">
-                            {auction?.name?.charAt(0)?.toUpperCase() +
-                              auction?.name?.slice(1) || "--"}
-                          </span>
+                        <td
+                          className="p-1 hover:cursor-pointer"
+                          onClick={() => {
+                            handleIsOpenModal("detail");
+                            handleViewUserDetail(auction.userId);
+                          }}
+                        >
+                          <div className="flex items-center gap-1">
+                            <CircleUser
+                              size={"30"}
+                              style={{
+                                color: "gray",
+                              }}
+                            />
+
+                            <span className="text-sm text-gray-600">
+                              {auction?.name?.charAt(0)?.toUpperCase() +
+                                auction?.name?.slice(1) || "--"}
+                            </span>
+                          </div>
                         </td>
                       )}
 
                       {/* Vehicle Name with Image */}
-                      <td className="p-1">
+                      <td
+                        className="p-1"
+                        onClick={() => handleViewDetails(auction)}
+                      >
                         <div className="flex items-center gap-3">
                           <div className="w-12 h-12 rounded-full overflow-hidden bg-gray-100 flex-shrink-0 cursor-pointer">
                             {auction.images?.length > 0 ? (
@@ -308,10 +341,7 @@ export default function LiveAuctions() {
                               </div>
                             )}
                           </div>
-                          <div
-                            className="cursor-pointer min-w-0"
-                            onClick={() => handleViewDetails(auction)}
-                          >
+                          <div className="cursor-pointer min-w-0">
                             <h2 className="text-sm font-bold text-gray-800 truncate">
                               {auction.make} {auction.model}
                             </h2>
@@ -538,6 +568,14 @@ export default function LiveAuctions() {
             vehicle={bidData}
             onClose={() => handleIsOpenModal("")}
             handleGetVehicleBid={handleGetVehicleBid}
+          />
+        )}
+
+        {isOpenModal === "detail" && (
+          <UserDetailModal
+            isOpen={isOpenModal}
+            closeModal={() => handleIsOpenModal("")}
+            userDetail={userDetail}
           />
         )}
       </div>

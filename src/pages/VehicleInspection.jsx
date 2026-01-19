@@ -1095,6 +1095,7 @@ const VehicleInspection = () => {
                                       )}
 
                                       {/* Delete */}
+                                      {/*  
                                       <button
                                         onClick={(e) => {
                                           e.stopPropagation();
@@ -1121,6 +1122,7 @@ const VehicleInspection = () => {
                                         </svg>
                                         Delete Vehicle
                                       </button>
+                                      */}
                                     </>
                                   ) : (
                                     /* Customer View - Create Bid */

@@ -14,6 +14,7 @@ import CustomSearch from "../../CustomSearch";
 import { useSelector } from "react-redux";
 import moment from "moment";
 import { UserDetailModal } from "../components/UserDetailModal/UserDetail";
+import { ViewAdminCar } from "../../components/ViewAdminCar";
 
 export const PastVehicle = () => {
   const { currentUser } = useSelector((state) => state?.auth);
@@ -41,7 +42,7 @@ export const PastVehicle = () => {
   const handleGetAllUnapprovalVehicles = async () => {
     try {
       const res = await axios.get(
-        `${BASE_URL}/PastAuctionVehicleListbyDateRange/${currentUser.role}/${dateRange.fromDate}/${dateRange.toDate}`
+        `${BASE_URL}/PastAuctionVehicleListbyDateRange/${currentUser.role}/${currentUser.id}/${dateRange.fromDate}/${dateRange.toDate}`,
       );
       console.log(res.data);
       setVehicles(res.data);
@@ -53,7 +54,7 @@ export const PastVehicle = () => {
   const handleViewUserDetail = async (id) => {
     try {
       const res = await axios.get(
-        `${BASE_URL}/admin/getUserDetailsApprovedVehicleListById/${id}`
+        `${BASE_URL}/admin/getUserDetailsApprovedVehicleListById/${id}`,
       );
 
       setUSerDetail(res.data?.data);
@@ -150,7 +151,7 @@ export const PastVehicle = () => {
   const handlePrevImage = () => {
     if (selectedVehicle?.images) {
       setCurrentImageIndex((prev) =>
-        prev === 0 ? selectedVehicle.images.length - 1 : prev - 1
+        prev === 0 ? selectedVehicle.images.length - 1 : prev - 1,
       );
     }
   };
@@ -158,7 +159,7 @@ export const PastVehicle = () => {
   const handleNextImage = () => {
     if (selectedVehicle?.images) {
       setCurrentImageIndex((prev) =>
-        prev === selectedVehicle.images.length - 1 ? 0 : prev + 1
+        prev === selectedVehicle.images.length - 1 ? 0 : prev + 1,
       );
     }
   };
@@ -179,7 +180,7 @@ export const PastVehicle = () => {
   const filteredVehicles = vehicles.filter((v) =>
     `${v.make} ${v.model} ${v.series}`
       .toLowerCase()
-      .includes(search.toLowerCase())
+      .includes(search.toLowerCase()),
   );
 
   const totalItems = filteredVehicles.length;
@@ -274,17 +275,21 @@ export const PastVehicle = () => {
               <thead className="bg-blue-950 text-white">
                 <tr>
                   <th className="p-3 text-start text-sm font-semibold">Sr</th>
-                  <th className="p-1 text-left text-sm font-semibold">
-                    Seller Name
-                  </th>
+                  {currentUser.role === "admin" && (
+                    <>
+                      <th className="p-1 text-left text-sm font-semibold">
+                        Seller Name
+                      </th>
+                      <th className="p-1 text-left text-sm font-semibold">
+                        Customer Name
+                      </th>
+                    </>
+                  )}
                   <th className="p-1 text-left text-sm font-semibold">
                     Vehicle Name
                   </th>
                   <th className="p-1 text-left text-sm font-semibold">Lot#</th>
                   <th className="p-1 text-left text-sm font-semibold">Year</th>
-                  <th className="p-1 text-left text-sm font-semibold">
-                    Fuel Type
-                  </th>
 
                   <th className="p-1 text-left text-sm font-semibold">Color</th>
                   <th className="p-1 text-left text-sm font-semibold">City</th>
@@ -296,7 +301,10 @@ export const PastVehicle = () => {
                     Reserve Price
                   </th>
                   <th className="p-1 text-left text-sm font-semibold">
-                    Actions
+                    Sold Price
+                  </th>
+                  <th className="p-1 text-left text-sm font-semibold">
+                    Status
                   </th>
                 </tr>
               </thead>
@@ -308,28 +316,51 @@ export const PastVehicle = () => {
                   >
                     {/* Serial Number */}
                     <td className="p-3 text-start text-gray-600">
-                      {index + 1}
+                      {(pageNo - 1) * itemsPerPage + index + 1}
                     </td>
-
-                    <td
-                      className="hover:cursor-pointer"
-                      onClick={() => {
-                        handleIsOpen("detail");
-                        handleViewUserDetail(vehicle.userId);
-                      }}
-                    >
-                      <div className="flex items-center gap-1">
-                        <CircleUser
-                          size={"30"}
-                          style={{
-                            color: "gray",
+                    {currentUser.role === "admin" && (
+                      <>
+                        <td
+                          className="hover:cursor-pointer"
+                          onClick={() => {
+                            handleIsOpen("detail");
+                            handleViewUserDetail(vehicle.userId);
                           }}
-                        />
-                        <span className="text-sm text-gray-600 font-medium capitalize">
-                          {vehicle.username || "--"}
-                        </span>
-                      </div>
-                    </td>
+                        >
+                          <div className="flex items-center gap-1">
+                            <CircleUser
+                              size={"30"}
+                              style={{
+                                color: "gray",
+                              }}
+                            />
+                            <span className="text-sm text-gray-600 font-medium capitalize">
+                              {vehicle.username || "--"}
+                            </span>
+                          </div>
+                        </td>
+
+                        <td
+                          className="hover:cursor-pointer"
+                          onClick={() => {
+                            handleIsOpen("customerdetail");
+                            handleViewUserDetail(vehicle?.winnerUserId);
+                          }}
+                        >
+                          <div className="flex items-center gap-1">
+                            <CircleUser
+                              size={"30"}
+                              style={{
+                                color: "gray",
+                              }}
+                            />
+                            <span className="text-sm text-gray-600 font-medium capitalize">
+                              {vehicle.winnerUsername || "--"}
+                            </span>
+                          </div>
+                        </td>
+                      </>
+                    )}
 
                     {/* Vehicle Column with Image and Name */}
                     <td className="p-1">
@@ -379,14 +410,6 @@ export const PastVehicle = () => {
                       </span>
                     </td>
 
-                    {/* Fuel Type */}
-                    <td className="p-1">
-                      <span className="text-sm text-gray-600">
-                        {vehicle.fuelType?.charAt(0)?.toUpperCase() +
-                          vehicle.fuelType?.slice(1) || "--"}
-                      </span>
-                    </td>
-
                     {/* Color */}
                     <td className="p-1">
                       <span className="text-sm text-gray-600">
@@ -408,7 +431,7 @@ export const PastVehicle = () => {
                         <span>
                           {vehicle?.VehicleCreatedAt
                             ? new Date(
-                                vehicle?.VehicleCreatedAt
+                                vehicle?.VehicleCreatedAt,
                               ).toLocaleDateString("en-GB")
                             : "N/A"}
                         </span>
@@ -429,36 +452,17 @@ export const PastVehicle = () => {
                       </span>
                     </td>
 
+                    {/* Reserve Price */}
                     <td className="p-1">
-                      <div
-                        className="relative"
-                        onClick={(e) => {
-                          e.stopPropagation();
-                        }}
-                      >
-                        <button
-                          onClick={() => {
-                            handleViewDetails(vehicle);
-                            setActionMenuOpen(null);
-                          }}
-                          className="px-4 py-2 text-sm font-medium text-white bg-blue-950 hover:bg-blue-900 rounded-lg transition-colors flex items-center gap-2"
-                        >
-                          <svg
-                            className="w-4 h-4"
-                            fill="none"
-                            stroke="currentColor"
-                            viewBox="0 0 24 24"
-                          >
-                            <path
-                              strokeLinecap="round"
-                              strokeLinejoin="round"
-                              strokeWidth={2}
-                              d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"
-                            />
-                          </svg>
-                          View Details
-                        </button>
-                      </div>
+                      <span className="text-sm font-semibold text-gray-700">
+                        PKR {vehicle?.winningBid}
+                      </span>
+                    </td>
+
+                    <td className="p-1">
+                      <span className="text-xs text-red-500 bg-red-50 rounded-full p-2 uppercase">
+                        {vehicle?.saleStatus}
+                      </span>
                     </td>
                   </tr>
                 ))}
@@ -567,211 +571,22 @@ export const PastVehicle = () => {
         </div>
       )}
 
-      {/* View Modal - 100% unchanged */}
-      {isViewModalOpen && selectedVehicle && (
-        <div className="fixed inset-0 z-500 flex items-center justify-center  backdrop-blur-sm p-4">
-          <div className="bg-white rounded-lg shadow-2xl w-full max-w-4xl max-h-[90vh] overflow-y-auto relative border">
-            <button
-              onClick={handleCloseModal}
-              className="absolute top-4 right-4 z-10 bg-white rounded-full p-2 shadow-lg hover:bg-gray-100 transition"
-            >
-              <X className="h-6 w-6 text-gray-700" />
-            </button>
-
-            <div className="p-6">
-              <h2 className="text-2xl font-bold text-gray-800 mb-6">
-                View Vehicle
-              </h2>
-
-              <div className="grid md:grid-cols-2 gap-6">
-                <div className="space-y-4">
-                  <div className="grid grid-cols-2 gap-4">
-                    <div>
-                      <p className="text-sm font-bold text-gray-900">
-                        Lot Number:
-                      </p>
-                      <p className="text-base text-gray-900">
-                        {selectedVehicle.lot_number || "—"}
-                      </p>
-                    </div>
-                    <div>
-                      <p className="text-sm font-bold text-gray-900">
-                        Location:
-                      </p>
-                      <p className="text-base text-gray-900">
-                        {selectedVehicle.cityName || "—"}
-                      </p>
-                    </div>
-                    <div>
-                      <p className="text-sm font-bold text-gray-900">Make:</p>
-                      <p className="text-base text-gray-900">
-                        {selectedVehicle.make || "—"}
-                      </p>
-                    </div>
-                  </div>
-
-                  <div className="grid grid-cols-2 gap-4">
-                    <div>
-                      <p className="text-sm font-bold text-gray-900">Model:</p>
-                      <p className="text-base text-gray-900">
-                        {selectedVehicle.model || "—"}
-                      </p>
-                    </div>
-                    <div>
-                      <p className="text-sm font-bold text-gray-900">Series:</p>
-                      <p className="text-base text-gray-900">
-                        {selectedVehicle.series || "—"}
-                      </p>
-                    </div>
-                  </div>
-
-                  <div className="grid grid-cols-2 gap-4">
-                    <div>
-                      <p className="text-sm font-bold text-gray-900">Color:</p>
-                      <p className="text-base text-gray-900">
-                        {selectedVehicle.color || "—"}
-                      </p>
-                    </div>
-                    <div>
-                      <p className="text-sm font-bold text-gray-900">
-                        Transmission:
-                      </p>
-                      <p className="text-base text-gray-900">
-                        {selectedVehicle.transmission || "—"}
-                      </p>
-                    </div>
-                  </div>
-
-                  <div className="grid grid-cols-2 gap-4">
-                    <div>
-                      <p className="text-sm font-bold text-gray-900">
-                        Fuel Type:
-                      </p>
-                      <p className="text-base text-gray-900 capitalize">
-                        {selectedVehicle.fuelType || "—"}
-                      </p>
-                    </div>
-                    <div>
-                      <p className="text-sm font-bold text-gray-900">
-                        Body Style:
-                      </p>
-                      <p className="text-base text-gray-900">
-                        {selectedVehicle.bodyStyle || "—"}
-                      </p>
-                    </div>
-                  </div>
-
-                  <div className="grid grid-cols-2 gap-4">
-                    <div>
-                      <p className="text-sm font-bold text-gray-900">
-                        Certify Status:
-                      </p>
-                      <p className="text-base text-gray-900">
-                        {selectedVehicle.certifyStatus || "—"}
-                      </p>
-                    </div>
-                    <div>
-                      <p className="text-sm font-bold text-gray-900">
-                        Drive Type:
-                      </p>
-                      <p className="text-base text-gray-900 uppercase">
-                        {selectedVehicle.driveType || "—"}
-                      </p>
-                    </div>
-                  </div>
-
-                  <div className="grid grid-cols-2 gap-4">
-                    <div>
-                      <p className="text-sm font-bold text-gray-900">
-                        Meter Reading:
-                      </p>
-                      <p className="text-base text-gray-900">
-                        {selectedVehicle.mileage || "—"}
-                      </p>
-                    </div>
-                    <div>
-                      <p className="text-sm font-bold text-gray-900">Year:</p>
-                      <p className="text-base text-gray-900">
-                        {selectedVehicle.year || "—"}
-                      </p>
-                    </div>
-                  </div>
-
-                  <div className="grid grid-cols-2 gap-4">
-                    <div>
-                      <p className="text-sm font-bold text-gray-900">
-                        Condition:
-                      </p>
-                      <p className="text-base text-gray-900 capitalize">
-                        {selectedVehicle.vehicleCondition || "—"}
-                      </p>
-                    </div>
-                    <div>
-                      <p className="text-sm font-bold text-gray-900">
-                        Reserve Price:
-                      </p>
-                      <p className="text-base text-gray-700 font-semibold">
-                        {selectedVehicle.buyNowPrice}
-                      </p>
-                    </div>
-                  </div>
-                </div>
-
-                <div className="flex flex-col items-center">
-                  {selectedVehicle.images &&
-                  selectedVehicle.images.length > 0 ? (
-                    <>
-                      <div className="w-full h-64 rounded-lg overflow-hidden bg-gray-100 mb-4">
-                        <img
-                          src={selectedVehicle.images[currentImageIndex]}
-                          alt={`${selectedVehicle.make} ${selectedVehicle.model}`}
-                          className="w-full h-full object-cover"
-                        />
-                      </div>
-
-                      <div className="flex items-center justify-center gap-4 w-full">
-                        <button
-                          onClick={handlePrevImage}
-                          className="bg-red-500 hover:bg-red-600 text-white rounded-full p-3 shadow-lg transition disabled:opacity-50 disabled:cursor-not-allowed"
-                          disabled={selectedVehicle.images.length <= 1}
-                        >
-                          <ChevronLeft className="h-5 w-5" />
-                        </button>
-
-                        <div className="w-20 h-20 rounded-lg overflow-hidden border-2 border-blue-500 bg-gray-100">
-                          <img
-                            src={selectedVehicle.images[currentImageIndex]}
-                            alt="Thumbnail"
-                            className="w-full h-full object-cover"
-                          />
-                        </div>
-
-                        <button
-                          onClick={handleNextImage}
-                          className="bg-red-500 hover:bg-red-600 text-white rounded-full p-3 shadow-lg transition disabled:opacity-50 disabled:cursor-not-allowed"
-                          disabled={selectedVehicle.images.length <= 1}
-                        >
-                          <ChevronRight className="h-5 w-5" />
-                        </button>
-                      </div>
-
-                      <p className="text-sm text-gray-600 mt-2">
-                        {currentImageIndex + 1} /{" "}
-                        {selectedVehicle.images.length}
-                      </p>
-                    </>
-                  ) : (
-                    <div className="w-full h-64 rounded-lg bg-gray-100 flex items-center justify-center">
-                      <p className="text-gray-400">No images available</p>
-                    </div>
-                  )}
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
+      {isViewModalOpen && (
+        <ViewAdminCar
+          handleClick={() => setIsViewModalOpen(false)}
+          selectedVehicle={selectedVehicle}
+          isViewModalOpen={isViewModalOpen}
+        />
       )}
       {isOpen === "detail" && (
+        <UserDetailModal
+          isOpen={isOpen}
+          closeModal={() => handleIsOpen("")}
+          userDetail={userDetail}
+        />
+      )}
+
+      {isOpen === "customerdetail" && (
         <UserDetailModal
           isOpen={isOpen}
           closeModal={() => handleIsOpen("")}

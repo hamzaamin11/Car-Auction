@@ -235,7 +235,7 @@ function AddAdminVehicle({ open, setOpen, onVehicleUpdated }) {
 
   console.log("Add a New Vehicle =>", vehicle);
   const [autoDescription, setAutoDescription] = useState(
-    initialAutoDescription
+    initialAutoDescription,
   );
 
   const [allCities, setAllCities] = useState([]);
@@ -384,7 +384,7 @@ function AddAdminVehicle({ open, setOpen, onVehicleUpdated }) {
   const handleGetVehicles = async () => {
     try {
       const res = await axios.get(
-        `${BASE_URL}/ApprovedVehicleListbyDateRange/${currentUser?.role}/${dateRange.fromDate}/${dateRange.toDate}`
+        `${BASE_URL}/ApprovedVehicleListbyDateRange/${currentUser?.role}/${dateRange.fromDate}/${dateRange.toDate}`,
       );
       setAllVehicles(res.data || []);
       setTotalVehicles(res.data || []);
@@ -422,7 +422,7 @@ function AddAdminVehicle({ open, setOpen, onVehicleUpdated }) {
   const handleTotalVehicles = async () => {
     try {
       const res = await axios.get(
-        `${BASE_URL}/getApprovedVehicles/${currentUser?.role}`
+        `${BASE_URL}/getApprovedVehicles/${currentUser?.role}`,
       );
       console.log(res.data);
       setTotalVehicles(res.data);
@@ -521,7 +521,7 @@ function AddAdminVehicle({ open, setOpen, onVehicleUpdated }) {
   const handleViewUserDetail = async (id) => {
     try {
       const res = await axios.get(
-        `${BASE_URL}/admin/getUserDetailsApprovedVehicleListById/${id}`
+        `${BASE_URL}/admin/getUserDetailsApprovedVehicleListById/${id}`,
       );
 
       setUSerDetail(res.data?.data);
@@ -646,7 +646,7 @@ function AddAdminVehicle({ open, setOpen, onVehicleUpdated }) {
       filtered = allVehicles.filter((v) =>
         `${v.make} ${v.model} ${v.year} ${v.series}`
           .toLowerCase()
-          .includes(search.toLowerCase())
+          .includes(search.toLowerCase()),
       );
     }
 
@@ -662,8 +662,8 @@ function AddAdminVehicle({ open, setOpen, onVehicleUpdated }) {
         !search ||
         `${v.make} ${v.model} ${v.year} ${v.series}`
           .toLowerCase()
-          .includes(search.toLowerCase())
-    ).length / 10
+          .includes(search.toLowerCase()),
+    ).length / 10,
   );
 
   const goToPage = (page) => {
@@ -708,7 +708,7 @@ function AddAdminVehicle({ open, setOpen, onVehicleUpdated }) {
     <div className="max-h-screen bg-white p-4 sm:p-6">
       <div className="flex flex-col sm:flex-row justify-between lg:items-start items-center w-full gap-4 mb-6">
         <h2 className="lg:text-3xl text-xl font-bold text-gray-800 ">
-          Vehicle Lists
+          Vehicle List
         </h2>
 
         <div className="relative w-full max-w-md">
@@ -847,7 +847,7 @@ function AddAdminVehicle({ open, setOpen, onVehicleUpdated }) {
                     options={driveTypeOptions}
                     value={
                       driveTypeOptions.find(
-                        (d) => d.value === vehicle.driveType
+                        (d) => d.value === vehicle.driveType,
                       ) || null
                     }
                     onChange={(opt) =>
@@ -868,7 +868,7 @@ function AddAdminVehicle({ open, setOpen, onVehicleUpdated }) {
                     options={bodyStyleOptions}
                     value={
                       bodyStyleOptions.find(
-                        (b) => b.value === vehicle.bodyStyle
+                        (b) => b.value === vehicle.bodyStyle,
                       ) || null
                     }
                     onChange={(option) =>
@@ -890,7 +890,7 @@ function AddAdminVehicle({ open, setOpen, onVehicleUpdated }) {
                     options={transmissionOptions}
                     value={
                       transmissionOptions.find(
-                        (t) => t.value === vehicle.transmission
+                        (t) => t.value === vehicle.transmission,
                       ) || null
                     }
                     onChange={(option) =>
@@ -951,7 +951,7 @@ function AddAdminVehicle({ open, setOpen, onVehicleUpdated }) {
                     options={fuelTypeOptions}
                     value={
                       fuelTypeOptions.find(
-                        (f) => f.value === vehicle.fuelType
+                        (f) => f.value === vehicle.fuelType,
                       ) || null
                     }
                     onChange={(option) =>
@@ -972,7 +972,7 @@ function AddAdminVehicle({ open, setOpen, onVehicleUpdated }) {
                     options={conditionOptions}
                     value={
                       conditionOptions.find(
-                        (c) => c.value === vehicle.vehicleCondition
+                        (c) => c.value === vehicle.vehicleCondition,
                       ) || null
                     }
                     onChange={(option) =>
@@ -1038,7 +1038,7 @@ function AddAdminVehicle({ open, setOpen, onVehicleUpdated }) {
                   options={certifyOptions}
                   value={
                     certifyOptions.find(
-                      (c) => c.value === vehicle.certifyStatus
+                      (c) => c.value === vehicle.certifyStatus,
                     ) || null
                   }
                   onChange={(option) =>
@@ -1195,10 +1195,10 @@ function AddAdminVehicle({ open, setOpen, onVehicleUpdated }) {
                           <div
                             onClick={() => {
                               const updatedPreviews = previewImages.filter(
-                                (_, i) => i !== index
+                                (_, i) => i !== index,
                               );
                               const updatedImages = vehicle.image.filter(
-                                (_, i) => i !== index
+                                (_, i) => i !== index,
                               );
                               setPreviewImages(updatedPreviews);
                               setVehicle((prev) => ({
@@ -1273,7 +1273,10 @@ function AddAdminVehicle({ open, setOpen, onVehicleUpdated }) {
                     Date / Time
                   </th>
                   <th className="p-1 text-left text-sm font-semibold">
-                    Resverse Price
+                    Reserve Price
+                  </th>
+                  <th className="p-1 text-left text-sm font-semibold">
+                    Status
                   </th>
                   <th className="p-1 text-left text-sm font-semibold ">
                     Actions
@@ -1288,7 +1291,7 @@ function AddAdminVehicle({ open, setOpen, onVehicleUpdated }) {
                     onClick={(e) => handleOutsideClick(e, vehicle.id)}
                   >
                     <p className="  text-center pt-4  text-gray-600">
-                      {index + 1}
+                      {(pageNo - 1) * 10 + index + 1}
                     </p>
 
                     <td
@@ -1388,7 +1391,7 @@ function AddAdminVehicle({ open, setOpen, onVehicleUpdated }) {
                         <span>
                           {vehicle?.VehicleCreatedAt
                             ? new Date(
-                                vehicle?.VehicleCreatedAt
+                                vehicle?.VehicleCreatedAt,
                               ).toLocaleDateString("en-GB")
                             : "N/A"}
                         </span>
@@ -1407,6 +1410,26 @@ function AddAdminVehicle({ open, setOpen, onVehicleUpdated }) {
                       <span className="text-sm font-semibold text-gray-700">
                         PKR {vehicle.buyNowPrice}
                       </span>
+                    </td>
+
+                    <td className="p-1 uppercase">
+                      {vehicle?.saleStatus === "upcoming" ? (
+                        <span className="inline-flex items-center px-2 py-1 text-xs font-medium  bg-green-100 text-green-800  rounded-full">
+                          Live
+                        </span>
+                      ) : vehicle?.saleStatus === "live" ? (
+                        <span className="inline-flex items-center px-2 py-1 text-xs bg-red-100 text-red-800 font-medium rounded-full">
+                          Pending
+                        </span>
+                      ) : vehicle?.saleStatus === "Unsold" ? (
+                        <span className="inline-flex items-center px-2 py-1 text-xs font-medium bg-orange-100 text-orange-500 rounded-full">
+                          UnSold
+                        </span>
+                      ) : (
+                        <span className="inline-flex items-center px-2 py-1 text-xs font-medium bg-gray-100 text-gray-800 rounded-full">
+                          Available
+                        </span>
+                      )}
                     </td>
 
                     {/* Actions */}
@@ -1469,6 +1492,7 @@ function AddAdminVehicle({ open, setOpen, onVehicleUpdated }) {
                               </svg>
                               View
                             </button>
+                            {/*
                             <button
                               onClick={() => {
                                 handleDeleteVehicle(vehicle.id);
@@ -1491,6 +1515,7 @@ function AddAdminVehicle({ open, setOpen, onVehicleUpdated }) {
                               </svg>
                               Delete
                             </button>
+                            */}
                           </div>
                         )}
                       </div>
@@ -1522,8 +1547,8 @@ function AddAdminVehicle({ open, setOpen, onVehicleUpdated }) {
                       !search ||
                       `${v.make} ${v.model} ${v.year} ${v.series}`
                         .toLowerCase()
-                        .includes(search.toLowerCase())
-                  ).length
+                        .includes(search.toLowerCase()),
+                  ).length,
                 )}
               </span>{" "}
               of{" "}
@@ -1534,7 +1559,7 @@ function AddAdminVehicle({ open, setOpen, onVehicleUpdated }) {
                       !search ||
                       `${v.make} ${v.model} ${v.year} ${v.series}`
                         .toLowerCase()
-                        .includes(search.toLowerCase())
+                        .includes(search.toLowerCase()),
                   ).length
                 }
               </span>{" "}
@@ -1616,6 +1641,7 @@ function AddAdminVehicle({ open, setOpen, onVehicleUpdated }) {
         <ViewAdminCar
           handleClick={handleToggle}
           selectedVehicle={selectedVehicle}
+          isViewModalOpen={viewModal}
         />
       )}
       {isOpenBid && (

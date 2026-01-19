@@ -54,9 +54,16 @@ const Dashboard = () => {
   const [awaitingStatus, setAwaitingStatus] = useState([]);
   const [bidInfo, setBidInfo] = useState([]);
   const [kpisStats, setKpisStats] = useState();
-const approvalRate = totalVehicles.length && (unapprovelVehicles.length || awaitingStatus.length)
-  ? Math.round((totalVehicles.length / (totalVehicles.length + unapprovelVehicles.length + awaitingStatus.length)) * 100)
-  : 0;
+  const approvalRate =
+    totalVehicles.length && (unapprovelVehicles.length || awaitingStatus.length)
+      ? Math.round(
+          (totalVehicles.length /
+            (totalVehicles.length +
+              unapprovelVehicles.length +
+              awaitingStatus.length)) *
+            100,
+        )
+      : 0;
   const totalGMV = kpisStats?.data?.totalGMV;
 
   const totalAuction = kpisStats?.data?.totalAuctionsCompleted;
@@ -77,7 +84,7 @@ const approvalRate = totalVehicles.length && (unapprovelVehicles.length || await
     setLoading(true);
     try {
       const res = await axios.get(
-        `${BASE_URL}/getApprovedVehicles/${currentUser?.role}`
+        `${BASE_URL}/getApprovedVehicles/${currentUser?.role}`,
       );
       setTotalVehicles(res?.data);
       setLoading(false);
@@ -126,7 +133,7 @@ const approvalRate = totalVehicles.length && (unapprovelVehicles.length || await
   const handleAdminKPIS = async () => {
     try {
       const res = await axios.get(
-        `${BASE_URL}/AdminDashboardStats/${currentUser?.id}?fromDate=${filterDate.fromDate}&toDate=${filterDate.toDate}`
+        `${BASE_URL}/AdminDashboardStats/${currentUser?.id}?fromDate=${filterDate.fromDate}&toDate=${filterDate.toDate}`,
       );
       console.log("KPIS =>>", res.data);
       setKpisStats(res.data);
@@ -171,7 +178,7 @@ const approvalRate = totalVehicles.length && (unapprovelVehicles.length || await
     setLoading(true);
     try {
       const res = await axios.get(
-        `${BASE_URL}/admin/getBrands/${currentUser?.role}`
+        `${BASE_URL}/admin/getBrands/${currentUser?.role}`,
       );
       setAllBrands(res.data);
       setLoading(false);
@@ -277,12 +284,6 @@ const approvalRate = totalVehicles.length && (unapprovelVehicles.length || await
                 Welcome back, Admin! Here's what's happening today.
               </p>
             </div>
-            <div className="flex items-center gap-3 bg-white px-4 py-2 rounded-full shadow-sm">
-              <div className="w-3 h-3 bg-green-500 rounded-full animate-pulse"></div>
-              <span className="text-sm font-medium text-gray-700">
-                Live Dashboard
-              </span>
-            </div>
           </div>
 
           {/* TOP METRICS GRID */}
@@ -299,16 +300,16 @@ const approvalRate = totalVehicles.length && (unapprovelVehicles.length || await
                       {totalVehicles.length}
                     </h2>
                     <div className="flex items-center gap-1 mt-2">
-  <div className="w-full bg-blue-100 rounded-full h-2">
-    <div
-      className="bg-blue-950 h-2 rounded-full"
-      style={{ width: `${approvalRate}%` }}
-    ></div>
-  </div>
-  <span className="text-xs text-blue-950 font-medium">
-    {approvalRate}%
-  </span>
-</div>
+                      <div className="w-full bg-blue-100 rounded-full h-2">
+                        <div
+                          className="bg-blue-950 h-2 rounded-full"
+                          style={{ width: `${approvalRate}%` }}
+                        ></div>
+                      </div>
+                      <span className="text-xs text-blue-950 font-medium">
+                        {approvalRate}%
+                      </span>
+                    </div>
                   </div>
                   <div className="bg-blue-100 p-3 rounded-xl group-hover:bg-blue-200 transition-colors">
                     <FaCar className="text-3xl text-blue-950" />
@@ -538,10 +539,6 @@ const approvalRate = totalVehicles.length && (unapprovelVehicles.length || await
                 <p className="text-gray-600 mt-1">
                   Key metrics and financial overview
                 </p>
-              </div>
-              <div className="flex items-center gap-2 mt-4 md:mt-0">
-                <div className="w-2 h-2 bg-blue-950 rounded-full"></div>
-                <span className="text-sm text-gray-700">Real-time Data</span>
               </div>
             </div>
 

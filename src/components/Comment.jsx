@@ -33,11 +33,21 @@ const LiveCommentsModal = ({
   const commentsEndRef = useRef(null);
   const [currentAmount, setCurrentAmount] = useState(null);
   const maxBidRef = useRef();
+  const [incrematalAmount, setIncrementAmount] = useState([]);
 
   const handleChange = (e) => {
     const { name, value } = e.target;
     if (/^\d*$/.test(value) && value.length <= 9) {
       setBidAmount({ ...bidAmount, [name]: value });
+    }
+  };
+
+  const handleGetIncrementalAmount = async () => {
+    try {
+      const res = await axios.get(`${BASE_URL}/admin/listConfigureIncrements`);
+      setIncrementAmount(res.data);
+    } catch (error) {
+      console.log(error);
     }
   };
 
@@ -224,6 +234,7 @@ const LiveCommentsModal = ({
   }, [allCustomerBid]);
 
   useEffect(() => {
+    handleGetIncrementalAmount();
     document.body.style.overflow = "hidden";
     return () => (document.body.style.overflow = "auto");
   }, []);
@@ -487,18 +498,13 @@ const LiveCommentsModal = ({
             </div>
 
             <div className="grid grid-cols-2 gap-3">
-              {[
-                { value: 50000, label: "50,000" },
-                { value: 100000, label: "1 Lac" },
-                { value: 200000, label: "2 Lac" },
-                { value: 400000, label: "4 Lac" },
-              ].map((inc) => (
+              {incrematalAmount.map((inc, index) => (
                 <button
-                  key={inc.value}
-                  onClick={() => handleIncrement(inc.value)}
+                  key={index}
+                  onClick={() => handleIncrement(inc.amount)}
                   className="bg-blue-950 text-white font-semibold py-3 rounded-lg transition transform hover:scale-105"
                 >
-                  + {inc.label}
+                  + {inc.amount}
                 </button>
               ))}
             </div>
