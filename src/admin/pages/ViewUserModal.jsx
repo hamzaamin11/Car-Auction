@@ -68,9 +68,6 @@ const ViewUserModal = ({ isOpen, closeModal }) => {
               <Dialog.Panel className="w-full max-w-5xl transform overflow-hidden rounded-3xl bg-white text-left align-middle shadow-2xl transition-all border">
                 {/* Modern Header with gradient */}
                 <div className="relative bg-blue-900 p-4 rounded-t-3xl">
-                  <div className="absolute top-0 right-0 w-32 h-32 bg-white/10 rounded-full -translate-y-16 translate-x-16"></div>
-                  <div className="absolute bottom-0 left-0 w-24 h-24 bg-white/5 rounded-full translate-y-12 -translate-x-12"></div>
-
                   <div className="relative flex justify-between items-center z-10">
                     <div>
                       <Dialog.Title
@@ -79,9 +76,6 @@ const ViewUserModal = ({ isOpen, closeModal }) => {
                       >
                         User Profile
                       </Dialog.Title>
-                      <p className="text-blue-100 mt-1">
-                        Detailed information and contact
-                      </p>
                     </div>
                     <button
                       onClick={closeModal}
@@ -159,9 +153,6 @@ const ViewUserModal = ({ isOpen, closeModal }) => {
                             </div>
                             Personal Information
                           </h3>
-                          <p className="text-gray-600">
-                            Complete profile details and contact information
-                          </p>
                         </div>
 
                         {/* Information Grid */}
@@ -279,7 +270,7 @@ const ViewUserModal = ({ isOpen, closeModal }) => {
 };
 
 // Enhanced Info Field Component with Copy Functionality
-const InfoField = ({ icon, label, value, copyable = false }) => (
+const InfoField = ({ icon, label, value = false }) => (
   <div className="bg-white p-5 rounded-xl border border-gray-100 hover:border-blue-200 transition-all hover:shadow-md">
     <div className="flex justify-between items-start">
       <div className="flex items-start gap-3 flex-1">

@@ -75,7 +75,7 @@ const VehicleDetailsViewer = () => {
   const filteredVehicles = getVehicles.filter((vehicle) =>
     `${vehicle.make} ${vehicle.model} ${vehicle.year} ${vehicle.vin}`
       .toLowerCase()
-      .includes(searchTerm.toLowerCase())
+      .includes(searchTerm.toLowerCase()),
   );
 
   const handleVehicleSelect = (e) => {
@@ -108,16 +108,10 @@ const VehicleDetailsViewer = () => {
       {/* Searchable Dropdown */}
       <div className="mb-8 bg-white p-4 rounded-lg mt-6 shadow-md sticky top-0 z-10">
         <div className="relative max-w-2xl mx-auto ">
-          <h1 className="text-3xl text-blue-600 font-bold mb-4">
+          <h1 className="text-3xl text-blue-900 font-bold mb-4">
             View Complete Vehicle Details
           </h1>
-          {/* <input
-            type="text"
-            placeholder="🔍 Search vehicles (make, model, year, VIN)..."
-            className="w-full p-3 border border-gray-300 rounded-lg mb-2 focus:ring-2 focus:ring-blue-500"
-            value={searchTerm}
-            onChange={(e) => setSearchTerm(e.target.value)}
-          /> */}
+
           {searchTerm && (
             <button
               onClick={() => setSearchTerm("")}

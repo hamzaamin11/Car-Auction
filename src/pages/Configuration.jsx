@@ -44,7 +44,7 @@ export const Configuration = () => {
       if (!result.isConfirmed) return;
 
       const res = await axios.patch(
-        `${BASE_URL}/deletecommission/${getCommission?.id}`
+        `${BASE_URL}/deletecommission/${getCommission?.id}`,
       );
 
       await Swal.fire({
@@ -150,7 +150,7 @@ export const Configuration = () => {
                           handleToggleModal("Edit");
                           setSeleteCommission(getCommission?.id);
                         }}
-                        className="inline-flex items-center px-4 py-2 bg-blue-950 hover:bg-blue-900 text-white font-medium rounded-lg transition-colors duration-200 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-1"
+                        className="inline-flex items-center p-2   bg-blue-950 hover:bg-blue-900 text-white font-medium rounded-lg transition-colors duration-200 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-1"
                       >
                         <svg
                           className="w-4 h-4 mr-2"
@@ -170,10 +170,10 @@ export const Configuration = () => {
                       </button>
                       <button
                         onClick={() => handleDeleteCommission(getCommission)}
-                        className="inline-flex items-center px-4 py-2 bg-red-600 hover:bg-red-500 text-white font-medium rounded-lg border border-red-200 transition-colors duration-200 focus:outline-none focus:ring-2 focus:ring-red-500 focus:ring-offset-1"
+                        className="inline-flex items-center p-2  bg-red-600 hover:bg-red-500 text-white font-medium rounded-lg border border-red-200 transition-colors duration-200 focus:outline-none focus:ring-2 focus:ring-red-500 focus:ring-offset-1"
                       >
                         <svg
-                          className="w-4 h-4 mr-2"
+                          className="w-4 h-4 "
                           fill="none"
                           stroke="currentColor"
                           viewBox="0 0 24 24"

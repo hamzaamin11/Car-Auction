@@ -1,4 +1,5 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
+import ReactDOM from "react-dom";
 import { useAuth } from "../context/AuthContext";
 import { BASE_URL } from "../components/Contant/URL";
 import { useDispatch, useSelector } from "react-redux";
@@ -19,6 +20,189 @@ import {
 import Dropdown from "../Dropdown";
 import { UserDetailModal } from "../admin/components/UserDetailModal/UserDetail";
 import { CircleUser } from "lucide-react";
+
+// Dropdown Menu Component using Portal
+const DropdownMenu = ({
+  vehicle,
+  isOpen,
+  position,
+  onClose,
+  onEdit,
+  onView,
+  onDelete,
+  onBidAdded,
+  onCreateBid,
+  isCustomer,
+  hasBid,
+}) => {
+  const menuRef = useRef(null);
+
+  useEffect(() => {
+    const handleClickOutside = (event) => {
+      if (menuRef.current && !menuRef.current.contains(event.target)) {
+        onClose();
+      }
+    };
+
+    if (isOpen) {
+      document.addEventListener("mousedown", handleClickOutside);
+    }
+
+    return () => {
+      document.removeEventListener("mousedown", handleClickOutside);
+    };
+  }, [isOpen, onClose]);
+
+  if (!isOpen) return null;
+
+  return ReactDOM.createPortal(
+    <div
+      ref={menuRef}
+      className="fixed z-[9999] w-48 bg-white border border-gray-200 rounded-lg shadow-lg"
+      style={{
+        left: `${position.x}px`,
+        top: `${position.y}px`,
+      }}
+    >
+      {!isCustomer ? (
+        <>
+          {/* Edit */}
+          <button
+            onClick={(e) => {
+              e.stopPropagation();
+              onEdit(vehicle);
+            }}
+            className="w-full px-4 py-2.5 text-sm text-orange-600 hover:bg-orange-50 hover:text-orange-700 text-left flex items-center gap-2 rounded-t-lg transition"
+            type="button"
+          >
+            <svg
+              className="w-4 h-4"
+              fill="none"
+              stroke="currentColor"
+              viewBox="0 0 24 24"
+            >
+              <path
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                strokeWidth={2}
+                d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"
+              />
+            </svg>
+            Edit
+          </button>
+
+          {/* Bid Status / View */}
+          {hasBid ? (
+            <button
+              onClick={(e) => {
+                e.stopPropagation();
+                onBidAdded(vehicle.bidId);
+              }}
+              className="w-full px-4 py-2.5 text-sm text-green-600 hover:bg-green-50 hover:text-green-700 text-left flex items-center gap-2 transition"
+              type="button"
+            >
+              <svg
+                className="w-4 h-4"
+                fill="none"
+                stroke="currentColor"
+                viewBox="0 0 24 24"
+              >
+                <path
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  strokeWidth={2}
+                  d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"
+                />
+              </svg>
+              Bid Added
+            </button>
+          ) : (
+            <button
+              onClick={(e) => {
+                e.stopPropagation();
+                onView(vehicle);
+              }}
+              className="w-full px-4 py-2.5 text-sm text-blue-600 hover:bg-blue-50 hover:text-blue-700 text-left flex items-center gap-2 transition"
+              type="button"
+            >
+              <svg
+                className="w-4 h-4"
+                fill="none"
+                stroke="currentColor"
+                viewBox="0 0 24 24"
+              >
+                <path
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  strokeWidth={2}
+                  d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"
+                />
+                <path
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  strokeWidth={2}
+                  d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"
+                />
+              </svg>
+              View Details
+            </button>
+          )}
+
+          {/* Delete */}
+          <button
+            onClick={(e) => {
+              e.stopPropagation();
+              onDelete(vehicle);
+            }}
+            className="w-full px-4 py-2.5 text-sm text-red-600 hover:bg-red-50 hover:text-red-700 text-left flex items-center gap-2 rounded-b-lg transition"
+            type="button"
+          >
+            <svg
+              className="w-4 h-4"
+              fill="none"
+              stroke="currentColor"
+              viewBox="0 0 24 24"
+            >
+              <path
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                strokeWidth={2}
+                d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"
+              />
+            </svg>
+            Delete
+          </button>
+        </>
+      ) : (
+        /* Customer View - Create Bid */
+        <button
+          onClick={(e) => {
+            e.stopPropagation();
+            onCreateBid(vehicle);
+          }}
+          className="w-full px-4 py-2.5 text-sm text-blue-600 hover:bg-blue-50 hover:text-blue-700 text-left flex items-center gap-2 rounded-lg transition"
+          type="button"
+        >
+          <svg
+            className="w-4 h-4"
+            fill="none"
+            stroke="currentColor"
+            viewBox="0 0 24 24"
+          >
+            <path
+              strokeLinecap="round"
+              strokeLinejoin="round"
+              strokeWidth={2}
+              d="M12 4v16m8-8H4"
+            />
+          </svg>
+          Create Bid
+        </button>
+      )}
+    </div>,
+    document.body,
+  );
+};
 
 const bodyStyles = [
   "Convertible",
@@ -237,11 +421,10 @@ const certifyOptions = [
   { label: "Non-Certified", value: "Non-Certified" },
 ];
 
-const currentDate = new Date().toISOString().split("T")[0];
-
 const initialState = {
-  fromDate: currentDate,
-  toDate: currentDate,
+  fromDate: "",
+  toDate: "",
+  statusFilter: "",
 };
 
 const AddVehicles = () => {
@@ -254,6 +437,8 @@ const AddVehicles = () => {
   const [isCustomerBidModalOpen, setIsCustomerBidModalOpen] = useState(false);
 
   const [dateRange, setDateRange] = useState(initialState);
+
+  console.log(dateRange);
 
   const [autoDescription, setAutoDescription] = useState(
     initialAutoDescription,
@@ -309,6 +494,7 @@ const AddVehicles = () => {
   };
 
   const [vehicleData, setVehicleData] = useState(initialFields);
+  console.log("vehicle data =>", vehicleData);
   const selected = useSelector((state) => state.carSelector);
   const [vehicles, setVehicles] = useState([]);
   const [allVehicles, setAllVehicles] = useState([]);
@@ -330,8 +516,11 @@ const AddVehicles = () => {
   const dispatch = useDispatch();
   const [selectedCount, setSelectedCount] = useState(0);
   const [price, setPrice] = useState("");
-  const [isDropdownOpen, setIsDropdownOpen] = useState(null);
+  const [dropdownOpenId, setDropdownOpenId] = useState(null);
+  const [dropdownPosition, setDropdownPosition] = useState({ x: 0, y: 0 });
   const [userDetail, setUSerDetail] = useState(null);
+
+  const buttonRefs = useRef({});
 
   // Convert numerical price to Indian format (e.g., 2800000 -> "28 Lac")
   const formatPriceToIndian = (num) => {
@@ -526,11 +715,21 @@ const AddVehicles = () => {
   };
 
   const handleSelectDescription = (id, value) => {
+    // پہلے چیک کریں کہ یہ ڈسکریپشن پہلے سے شامل نہ ہو
+    const isAlreadyAdded = Array.isArray(vehicleData.description)
+      ? vehicleData.description.includes(value)
+      : vehicleData.description === value;
+
     setAutoDescription((prev) => prev.filter((desc) => desc.id !== id));
 
+    // Array میں ڈسکریپشن شامل کریں
     setVehicleData((prev) => ({
       ...prev,
-      description: prev.description ? `${prev.description}\n${value}` : value,
+      description: prev.description
+        ? Array.isArray(prev.description)
+          ? [...prev.description, value]
+          : [prev.description, value] // اگر سٹرنگ ہے تو array میں تبدیل کریں
+        : [value], // پہلی ڈسکریپشن
     }));
   };
 
@@ -579,9 +778,9 @@ const AddVehicles = () => {
   const handleGetAllVehicleById = async () => {
     try {
       const res = await axios.get(
-        `${BASE_URL}/getVehiclesByUserbyDateRange/${currentUser?.id}/${
+        `${BASE_URL}/getVehiclesByUserbyDateRange/${currentUser?.id}?fromDate=${
           dateRange.fromDate
-        }/${dateRange.toDate}?search=${search}&Entry=${10}&page=${pageNo}`,
+        }&toDate=${dateRange.toDate}&status=${dateRange.statusFilter}&search=${search}&Entry=${10}&page=${pageNo}`,
       );
       setAllVehicles(res.data);
     } catch (error) {
@@ -645,8 +844,33 @@ const AddVehicles = () => {
     // Parse the buyNowPrice string (e.g., "34 Lac") to a raw number (e.g., "3400000")
     const rawPrice = parsePrice(vehicle.buyNowPrice).toString();
 
+    // Convert description from JSON string to array if needed
+    let descriptionArray = [];
+    try {
+      if (typeof vehicle.description === "string") {
+        // Try to parse as JSON
+        const parsed = JSON.parse(vehicle.description);
+        if (Array.isArray(parsed)) {
+          descriptionArray = parsed;
+        } else {
+          // If not JSON, treat as single description
+          descriptionArray = vehicle.description
+            ? [vehicle.description.toString()]
+            : [];
+        }
+      } else if (Array.isArray(vehicle.description)) {
+        descriptionArray = vehicle.description;
+      }
+    } catch (error) {
+      console.log("Error parsing description:", error);
+      descriptionArray = vehicle.description
+        ? [vehicle.description.toString()]
+        : [];
+    }
+
     setVehicleData({
       ...vehicle,
+      description: descriptionArray,
       buyNowPrice: rawPrice,
       images: vehicle.images || [],
     });
@@ -743,6 +967,23 @@ const AddVehicles = () => {
       }
     }
 
+    // Check if description array has at least one item
+    if (
+      !vehicleData.description ||
+      (Array.isArray(vehicleData.description) &&
+        vehicleData.description.length === 0) ||
+      (typeof vehicleData.description === "string" &&
+        vehicleData.description.trim() === "")
+    ) {
+      Swal.fire({
+        title: "Missing Field",
+        text: "Description is required.",
+        icon: "error",
+        confirmButtonColor: "#ef4444",
+      });
+      return;
+    }
+
     if (vehicleData.buyNowPrice < 10000) {
       await Swal.fire({
         title: "Invalid Price",
@@ -775,7 +1016,6 @@ const AddVehicles = () => {
       "locationId",
       "buyNowPrice",
       "certifyStatus",
-      "description",
     ];
 
     fieldsToSend.forEach((field) => {
@@ -783,6 +1023,23 @@ const AddVehicles = () => {
         formData.append(field, vehicleData[field].toString());
       }
     });
+
+    // Handle description field specially - convert array to JSON string
+    if (vehicleData.description) {
+      if (Array.isArray(vehicleData.description)) {
+        // Filter out empty strings and convert to JSON
+        const filteredDescription = vehicleData.description.filter(
+          (desc) => desc && desc.trim() !== "",
+        );
+        formData.append("description", JSON.stringify(filteredDescription));
+      } else if (typeof vehicleData.description === "string") {
+        // If it's a string, split by newlines and convert to array
+        const descriptionArray = vehicleData.description
+          .split("\n")
+          .filter((line) => line.trim() !== "");
+        formData.append("description", JSON.stringify(descriptionArray));
+      }
+    }
 
     // Append existing images (as JSON array) only for edit mode
     if (editId && existingImages.length > 0) {
@@ -819,6 +1076,7 @@ const AddVehicles = () => {
       setPrice("");
       setFormOpen(false);
       setEditId(null);
+      setAutoDescription(initialAutoDescription); // Reset auto description options
 
       Swal.fire({
         title: "Success!",
@@ -977,12 +1235,100 @@ const AddVehicles = () => {
     };
   }, [formOpen]);
 
-  const toggleDropdown = (vehicleId) => {
-    setIsDropdownOpen((prev) => (prev === vehicleId ? null : vehicleId));
+  const toggleDropdown = (vehicleId, index, event) => {
+    if (event) {
+      event.stopPropagation();
+    }
+
+    if (dropdownOpenId === vehicleId) {
+      setDropdownOpenId(null);
+      return;
+    }
+
+    // Calculate dropdown position
+    const button = buttonRefs.current[vehicleId];
+    if (!button) return;
+
+    const buttonRect = button.getBoundingClientRect();
+
+    // Calculate position for dropdown
+    // Open below the button by default
+    let x = buttonRect.left;
+    let y = buttonRect.bottom + 5;
+
+    // Check if there's enough space at the bottom
+    const viewportHeight = window.innerHeight;
+    const dropdownHeight = 150; // Approximate height of dropdown
+
+    if (y + dropdownHeight > viewportHeight) {
+      // If not enough space at bottom, open above the button
+      y = buttonRect.top - dropdownHeight - 5;
+
+      // Ensure it doesn't go above viewport
+      if (y < 5) {
+        y = 5;
+      }
+    }
+
+    // Ensure it doesn't go beyond right edge
+    const dropdownWidth = 192; // w-48 = 192px
+    if (x + dropdownWidth > window.innerWidth) {
+      x = window.innerWidth - dropdownWidth - 5;
+    }
+
+    // Adjust for scroll position
+    x += window.scrollX;
+    y += window.scrollY;
+
+    setDropdownPosition({ x, y });
+    setDropdownOpenId(vehicleId);
   };
 
-  const handleDropdownClose = () => {
-    setIsDropdownOpen(null);
+  // Close dropdown when scrolling
+  useEffect(() => {
+    const handleScroll = () => {
+      if (dropdownOpenId) {
+        setDropdownOpenId(null);
+      }
+    };
+
+    window.addEventListener("scroll", handleScroll, true);
+    return () => {
+      window.removeEventListener("scroll", handleScroll, true);
+    };
+  }, [dropdownOpenId]);
+
+  const handleEditClick = (vehicle) => {
+    setDropdownOpenId(null);
+    handleEdit(vehicle);
+  };
+
+  const handleViewClick = (vehicle) => {
+    setDropdownOpenId(null);
+    setSelectVehicle(vehicle);
+    handleIsOpenToggle("View");
+  };
+
+  const handleDeleteClick = (vehicle) => {
+    setDropdownOpenId(null);
+    handleDelete(vehicle.newVehicleId, vehicle.approval);
+  };
+
+  const handleBidAddedClick = (bidId) => {
+    setDropdownOpenId(null);
+    handleEndBidding(bidId);
+    handleIsOpenToggle("bid");
+  };
+
+  const handleCreateBidClick = (vehicle) => {
+    setDropdownOpenId(null);
+    setCustomerBidData({
+      userId: user?.id,
+      vehicleId: vehicle.id,
+      maxBid: "",
+      monsterBid: "",
+    });
+    setIsCustomerBidModalOpen(true);
   };
 
   const carInfoValue = `${selected?.year || vehicleData?.year} ${
@@ -998,16 +1344,13 @@ const AddVehicles = () => {
     vehicleData.series;
 
   return (
-    <div
-      className="max-h-screen lg:p-6 px-2 bg-gradient-to-br from-gray-100 to-blue-50"
-      onClick={handleDropdownClose}
-    >
+    <div className="max-h-screen lg:p-6 px-2 bg-gradient-to-br from-gray-100 to-blue-50">
       <div className="max-w-7xl mx-auto">
         <header className="flex flex-col md:flex-row justify-between items-center">
           <h1 className="lg:text-3xl text-xl font-bold text-gray-800 p-3">
             Vehicle List
           </h1>
-          <div className="relative w-full max-w-md">
+          <div className="relative w-full max-w-md my-3">
             <span className="absolute inset-y-0 left-0 flex items-center pl-3 text-gray-400">
               <svg
                 xmlns="http://www.w3.org/2000/svg"
@@ -1025,7 +1368,7 @@ const AddVehicles = () => {
               </svg>
             </span>
             <CustomSearch
-              placeholder="Search by Car Name..."
+              placeholder="Search..."
               value={search}
               onChange={(e) => {
                 setSearch(e.target.value);
@@ -1055,6 +1398,7 @@ const AddVehicles = () => {
                 dispatch(addMake(""));
                 dispatch(addModel(""));
                 dispatch(addSeries(""));
+                setAutoDescription(initialAutoDescription);
               }}
             />
           )}
@@ -1072,15 +1416,17 @@ const AddVehicles = () => {
           </div>
         )}
 
-        <div className="flex items-center justify-between mb-2">
+        <div className="flex flex-col md:flex-row items-center justify-between my-2">
           <div className="text-gray-800 mb-2 font-semibold text-2xl">
-            Total Approval Vehicles: {allVehicles.length}
+            Total Vehicles: {allVehicles.length}
           </div>
 
-          <div className="flex items-center gap-4">
+          <div className="flex items-center justify-between gap-4 flex-wrap">
+            {/* Status Filter Dropdown */}
+
             <div className="flex flex-col">
               <label className="text-sm font-medium text-gray-800 mb-1">
-                From Date :
+                From Date:
               </label>
               <input
                 type="date"
@@ -1093,7 +1439,7 @@ const AddVehicles = () => {
 
             <div className="flex flex-col">
               <label className="text-sm font-medium text-gray-800 mb-1">
-                To Date :
+                To Date:
               </label>
               <input
                 type="date"
@@ -1102,6 +1448,31 @@ const AddVehicles = () => {
                 value={dateRange.toDate}
                 className="px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-900 focus:border-blue-900 focus:outline-none"
               />
+            </div>
+            <div className="flex flex-col">
+              <label className="text-sm font-medium text-gray-800 mb-1">
+                Status:
+              </label>
+              <select
+                name="statusFilter"
+                onChange={handleChangeDate}
+                value={dateRange?.statusFilter}
+                className="px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-900 focus:border-blue-900 focus:outline-none lg:w-full"
+              >
+                <option value="">All Status</option>
+                <option className="text-green-600 bg-green-50" value="Approved">
+                  Approved
+                </option>
+                <option className="text-red-600 bg-red-50" value="Rejected">
+                  Rejected
+                </option>
+                <option
+                  className="text-orange-600 bg-orange-50"
+                  value="Pending"
+                >
+                  Pending
+                </option>
+              </select>
             </div>
           </div>
         </div>
@@ -1342,35 +1713,54 @@ const AddVehicles = () => {
                 </div>
 
                 <div className="mt-4">
-                  <label className="block text-sm  text-gray-700 mb-2">
+                  <label className="block text-sm text-gray-700 mb-2">
                     Add Description <span className="text-red-500">*</span>
                   </label>
 
                   <textarea
                     placeholder="Describe your vehicle condition, features, registration details, reason for sale etc."
-                    value={vehicleData.description}
-                    onChange={(e) =>
+                    value={
+                      Array.isArray(vehicleData.description)
+                        ? vehicleData.description.join("\n")
+                        : vehicleData.description || ""
+                    }
+                    onChange={(e) => {
+                      const text = e.target.value;
+                      // سٹرنگ کو array میں تبدیل کریں (ہر لائن کو الگ array item بنائیں)
+                      const lines = text
+                        .split("\n")
+                        .filter((line) => line.trim() !== "");
                       setVehicleData((prev) => ({
                         ...prev,
-                        description: e.target.value,
-                      }))
-                    }
+                        description: lines,
+                      }));
+                    }}
                     maxLength={995}
                     rows={6}
                     className="w-full resize-none rounded-lg border border-gray-400 p-3 text-sm text-gray-800 placeholder-gray-400 focus:ring-1 focus:ring-indigo-500 outline-none transition"
                   />
 
                   <div className="mt-2 flex items-center justify-between text-xs text-gray-700">
-                    You can also use these suggestions
+                    <div>
+                      You can also use these suggestions
+                      <span className="ml-2 font-medium text-blue-600">
+                        ({vehicleData.description?.length || 0} descriptions
+                        added)
+                      </span>
+                    </div>
                     <span
                       className={`font-medium ${
-                        vehicleData?.description?.length < 50
+                        vehicleData?.description?.length < 1
                           ? "text-red-500"
                           : "text-gray-600"
                       }`}
                     >
-                      Remaining character:(
-                      {995 - (vehicleData?.description?.length || 0)})
+                      Remaining character: (
+                      {995 -
+                        (Array.isArray(vehicleData.description)
+                          ? vehicleData.description.join("\n").length
+                          : vehicleData.description?.length || 0)}
+                      )
                     </span>
                   </div>
                 </div>
@@ -1546,8 +1936,8 @@ const AddVehicles = () => {
                 </div>
               </form>
               {isOpen === "selector" && (
-                <div className="fixed inset-0 flex items-center justify-center z-50  ">
-                  <div className="w-full max-w-5xl  rounded-lg  relative">
+                <div className="fixed inset-0 flex items-center justify-center z-50">
+                  <div className="w-full max-w-5xl rounded-lg relative">
                     <CarSelector
                       handleIsOpenToggle={() => handleIsOpenToggle("")}
                     />
@@ -1558,274 +1948,8 @@ const AddVehicles = () => {
           </div>
         )}
 
-        <section className="lg:mt-6 mt-3 space-y-4 max-h-[55vh] overflow-y-auto md:hidden block">
-          {loading ? (
-            <p className="text-center text-indigo-600 font-semibold">
-              Loading vehicles...
-            </p>
-          ) : currentCars.length === 0 ? (
-            <p className="text-center text-gray-600">No vehicles found.</p>
-          ) : (
-            currentCars?.map((vehicle) => (
-              <div
-                key={vehicle.newVehicleId}
-                className="bg-white border rounded-xl shadow-sm hover:shadow-md transition p-2 flex items-center justify-between gap-4"
-              >
-                <div className="w-20 h-20 sm:w-28 sm:h-28 rounded-lg overflow-hidden bg-gray-100 flex-shrink-0">
-                  <img
-                    src={vehicle.images?.[0]}
-                    alt={`${vehicle.make} ${vehicle.model}`}
-                    className="w-full h-full object-cover hover:cursor-pointer"
-                    onClick={() => (
-                      setSelectVehicle(vehicle),
-                      handleIsOpenToggle("View")
-                    )}
-                  />
-                </div>
-                <div className="flex-1 min-w-0">
-                  <h2 className="font-bold text-gray-800 text-xs truncate">
-                    {vehicle.make || "—"} {vehicle.model || "—"}{" "}
-                    {vehicle.series || "—"}
-                  </h2>
-                  <p className="text-xs font-bold text-gray-900">
-                    PKR {vehicle.buyNowPrice}
-                  </p>
-                  <p className="text-xs text-gray-600">
-                    {vehicle.year || "—"} •{" "}
-                    {vehicle.fuelType?.charAt(0)?.toUpperCase() +
-                      vehicle.fuelType?.slice(1) || "--"}{" "}
-                    • {vehicle.transmission || "—"} • {vehicle.cityName || "—"}
-                  </p>
-                  <p
-                    className={`text-[8px] text-center rounded w-16 ${
-                      vehicle.approval === "Y"
-                        ? "bg-green-500 text-white"
-                        : "bg-red-500 text-white"
-                    }`}
-                  >
-                    {vehicle.approval === "Y" ? "Approved" : "Pending"}
-                  </p>
-                </div>
-                <div className="relative flex-shrink-0">
-                  <button
-                    onClick={(e) => {
-                      e.stopPropagation();
-                      toggleDropdown(vehicle.newVehicleId);
-                    }}
-                    className="px-3 py-1 text-gray-600 text-xl"
-                  >
-                    <BsThreeDotsVertical />
-                  </button>
-                  {isDropdownOpen === vehicle.newVehicleId && (
-                    <div className="absolute right-0 mt-2 w-32 bg-white border rounded-lg shadow-lg z-10">
-                      {!isCustomer ? (
-                        <>
-                          <button
-                            onClick={(e) => {
-                              e.stopPropagation();
-                              handleEdit(vehicle);
-                            }}
-                            className="block w-full px-4 py-2 text-sm text-yellow-600 hover:bg-yellow-100 text-left rounded-t-lg"
-                          >
-                            Edit
-                          </button>
-                          {vehicle.bidId ? (
-                            <button
-                              onClick={(e) => {
-                                e.stopPropagation();
-                                handleEndBidding(vehicle.bidId);
-                                handleIsOpenToggle("bid");
-                              }}
-                              className="block w-full px-4 py-2 text-sm text-green-600 hover:bg-green-100 text-left"
-                            >
-                              Bid Added
-                            </button>
-                          ) : (
-                            <button
-                              onClick={(e) => {
-                                e.stopPropagation();
-                                setSelectVehicle(vehicle);
-                                handleIsOpenToggle("View");
-                              }}
-                              className="block w-full text-left px-4 py-2 text-sm text-green-600 hover:bg-green-100"
-                            >
-                              View
-                            </button>
-                          )}
-                          <button
-                            onClick={(e) => {
-                              e.stopPropagation();
-                              handleDelete(
-                                vehicle.newVehicleId,
-                                vehicle.approval,
-                              );
-                            }}
-                            className="block w-full text-left px-4 py-2 text-sm text-red-600 hover:bg-red-100 rounded-b-lg"
-                          >
-                            Delete
-                          </button>
-                        </>
-                      ) : (
-                        <button
-                          onClick={(e) => {
-                            e.stopPropagation();
-                            setCustomerBidData({
-                              userId: user?.id,
-                              vehicleId: vehicle.id,
-                              maxBid: "",
-                              monsterBid: "",
-                            });
-                            setIsCustomerBidModalOpen(true);
-                          }}
-                          className="block w-full text-left px-4 py-2 text-sm text-blue-500 hover:bg-blue-500 hover:text-white"
-                        >
-                          Create Bid
-                        </button>
-                      )}
-                    </div>
-                  )}
-                </div>
-              </div>
-            ))
-          )}
-          {currentCars.length > 0 && (
-            <div className="bg-white rounded-lg shadow-sm p-4 mt-6">
-              <div className="flex flex-col sm:flex-row justify-between items-center gap-4 text-sm text-gray-700">
-                {/* Page Buttons */}
-                <div className="flex items-center gap-1 flex-wrap justify-center">
-                  {/* First Page */}
-                  <button
-                    onClick={() => {
-                      setCurrentPage(1);
-                      window.scrollTo({ top: 0, behavior: "smooth" });
-                    }}
-                    disabled={currentPage === 1}
-                    className={`px-2 py-1 rounded border text-xs sm:text-sm ${
-                      currentPage === 1
-                        ? "bg-gray-100 text-gray-400 cursor-not-allowed"
-                        : "bg-white text-gray-700 hover:bg-gray-50"
-                    }`}
-                  >
-                    {"<<"}
-                  </button>
-
-                  {/* Prev */}
-                  <button
-                    onClick={goToPrevPage}
-                    disabled={currentPage === 1}
-                    className={`px-2 py-1 rounded border text-xs sm:text-sm ${
-                      currentPage === 1
-                        ? "bg-gray-100 text-gray-400 cursor-not-allowed"
-                        : "bg-white text-gray-700 hover:bg-gray-50"
-                    }`}
-                  >
-                    {"<"}
-                  </button>
-
-                  {/* Page Numbers */}
-                  {Array.from(
-                    {
-                      length: Math.min(
-                        window.innerWidth < 640 ? 3 : 5,
-                        totalPages,
-                      ),
-                    },
-                    (_, i) => {
-                      let pageNum;
-
-                      if (totalPages <= 5) pageNum = i + 1;
-                      else if (currentPage <= 2) pageNum = i + 1;
-                      else if (currentPage >= totalPages - 1)
-                        pageNum =
-                          totalPages - (window.innerWidth < 640 ? 2 : 4) + i;
-                      else pageNum = currentPage - 1 + i;
-
-                      return (
-                        <button
-                          key={pageNum}
-                          onClick={() => {
-                            setCurrentPage(pageNum);
-                            window.scrollTo({ top: 0, behavior: "smooth" });
-                          }}
-                          className={`px-2 py-1 rounded border text-xs sm:text-sm ${
-                            currentPage === pageNum
-                              ? "bg-blue-950 text-white"
-                              : "bg-white text-gray-700 hover:bg-gray-50"
-                          }`}
-                        >
-                          {pageNum}
-                        </button>
-                      );
-                    },
-                  )}
-
-                  {/* Next */}
-                  <button
-                    onClick={goToNextPage}
-                    disabled={currentPage === totalPages}
-                    className={`px-2 py-1 rounded border text-xs sm:text-sm ${
-                      currentPage === totalPages
-                        ? "bg-gray-100 text-gray-400 cursor-not-allowed"
-                        : "bg-white text-gray-700 hover:bg-gray-50"
-                    }`}
-                  >
-                    {">"}
-                  </button>
-
-                  {/* Last Page */}
-                  <button
-                    onClick={() => {
-                      setCurrentPage(totalPages);
-                      window.scrollTo({ top: 0, behavior: "smooth" });
-                    }}
-                    disabled={currentPage === totalPages}
-                    className={`px-2 py-1 rounded border text-xs sm:text-sm ${
-                      currentPage === totalPages
-                        ? "bg-gray-100 text-gray-400 cursor-not-allowed"
-                        : "bg-white text-gray-700 hover:bg-gray-50"
-                    }`}
-                  >
-                    {">>"}
-                  </button>
-                </div>
-
-                {/* Show entries */}
-                <div className="flex items-center gap-2 text-xs sm:text-sm">
-                  <span className="text-gray-600">Show</span>
-
-                  <select
-                    value={carsPerPage}
-                    onChange={(e) => {
-                      setCarsPerPage(Number(e.target.value));
-                      setCurrentPage(1);
-                    }}
-                    className="border rounded px-2 py-1 text-xs sm:text-sm focus:outline-none focus:ring-2 focus:ring-blue-900"
-                  >
-                    {[10, 20, 50, 100].map((size) => (
-                      <option key={size} value={size}>
-                        {size}
-                      </option>
-                    ))}
-                  </select>
-
-                  <span className="text-gray-600">entries</span>
-                </div>
-                {/* Showing X to Y of Z */}
-                <div className="text-gray-600 text-center sm:text-left">
-                  Showing{" "}
-                  <span className="font-medium">
-                    {startIndex + 1} to {endIndex}
-                  </span>{" "}
-                  of <span className="font-medium">{allVehicles.length}</span>{" "}
-                  entries
-                </div>
-              </div>
-            </div>
-          )}
-        </section>
-
         <section
-          className="lg:mt-6 overflow-y-auto md:block hidden pb-10"
+          className="lg:mt-6 overflow-y-auto pb-10"
           style={{ maxHeight: "calc(100vh - 210px)" }}
         >
           {loading ? (
@@ -1840,16 +1964,15 @@ const AddVehicles = () => {
             </div>
           ) : (
             <>
-              {/* Table Container - Matching your desired style */}
               <div className="bg-white rounded-lg shadow-sm overflow-hidden border">
                 <div className="overflow-x-auto">
                   <table className="w-full border-collapse">
+                    {/* Table Header */}
                     <thead className="bg-blue-950 text-white">
                       <tr>
                         <th className="p-3 text-start text-sm font-semibold">
                           Sr
                         </th>
-
                         <th className="p-1 text-left text-sm font-semibold">
                           Vehicle Name
                         </th>
@@ -2023,167 +2146,18 @@ const AddVehicles = () => {
                           <td className="p-1">
                             <div className="relative">
                               <button
-                                onClick={(e) => {
-                                  e.stopPropagation();
-                                  toggleDropdown(vehicle.newVehicleId);
-                                }}
+                                ref={(el) =>
+                                  (buttonRefs.current[vehicle.newVehicleId] =
+                                    el)
+                                }
+                                onClick={(e) =>
+                                  toggleDropdown(vehicle.newVehicleId, index, e)
+                                }
                                 className="p-2 rounded-full hover:bg-gray-200 transition"
+                                type="button"
                               >
                                 <BsThreeDotsVertical className="h-5 w-5 text-gray-600" />
                               </button>
-
-                              {isDropdownOpen === vehicle.newVehicleId && (
-                                <div className="absolute right-0 mt-2 w-48 bg-white border rounded-lg shadow-lg z-50">
-                                  {!isCustomer ? (
-                                    <>
-                                      {/* Edit */}
-                                      <button
-                                        onClick={(e) => {
-                                          e.stopPropagation();
-                                          handleEdit(vehicle);
-                                          toggleDropdown(null);
-                                        }}
-                                        className="w-full px-4 py-2 text-sm text-orange-600 hover:bg-orange-100 text-left flex items-center gap-2 rounded-t-lg"
-                                      >
-                                        <svg
-                                          className="w-4 h-4"
-                                          fill="none"
-                                          stroke="currentColor"
-                                          viewBox="0 0 24 24"
-                                        >
-                                          <path
-                                            strokeLinecap="round"
-                                            strokeLinejoin="round"
-                                            strokeWidth={2}
-                                            d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"
-                                          />
-                                        </svg>
-                                        Edit
-                                      </button>
-
-                                      {/* Bid Status / View */}
-                                      {vehicle.bidId ? (
-                                        <button
-                                          onClick={(e) => {
-                                            e.stopPropagation();
-                                            handleEndBidding(vehicle.bidId);
-                                            handleIsOpenToggle("bid");
-                                            toggleDropdown(null);
-                                          }}
-                                          className="w-full px-4 py-2 text-sm text-green-600 hover:bg-green-100 text-left flex items-center gap-2"
-                                        >
-                                          <svg
-                                            className="w-4 h-4"
-                                            fill="none"
-                                            stroke="currentColor"
-                                            viewBox="0 0 24 24"
-                                          >
-                                            <path
-                                              strokeLinecap="round"
-                                              strokeLinejoin="round"
-                                              strokeWidth={2}
-                                              d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"
-                                            />
-                                          </svg>
-                                          Bid Added
-                                        </button>
-                                      ) : (
-                                        <button
-                                          onClick={(e) => {
-                                            e.stopPropagation();
-                                            setSelectVehicle(vehicle);
-                                            handleIsOpenToggle("View");
-                                            toggleDropdown(null);
-                                          }}
-                                          className="w-full px-4 py-2 text-sm text-blue-600 hover:bg-blue-100 text-left flex items-center gap-2"
-                                        >
-                                          <svg
-                                            className="w-4 h-4"
-                                            fill="none"
-                                            stroke="currentColor"
-                                            viewBox="0 0 24 24"
-                                          >
-                                            <path
-                                              strokeLinecap="round"
-                                              strokeLinejoin="round"
-                                              strokeWidth={2}
-                                              d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"
-                                            />
-                                            <path
-                                              strokeLinecap="round"
-                                              strokeLinejoin="round"
-                                              strokeWidth={2}
-                                              d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"
-                                            />
-                                          </svg>
-                                          View Details
-                                        </button>
-                                      )}
-
-                                      {/* Delete */}
-                                      {/*  
-                                      <button
-                                        onClick={(e) => {
-                                          e.stopPropagation();
-                                          handleDelete(
-                                            vehicle.newVehicleId,
-                                            vehicle.approval
-                                          );
-                                          toggleDropdown(null);
-                                        }}
-                                        className="w-full px-4 py-2 text-sm text-red-600 hover:bg-red-100 text-left flex items-center gap-2 rounded-b-lg"
-                                      >
-                                        <svg
-                                          className="w-4 h-4"
-                                          fill="none"
-                                          stroke="currentColor"
-                                          viewBox="0 0 24 24"
-                                        >
-                                          <path
-                                            strokeLinecap="round"
-                                            strokeLinejoin="round"
-                                            strokeWidth={2}
-                                            d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"
-                                          />
-                                        </svg>
-                                        Delete
-                                      </button>
-                                      */}
-                                    </>
-                                  ) : (
-                                    /* Customer View - Create Bid */
-                                    <button
-                                      onClick={(e) => {
-                                        e.stopPropagation();
-                                        setCustomerBidData({
-                                          userId: user?.id,
-                                          vehicleId: vehicle.id,
-                                          maxBid: "",
-                                          monsterBid: "",
-                                        });
-                                        setIsCustomerBidModalOpen(true);
-                                        toggleDropdown(null);
-                                      }}
-                                      className="w-full px-4 py-2 text-sm text-blue-600 hover:bg-blue-100 text-left flex items-center gap-2 rounded-lg"
-                                    >
-                                      <svg
-                                        className="w-4 h-4"
-                                        fill="none"
-                                        stroke="currentColor"
-                                        viewBox="0 0 24 24"
-                                      >
-                                        <path
-                                          strokeLinecap="round"
-                                          strokeLinejoin="round"
-                                          strokeWidth={2}
-                                          d="M12 4v16m8-8H4"
-                                        />
-                                      </svg>
-                                      Create Bid
-                                    </button>
-                                  )}
-                                </div>
-                              )}
                             </div>
                           </td>
                         </tr>
@@ -2191,8 +2165,10 @@ const AddVehicles = () => {
                     </tbody>
                   </table>
                 </div>
+
+                {/* باقی کوڈ - Pagination وغیرہ */}
                 {currentCars.length > 0 && (
-                  <div className="bg-white shadow-sm p-4 mt-4 ">
+                  <div className="bg-white shadow-sm p-4 mt-4">
                     <div className="flex flex-col sm:flex-row justify-between items-center gap-4 text-sm text-gray-700">
                       <div className="text-gray-600">
                         Showing{" "}
@@ -2302,12 +2278,33 @@ const AddVehicles = () => {
         </section>
       </div>
 
+      {/* Portal-based Dropdown Menu */}
+      {dropdownOpenId && (
+        <DropdownMenu
+          vehicle={currentCars.find((v) => v.newVehicleId === dropdownOpenId)}
+          isOpen={true}
+          position={dropdownPosition}
+          onClose={() => setDropdownOpenId(null)}
+          onEdit={handleEditClick}
+          onView={handleViewClick}
+          onDelete={handleDeleteClick}
+          onBidAdded={handleBidAddedClick}
+          onCreateBid={handleCreateBidClick}
+          isCustomer={isCustomer}
+          hasBid={
+            currentCars.find((v) => v.newVehicleId === dropdownOpenId)?.bidId
+          }
+        />
+      )}
+
       {isOpen === "View" && (
         <ViewAdminCar
           handleClick={handleIsOpenToggle}
           selectedVehicle={selectVehicle}
+          isViewModalOpen={isOpen}
         />
       )}
+
       {isOpen === "bid" && (
         <AdminAddBid
           selectedVehicle={sellerBidData}

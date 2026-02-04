@@ -213,11 +213,14 @@ function EditAdminVehicle({
     auctionDate: "",
     buyNowPrice: "",
     certifyStatus: "",
-    description: [],
+    description: "",
     images: [],
   };
 
   const [vehicle, setVehicle] = useState(initialVehicleState);
+
+  console.log("=>", vehicle);
+
   const [existingImages, setExistingImages] = useState([]);
   const [newImages, setNewImages] = useState([]);
   const [imagePreviews, setImagePreviews] = useState([]);
@@ -271,7 +274,9 @@ function EditAdminVehicle({
         buyNowPrice: parsed || "",
         certifyStatus: selectedVehicle.certifyStatus || "",
         images: vehicleImages,
-        description: selectedVehicle?.description || [],
+        description: Array.isArray(selectedVehicle?.description)
+          ? selectedVehicle.description.join(", ")
+          : selectedVehicle?.description || "",
       });
 
       setExistingImages(vehicleImages);
@@ -281,8 +286,6 @@ function EditAdminVehicle({
     }
   }, [selectedVehicle]);
 
-  /* ----------------------------------------------------- */
-  /*  CarSelector → vehicle                               */
   /* ----------------------------------------------------- */
   useEffect(() => {
     if (
@@ -459,13 +462,20 @@ function EditAdminVehicle({
   const handleSelectDescription = (id, value) => {
     setAutoDescription((prev) => prev.filter((desc) => desc.id !== id));
 
-    setVehicle((prev) => ({
-      ...prev,
-      description: [
-        ...(Array.isArray(prev.description) ? prev.description : []),
-        value,
-      ],
-    }));
+    setVehicle((prev) => {
+      const existing = prev.description?.trim();
+
+      const newText = existing
+        ? existing.endsWith(",")
+          ? `${existing} ${value}`
+          : `${existing}, ${value}`
+        : value;
+
+      return {
+        ...prev,
+        description: newText,
+      };
+    });
   };
 
   const handleIsOpenToggle = (active) => {

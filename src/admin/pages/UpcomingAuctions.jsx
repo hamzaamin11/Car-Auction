@@ -22,12 +22,13 @@ import { AdminUpdatebid } from "../AdminUpdatebid";
 import { X, ChevronLeft, ChevronRight, CircleUser } from "lucide-react";
 import CustomSearch from "../../CustomSearch";
 import { UserDetailModal } from "../components/UserDetailModal/UserDetail";
+import { ViewAdminCar } from "../../components/ViewAdminCar";
 
 const currentDate = new Date().toISOString().split("T")[0];
 
 const initialState = {
-  fromDate: currentDate,
-  toDate: currentDate,
+  fromDate: "",
+  toDate: "",
 };
 
 export default function UpcomingAuctions() {
@@ -58,7 +59,7 @@ export default function UpcomingAuctions() {
       setSearch(value);
       setPageNo(1);
     }, 300),
-    []
+    [],
   );
 
   const handleChangeDate = (e) => {
@@ -70,7 +71,7 @@ export default function UpcomingAuctions() {
     setLoading(true);
     try {
       const res = await axios.get(
-        `${BASE_URL}/admin/upcomingAuctionsForAdminbyDateRange/${dateRange.fromDate}/${dateRange.toDate}?entry=${itemsPerPage}&page=${pageNo}`
+        `${BASE_URL}/admin/upcomingAuctionsForAdminbyDateRange?fromDate=${dateRange.fromDate}&toDate=${dateRange.toDate}&entry=${itemsPerPage}&page=${pageNo}`,
       );
       console.log("API Response (Admin):", res.data);
       const auctions = res.data?.data || res.data || [];
@@ -90,7 +91,7 @@ export default function UpcomingAuctions() {
     setLoading(true);
     try {
       const res = await axios.get(
-        `${BASE_URL}/seller/upcomingAuctionsbyDateRange/${id}/${dateRange.fromDate}/${dateRange.toDate}`
+        `${BASE_URL}/seller/upcomingAuctionsbyDateRange/${id}?fromDate=${dateRange.fromDate}&toDate=${dateRange.toDate}`,
       );
       console.log("API Response (Seller):", res.data);
       const auctions = Array.isArray(res.data) ? res.data : [];
@@ -112,7 +113,7 @@ export default function UpcomingAuctions() {
   const handleUpdateBid = async (id) => {
     try {
       const res = await axios.put(
-        `${BASE_URL}/admin/updateBidStatusAdmin/${id}`
+        `${BASE_URL}/admin/updateBidStatusAdmin/${id}`,
       );
       Swal.fire({
         title: "Success!",
@@ -153,7 +154,7 @@ export default function UpcomingAuctions() {
   const handlePrevImage = () => {
     if (selectedVehicle?.images) {
       setCurrentImageIndex((prev) =>
-        prev === 0 ? selectedVehicle.images.length - 1 : prev - 1
+        prev === 0 ? selectedVehicle.images.length - 1 : prev - 1,
       );
     }
   };
@@ -161,7 +162,7 @@ export default function UpcomingAuctions() {
   const handleNextImage = () => {
     if (selectedVehicle?.images) {
       setCurrentImageIndex((prev) =>
-        prev === selectedVehicle.images.length - 1 ? 0 : prev + 1
+        prev === selectedVehicle.images.length - 1 ? 0 : prev + 1,
       );
     }
   };
@@ -169,7 +170,7 @@ export default function UpcomingAuctions() {
   const handleViewUserDetail = async (id) => {
     try {
       const res = await axios.get(
-        `${BASE_URL}/admin/getUserDetailsApprovedVehicleListById/${id}`
+        `${BASE_URL}/admin/getUserDetailsApprovedVehicleListById/${id}`,
       );
 
       setUSerDetail(res.data?.data);
@@ -191,7 +192,10 @@ export default function UpcomingAuctions() {
       (auction) =>
         auction.make?.toLowerCase().includes(search.toLowerCase()) ||
         auction.model?.toLowerCase().includes(search.toLowerCase()) ||
-        auction.vehicleCondition?.toLowerCase().includes(search.toLowerCase())
+        auction.series?.toLowerCase().includes(search.toLowerCase()) ||
+        auction.locationId?.toLowerCase().includes(search.toLowerCase()) ||
+        auction.color?.toLowerCase().includes(search.toLowerCase()) ||
+        auction.lot_number?.toLowerCase().includes(search.toLowerCase()),
     );
     setFilteredAuctions(filtered);
   }, [search, allUpcoming]);
@@ -246,7 +250,7 @@ export default function UpcomingAuctions() {
               </svg>
             </span>
             <CustomSearch
-              placeholder="Search by Make, Model, or Condition..."
+              placeholder="Search..."
               value={search}
               onChange={(e) => {
                 setSearch(e.target.value);
@@ -256,9 +260,9 @@ export default function UpcomingAuctions() {
           </div>
         </div>
 
-        <div className="flex items-center justify-between mb-2">
-          <div className="text-gray-800 mb-2 font-semibold text-2xl">
-            Total Upcoming: {totalItems}
+        <div className="flex  flex-col md:flex-row items-center  justify-between mb-2">
+          <div className="text-gray-800 mb-2 font-semibold lg:text-2xl text-xl ">
+            Total Upcoming Vehicle: {totalItems}
           </div>
 
           <div className="flex items-center gap-4">
@@ -333,12 +337,6 @@ export default function UpcomingAuctions() {
                       <th className="p-1 text-left text-sm font-semibold">
                         Reserve Price
                       </th>
-
-                      {currentUser?.role === "seller" ? null : (
-                        <th className="p-1 text-left text-sm font-semibold">
-                          Actions
-                        </th>
-                      )}
                     </tr>
                   </thead>
                   <tbody className="divide-y">
@@ -452,7 +450,7 @@ export default function UpcomingAuctions() {
                             <span>
                               {auction?.startTime
                                 ? new Date(
-                                    auction.startTime
+                                    auction.startTime,
                                   ).toLocaleDateString("en-GB")
                                 : "N/A"}
                             </span>
@@ -474,39 +472,6 @@ export default function UpcomingAuctions() {
                         </td>
 
                         {/* Actions (for non-seller roles) */}
-                        {currentUser?.role === "seller" ? null : (
-                          <td className="p-1">
-                            <div
-                              className="relative"
-                              onClick={(e) => {
-                                e.stopPropagation();
-                              }}
-                            >
-                              <button
-                                onClick={() => {
-                                  handleToggleModel("update");
-                                  setselectedVehicle(auction);
-                                }}
-                                className="px-4 py-2 text-sm font-medium text-white bg-blue-950 hover:bg-blue-900 rounded-lg transition-colors flex items-center gap-2"
-                              >
-                                <svg
-                                  className="w-4 h-4"
-                                  fill="none"
-                                  stroke="currentColor"
-                                  viewBox="0 0 24 24"
-                                >
-                                  <path
-                                    strokeLinecap="round"
-                                    strokeLinejoin="round"
-                                    strokeWidth={2}
-                                    d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"
-                                  />
-                                </svg>
-                                Edit
-                              </button>
-                            </div>
-                          </td>
-                        )}
                       </tr>
                     ))}
                   </tbody>
@@ -622,276 +587,17 @@ export default function UpcomingAuctions() {
           />
         )}
 
-        {isOpen === "update" && (
-          <AdminUpdatebid
-            selectedVehicle={selectedVehicle}
-            setIsOpenBid={() => handleToggleModel("update")}
-            handleGetAllUpcomingAuctions={handleGetAllUpcomingAuctions}
-          />
-        )}
-
         {/* ============================================ */}
         {/* VIEW VEHICLE MODAL */}
         {/* ============================================ */}
         {isViewModalOpen && (document.body.style.overflow = "hidden")}
-        {isViewModalOpen && selectedVehicle && (
-          <div className="fixed inset-0 z-50 flex items-center justify-center bg-blur backdrop-blur-md p-4">
-            <div className="bg-white rounded-lg shadow-2xl w-full max-w-4xl max-h-[90vh] overflow-y-auto relative">
-              {/* Close Button */}
-              <button
-                onClick={handleCloseModal}
-                className="absolute top-4 right-4 z-10 bg-white rounded-full p-2 shadow-lg hover:bg-gray-100 transition"
-              >
-                <X className="h-6 w-6 text-gray-700 hover:text-red-500" />
-              </button>
 
-              {/* Modal Content */}
-              <div className="p-6">
-                <h2 className="text-2xl font-bold text-gray-800 mb-6">
-                  View Vehicle
-                </h2>
-
-                <div className="grid md:grid-cols-2 gap-6">
-                  {/* Left Side - Vehicle Details */}
-                  <div className="space-y-4">
-                    <div className="grid grid-cols-2 gap-4">
-                      <div>
-                        <p className="text-sm font-bold text-gray-900">
-                          Owner Name:
-                        </p>
-                        <p className="text-base text-gray-900">
-                          {selectedVehicle.name || "—"}
-                        </p>
-                      </div>
-
-                      <div>
-                        <p className="text-sm font-bold text-gray-900">
-                          Lot Number:
-                        </p>
-                        <p className="text-base text-gray-900">
-                          {selectedVehicle.lot_number || "—"}
-                        </p>
-                      </div>
-                      <div>
-                        <p className="text-sm font-bold text-gray-900">Make:</p>
-                        <p className="text-base text-gray-900">
-                          {selectedVehicle.make || "—"}
-                        </p>
-                      </div>
-                    </div>
-
-                    <div className="grid grid-cols-2 gap-4">
-                      <div>
-                        <p className="text-sm font-bold text-gray-900">
-                          Model:
-                        </p>
-                        <p className="text-base text-gray-900">
-                          {selectedVehicle.model || "—"}
-                        </p>
-                      </div>
-                      <div>
-                        <p className="text-sm font-bold text-gray-900">
-                          Series:
-                        </p>
-                        <p className="text-base text-gray-900">
-                          {selectedVehicle.series || "—"}
-                        </p>
-                      </div>
-                    </div>
-
-                    <div className="grid grid-cols-2 gap-4">
-                      <div>
-                        <p className="text-sm font-bold text-gray-900">
-                          Color:
-                        </p>
-                        <p className="text-base text-gray-900">
-                          {selectedVehicle.color || "—"}
-                        </p>
-                      </div>
-                      <div>
-                        <p className="text-sm font-bold text-gray-900">
-                          Transmission:
-                        </p>
-                        <p className="text-base text-gray-900">
-                          {selectedVehicle.transmission || "—"}
-                        </p>
-                      </div>
-                    </div>
-
-                    <div className="grid grid-cols-2 gap-4">
-                      <div>
-                        <p className="text-sm font-bold text-gray-900">
-                          Fuel Type:
-                        </p>
-                        <p className="text-base text-gray-900 capitalize">
-                          {selectedVehicle.fuelType || "—"}
-                        </p>
-                      </div>
-                      <div>
-                        <p className="text-sm font-bold text-gray-900">
-                          Body Style:
-                        </p>
-                        <p className="text-base text-gray-900">
-                          {selectedVehicle.bodyStyle || "—"}
-                        </p>
-                      </div>
-                    </div>
-
-                    <div className="grid grid-cols-2 gap-4">
-                      <div>
-                        <p className="text-sm font-bold text-gray-900">
-                          Certify Status:
-                        </p>
-                        <p className="text-base text-gray-900">
-                          {selectedVehicle.certifyStatus || "—"}
-                        </p>
-                      </div>
-                      <div>
-                        <p className="text-sm font-bold text-gray-900">
-                          Drive Type:
-                        </p>
-                        <p className="text-base text-gray-900 uppercase">
-                          {selectedVehicle.driveType || "—"}
-                        </p>
-                      </div>
-                    </div>
-
-                    <div className="grid grid-cols-2 gap-4">
-                      <div>
-                        <p className="text-sm font-bold text-gray-900">
-                          Meter Reading:
-                        </p>
-                        <p className="text-base text-gray-900">
-                          {selectedVehicle.mileage || "—"}
-                        </p>
-                      </div>
-                      <div>
-                        <p className="text-sm font-bold text-gray-900">Year:</p>
-                        <p className="text-base text-gray-900">
-                          {selectedVehicle.year || "—"}
-                        </p>
-                      </div>
-                    </div>
-
-                    <div className="grid grid-cols-2 gap-4">
-                      <div>
-                        <p className="text-sm font-bold text-gray-900">
-                          Condition:
-                        </p>
-                        <p className="text-base text-gray-900 capitalize">
-                          {selectedVehicle.vehicleCondition || "—"}
-                        </p>
-                      </div>
-                      <div>
-                        <p className="text-sm font-bold text-gray-900">
-                          Reserve Price:
-                        </p>
-                        <p className="text-base text-gray-900 capitalize">
-                          {selectedVehicle.sellerOffer ||
-                            selectedVehicle.buyNowPrice}
-                        </p>
-                      </div>
-                    </div>
-
-                    <div className="grid grid-cols-2 gap-4">
-                      <div>
-                        <p className="text-sm font-bold text-gray-900">
-                          Start Time:
-                        </p>
-                        <p className="text-base text-gray-900">
-                          {selectedVehicle.startTime
-                            ? moment(selectedVehicle.startTime)
-                                .local()
-                                .format("hh:mm A")
-                            : "—"}
-                        </p>
-                      </div>
-                      <div>
-                        <p className="text-sm font-bold text-gray-900">
-                          End Time:
-                        </p>
-                        <p className="text-base text-gray-900">
-                          {selectedVehicle.endTime
-                            ? moment(selectedVehicle.endTime)
-                                .local()
-                                .format("hh:mm A")
-                            : "—"}
-                        </p>
-                      </div>
-                    </div>
-
-                    <div className="grid grid-cols-2 gap-4">
-                      <div>
-                        <p className="text-sm font-bold text-gray-900">
-                          Auction Status:
-                        </p>
-                        <p className="text-base text-gray-900 capitalize">
-                          {selectedVehicle.auctionStatus || "—"}
-                        </p>
-                      </div>
-                    </div>
-                  </div>
-
-                  {/* Right Side - Image Gallery */}
-                  <div className="flex flex-col items-center">
-                    {selectedVehicle.images &&
-                    selectedVehicle.images.length > 0 ? (
-                      <>
-                        {/* Main Image */}
-                        <div className="w-full h-64 rounded-lg overflow-hidden bg-gray-100 mb-4">
-                          <img
-                            src={selectedVehicle.images[currentImageIndex]}
-                            alt={`${selectedVehicle.make} ${selectedVehicle.model}`}
-                            className="w-full h-full object-cover"
-                          />
-                        </div>
-
-                        {/* Navigation Arrows and Thumbnails */}
-                        <div className="flex items-center justify-center gap-4 w-full">
-                          {/* Previous Button */}
-                          <button
-                            onClick={handlePrevImage}
-                            className="bg-red-500 hover:bg-red-600 text-white rounded-full p-3 shadow-lg transition hover:cursor-pointer"
-                            disabled={selectedVehicle.images.length <= 1}
-                          >
-                            <ChevronLeft className="h-5 w-5" />
-                          </button>
-
-                          {/* Current Thumbnail */}
-                          <div className="w-20 h-20 rounded-lg overflow-hidden border-2 border-blue-500 bg-gray-100">
-                            <img
-                              src={selectedVehicle.images[currentImageIndex]}
-                              alt="Thumbnail"
-                              className="w-full h-full object-cover"
-                            />
-                          </div>
-
-                          {/* Next Button */}
-                          <button
-                            onClick={handleNextImage}
-                            className="bg-red-500 hover:bg-red-600 text-white rounded-full p-3 shadow-lg transition duration-200 ease-in-out transform hover:cursor-pointer"
-                            disabled={selectedVehicle.images.length <= 1}
-                          >
-                            <ChevronRight className="h-5 w-5" />
-                          </button>
-                        </div>
-
-                        {/* Image Counter */}
-                        <p className="text-sm text-gray-600 mt-2">
-                          {currentImageIndex + 1} /{" "}
-                          {selectedVehicle.images.length}
-                        </p>
-                      </>
-                    ) : (
-                      <div className="w-full h-64 rounded-lg bg-gray-100 flex items-center justify-center">
-                        <p className="text-gray-400">No images available</p>
-                      </div>
-                    )}
-                  </div>
-                </div>
-              </div>
-            </div>
-          </div>
+        {isViewModalOpen && (
+          <ViewAdminCar
+            handleClick={() => setIsViewModalOpen(false)}
+            selectedVehicle={selectedVehicle}
+            isViewModalOpen={selectedVehicle}
+          />
         )}
         {isOpen === "detail" && (
           <UserDetailModal

@@ -39,8 +39,8 @@ export const UnsoldVehicles = () => {
   const currentDate = new Date().toISOString().split("T")[0];
 
   const initialState = {
-    fromDate: currentDate,
-    toDate: currentDate,
+    fromDate: "",
+    toDate: "",
   };
   const [dateRange, setDateRange] = useState(initialState);
 
@@ -57,7 +57,7 @@ export const UnsoldVehicles = () => {
     setLoading(true);
     try {
       const res = await axios.get(
-        `${BASE_URL}/UnsoldVehicleListbyDateRange/${currentUser.role}/${dateRange.fromDate}/${dateRange.toDate}/${currentUser?.id}`,
+        `${BASE_URL}/UnsoldVehicleListbyDateRange/${currentUser.role}/${currentUser?.id}?fromDate=${dateRange.fromDate}&toDate=${dateRange.toDate}`,
       );
       console.log(res.data);
       setVehicles(res.data || []);
@@ -82,7 +82,7 @@ export const UnsoldVehicles = () => {
   const handleWanttoSoldVehicle = async (VehicleId) => {
     try {
       const result = await Swal.fire({
-        title: "Move to Awaiting?",
+        title: "Sell Out?",
         text: `Are you sure you want to Sold this Vehicle?`,
         icon: "question",
         showCancelButton: true,
@@ -92,13 +92,20 @@ export const UnsoldVehicles = () => {
         cancelButtonText: "No",
       });
 
-      if (result.isConfirmed) {
-        const res = await axios.post(
-          `${BASE_URL}/markVehicleAsSold/${VehicleId}`,
-        );
+      if (!result.isConfirmed) {
+        return; // User cancelled, exit function
       }
+
+      // User confirmed, make the API call
+      const res = await axios.post(
+        `${BASE_URL}/markVehicleAsSold/${VehicleId}`,
+      );
+
       console.log(res.data);
+
+      // Refresh the vehicle list
       handleGetAllUnsoldVehicles();
+
       await Swal.fire({
         title: "Success!",
         text: "This vehicle has been Sold successfully.",
@@ -108,13 +115,12 @@ export const UnsoldVehicles = () => {
     } catch (error) {
       await Swal.fire({
         title: "Error!",
-        text: error?.response?.data?.message || "Something want Wrong",
+        text: error?.response?.data?.message || "Something went wrong",
         icon: "error",
         confirmButtonColor: "#dc2626",
       });
     }
   };
-
   const handleViewUserDetail = async (id) => {
     try {
       const res = await axios.get(
@@ -183,7 +189,10 @@ export const UnsoldVehicles = () => {
       (v.model && v.model.toLowerCase().includes(searchTerm)) ||
       (v.series && v.series.toLowerCase().includes(searchTerm)) ||
       (v.lot_number &&
-        v.lot_number.toString().toLowerCase().includes(searchTerm))
+        v.lot_number.toString().toLowerCase().includes(searchTerm)) ||
+      (v.year && v.year.toString().toLowerCase().includes(searchTerm)) ||
+      (v.color && v.color.toString().toLowerCase().includes(searchTerm)) ||
+      (v.cityName && v.cityName.toString().toLowerCase().includes(searchTerm))
     );
   });
 
@@ -236,7 +245,7 @@ export const UnsoldVehicles = () => {
 
         <div className="relative w-full sm:w-80 mt-4 sm:mt-0">
           <CustomSearch
-            placeholder="Search by Car Name or Lot Number..."
+            placeholder="Search..."
             value={search}
             onChange={(e) => {
               setSearch(e.target.value);
@@ -249,12 +258,12 @@ export const UnsoldVehicles = () => {
         </div>
       </div>
 
-      <div className="flex flex-col lg:flex-row items-start lg:items-center justify-between mb-6 gap-4">
-        <div className="text-gray-800 font-semibold text-2xl">
-          Total Vehicle: {totalItems}
+      <div className="flex flex-col md:flex-row items-center justify-between mb-6 gap-4">
+        <div className="text-gray-800 font-semibold lg:text-2xl text-xl ">
+          Total Unsold Vehicle: {totalItems}
         </div>
 
-        <div className="flex flex-col sm:flex-row items-center gap-4">
+        <div className="flex items-center gap-2">
           <div className="flex flex-col">
             <label className="text-sm font-medium text-gray-800 mb-1">
               From Date :
@@ -313,10 +322,7 @@ export const UnsoldVehicles = () => {
                   </th>
                   <th className="p-1 text-left text-sm font-semibold">Lot#</th>
                   <th className="p-1 text-left text-sm font-semibold">Year</th>
-                  <th className="p-1 text-left text-sm font-semibold">
-                    Fuel Type
-                  </th>
-                  <th className="p-1 text-left text-sm font-semibold">Color</th>
+
                   <th className="p-1 text-left text-sm font-semibold">City</th>
                   <th className="p-1 text-left text-sm font-semibold">
                     Date / Time
@@ -324,10 +330,10 @@ export const UnsoldVehicles = () => {
                   <th className="p-1 text-left text-sm font-semibold">
                     Reserve Price
                   </th>
-                  <th className="p-1 text-left text-sm font-semibold">
+                  <th className="p-1 text-center text-sm font-semibold">
                     Status
                   </th>
-                  <th className="p-1 text-left text-sm font-semibold">
+                  <th className="p-1 text-center text-sm font-semibold">
                     Actions
                   </th>
                 </tr>
@@ -440,26 +446,6 @@ export const UnsoldVehicles = () => {
 
                     <td className="p-1">
                       <span className="text-sm text-gray-600">
-                        {vehicle.fuelType
-                          ? vehicle.fuelType.charAt(0).toUpperCase() +
-                            vehicle.fuelType.slice(1)
-                          : "--"}
-                      </span>
-                    </td>
-
-                    <td className="p-1">
-                      <div className="flex items-center gap-2">
-                        <span className="text-sm text-gray-600">
-                          {vehicle.color
-                            ? vehicle.color.charAt(0).toUpperCase() +
-                              vehicle.color.slice(1)
-                            : "--"}
-                        </span>
-                      </div>
-                    </td>
-
-                    <td className="p-1">
-                      <span className="text-sm text-gray-600">
                         {vehicle.cityName || "--"}
                       </span>
                     </td>
@@ -467,17 +453,15 @@ export const UnsoldVehicles = () => {
                     <td className="p-1">
                       <div className="flex flex-col">
                         <span className="text-sm text-gray-700">
-                          {vehicle?.vehicleCreatedAt
-                            ? new Date(
-                                vehicle.vehicleCreatedAt,
-                              ).toLocaleDateString("en-GB")
+                          {vehicle?.endTime
+                            ? new Date(vehicle.endTime).toLocaleDateString(
+                                "en-GB",
+                              )
                             : "N/A"}
                         </span>
                         <span className="text-xs text-gray-500">
-                          {vehicle?.vehicleCreatedAt
-                            ? moment(vehicle.vehicleCreatedAt)
-                                .local()
-                                .format("hh:mm A")
+                          {vehicle?.endTime
+                            ? moment(vehicle.endTime).local().format("hh:mm A")
                             : "--"}
                         </span>
                       </div>
@@ -495,19 +479,19 @@ export const UnsoldVehicles = () => {
                       </span>
                     </td>
 
-                    <td className="p-1 flex gap-1">
-                      <button
+                    <td className=" mt-2 flex gap-1">
+                      <div
                         onClick={() => handleViewReason(vehicle?.reason)}
-                        className="p-1.5 text-white bg-red-600 rounded hover:cursor-pointer"
+                        className="p-1 text-white bg-red-600 rounded hover:cursor-pointer"
                       >
                         Reason
-                      </button>
-                      <button
+                      </div>
+                      <div
                         onClick={() => handleWanttoSoldVehicle(vehicle?.id)}
-                        className="p-1.5 text-white bg-blue-950 rounded hover:cursor-pointer"
+                        className="p-2 text-white bg-blue-950 rounded hover:cursor-pointer "
                       >
-                        Sell Car
-                      </button>
+                        Sell
+                      </div>
                     </td>
                   </tr>
                 ))}

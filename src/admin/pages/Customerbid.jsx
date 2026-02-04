@@ -32,8 +32,6 @@ export const Customerbid = () => {
 
   const navigate = useNavigate();
 
-  console.log("userid =>", userId);
-
   const [isOpen, setIsOpen] = useState(false);
 
   const [isOpenModal, setIsOpenModal] = useState("");
@@ -164,10 +162,10 @@ export const Customerbid = () => {
           // Avoid duplicates by checking if bid already exists
           const bidExists = prev.some(
             (bid) =>
-              bid.id === data.latestBid.id ||
-              (bid.createdAt === data.latestBid.createdAt &&
-                bid.maxBid === data.latestBid.maxBid &&
-                bid.userId === data.latestBid.userId),
+              bid.id === data.latestBid?.id ||
+              (bid.createdAt === data?.latestBid?.createdAt &&
+                bid.maxBid === data?.latestBid?.maxBid &&
+                bid.userId === data?.latestBid?.userId),
           );
 
           if (bidExists) {
@@ -327,7 +325,7 @@ END:VCALENDAR`.trim();
         {/* Top Bar: Breadcrumb on left, Back button on right */}
         <div className="flex items-center justify-between">
           {/* Breadcrumb - Left */}
-          <nav className="flex flex-nowrap items-center whitespace-nowrap text-sm text-gray-600">
+          <nav className="flex flex-wrap items-center whitespace-nowrap text-sm text-gray-600">
             <Link to="/" className="hover:underline text-blue-950">
               Home
             </Link>
@@ -815,7 +813,7 @@ END:VCALENDAR`.trim();
                 <tr className="border-b border-gray-100">
                   <td className=" px-2 py-2">City:</td>
                   <td className="py-2 font-semibold text-right">
-                    {selectedPrice?.locationId || "N/A"}
+                    {selectedPrice?.cityName || "N/A"}
                   </td>
                 </tr>
                 <tr className="border-b border-gray-100">

@@ -18,7 +18,7 @@ const CarCard = ({ car }) => {
 
   const currentUser = useSelector((state) => state?.auth?.currentUser);
   const wishlistByUser = useSelector(
-    (state) => state?.wishList?.wishlistByUser
+    (state) => state?.wishList?.wishlistByUser,
   );
 
   const isInWishlist =
@@ -66,7 +66,7 @@ const CarCard = ({ car }) => {
       {/* Content */}
       <div className="p-4 space-y-1 flex-grow flex flex-col">
         {/* Desktop: Heart at top-right */}
-        <div className="flex justify-end -mt-2 relative z-20">
+        <div className="flex justify-end -mt-2 relative z-20  ">
           <button
             onClick={handleWishlist}
             className={`p-2 rounded-full transition-all duration-300 ${
@@ -80,24 +80,10 @@ const CarCard = ({ car }) => {
         </div>
 
         {/* Mobile: Title + Heart */}
-        <div className="flex sm:hidden justify-between items-center relative z-20">
-          <h3 className="text-[15px] font-bold text-gray-800 line-clamp-1">
-            {car?.make} {car?.model}
-          </h3>
-          <button
-            onClick={handleWishlist}
-            className={`p-2 rounded-full transition-all duration-300 ${
-              isInWishlist
-                ? "text-red-600"
-                : "text-gray-400 hover:text-red-600 hover:bg-red-50"
-            }`}
-          >
-            <FaHeart size={20} className={isInWishlist ? "fill-current" : ""} />
-          </button>
-        </div>
+      
 
         {/* Desktop Title (below heart) */}
-        <h3 className="hidden sm:block text-[15px] font-bold text-gray-800 -mt-6 relative z-10">
+        <h3 className=" text-[15px] font-bold text-gray-800 -mt-6 relative z-10">
           {car?.make} {car?.model}
         </h3>
 
@@ -165,7 +151,7 @@ const CarCardSlider = () => {
   const handleGetVehicles = async () => {
     try {
       const res = await axios.get(
-        `${BASE_URL}/getApprovedVehicles/${currentUser?.role}`
+        `${BASE_URL}/getApprovedVehicles/${currentUser?.role}`,
       );
       setAllCars(res.data);
     } catch (error) {
@@ -197,7 +183,7 @@ const CarCardSlider = () => {
 
   const nextCards = () => {
     setCurrentIndex((prev) =>
-      Math.min(allCars.length - visibleCards, prev + visibleCards)
+      Math.min(allCars.length - visibleCards, prev + visibleCards),
     );
   };
 
@@ -232,7 +218,7 @@ const CarCardSlider = () => {
           <button
             onClick={prevCards}
             disabled={currentIndex === 0}
-            className="absolute left-0 top-1/2 -translate-y-1/2 md:-left-12 bg-white p-2 rounded-full shadow-lg text-gray-700 z-20 hover:bg-blue-950 hover:text-white disabled:opacity-50 disabled:cursor-not-allowed transition-all duration-300 hover:scale-110"
+            className="absolute left-0 md:top-1/2 top-1/4 -translate-y-1/2 md:-left-12 bg-white p-2 rounded-full shadow-lg text-gray-700 z-20 hover:bg-blue-950 hover:text-white disabled:opacity-50 disabled:cursor-not-allowed transition-all duration-300 hover:scale-110"
           >
             <ChevronLeft size={28} />
           </button>
@@ -250,7 +236,7 @@ const CarCardSlider = () => {
           <button
             onClick={nextCards}
             disabled={currentIndex + visibleCards >= allCars.length}
-            className="absolute right-0 top-1/2 -translate-y-1/2 md:-right-12 bg-white p-2 rounded-full shadow-lg text-gray-700 z-20 hover:bg-blue-950 hover:text-white disabled:opacity-50 disabled:cursor-not-allowed transition-all duration-300 hover:scale-110"
+            className="absolute right-0 md:top-1/2 top-1/4 -translate-y-1/2 md:-right-12 bg-white p-2 rounded-full shadow-lg text-gray-700 z-20 hover:bg-blue-950 hover:text-white disabled:opacity-50 disabled:cursor-not-allowed transition-all duration-300 hover:scale-110"
           >
             <ChevronRight size={28} />
           </button>

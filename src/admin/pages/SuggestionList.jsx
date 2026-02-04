@@ -20,7 +20,7 @@ export const SuggestionList = () => {
       setSearch(value);
       setCurrentPage(1);
     }, 300),
-    []
+    [],
   );
 
   const handleGetSuggestions = async () => {
@@ -41,7 +41,7 @@ export const SuggestionList = () => {
 
   useEffect(() => {
     const filtered = allSuggestions.filter((suggestion) =>
-      suggestion.name?.toLowerCase().includes(search.toLowerCase())
+      suggestion.name?.toLowerCase().includes(search.toLowerCase()),
     );
     setFilteredSuggestions(filtered);
   }, [search, allSuggestions]);
@@ -117,7 +117,7 @@ export const SuggestionList = () => {
       </div>
 
       {/* Desktop Table – 100% unchanged */}
-      <div className="hidden md:block overflow-x-auto rounded border">
+      <div className=" overflow-x-auto rounded border">
         <table className="min-w-full bg-white shadow-sm">
           <thead className="bg-blue-950 text-white">
             <tr>
@@ -275,49 +275,6 @@ export const SuggestionList = () => {
             )}
           </tbody>
         </table>
-      </div>
-
-      {/* Mobile Cards – 100% unchanged */}
-      <div className="md:hidden space-y-2">
-        {currentItems.length > 0 ? (
-          currentItems.map((sugest) => (
-            <div
-              key={sugest.id}
-              className="bg-white rounded-xl shadow-md border border-gray-200 p-4 transition-all duration-300 hover:shadow-lg cursor-pointer"
-              onClick={() => handleViewBtn(sugest)}
-            >
-              <div className="space-y-2 text-sm">
-                <p className="flex justify-between">
-                  <span className="font-bold text-gray-900">Name</span>
-                  <span className="text-gray-700">
-                    {sugest.name.charAt(0).toUpperCase() + sugest.name.slice(1)}
-                  </span>
-                </p>
-                <p className="flex justify-between">
-                  <span className="font-bold text-gray-900">Email</span>
-                  <span className="text-gray-700">
-                    {sugest.email.charAt(0).toUpperCase() +
-                      sugest.email.slice(1)}
-                  </span>
-                </p>
-                <p className="flex justify-between">
-                  <span className="font-bold text-gray-900">Contact</span>
-                  <span className="text-gray-700">{sugest.contactNumber}</span>
-                </p>
-                <p className="flex justify-between">
-                  <span className="font-bold text-gray-900">Suggestion</span>
-                  <span className="text-gray-700">
-                    {truncateSuggestion(sugest.suggestion)}
-                  </span>
-                </p>
-              </div>
-            </div>
-          ))
-        ) : (
-          <div className="text-center py-8 text-gray-400 text-sm">
-            No suggestions found.
-          </div>
-        )}
       </div>
 
       {/* ONLY THIS PART CHANGED – PERFECT PAGINATION */}
@@ -506,8 +463,8 @@ export const SuggestionList = () => {
                             selectedSuggestion.priority === "High"
                               ? "bg-red-100 text-red-800"
                               : selectedSuggestion.priority === "Medium"
-                              ? "bg-yellow-100 text-yellow-800"
-                              : "bg-green-100 text-green-800"
+                                ? "bg-yellow-100 text-yellow-800"
+                                : "bg-green-100 text-green-800"
                           }`}
                         >
                           {selectedSuggestion.priority}

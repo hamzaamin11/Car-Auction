@@ -266,8 +266,8 @@ function AddAdminVehicle({ open, setOpen, onVehicleUpdated }) {
   const currentDate = new Date().toISOString().split("T")[0];
 
   const initialState = {
-    fromDate: currentDate,
-    toDate: currentDate,
+    fromDate: "",
+    toDate: "",
   };
   const [dateRange, setDateRange] = useState(initialState);
 
@@ -351,16 +351,22 @@ function AddAdminVehicle({ open, setOpen, onVehicleUpdated }) {
       return;
     }
 
+    // Create preview URLs for new files
+    const newPreviews = files.map((file) => URL.createObjectURL(file));
+
+    // Update vehicle images
     setVehicle((prev) => ({
       ...prev,
       image: [...prev.image, ...files],
     }));
 
-    const previews = files.map((file) => URL.createObjectURL(file));
+    // Add new previews to previewImages array
+    setPreviewImages((prev) => [...prev, ...newPreviews]);
 
-    setPreviewImages([...previewImages, previews]);
+    // Update selected count
+    setSelectedCount((prev) => prev + files.length);
 
-    setSelectedCount(vehicle.image.length + files.length);
+    // Reset input
     e.target.value = null;
   };
 
@@ -384,7 +390,7 @@ function AddAdminVehicle({ open, setOpen, onVehicleUpdated }) {
   const handleGetVehicles = async () => {
     try {
       const res = await axios.get(
-        `${BASE_URL}/ApprovedVehicleListbyDateRange/${currentUser?.role}/${dateRange.fromDate}/${dateRange.toDate}`,
+        `${BASE_URL}/ApprovedVehicleListbyDateRange/${currentUser?.role}?fromDate=${dateRange.fromDate}&toDate=${dateRange.toDate}`,
       );
       setAllVehicles(res.data || []);
       setTotalVehicles(res.data || []);
@@ -579,6 +585,9 @@ function AddAdminVehicle({ open, setOpen, onVehicleUpdated }) {
         body: formData,
       });
 
+      // Cleanup preview URLs to prevent memory leaks
+      previewImages.forEach((url) => URL.revokeObjectURL(url));
+
       setVehicle(initialVehicleState);
       handleGetVehicles();
       setShowModal(false);
@@ -644,7 +653,7 @@ function AddAdminVehicle({ open, setOpen, onVehicleUpdated }) {
 
     if (search) {
       filtered = allVehicles.filter((v) =>
-        `${v.make} ${v.model} ${v.year} ${v.series}`
+        `${v.make} ${v.model}  ${v.series} ${v.year} ${v.lot_number} ${v.color} ${v.cityName} ${v.year} `
           .toLowerCase()
           .includes(search.toLowerCase()),
       );
@@ -729,7 +738,7 @@ function AddAdminVehicle({ open, setOpen, onVehicleUpdated }) {
             </svg>
           </span>
           <CustomSearch
-            placeholder="Search By Car Name..."
+            placeholder="Search...."
             value={search}
             onChange={handleSearchChange}
           />
@@ -745,12 +754,16 @@ function AddAdminVehicle({ open, setOpen, onVehicleUpdated }) {
             setVehicle(initialVehicleState);
             setPrice("");
             setSelectedCount(0);
+
+            // Cleanup existing preview URLs
+            previewImages.forEach((url) => URL.revokeObjectURL(url));
+            setPreviewImages([]);
           }}
         />
       </div>
 
-      <div className="flex items-center justify-between mb-2">
-        <div className="text-gray-800 mb-2 font-semibold text-2xl">
+      <div className="flex flex-col md:flex-row items-center justify-between mb-2">
+        <div className="text-gray-800 mb-2 font-semibold md:text-2xl text-lg">
           Total Approval Vehicles: {allVehicles.length}
         </div>
 
@@ -791,7 +804,11 @@ function AddAdminVehicle({ open, setOpen, onVehicleUpdated }) {
                 Add a New Vehicle
               </h2>
               <button
-                onClick={() => setShowModal(false)}
+                onClick={() => {
+                  // Cleanup preview URLs when closing modal
+                  previewImages.forEach((url) => URL.revokeObjectURL(url));
+                  setShowModal(false);
+                }}
                 className="text-red-700 text-3xl"
               >
                 ×
@@ -1194,18 +1211,28 @@ function AddAdminVehicle({ open, setOpen, onVehicleUpdated }) {
                           {/* Remove Image Button */}
                           <div
                             onClick={() => {
+                              // Remove preview URL
                               const updatedPreviews = previewImages.filter(
                                 (_, i) => i !== index,
                               );
+
+                              // Remove file from vehicle
                               const updatedImages = vehicle.image.filter(
                                 (_, i) => i !== index,
                               );
+
+                              // Update both states
                               setPreviewImages(updatedPreviews);
                               setVehicle((prev) => ({
                                 ...prev,
                                 image: updatedImages,
                               }));
+
+                              // Update count
                               setSelectedCount(updatedImages.length);
+
+                              // Revoke object URL to prevent memory leak
+                              URL.revokeObjectURL(src);
                             }}
                             className="absolute top-1 right-1 bg-white rounded-full shadow p-1 cursor-pointer hover:bg-gray-100"
                           >
@@ -1261,13 +1288,7 @@ function AddAdminVehicle({ open, setOpen, onVehicleUpdated }) {
                   </th>
                   <th className="p-1 text-left text-sm font-semibold ">Lot#</th>
                   <th className="p-1 text-left text-sm font-semibold ">Year</th>
-                  <th className="p-1 text-left text-sm font-semibold ">
-                    Fuel Type
-                  </th>
 
-                  <th className="p-1 text-left text-sm font-semibold ">
-                    Color
-                  </th>
                   <th className="p-1 text-left text-sm font-semibold ">City</th>
                   <th className="p-1 text-left text-sm font-semibold ">
                     Date / Time
@@ -1362,22 +1383,6 @@ function AddAdminVehicle({ open, setOpen, onVehicleUpdated }) {
                       </span>
                     </td>
 
-                    {/* Fuel Type */}
-                    <td className="p-1">
-                      <span className="text-sm text-gray-600">
-                        {vehicle.fuelType.charAt(0).toUpperCase() +
-                          vehicle.fuelType.slice(1)}
-                      </span>
-                    </td>
-
-                    {/* Color */}
-                    <td className="p-1">
-                      <span className="text-sm text-gray-600">
-                        {vehicle.color.charAt(0).toUpperCase() +
-                          vehicle.color.slice(1)}
-                      </span>
-                    </td>
-
                     {/* City */}
                     <td className="p-1">
                       <span className="text-sm text-gray-600">
@@ -1413,16 +1418,16 @@ function AddAdminVehicle({ open, setOpen, onVehicleUpdated }) {
                     </td>
 
                     <td className="p-1 uppercase">
-                      {vehicle?.saleStatus === "upcoming" ? (
+                      {vehicle?.approval === "Y" ? (
                         <span className="inline-flex items-center px-2 py-1 text-xs font-medium  bg-green-100 text-green-800  rounded-full">
-                          Live
+                          Approved
                         </span>
                       ) : vehicle?.saleStatus === "live" ? (
-                        <span className="inline-flex items-center px-2 py-1 text-xs bg-red-100 text-red-800 font-medium rounded-full">
+                        <span className="inline-flex items-center px-2 py-1 text-xs bg-orange-100 text-orange-500 font-medium rounded-full">
                           Pending
                         </span>
                       ) : vehicle?.saleStatus === "Unsold" ? (
-                        <span className="inline-flex items-center px-2 py-1 text-xs font-medium bg-orange-100 text-orange-500 rounded-full">
+                        <span className="inline-flex items-center px-2 py-1 text-xs font-medium bg-red-100 text-red-800   rounded-full">
                           UnSold
                         </span>
                       ) : (

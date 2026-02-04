@@ -35,7 +35,7 @@ const initialState = {
 const Dashboard = () => {
   const { currentUser } = useSelector((state) => state?.auth);
   const [filterDate, setFilterDate] = useState(initialState);
-  console.log("filter date =>", filterDate);
+  const token = currentUser?.token;
   const [loading, setLoading] = useState(false);
   const [totalVehicles, setTotalVehicles] = useState({});
   const [allBrands, setAllBrands] = useState([]);
@@ -84,7 +84,7 @@ const Dashboard = () => {
     setLoading(true);
     try {
       const res = await axios.get(
-        `${BASE_URL}/getApprovedVehicles/${currentUser?.role}`,
+        `${BASE_URL}/ApprovedVehicleListbyDateRange/${currentUser?.role}`,
       );
       setTotalVehicles(res?.data);
       setLoading(false);
@@ -134,11 +134,20 @@ const Dashboard = () => {
     try {
       const res = await axios.get(
         `${BASE_URL}/AdminDashboardStats/${currentUser?.id}?fromDate=${filterDate.fromDate}&toDate=${filterDate.toDate}`,
+        {
+          headers: {
+            Authorization: token,
+          },
+        },
       );
       console.log("KPIS =>>", res.data);
       setKpisStats(res.data);
-    } catch {
-      console.log(error);
+    } catch (error) {
+      console.log("=>", error);
+      if (error.response.status === 401) {
+        localStorage.clear();
+        window.location.href = "/login";
+      }
     }
   };
 
@@ -280,9 +289,6 @@ const Dashboard = () => {
               <h1 className="text-3xl md:text-4xl font-bold bg-blue-950 bg-clip-text text-transparent">
                 Dashboard Overview
               </h1>
-              <p className="text-gray-600 mt-2">
-                Welcome back, Admin! Here's what's happening today.
-              </p>
             </div>
           </div>
 
@@ -389,142 +395,100 @@ const Dashboard = () => {
           </div>
 
           {/* SECOND ROW - 2 COLUMNS */}
-          <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-            {/* Left Column - New Submissions */}
-            <div className="lg:col-span-2">
-              <div className="bg-white rounded-2xl border border-gray-200 shadow-lg p-6 h-full">
-                <div className="flex justify-between items-center mb-6">
-                  <h3 className="text-xl font-bold text-gray-800">
-                    Awaiting Approvals
-                  </h3>
-                  <span className="bg-red-100 text-red-600 text-xs font-bold px-3 py-1 rounded-full">
-                    Action Required
-                  </span>
-                </div>
-                <div className="flex items-center justify-between">
-                  <div>
-                    <p className="text-gray-600 mb-2">
-                      New submissions awaiting your approval
-                    </p>
-                    <div className="flex items-baseline gap-3">
-                      <h2 className="text-5xl font-bold text-gray-900">
-                        {awaitingStatus.length}
-                      </h2>
-                      <span className="text-gray-500">vehicles</span>
+          <div className="flex flex-col md:flex-row gap-6">
+            {/* Latest Bid Activity Card */}
+            <div className="flex-1 bg-white rounded-2xl border border-gray-200 shadow-lg p-6">
+              <h3 className="font-bold text-gray-800 mb-4 flex items-center gap-2">
+                <FaChartLine className="text-blue-950" /> Latest Bid Activity
+              </h3>
+
+              {bidInfo.length > 0 ? (
+                <div className="bg-gradient-to-r from-blue-50 to-white p-4 rounded-xl space-y-4">
+                  {/* Bidder */}
+                  <div className="flex items-center gap-3">
+                    <div className="bg-blue-100 p-2 rounded-lg">
+                      <FaUser className="text-blue-950" />
                     </div>
-                    <Link
-                      to={"/admin/awaiting"}
-                      className="mt-6 bg-blue-950 text-white px-5 py-2.5 rounded-lg font-medium transition-colors flex items-center justify-center gap-2"
-                    >
-                      <FaClipboardCheck /> Review Now
-                    </Link>
-                  </div>
-                  <div className="relative">
-                    <div className="w-48 h-48">
-                      <div className="absolute inset-0 bg-gradient-to-r from-blue-500 to-blue-300 rounded-full opacity-10"></div>
-                      <FaClipboardCheck className="text-8xl text-blue-100" />
+                    <div>
+                      <p className="text-sm text-gray-600">Latest Bidder</p>
+                      <p className="font-semibold">
+                        {bidInfo[0].bidderName.toUpperCase()}
+                      </p>
                     </div>
                   </div>
+
+                  {/* Seller */}
+                  <div className="flex items-center gap-3">
+                    <div className="bg-blue-100 p-2 rounded-lg">
+                      <FaEnvelope className="text-blue-950" />
+                    </div>
+                    <div>
+                      <p className="text-sm text-gray-600">Seller</p>
+                      <p className="font-semibold">
+                        {bidInfo[0].sellerName.toUpperCase()}
+                      </p>
+                    </div>
+                  </div>
+
+                  {/* Vehicle */}
+                  <div className="flex items-center gap-3">
+                    <div className="bg-blue-100 p-2 rounded-lg">
+                      <FaCarSide className="text-blue-950" />
+                    </div>
+                    <div>
+                      <p className="text-sm text-gray-600">Vehicle</p>
+                      <p className="font-semibold">
+                        {bidInfo[0].vehicleName.toUpperCase()}
+                      </p>
+                    </div>
+                  </div>
                 </div>
-              </div>
+              ) : (
+                <p className="text-gray-500 text-center py-4">
+                  No recent bid activity
+                </p>
+              )}
             </div>
 
-            {/* Right Column - Two Small Cards */}
-            <div className="space-y-6">
-              {/* Vehicle Snapshot */}
-              <div className="bg-white rounded-2xl border border-gray-200 shadow-lg p-6">
-                <h3 className="font-bold text-gray-800 mb-4 flex items-center gap-2">
-                  <FaCarSide className="text-blue-950" /> Vehicle Snapshot
-                </h3>
-                <div className="space-y-4">
-                  {[
-                    {
-                      label: "Non Approved Vehicles",
-                      value: unapprovelVehicles.length,
-                      color: "bg-red-500",
-                      path: "/admin/approval",
-                    },
-                    {
-                      label: "Vehicle Makes",
-                      value: allBrands.length,
-                      color: "bg-blue-500",
-                      path: "/admin/addbrand",
-                    },
-                    {
-                      label: "Auction Models",
-                      value: allModels.length,
-                      color: "bg-green-500",
-                      path: "/admin/addmodel",
-                    },
-                  ].map((item, index) => (
-                    <Link to={`${item.path}`}>
-                      <div
-                        key={index}
-                        className="flex items-center justify-between group hover:bg-gray-50 p-2 rounded-lg transition-colors"
-                      >
-                        <div className="flex items-center gap-3">
-                          <div
-                            className={`w-3 h-3 rounded-full ${item.color}`}
-                          ></div>
-                          <span className="text-gray-700">{item.label}</span>
-                        </div>
-                        <span className="font-bold text-gray-900 text-lg">
-                          {item.value}
-                        </span>
-                      </div>
-                    </Link>
-                  ))}
-                </div>
-              </div>
+            {/* Vehicle Snapshot Card */}
+            <div className="flex-1 bg-white rounded-2xl border border-gray-200 shadow-lg p-6">
+              <h3 className="font-bold text-gray-800 mb-4 flex items-center gap-2">
+                <FaCarSide className="text-blue-950" /> Vehicle Snapshot
+              </h3>
 
-              {/* Auction Activity */}
-              <div className="bg-white rounded-2xl border border-gray-200 shadow-lg p-6">
-                <h3 className="font-bold text-gray-800 mb-4 flex items-center gap-2">
-                  <FaChartLine className="text-blue-950" /> Latest Bid Activity
-                </h3>
-                {bidInfo.length > 0 ? (
-                  <div className="space-y-4">
-                    <div className="bg-gradient-to-r from-blue-50 to-white p-4 rounded-xl">
-                      <div className="flex items-center gap-3 mb-3">
-                        <div className="bg-blue-100 p-2 rounded-lg">
-                          <FaUser className="text-blue-950" />
-                        </div>
-                        <div>
-                          <p className="text-sm text-gray-600">Latest Bidder</p>
-                          <p className="font-semibold">
-                            {bidInfo[0].bidderName.toUpperCase()}
-                          </p>
-                        </div>
-                      </div>
-                      <div className="flex items-center gap-3 mb-3">
-                        <div className="bg-blue-100 p-2 rounded-lg">
-                          <FaEnvelope className="text-blue-950" />
-                        </div>
-                        <div>
-                          <p className="text-sm text-gray-600">Seller</p>
-                          <p className="font-semibold">
-                            {bidInfo[0].sellerName.toUpperCase()}
-                          </p>
-                        </div>
-                      </div>
+              <div className="space-y-4">
+                {[
+                  {
+                    label: "Non Approved Vehicles",
+                    value: unapprovelVehicles.length,
+                    color: "bg-red-500",
+                    path: "/admin/approval",
+                  },
+                  {
+                    label: "Vehicle Makes",
+                    value: allBrands.length,
+                    color: "bg-blue-500",
+                    path: "/admin/addbrand",
+                  },
+                  {
+                    label: "Auction Models",
+                    value: allModels.length,
+                    color: "bg-green-500",
+                    path: "/admin/addmodel",
+                  },
+                ].map((item, index) => (
+                  <Link key={index} to={item.path}>
+                    <div className="flex items-center justify-between group hover:bg-gray-50 p-2 rounded-lg transition-colors">
                       <div className="flex items-center gap-3">
-                        <div className="bg-blue-100 p-2 rounded-lg">
-                          <FaCarSide className="text-blue-950" />
-                        </div>
-                        <div>
-                          <p className="text-sm text-gray-600">Vehicle</p>
-                          <p className="font-semibold">
-                            {bidInfo[0].vehicleName.toUpperCase()}
-                          </p>
-                        </div>
+                        <div className={`w-3 h-3 rounded-full ${item.color}`} />
+                        <span className="text-gray-700">{item.label}</span>
                       </div>
+                      <span className="font-bold text-gray-900 text-lg">
+                        {item.value}
+                      </span>
                     </div>
-                  </div>
-                ) : (
-                  <p className="text-gray-500 text-center py-4">
-                    No recent bid activity
-                  </p>
-                )}
+                  </Link>
+                ))}
               </div>
             </div>
           </div>
@@ -536,9 +500,6 @@ const Dashboard = () => {
                 <h1 className="text-2xl md:text-3xl font-bold text-gray-900">
                   Business Performance
                 </h1>
-                <p className="text-gray-600 mt-1">
-                  Key metrics and financial overview
-                </p>
               </div>
             </div>
 

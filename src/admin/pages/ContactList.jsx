@@ -9,6 +9,7 @@ export const ContactList = () => {
   const [allContacts, setAllContacts] = useState([]);
   const [filteredContacts, setFilteredContacts] = useState([]);
   const [selectedContact, setSelectedContact] = useState(null);
+  console.log("selectedContact =>", selectedContact);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [search, setSearch] = useState("");
   const [loading, setLoading] = useState(false);
@@ -20,7 +21,7 @@ export const ContactList = () => {
       setSearch(value);
       setCurrentPage(1);
     }, 300),
-    []
+    [],
   );
 
   const handleGetSuggestions = async () => {
@@ -41,7 +42,7 @@ export const ContactList = () => {
 
   useEffect(() => {
     const filtered = allContacts.filter((contact) =>
-      contact.subject?.toLowerCase().includes(search.toLowerCase())
+      contact.subject?.toLowerCase().includes(search.toLowerCase()),
     );
     setFilteredContacts(filtered);
   }, [search, allContacts]);
@@ -79,7 +80,7 @@ export const ContactList = () => {
 
   return (
     <div className="max-h-screen bg-gray-100 p-4">
-      <div className="flex flex-col sm:flex-row justify-between items-center gap-4 mb-3">
+      <div className="flex flex-col sm:flex-row justify-between items-start gap-4 mb-3">
         <h2 className="lg:text-3xl text-xl font-bold text-gray-800">
           Contact List
         </h2>
@@ -112,7 +113,7 @@ export const ContactList = () => {
       </div>
 
       {/* Desktop Table – 100% unchanged */}
-      <div className="hidden md:block">
+      <div className="">
         <table className="w-full bg-white shadow-md rounded border border-gray-600 overflow-hidden text-xs sm:text-sm">
           <thead className="bg-blue-950 text-white rounded-t-lg">
             <tr>
@@ -175,56 +176,6 @@ export const ContactList = () => {
             )}
           </tbody>
         </table>
-      </div>
-
-      {/* Mobile Cards – 100% unchanged */}
-      <div className="md:hidden space-y-4">
-        {currentItems.length > 0 ? (
-          currentItems.map((contact) => (
-            <div
-              key={contact.id}
-              className="bg-white rounded-xl shadow-md border border-gray-200 p-4 transition-all duration-300 hover:shadow-lg cursor-pointer"
-              onClick={() => handleView(contact)}
-            >
-              <div className="space-y-2 text-sm">
-                <p className="flex justify-between">
-                  <span className="font-bold text-gray-900">Name</span>
-                  <span className="text-gray-700">
-                    {contact?.subject.charAt(0).toUpperCase() +
-                      contact?.subject.slice(1)}
-                  </span>
-                </p>
-                <p className="flex justify-between">
-                  <span className="font-bold text-gray-900">Email</span>
-                  <span className="text-gray-700">
-                    {contact?.email.charAt(0).toUpperCase() +
-                      contact?.email.slice(1)}
-                  </span>
-                </p>
-                <p className="flex justify-between">
-                  <span className="font-bold text-gray-900">Contact</span>
-                  <span className="text-gray-700">
-                    {contact?.contactNumber}
-                  </span>
-                </p>
-                <p className="flex justify-between">
-                  <span className="font-bold text-gray-900">
-                    Customer Message
-                  </span>
-                  <span className="text-gray-700 text-xs">
-                    {contact?.description?.length > 50
-                      ? `${contact?.description.slice(0, 50)}...`
-                      : contact?.description || "No message provided."}
-                  </span>
-                </p>
-              </div>
-            </div>
-          ))
-        ) : (
-          <div className="text-center py-8 text-gray-400 text-sm">
-            No contacts found.
-          </div>
-        )}
       </div>
 
       {/* ONLY THIS PART CHANGED – PERFECT PAGINATION */}
@@ -321,7 +272,7 @@ export const ContactList = () => {
                     {/* Contact Icon */}
                     <div className="p-3 rounded-lg bg-blue-100 border border-blue-100">
                       <svg
-                        className="w-6 h-6 text-blue-900"
+                        className="w-5 h-5"
                         fill="none"
                         stroke="currentColor"
                         viewBox="0 0 24 24"
@@ -340,9 +291,6 @@ export const ContactList = () => {
                       <h3 className="text-xl font-bold text-white">
                         Contact Inquiry
                       </h3>
-                      <p className="text-white text-sm mt-1">
-                        Customer Support Request
-                      </p>
 
                       {/* Contact Info Badges */}
                       <div className="flex flex-wrap gap-2 mt-3">
@@ -351,43 +299,21 @@ export const ContactList = () => {
                             {selectedContact.email}
                           </span>
                         )}
-                        {selectedContact?.contact && (
+                        {selectedContact?.contactNumber && (
                           <span className="px-3 py-1 bg-indigo-50 rounded-md text-xs font-medium text-indigo-700 border border-indigo-200">
-                            📞 {selectedContact.contact}
+                            📞 {selectedContact?.contactNumber}
                           </span>
                         )}
-                        <span className="px-3 py-1 bg-green-500 rounded-md text-xs font-medium text-white ">
-                          New Inquiry
-                        </span>
                       </div>
                     </div>
                   </div>
 
                   {/* Simple Close Button */}
-                  <button
-                    onClick={() => setIsModalOpen(false)}
-                    className="p-2 rounded-lg hover:scale-105 transition-colors text-white bg-red-600"
-                    aria-label="Close modal"
-                  >
-                    <svg
-                      className="w-5 h-5 "
-                      fill="none"
-                      stroke="currentColor"
-                      viewBox="0 0 24 24"
-                    >
-                      <path
-                        strokeLinecap="round"
-                        strokeLinejoin="round"
-                        strokeWidth="1.5"
-                        d="M6 18L18 6M6 6l12 12"
-                      />
-                    </svg>
-                  </button>
                 </div>
               </div>
 
               {/* Content Area */}
-              <div className="p-6 space-y-6">
+              <div className="p-6 ">
                 {/* Customer Info Section */}
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
                   {selectedContact?.name && (
@@ -395,7 +321,7 @@ export const ContactList = () => {
                       <div className="flex items-center gap-2">
                         <div className="p-2 bg-blue-50 rounded-lg">
                           <svg
-                            className="w-4 h-4 text-blue-600"
+                            className="w-4 h-4 text-blue-950"
                             fill="none"
                             stroke="currentColor"
                             viewBox="0 0 24 24"
@@ -414,42 +340,6 @@ export const ContactList = () => {
                       </div>
                       <p className="text-gray-800 font-medium text-lg pl-10">
                         {selectedContact.name}
-                      </p>
-                    </div>
-                  )}
-
-                  {selectedContact?.date && (
-                    <div className="space-y-2">
-                      <div className="flex items-center gap-2">
-                        <div className="p-2 bg-blue-50 rounded-lg">
-                          <svg
-                            className="w-4 h-4 text-blue-600"
-                            fill="none"
-                            stroke="currentColor"
-                            viewBox="0 0 24 24"
-                          >
-                            <path
-                              strokeLinecap="round"
-                              strokeLinejoin="round"
-                              strokeWidth="1.5"
-                              d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"
-                            />
-                          </svg>
-                        </div>
-                        <p className="text-sm font-medium text-gray-500">
-                          Submitted On
-                        </p>
-                      </div>
-                      <p className="text-gray-800 font-medium text-lg pl-10">
-                        {new Date(selectedContact.date).toLocaleDateString(
-                          "en-US",
-                          {
-                            weekday: "long",
-                            year: "numeric",
-                            month: "long",
-                            day: "numeric",
-                          }
-                        )}
                       </p>
                     </div>
                   )}
@@ -514,8 +404,8 @@ export const ContactList = () => {
                             selectedContact.priority === "High"
                               ? "bg-red-50 text-red-700 border border-red-200"
                               : selectedContact.priority === "Medium"
-                              ? "bg-yellow-50 text-yellow-700 border border-yellow-200"
-                              : "bg-green-50 text-green-700 border border-green-200"
+                                ? "bg-yellow-50 text-yellow-700 border border-yellow-200"
+                                : "bg-green-50 text-green-700 border border-green-200"
                           }`}
                         >
                           {selectedContact.priority}
@@ -547,9 +437,6 @@ export const ContactList = () => {
                       <h4 className="font-semibold text-gray-800 text-lg">
                         Customer Message
                       </h4>
-                      <p className="text-gray-500 text-sm">
-                        Detailed inquiry from customer
-                      </p>
                     </div>
                   </div>
 
@@ -597,7 +484,7 @@ export const ContactList = () => {
                         onClick={() =>
                           (window.location.href = `mailto:${selectedContact.email}`)
                         }
-                        className="flex-1 px-5 py-3 text-sm font-medium bg-blue-600 hover:bg-blue-700 text-white rounded-lg transition-all duration-200 flex items-center justify-center gap-2 border border-blue-600"
+                        className="flex-1 px-5 py-3 text-sm font-medium bg-blue-950 hover:bg-blue-900 text-white rounded-lg transition-all duration-200 flex items-center justify-center gap-2 border border-blue-600"
                       >
                         <svg
                           className="w-4 h-4"

@@ -20,7 +20,7 @@ export const BecomePartnerList = () => {
       setSearch(value);
       setCurrentPage(1);
     }, 300),
-    []
+    [],
   );
 
   const handleGetPartners = async () => {
@@ -41,7 +41,7 @@ export const BecomePartnerList = () => {
 
   useEffect(() => {
     const filtered = allPartner.filter((partner) =>
-      partner.bussinessType?.toLowerCase().includes(search.toLowerCase())
+      partner.bussinessType?.toLowerCase().includes(search.toLowerCase()),
     );
     setFilteredPartners(filtered);
   }, [search, allPartner]);
@@ -112,8 +112,8 @@ export const BecomePartnerList = () => {
       </div>
 
       {/* Desktop Table – 100% unchanged */}
-      <div className="hidden md:block">
-        <div className="overflow-hidden rounded border border-gray-600 shadow-sm">
+      <div className="min-w-full">
+        <div className=" min-w-full overflow-hidden rounded border border-gray-600 shadow-sm ">
           <table className="min-w-full bg-white">
             <thead className="bg-blue-950 ">
               <tr>
@@ -286,57 +286,6 @@ export const BecomePartnerList = () => {
         </div>
       </div>
 
-      {/* Mobile Cards – 100% unchanged */}
-      <div className="md:hidden space-y-4">
-        {currentItems.length > 0 ? (
-          currentItems.map((msg) => (
-            <div
-              key={msg.id}
-              className="bg-white rounded-xl shadow-md border border-gray-200 p-4 transition-all duration-300 hover:shadow-lg cursor-pointer"
-              onClick={() => handleViewBtn(msg)}
-            >
-              <div className="space-y-2 text-sm">
-                <p className="flex justify-between">
-                  <span className="font-bold text-gray-900">Name</span>
-                  <span className="text-gray-700">
-                    {msg?.name.charAt(0).toUpperCase() + msg?.name.slice(1)}
-                  </span>
-                </p>
-                <p className="flex justify-between">
-                  <span className="font-bold text-gray-900">Email</span>
-                  <span className="text-gray-700 text-xs">
-                    {msg?.email.charAt(0).toUpperCase() + msg?.email.slice(1)}
-                  </span>
-                </p>
-                <p className="flex justify-between">
-                  <span className="font-bold text-gray-900">Contact</span>
-                  <span className="text-gray-700">{msg?.contact}</span>
-                </p>
-                <p className="flex justify-between">
-                  <span className="font-bold text-gray-900">Business Type</span>
-                  <span className="text-gray-700">
-                    {msg?.bussinessType.charAt(0).toUpperCase() +
-                      msg?.bussinessType.slice(1)}
-                  </span>
-                </p>
-                <p className="flex justify-between">
-                  <span className="font-bold text-gray-900">Details</span>
-                  <span className="text-gray-700 text-xs">
-                    {msg?.message.length > 50
-                      ? `${msg?.message.slice(0, 50)}...`
-                      : msg?.message}
-                  </span>
-                </p>
-              </div>
-            </div>
-          ))
-        ) : (
-          <div className="text-center py-8 text-gray-400 text-sm">
-            No partners found.
-          </div>
-        )}
-      </div>
-
       {/* ONLY THIS PART CHANGED – PERFECT PAGINATION */}
       {totalItems > 0 && (
         <div className="bg-white rounded-lg shadow-sm p-4 mt-6">
@@ -430,13 +379,13 @@ export const BecomePartnerList = () => {
               <div className="absolute bottom-0 right-0 w-32 h-32 bg-gradient-to-tl from-gray-500/5 to-transparent translate-x-16 translate-y-16 rounded-full" />
 
               {/* Header with modern gradient and pattern */}
-              <div className="relative bg-blue-900 p-6">
+              <div className="relative bg-blue-900 p-4">
                 {/* Subtle pattern overlay */}
                 <div className="absolute inset-0 opacity-10" />
 
                 <div className="relative flex items-start justify-between">
                   <div>
-                    <div className="flex items-center gap-3 mb-2">
+                    <div className="flex items-center gap-3">
                       <div className="p-2 bg-white/20 rounded-lg backdrop-blur-sm">
                         <svg
                           className="w-6 h-6 text-white"
@@ -456,9 +405,6 @@ export const BecomePartnerList = () => {
                         <h3 className="text-2xl font-bold text-white">
                           Partner Details
                         </h3>
-                        <p className="text-blue-100 text-sm mt-1">
-                          Strategic Partnership Information
-                        </p>
                       </div>
                     </div>
 
@@ -479,28 +425,6 @@ export const BecomePartnerList = () => {
                       )}
                     </div>
                   </div>
-
-                  {/* Elegant Close Button */}
-                  <button
-                    onClick={() => setIsModalOpen(false)}
-                    className="group relative p-2 rounded-xl hover:bg-white/20 transition-all duration-200 backdrop-blur-sm"
-                    aria-label="Close modal"
-                  >
-                    <div className="absolute inset-0 bg-red-600 rounded-xl  transition-colors" />
-                    <svg
-                      className="relative w-5 h-5 text-white group-hover:scale-110 transition-transform"
-                      fill="none"
-                      stroke="currentColor"
-                      viewBox="0 0 24 24"
-                    >
-                      <path
-                        strokeLinecap="round"
-                        strokeLinejoin="round"
-                        strokeWidth="2"
-                        d="M6 18L18 6M6 6l12 12"
-                      />
-                    </svg>
-                  </button>
                 </div>
               </div>
 
@@ -544,9 +468,9 @@ export const BecomePartnerList = () => {
                     <div className="absolute -bottom-2 -left-2 w-4 h-4 border-b-2 border-l-2 border-blue-200 rounded-bl-lg opacity-0 group-hover:opacity-100 transition-opacity" />
                     <div className="absolute -bottom-2 -right-2 w-4 h-4 border-b-2 border-r-2 border-blue-200 rounded-br-lg opacity-0 group-hover:opacity-100 transition-opacity" />
 
-                    <div className="relative bg-gradient-to-br from-gray-50 to-white border border-gray-200 rounded-xl p-6 min-h-[180px] max-h-80 overflow-y-auto">
+                    <div className="relative bg-gradient-to-br from-gray-50 to-white border border-gray-200 rounded-xl p-6 min-h-[120px] max-h-80 overflow-y-auto">
                       {/* Fade effect at bottom for long content */}
-                      <div className="absolute bottom-0 left-0 right-0 h-12 bg-gradient-to-t from-white to-transparent pointer-events-none" />
+                      <div className="absolute bottom-0 left-0 right-0 h-10 bg-gradient-to-t from-white to-transparent pointer-events-none" />
 
                       <div className="space-y-4">
                         {/* Message content with proper typography */}
@@ -615,7 +539,7 @@ export const BecomePartnerList = () => {
                           </svg>
                           Contact Email
                         </p>
-                        <p className="text-blue-600 font-medium hover:text-blue-800 transition-colors">
+                        <p className="text-gray-800 font-medium  transition-colors">
                           {selectedPartner.email}
                         </p>
                       </div>
@@ -639,7 +563,7 @@ export const BecomePartnerList = () => {
                           </svg>
                           Contact Email
                         </p>
-                        <p className="text-blue-600 font-medium hover:text-blue-800 transition-colors">
+                        <p className="text-gray-800 font-medium  transition-colors">
                           {selectedPartner.contact}
                         </p>
                       </div>
@@ -648,7 +572,7 @@ export const BecomePartnerList = () => {
                 )}
 
                 {/* Action Buttons */}
-                <div className="flex flex-col sm:flex-row justify-end gap-3 pt-8 border-t border-gray-100">
+                <div className="flex flex-col sm:flex-row justify-end gap-3 pt-4 border-t border-gray-100">
                   <button
                     onClick={() => setIsModalOpen(false)}
                     className="px-6 py-3 text-sm font-medium bg-red-600 text-white hover:bg-opacity-95  rounded-xl transition-all duration-200 flex items-center justify-center gap-2"

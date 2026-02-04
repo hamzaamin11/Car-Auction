@@ -21,6 +21,7 @@ import Swal from "sweetalert2";
 import { LiveBidModal } from "../components/ViewAdminBidModal/LiveBidModal";
 import { CircleUser } from "lucide-react";
 import { UserDetailModal } from "../components/UserDetailModal/UserDetail";
+import { ViewAdminCar } from "../../components/ViewAdminCar";
 
 export default function LiveAuctions() {
   const [selectedVehicle, setselectedVehicle] = useState(null);
@@ -47,14 +48,14 @@ export default function LiveAuctions() {
       setSearch(value);
       setPageNo(1);
     }, 300),
-    []
+    [],
   );
 
   const handleGetAllLive = async () => {
     setLoading(true);
     try {
       const res = await axios.get(
-        `${BASE_URL}/admin/liveAuctionsForAdmin?entry=${itemsPerPage}&page=${pageNo}`
+        `${BASE_URL}/admin/liveAuctionsForAdmin?entry=${itemsPerPage}&page=${pageNo}`,
       );
       console.log("API Response (Admin):", res.data);
       // Handle both { data: [], total: X } and direct array response
@@ -133,7 +134,7 @@ export default function LiveAuctions() {
   const handleViewUserDetail = async (id) => {
     try {
       const res = await axios.get(
-        `${BASE_URL}/admin/getUserDetailsApprovedVehicleListById/${id}`
+        `${BASE_URL}/admin/getUserDetailsApprovedVehicleListById/${id}`,
       );
 
       setUSerDetail(res.data?.data);
@@ -180,7 +181,7 @@ export default function LiveAuctions() {
         (auction.model || "").toLowerCase().includes(search.toLowerCase()) ||
         (auction.vehicleCondition || "")
           .toLowerCase()
-          .includes(search.toLowerCase())
+          .includes(search.toLowerCase()),
     );
     setFilteredAuctions(filtered);
   }, [search, allLiveAuction]);
@@ -235,7 +236,7 @@ export default function LiveAuctions() {
               </svg>
             </span>
             <CustomSearch
-              placeholder="Search by Make, Model, or Condition..."
+              placeholder="Search..."
               value={search}
               onChange={(e) => {
                 setSearch(e.target.value);
@@ -245,7 +246,7 @@ export default function LiveAuctions() {
           </div>
         </div>
 
-        <div className="text-gray-800 mb-4 font-semibold text-xl">
+        <div className="text-gray-800 text-center md:text-start mb-4 font-semibold text-xl">
           Total Live Auctions: {totalItems}
         </div>
 
@@ -282,7 +283,7 @@ export default function LiveAuctions() {
                     <th className="p-1 text-left text-sm font-semibold">
                       Reverse Price
                     </th>
-                    <th className="p-1 text-left text-sm font-semibold">
+                    <th className="p-1 text-left  text-sm font-semibold">
                       Actions
                     </th>
                   </tr>
@@ -379,7 +380,7 @@ export default function LiveAuctions() {
                         <span className="text-sm text-gray-600">
                           {auction?.endTime
                             ? new Date(auction.endTime).toLocaleDateString(
-                                "en-GB"
+                                "en-GB",
                               )
                             : "N/A"}
                         </span>
@@ -561,6 +562,14 @@ export default function LiveAuctions() {
           <ViewBrandModal
             selectedVehicle={selectedVehicle}
             handleClick={() => setselectedVehicle(null)}
+          />
+        )}
+
+        {selectedVehicle && (
+          <ViewAdminCar
+            handleClick={() => setselectedVehicle(null)}
+            selectedVehicle={selectedVehicle}
+            isViewModalOpen={selectedVehicle}
           />
         )}
         {isOpenModal === "liveBid" && (

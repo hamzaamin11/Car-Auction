@@ -3,7 +3,9 @@ import { useNavigate } from "react-router-dom";
 import axios from "axios";
 import { BASE_URL } from "./Contant/URL";
 import CustomDropdown from "../CustomDropdown";
-import { useSelector } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
+import { logOut } from "./Redux/UserSlice";
+
 const SearchableOption = ({ datas, placeholder, name, value, onChange }) => {
   const [search, setSearch] = useState("");
   const [filteredData, setFilteredData] = useState(datas || []);
@@ -15,8 +17,8 @@ const SearchableOption = ({ datas, placeholder, name, value, onChange }) => {
   useEffect(() => {
     setFilteredData(
       datas.filter((item) =>
-        item.label.toLowerCase().includes(search.toLowerCase())
-      )
+        item.label.toLowerCase().includes(search.toLowerCase()),
+      ),
     );
     setActiveIndex(-1);
   }, [search, datas]);
@@ -121,6 +123,8 @@ const TabsSection = () => {
   const [allCities, setAllCities] = useState([]);
   const [allMake, setAllMake] = useState([]);
   const navigate = useNavigate();
+  const token = currentUser?.token;
+  const dispatch = useDispatch();
 
   // ✅ Fetch all cities
   const handleGetAllCities = async () => {
@@ -137,7 +141,7 @@ const TabsSection = () => {
   const handleGetAllMakes = async () => {
     try {
       const res = await axios.get(
-        `${BASE_URL}/admin/getBrands/${currentUser?.role}`
+        `${BASE_URL}/admin/getBrands/${currentUser?.role}`,
       );
       setAllMake(res.data);
     } catch (error) {
@@ -146,9 +150,24 @@ const TabsSection = () => {
     }
   };
 
+  const handleDeleteSession = async () => {
+    try {
+      const res = await axios.get(`${BASE_URL}/customer/customerStatusCheck`, {
+        headers: {
+          Authorization: token,
+        },
+      });
+    } catch (error) {
+      if (error.response.status === 401) {
+        dispatch(logOut());
+      }
+    }
+  };
+
   useEffect(() => {
     handleGetAllCities();
     handleGetAllMakes();
+    handleDeleteSession();
   }, []);
 
   // ✅ Map city data
@@ -243,9 +262,9 @@ const TabsSection = () => {
       </div>
 
       {/* ✅ Dropdown Filters */}
-      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 mx-0 lg:mx-6">
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 mx-6 lg:mx-6">
         {/* City */}
-        <div className="max-w-xs">
+        <div className="max-w-full">
           <CustomDropdown
             datas={cityData}
             placeholder="Select City"
@@ -256,7 +275,7 @@ const TabsSection = () => {
         </div>
 
         {/* Make (Brand + Vehicle Count) */}
-        <div className="max-w-xs">
+        <div className="max-w-full">
           <CustomDropdown
             datas={makeData}
             placeholder="Select Make"
@@ -267,7 +286,7 @@ const TabsSection = () => {
         </div>
 
         {/* Body Style */}
-        <div className="max-w-xs">
+        <div className="max-w-full">
           <CustomDropdown
             datas={bodyData}
             placeholder="Select BodyStyle"
@@ -278,7 +297,7 @@ const TabsSection = () => {
         </div>
 
         {/* Budget */}
-        <div className="max-w-xs">
+        <div className="max-w-full">
           <CustomDropdown
             datas={budgetData.map((b) => ({
               label: b.label,

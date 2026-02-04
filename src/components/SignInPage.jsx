@@ -48,7 +48,7 @@ const SignInPage = () => {
         title: "Welcome Back!",
         text: "Login successful!",
         icon: "success",
-        timer: 2000,
+        timer: 1000,
         timerProgressBar: true,
         showConfirmButton: false,
       });

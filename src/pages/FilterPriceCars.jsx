@@ -39,7 +39,7 @@ const FilterPriceCars = () => {
 
   const currentUser = useSelector((state) => state?.auth?.currentUser);
   const wishlistByUser = useSelector(
-    (state) => state?.wishList?.wishlistByUser || {}
+    (state) => state?.wishList?.wishlistByUser || {},
   );
 
   const navigate = useNavigate();
@@ -103,7 +103,7 @@ const FilterPriceCars = () => {
         label: city.cityName.charAt(0).toUpperCase() + city.cityName.slice(1),
         value: city.id,
       })),
-    [allCities]
+    [allCities],
   );
 
   const budgetData = [
@@ -161,7 +161,7 @@ const FilterPriceCars = () => {
         brandName: make.brandsName,
         vehicleCount: make.vehicleCount,
       })),
-    [allMake]
+    [allMake],
   );
 
   // Transform models
@@ -171,7 +171,7 @@ const FilterPriceCars = () => {
         label: `${m.modelName} (${m.vehicleCount})`,
         value: m.modelName,
       })),
-    [filterModel]
+    [filterModel],
   );
 
   const handleGetYear = async () => {
@@ -229,7 +229,7 @@ const FilterPriceCars = () => {
       const selectedCity = allCities.find(
         (city) =>
           city.cityName.toLowerCase() ===
-          decodeURIComponent(value).toLowerCase()
+          decodeURIComponent(value).toLowerCase(),
       );
       if (selectedCity) {
         setFilterData((prev) => ({ ...prev, location: selectedCity.id }));
@@ -239,7 +239,7 @@ const FilterPriceCars = () => {
       const selectedMake = allMake.find(
         (make) =>
           make.brandName.toLowerCase() ===
-          decodeURIComponent(value).toLowerCase()
+          decodeURIComponent(value).toLowerCase(),
       );
       if (selectedMake) {
         setFilterData((prev) => ({ ...prev, allMakes: selectedMake.id }));
@@ -252,7 +252,7 @@ const FilterPriceCars = () => {
     const filters = [];
     if (updatedFilterData.vehicleType) {
       filters.push(
-        `bodyStyle/${encodeURIComponent(updatedFilterData.vehicleType)}`
+        `bodyStyle/${encodeURIComponent(updatedFilterData.vehicleType)}`,
       );
     }
     if (updatedFilterData.selectYear) {
@@ -260,7 +260,7 @@ const FilterPriceCars = () => {
     }
     if (updatedFilterData.allMakes) {
       const selectedMake = allMake.find(
-        (make) => make.id === updatedFilterData.allMakes
+        (make) => make.id === updatedFilterData.allMakes,
       );
       if (selectedMake) {
         filters.push(`make/${encodeURIComponent(selectedMake.brandName)}`);
@@ -271,7 +271,7 @@ const FilterPriceCars = () => {
     }
     if (updatedFilterData.location) {
       const selectedCity = allCities.find(
-        (city) => city.id === updatedFilterData.location
+        (city) => city.id === updatedFilterData.location,
       );
       if (selectedCity) {
         filters.push(`city/${encodeURIComponent(selectedCity.cityName)}`);
@@ -279,7 +279,7 @@ const FilterPriceCars = () => {
     }
     if (updatedFilterData.formCash && updatedFilterData.toCash) {
       filters.push(
-        `budget/${updatedFilterData.formCash}-${updatedFilterData.toCash}`
+        `budget/${updatedFilterData.formCash}-${updatedFilterData.toCash}`,
       );
     }
 
@@ -346,7 +346,7 @@ const FilterPriceCars = () => {
         `${BASE_URL}/getApprovedVehicles/${currentUser?.role}`,
         {
           params,
-        }
+        },
       );
 
       setAllFilterCars(res.data || []);
@@ -366,7 +366,7 @@ const FilterPriceCars = () => {
     }
     try {
       const res = await axios.get(
-        `${BASE_URL}/getModelById/${currentUser?.role}/${filterData.allMakes}`
+        `${BASE_URL}/getModelById/${currentUser?.role}/${filterData.allMakes}`,
       );
       setFilterModel(res.data);
     } catch (error) {
@@ -378,7 +378,7 @@ const FilterPriceCars = () => {
   const handleGetAllMakes = async () => {
     try {
       const res = await axios.get(
-        `${BASE_URL}/admin/getBrands/${currentUser?.role}`
+        `${BASE_URL}/admin/getBrands/${currentUser?.role}`,
       );
       setAllMake(res.data);
     } catch (error) {
@@ -521,7 +521,7 @@ const FilterPriceCars = () => {
           <CustomDropdown
             options={[...BodyType]}
             value={BodyType.find(
-              (option) => option.value === filterData.vehicleType
+              (option) => option.value === filterData.vehicleType,
             )}
             onChange={(s) => handleChange("vehicleType", s ? s.value : "")}
             placeholder="Select Body Style"
@@ -544,7 +544,7 @@ const FilterPriceCars = () => {
             <CustomDropdown
               options={[...currentYear]}
               value={currentYear.find(
-                (option) => option.value === filterData.selectYear
+                (option) => option.value === filterData.selectYear,
               )}
               onChange={(s) => handleChange("selectYear", s ? s.value : "")}
               placeholder="Select Year"
@@ -559,7 +559,7 @@ const FilterPriceCars = () => {
             <CustomDropdown
               options={[...currentYear]}
               value={currentYear.find(
-                (option) => option.value === filterData.toYear
+                (option) => option.value === filterData.toYear,
               )}
               onChange={(s) => handleChange("toYear", s ? s.value : "")}
               placeholder="To Year"
@@ -576,7 +576,7 @@ const FilterPriceCars = () => {
           <CustomDropdown
             options={[...allMakes]}
             value={allMakes.find(
-              (option) => option.value === filterData.allMakes
+              (option) => option.value === filterData.allMakes,
             )}
             onChange={(s) => handleChange("allMakes", s ? s.value : "")}
             placeholder="Select Make"
@@ -592,7 +592,7 @@ const FilterPriceCars = () => {
           <CustomDropdown
             options={[...allModels]}
             value={allModels.find(
-              (option) => option.value === filterData.allModels
+              (option) => option.value === filterData.allModels,
             )}
             onChange={(s) => handleChange("allModels", s ? s.value : "")}
             placeholder="Select Model"
@@ -608,7 +608,7 @@ const FilterPriceCars = () => {
           <CustomDropdown
             options={[...cityOptions]}
             value={cityOptions.find(
-              (option) => option.value === filterData.location
+              (option) => option.value === filterData.location,
             )}
             onChange={(s) => handleChange("location", s ? s.value : "")}
             placeholder="Select Location"
@@ -715,11 +715,11 @@ const FilterPriceCars = () => {
             Vehicles For Sale
           </h1>
           <div className="flex items-center gap-2">
-            <div className="font-semibold whitespace-nowrap">Sort By</div>
-            <div className="flex gap-3 w-full max-w-4xl">
+            <div className="font-semibold whitespace-nowrap hidden md:block">Sort By</div>
+            <div className="flex gap-1">
               {/* Budget */}
               <select
-                className="flex-1 border border-black rounded-lg px-4 py-2.5 text-sm bg-white"
+                className="w-full border border-black rounded-lg px-4 py-2.5 text-sm bg-white"
                 value={
                   filterPrice.budget.min
                     ? `${filterPrice.budget.min}-${filterPrice.budget.max}`
@@ -750,7 +750,7 @@ const FilterPriceCars = () => {
 
               {/* Year Range */}
               <select
-                className="flex-1 border border-black rounded-lg px-4 py-2.5 text-sm bg-white"
+                className="w-full border border-black rounded-lg px-4 py-2.5 text-sm bg-white"
                 value={quickYearFilter}
                 onChange={(e) => setQuickYearFilter(e.target.value)}
               >
@@ -764,7 +764,7 @@ const FilterPriceCars = () => {
 
               {/* Sorting */}
               <select
-                className="flex-1 border border-black rounded-lg px-4 py-2.5 text-sm bg-white"
+                className="w-full border border-black rounded-lg px-4 py-2.5 text-sm bg-white"
                 value={sorting}
                 onChange={(e) => {
                   setSorting(e.target.value);

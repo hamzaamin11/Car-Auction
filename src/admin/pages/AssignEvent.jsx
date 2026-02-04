@@ -1,4 +1,5 @@
-import { useEffect, useState } from "react";
+import { useEffect, useState, useRef } from "react";
+import ReactDOM from "react-dom";
 import axios from "axios";
 import { useSelector } from "react-redux";
 import {
@@ -7,6 +8,10 @@ import {
   CircleUser,
   Clock,
   User,
+  MoreVertical,
+  Edit,
+  RefreshCw,
+  Trash2,
 } from "lucide-react";
 import { BASE_URL } from "../../components/Contant/URL";
 import { AddEvent } from "../../components/EventModal/AddEvent";
@@ -19,11 +24,103 @@ import { Reauction } from "../../components/AssignEventModal/ReAuctionModal";
 import { ViewAdminCar } from "../../components/ViewAdminCar";
 import { UserDetailModal } from "../components/UserDetailModal/UserDetail";
 
-const currentDate = new Date().toISOString().split("T")[0];
+// Dropdown Menu Component using Portal
+const DropdownMenu = ({
+  bid,
+  isOpen,
+  position,
+  onClose,
+  onEdit,
+  onReauction,
+  onDelete,
+}) => {
+  const menuRef = useRef(null);
+
+  useEffect(() => {
+    const handleClickOutside = (event) => {
+      if (menuRef.current && !menuRef.current.contains(event.target)) {
+        onClose();
+      }
+    };
+
+    if (isOpen) {
+      document.addEventListener("mousedown", handleClickOutside);
+    }
+
+    return () => {
+      document.removeEventListener("mousedown", handleClickOutside);
+    };
+  }, [isOpen, onClose]);
+
+  if (!isOpen) return null;
+
+  return ReactDOM.createPortal(
+    <div
+      ref={menuRef}
+      className="fixed z-50 w-48 bg-white border border-gray-200 rounded-lg shadow-lg"
+      style={{
+        left: `${position.x}px`,
+        top: `${position.y}px`,
+      }}
+    >
+      <button
+        onClick={(e) => {
+          e.stopPropagation();
+          onEdit(bid);
+        }}
+        className="w-full px-4 py-2.5 text-sm text-left text-gray-700 hover:bg-gray-100 flex items-center gap-2 transition-colors rounded-t-lg"
+        type="button"
+      >
+        <Edit size={14} className="text-blue-950" />
+        Edit
+      </button>
+
+      <button
+        disabled={bid?.saleStatus !== "Unsold"}
+        onClick={(e) => {
+          e.stopPropagation();
+          if (bid?.saleStatus === "Unsold") {
+            onReauction(bid);
+          }
+        }}
+        className={`
+          w-full px-4 py-2.5 text-sm text-left flex items-center gap-2 transition-colors
+          ${
+            bid?.saleStatus === "Unsold"
+              ? "text-orange-600 hover:bg-gray-100 cursor-pointer"
+              : "text-gray-400 cursor-not-allowed"
+          }
+        `}
+        type="button"
+      >
+        <RefreshCw
+          size={14}
+          className={
+            bid?.saleStatus === "Unsold" ? "text-orange-500" : "text-gray-400"
+          }
+        />
+        Re-Auction
+      </button>
+
+      <button
+        onClick={(e) => {
+          e.stopPropagation();
+          onDelete(bid);
+        }}
+        className="w-full px-4 py-2.5 text-sm text-left text-red-600 hover:bg-gray-100 flex items-center gap-2 transition-colors rounded-b-lg"
+        type="button"
+      >
+        <Trash2 size={14} className="text-red-500" />
+        Delete
+      </button>
+    </div>,
+    document.body,
+  );
+};
 
 const initialState = {
-  fromDate: currentDate,
-  toDate: currentDate,
+  fromDate: "",
+  toDate: "",
 };
 
 export const AssignEvent = () => {
@@ -36,7 +133,12 @@ export const AssignEvent = () => {
   const [selectReauction, setSelectReauction] = useState(null);
   const [selectVehicle, setSelectVehicle] = useState(null);
   const [userDetail, setUSerDetail] = useState(null);
+  const [dropdownOpenId, setDropdownOpenId] = useState(null);
+  const [statsRecords, setStatsRecords] = useState(null);
+  const [dropdownPosition, setDropdownPosition] = useState({ x: 0, y: 0 });
+  const [cardsStats, setCardsStats] = useState(null);
 
+  const buttonRefs = useRef({});
   const itemsPerPage = 10;
 
   const handleIsOpenModal = (option) => {
@@ -91,9 +193,60 @@ export const AssignEvent = () => {
     }
   };
 
+  const handleGetStatsRecords = async () => {
+    try {
+      const res = await axios.get(`${BASE_URL}/admin/getVehicleEventCounts`);
+      console.log(" counts =>>>", res?.data);
+      setCardsStats(res.data);
+    } catch (error) {
+      console.log(error);
+    }
+  };
+
   useEffect(() => {
     handleGetAssignEvent();
   }, [dateRange]);
+
+  const toggleDropdown = (id, index) => {
+    if (dropdownOpenId === id) {
+      setDropdownOpenId(null);
+      return;
+    }
+
+    // Calculate dropdown position
+    const button = buttonRefs.current[id];
+    if (!button) return;
+
+    const buttonRect = button.getBoundingClientRect();
+
+    // Calculate position for dropdown
+    // Open below the button by default
+    let x = buttonRect.left;
+    let y = buttonRect.bottom + 5;
+
+    // Check if there's enough space at the bottom
+    const viewportHeight = window.innerHeight;
+    const dropdownHeight = 150; // Approximate height of dropdown
+
+    if (y + dropdownHeight > viewportHeight) {
+      // If not enough space at bottom, open above the button
+      y = buttonRect.top - dropdownHeight - 5;
+
+      // Ensure it doesn't go above viewport
+      if (y < 5) {
+        y = 5;
+      }
+    }
+
+    // Ensure it doesn't go beyond right edge
+    const dropdownWidth = 192; // w-48 = 192px
+    if (x + dropdownWidth > window.innerWidth) {
+      x = window.innerWidth - dropdownWidth - 5;
+    }
+
+    setDropdownPosition({ x, y });
+    setDropdownOpenId(id);
+  };
 
   // Pagination Logic
   const totalItems = allBiders.length;
@@ -153,6 +306,41 @@ export const AssignEvent = () => {
     return pages;
   };
 
+  // Close dropdown when scrolling
+  useEffect(() => {
+    const handleScroll = () => {
+      if (dropdownOpenId) {
+        setDropdownOpenId(null);
+      }
+    };
+
+    window.addEventListener("scroll", handleScroll, true);
+    return () => {
+      window.removeEventListener("scroll", handleScroll, true);
+    };
+  }, [dropdownOpenId]);
+
+  const handleEditClick = (bid) => {
+    setDropdownOpenId(null);
+    handleIsOpenModal("edit");
+    setSelectEvent(bid);
+  };
+
+  const handleReauctionClick = (bid) => {
+    setDropdownOpenId(null);
+    handleIsOpenModal("reauction");
+    handleSelectVehicleforReauction(bid?.vehicle_id);
+  };
+
+  const handleDeleteClick = (bid) => {
+    setDropdownOpenId(null);
+    handleDeleteAssignEvent(bid?.id);
+  };
+
+  useEffect(() => {
+    handleGetStatsRecords();
+  }, []);
+
   return (
     <div className="max-h-screen bg-gray-100 p-4 md:p-6 pb-20">
       <div className="max-w-7xl mx-auto mb-20">
@@ -161,6 +349,27 @@ export const AssignEvent = () => {
             Assign Event
           </h1>
 
+          <div className="md:grid md:grid-cols-3  hidden  gap-3">
+            <div className="bg-white rounded-lg  p-3 border border-gray-300 lg:w-64 md:max-w-64 ">
+              <p className="text-xs text-gray-600">Total Vehicle</p>
+              <p className="text-lg font-bold text-gray-900">
+                {cardsStats?.totalVehicles}
+              </p>
+            </div>
+            <div className="bg-white rounded-lg p-3 border border-gray-300">
+              <p className="text-xs text-gray-600">Vehicles Assign to Event</p>
+              <p className="text-lg font-bold text-gray-900">
+                {cardsStats?.vehicleAssigned}
+              </p>
+            </div>
+            <div className="bg-white rounded-lg p-3 border border-gray-300">
+              <p className="text-xs text-gray-600">Vehicle Not Assign </p>
+              <p className="text-lg font-bold text-gray-900">
+                {cardsStats?.vehicleNotAssigned}
+              </p>
+            </div>
+          </div>
+
           <button
             className="py-2 px-2 text-white bg-blue-950 rounded hover:cursor-pointer hover:opacity-90"
             onClick={() => handleIsOpenModal("add")}
@@ -168,7 +377,22 @@ export const AssignEvent = () => {
             Assign Event
           </button>
         </div>
-        <div className="flex items-center justify-end my-2 gap-4">
+
+        <div className="grid md:grid-cols-3  md:hidden  gap-3">
+          <div className="bg-white rounded-lg  p-3 border border-gray-300 ">
+            <p className="text-xs text-gray-600">Total Vehicle</p>
+            <p className="text-lg font-bold text-gray-900">{0}</p>
+          </div>
+          <div className="bg-white rounded-lg p-3 border border-gray-300">
+            <p className="text-xs text-gray-600">Vehicles Assign to Event</p>
+            <p className="text-lg font-bold text-gray-900">{0}</p>
+          </div>
+          <div className="bg-white rounded-lg p-3 border border-gray-300">
+            <p className="text-xs text-gray-600">Vehicle Not Assign </p>
+            <p className="text-lg font-bold text-gray-900">{0}</p>
+          </div>
+        </div>
+        <div className="flex items-center md:justify-end justify-between my-2 gap-4">
           <div className="flex flex-col">
             <label className="text-sm font-medium text-gray-800 mb-1">
               From Date :
@@ -197,30 +421,32 @@ export const AssignEvent = () => {
         </div>
 
         <div className="w-full bg-white rounded shadow-md border border-gray-600 mb-8">
-          {/* Desktop Table View  */}
-          <div className="hidden md:block overflow-x-auto">
+          {/* Desktop Table View */}
+          <div className="overflow-x-auto">
             <table className="min-w-full text-sm table-fixed">
               <thead className="bg-blue-950 text-white">
                 <tr>
                   <th className="p-3 text-left font-semibold">Sr</th>
                   <th className="p-1 text-left font-semibold">Date</th>
                   <th className="p-1 text-left font-semibold">Event Name</th>
-                  <th className="p-1 text-left font-semibold">Customer Name</th>
+                  <th className="p-1 text-left font-semibold">Seller Name</th>
                   <th className="p-1 text-left font-semibold">Vehicle Name</th>
                   <th className="p-1 text-left font-semibold">Lot#</th>
                   <th className="p-1 text-left font-semibold">Year</th>
-                  <th className="p-1 text-left font-semibold">City</th>
                   <th className="p-1 text-left font-semibold">Time</th>
                   <th className="p-1 text-left text-sm font-semibold">
                     Status
                   </th>
-                  <th className="p-1  text-left font-semibold">Actions</th>
+                  <th className="p-1 text-center font-semibold">Actions</th>
                 </tr>
               </thead>
               <tbody className="divide-y divide-gray-600">
                 {currentItems && currentItems.length > 0 ? (
                   currentItems.map((bid, index) => (
-                    <tr key={index} className="transition duration-200">
+                    <tr
+                      key={index}
+                      className="transition duration-200 hover:bg-gray-50"
+                    >
                       <td className="p-3">{startIndex + index + 1}</td>
                       <td className="p-1">
                         <div className="flex items-center gap-3">
@@ -234,7 +460,7 @@ export const AssignEvent = () => {
                                 );
                                 const month = String(
                                   date.getMonth() + 1,
-                                ).padStart(2, "0"); // Month is 0-indexed
+                                ).padStart(2, "0");
                                 const year = date.getFullYear();
                                 return `${day}-${month}-${year}`;
                               })()}
@@ -243,7 +469,7 @@ export const AssignEvent = () => {
                       </td>
 
                       <td className="p-1 ">
-                        <span className="inline-flex items-center   text-sm capitalize  ">
+                        <span className="inline-flex items-center text-sm capitalize">
                           {bid?.eventName}
                         </span>
                       </td>
@@ -305,18 +531,13 @@ export const AssignEvent = () => {
                       </td>
 
                       <td className="p-1 ">
-                        <span className="inline-flex items-center p-1 text-sm capitalize  ">
+                        <span className="inline-flex items-center p-1 text-sm capitalize">
                           {bid?.lot_number}
                         </span>
                       </td>
                       <td className="p-1">
-                        <span className="inline-flex items-center p-1 text-sm capitalize  ">
+                        <span className="inline-flex items-center p-1 text-sm capitalize">
                           {bid?.year}
-                        </span>
-                      </td>
-                      <td className="p-1 ">
-                        <span className="inline-flex items-center p-1 text-sm capitalize  ">
-                          {bid?.locationId || "--"}
                         </span>
                       </td>
 
@@ -338,11 +559,11 @@ export const AssignEvent = () => {
 
                       <td className="p-1">
                         {bid?.saleStatus === "upcoming" ? (
-                          <span className="inline-flex items-center px-2 py-1 text-xs font-medium bg-red-100 text-red-800 rounded-full">
+                          <span className="inline-flex items-center px-2 py-1 text-xs font-medium bg-green-100 text-green-800 rounded-full">
                             Live
                           </span>
                         ) : bid?.saleStatus === "sold" ? (
-                          <span className="inline-flex items-center px-2 py-1 text-xs font-medium bg-green-100 text-green-800 rounded-full">
+                          <span className="inline-flex items-center px-2 py-1 text-xs font-medium bg-red-100 text-red-800 rounded-full">
                             Sold
                           </span>
                         ) : bid?.saleStatus === "Unsold" ? (
@@ -356,73 +577,24 @@ export const AssignEvent = () => {
                         )}
                       </td>
 
-                      <td className="p-1">
-                        <div className="flex gap-2">
-                          {/* Edit Button */}
-                          <button
-                            onClick={() => {
-                              (handleIsOpenModal("edit"), setSelectEvent(bid));
-                            }}
-                            className="px-3 py-1.5 text-xs font-medium text-white bg-blue-950  hover:bg-blue-900 rounded transition-colors flex items-center gap-1 hover:cursor-pointer"
-                          >
-                            <svg
-                              className="w-3 h-3"
-                              fill="none"
-                              stroke="currentColor"
-                              viewBox="0 0 24 24"
+                      <td className="p-1 relative">
+                        <div className="flex justify-center">
+                          <div className="relative">
+                            <button
+                              ref={(el) => (buttonRefs.current[bid.id] = el)}
+                              onClick={(e) => {
+                                e.stopPropagation();
+                                toggleDropdown(bid.id, index);
+                              }}
+                              className="p-2 rounded-md hover:bg-gray-100 transition-colors"
+                              type="button"
                             >
-                              <path
-                                strokeLinecap="round"
-                                strokeLinejoin="round"
-                                strokeWidth={2}
-                                d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"
+                              <MoreVertical
+                                size={18}
+                                className="text-gray-600"
                               />
-                            </svg>
-                            Edit
-                          </button>
-
-                          <button
-                            disabled={bid?.saleStatus !== "Unsold"}
-                            onClick={() => {
-                              handleIsOpenModal("reauction");
-                              handleSelectVehicleforReauction(bid?.vehicle_id);
-                            }}
-                            className="
-    px-3 py-1.5 text-xs font-medium text-white rounded
-    flex items-center gap-1 transition-colors
-
-    bg-orange-500 hover:bg-orange-600 cursor-pointer
-
-    disabled:bg-gray-400
-    disabled:cursor-not-allowed
-    disabled:opacity-60
-    disabled:hover:bg-gray-400
-  "
-                          >
-                            <Clock size={12} />
-                            Re-Auction
-                          </button>
-
-                          {/* Delete Button */}
-                          <button
-                            onClick={() => handleDeleteAssignEvent(bid?.id)}
-                            className="px-3 py-1.5 text-xs font-medium text-white bg-red-600 hover:bg-red-700 rounded transition-colors flex items-center gap-1 hover:cursor-pointer"
-                          >
-                            <svg
-                              className="w-3 h-3"
-                              fill="none"
-                              stroke="currentColor"
-                              viewBox="0 0 24 24"
-                            >
-                              <path
-                                strokeLinecap="round"
-                                strokeLinejoin="round"
-                                strokeWidth={2}
-                                d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"
-                              />
-                            </svg>
-                            Delete
-                          </button>
+                            </button>
+                          </div>
                         </div>
                       </td>
                     </tr>
@@ -430,10 +602,10 @@ export const AssignEvent = () => {
                 ) : (
                   <tr>
                     <td
-                      colSpan="6"
+                      colSpan="12"
                       className="text-center py-10 text-gray-400 font-medium"
                     >
-                      No bids yet.or Please change the date filter.
+                      No Assign Event
                     </td>
                   </tr>
                 )}
@@ -441,13 +613,11 @@ export const AssignEvent = () => {
             </table>
           </div>
 
-          {/* PAGINATION –  */}
+          {/* PAGINATION */}
           {totalItems > 0 && (
             <div className="border-t border-gray-200">
               <div className="p-4">
-                {/* Responsive Flex Container */}
                 <div className="flex flex-col lg:flex-row lg:justify-between lg:items-center gap-3">
-                  {/* Info Text - Left Side on Desktop, Centered on Mobile */}
                   <div className="text-center lg:text-left text-sm text-gray-600 order-2 lg:order-1">
                     Showing{" "}
                     <span className="font-medium">{startIndex + 1}</span> to{" "}
@@ -455,10 +625,8 @@ export const AssignEvent = () => {
                     <span className="font-medium">{totalItems}</span> entries
                   </div>
 
-                  {/* Pagination Controls - Right Side on Desktop, Top on Mobile */}
                   <div className="flex justify-center lg:justify-end order-1 lg:order-2 overflow-x-auto">
                     <div className="inline-flex items-center gap-1">
-                      {/* First Page Button */}
                       <button
                         onClick={() => goToPage(1)}
                         disabled={currentPage === 1}
@@ -527,6 +695,21 @@ export const AssignEvent = () => {
             </div>
           )}
         </div>
+
+        {/* Portal-based Dropdown Menu */}
+        {dropdownOpenId && (
+          <DropdownMenu
+            bid={currentItems.find((b) => b.id === dropdownOpenId)}
+            isOpen={true}
+            position={dropdownPosition}
+            onClose={() => setDropdownOpenId(null)}
+            onEdit={handleEditClick}
+            onReauction={handleReauctionClick}
+            onDelete={handleDeleteClick}
+          />
+        )}
+
+        {/* Modals */}
         {isOpen === "add" && (
           <AddAssignEvent
             Open={isOpen}

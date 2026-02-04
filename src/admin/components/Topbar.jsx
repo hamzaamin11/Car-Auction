@@ -321,7 +321,7 @@ export default function Topbar() {
           <img
             src={logo}
             alt="Logo"
-            className="h-10 w-12 sm:h-14 sm:w-24 object-contain md:block hidden"
+            className="h-10 w-12 sm:h-14 sm:w-24 object-contain lg:block hidden"
           />
         </Link>
       </div>

@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { NavLink, useLocation } from "react-router-dom";
+import { NavLink, Link, useLocation } from "react-router-dom";
 import {
   FaTachometerAlt,
   FaCar,
@@ -14,8 +14,11 @@ import {
 } from "react-icons/fa";
 import { FiHelpCircle } from "react-icons/fi";
 import { IoIosSettings } from "react-icons/io";
+import logo from "../../assets/wheellogo.png";
+import { useSelector } from "react-redux";
 
 const Sidebar = () => {
+  const { currentUser } = useSelector((state) => state?.auth);
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const [expandedItems, setExpandedItems] = useState({
     Vehicles: true,
@@ -39,7 +42,6 @@ const Sidebar = () => {
       children: [
         { name: "Approved Vehicles", path: "/admin/vehicles" },
         { name: "Pending Vehicles", path: "/admin/approval" },
-        { name: "Awaiting Approval", path: "/admin/awaiting" },
         { name: "Un-Sold Vehicles", path: "/admin/unsold" },
         { name: "Sold Vehicles", path: "/admin/pastvehicle" },
       ],
@@ -53,7 +55,7 @@ const Sidebar = () => {
         { name: "Assign Event", path: "/admin/assignevent" },
         { name: "Live Auctions", path: "/admin/live-auctions" },
         { name: "Upcoming Auctions", path: "/admin/upcoming-auctions" },
-        { name: "Auction History", path: "/admin/bid-history" },
+        // { name: "Auction History", path: "/admin/bid-history" },
       ],
     },
     {
@@ -64,16 +66,23 @@ const Sidebar = () => {
         { name: "Vehicle Inspection", path: "/admin/inspection" },
       ],
     },
-    {
-      name: "Users",
-      path: "/admin/manage-users",
-      icon: <FaUsers />,
-    },
 
     {
-      name: "Account",
-      path: "/admin/account",
+      name: "Peoples",
+      icon: <FaUsers />,
+      children: [
+        { name: "Customers", path: "/admin/manage-users" },
+        { name: "Sellers", path: "/admin/seller" },
+      ],
+    },
+    {
+      name: "Accounts",
       icon: <FaMoneyBillAlt />,
+      children: [
+        { name: "Add Payment", path: "/admin/addpayment" },
+        { name: "Account List", path: "/admin/account" },
+        { name: "Commission List", path: "/admin/commissionlist" },
+      ],
     },
     {
       name: "Support Center",
@@ -94,7 +103,7 @@ const Sidebar = () => {
         { name: "Makes", path: "/admin/addbrand" },
         { name: "Models", path: "/admin/addmodel" },
         { name: "Series", path: "/admin/addseries" },
-        { name: "Citites", path: "/admin/city" },
+        { name: "Cities", path: "/admin/city" },
       ],
     },
   ];
@@ -122,8 +131,17 @@ const Sidebar = () => {
     <div className="w-64 h-full bg-white text-gray-800 flex flex-col border-r border-gray-200 shadow-sm">
       {/* Header */}
       <div className="p-5 border-b border-gray-100">
-        <h2 className="text-xl font-bold text-gray-900">Admin Panel</h2>
-        <p className="text-sm text-gray-500 mt-1">Vehicle Management System</p>
+        <div className="flex items-center justify-center gap-3 my-4 ">
+          <Link
+            to={currentUser?.role === "admin" ? "/admin" : "/seller/dashboard"}
+          >
+            <img
+              src={logo}
+              alt="Logo"
+              className="h-10 w-22  object-contain block lg:hidden "
+            />
+          </Link>
+        </div>
       </div>
 
       {/* Navigation */}

@@ -6,7 +6,7 @@ import { Link } from "react-router-dom";
 
 export const CustomerDashboard = () => {
   const wishlistByUser = useSelector(
-    (state) => state?.wishList?.wishlistByUser
+    (state) => state?.wishList?.wishlistByUser,
   );
 
   const { currentUser } = useSelector((state) => state?.auth);
@@ -21,7 +21,7 @@ export const CustomerDashboard = () => {
   const handleCustomerStats = async () => {
     try {
       const res = await axios.get(
-        `${BASE_URL}/CustomerStatsDashboard/${currentUser?.id}`
+        `${BASE_URL}/CustomerStatsDashboard/${currentUser?.id}`,
       );
       setStatsData(res.data);
     } catch (error) {
@@ -39,10 +39,8 @@ export const CustomerDashboard = () => {
         {/* Header with elegant design */}
         <div className="mb-8">
           <h1 className="text-4xl font-bold text-blue-950 pb-2">
-            Dashboard <span className="text-blue-600">Stats</span>
+            Dashboard <span className="text-blue-950">Stats</span>
           </h1>
-          <p className="text-gray-600">Overview of your auction performance</p>
-          <div className="h-1 w-20 bg-gradient-to-r from-blue-900 to-blue-500 mt-2 rounded-full"></div>
         </div>
 
         {/* Dashboard Cards Grid */}
@@ -52,7 +50,7 @@ export const CustomerDashboard = () => {
             <div className="flex items-center mb-5">
               <div className="bg-blue-100 p-2 rounded-lg mr-3">
                 <svg
-                  className="w-6 h-6 text-blue-900"
+                  className="w-6 h-6 text-blue-950"
                   fill="none"
                   stroke="currentColor"
                   viewBox="0 0 24 24"
@@ -90,7 +88,10 @@ export const CustomerDashboard = () => {
           </div>
 
           {/* Card 2 - Total Won Auction */}
-          <div className="bg-gradient-to-br from-white to-blue-50 border border-blue-100 shadow-lg rounded-xl p-6 hover:shadow-xl transition-shadow duration-300">
+          <Link
+            to={"/buyvehicles"}
+            className="bg-gradient-to-br from-white to-blue-50 border border-blue-100 shadow-lg rounded-xl p-6 hover:shadow-xl transition-shadow duration-300"
+          >
             <div className="flex items-center mb-5">
               <div className="bg-blue-100 p-2 rounded-lg mr-3">
                 <svg
@@ -127,7 +128,7 @@ export const CustomerDashboard = () => {
                 </div>
               </div>
             </div>
-          </div>
+          </Link>
 
           {/* Card 3 - Pre-qualification Status */}
           <div className="bg-gradient-to-br from-white to-blue-50 border border-blue-100 shadow-lg rounded-xl p-6 hover:shadow-xl transition-shadow duration-300">

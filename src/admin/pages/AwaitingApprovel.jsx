@@ -1,4 +1,5 @@
 import React, { useEffect, useState, useRef } from "react";
+import ReactDOM from "react-dom";
 import {
   MoreVertical,
   X,
@@ -19,8 +20,88 @@ import moment from "moment";
 import { UserDetailModal } from "../components/UserDetailModal/UserDetail";
 import { ViewAdminCar } from "../../components/ViewAdminCar";
 
+// Dropdown Menu Component using Portal
+const DropdownMenu = ({
+  vehicle,
+  isOpen,
+  position,
+  onClose,
+  onApprove,
+  onReject,
+  onViewDetails,
+}) => {
+  const menuRef = useRef(null);
+
+  useEffect(() => {
+    const handleClickOutside = (event) => {
+      if (menuRef.current && !menuRef.current.contains(event.target)) {
+        onClose();
+      }
+    };
+
+    if (isOpen) {
+      document.addEventListener("mousedown", handleClickOutside);
+    }
+
+    return () => {
+      document.removeEventListener("mousedown", handleClickOutside);
+    };
+  }, [isOpen, onClose]);
+
+  if (!isOpen) return null;
+
+  return ReactDOM.createPortal(
+    <div
+      ref={menuRef}
+      className="fixed z-50 w-48 bg-white border border-gray-200 rounded-lg shadow-lg"
+      style={{
+        left: `${position.x}px`,
+        top: `${position.y}px`,
+      }}
+    >
+      <button
+        onClick={(e) => {
+          e.stopPropagation();
+          onApprove(vehicle);
+        }}
+        className="w-full px-4 py-2.5 text-sm text-green-600 hover:bg-green-50 hover:text-green-700 text-left flex items-center gap-2 rounded-t-lg transition"
+        type="button"
+      >
+        <CheckCircle className="h-4 w-4" />
+        Approve
+      </button>
+
+      <button
+        onClick={(e) => {
+          e.stopPropagation();
+          onReject(vehicle);
+        }}
+        className="w-full px-4 py-2.5 text-sm text-red-600 hover:bg-red-50 hover:text-red-700 text-left flex items-center gap-2 transition"
+        type="button"
+      >
+        <XCircle className="h-4 w-4" />
+        Reject
+      </button>
+
+      <button
+        onClick={(e) => {
+          e.stopPropagation();
+          onViewDetails(vehicle);
+        }}
+        className="w-full px-4 py-2.5 text-sm text-blue-600 hover:bg-blue-50 hover:text-blue-700 text-left flex items-center gap-2 rounded-b-lg transition"
+        type="button"
+      >
+        <Eye className="h-4 w-4" />
+        View Details
+      </button>
+    </div>,
+    document.body,
+  );
+};
+
 export const AwaitingApproval = () => {
   const [actionMenuOpen, setActionMenuOpen] = useState(null);
+  const [dropdownPosition, setDropdownPosition] = useState({ x: 0, y: 0 });
   const [search, setSearch] = useState("");
   const [vehicles, setVehicles] = useState([]);
   const [selectedVehicle, setSelectedVehicle] = useState(null);
@@ -34,19 +115,19 @@ export const AwaitingApproval = () => {
   const currentDate = new Date().toISOString().split("T")[0];
 
   const initialState = {
-    fromDate: currentDate,
-    toDate: currentDate,
+    fromDate: "",
+    toDate: "",
   };
   const [dateRange, setDateRange] = useState(initialState);
 
-  const menuRef = useRef(null);
+  const buttonRefs = useRef({});
   const itemsPerPage = 10;
 
   const handleGetAllUnapprovalVehicles = async () => {
     setLoading(true);
     try {
       const res = await axios.get(
-        `${BASE_URL}/getawatingApprovedVehiclestbyDateRange/${dateRange.fromDate}/${dateRange.toDate}`,
+        `${BASE_URL}/getawatingApprovedVehiclestbyDateRange?fromDate=${dateRange.fromDate}&toDate=${dateRange.toDate}`,
       );
       console.log(res.data);
       setVehicles(res.data || []);
@@ -80,8 +161,45 @@ export const AwaitingApproval = () => {
     }
   };
 
-  const toggleActionMenu = (id) => {
-    setActionMenuOpen((prev) => (prev === id ? null : id));
+  const toggleActionMenu = (id, index) => {
+    if (actionMenuOpen === id) {
+      setActionMenuOpen(null);
+      return;
+    }
+
+    // Calculate dropdown position
+    const button = buttonRefs.current[id];
+    if (!button) return;
+
+    const buttonRect = button.getBoundingClientRect();
+
+    // Calculate position for dropdown
+    // Open below the button by default
+    let x = buttonRect.left;
+    let y = buttonRect.bottom + 5;
+
+    // Check if there's enough space at the bottom
+    const viewportHeight = window.innerHeight;
+    const dropdownHeight = 150; // Approximate height of dropdown
+
+    if (y + dropdownHeight > viewportHeight) {
+      // If not enough space at bottom, open above the button
+      y = buttonRect.top - dropdownHeight - 5;
+
+      // Ensure it doesn't go above viewport
+      if (y < 5) {
+        y = 5;
+      }
+    }
+
+    // Ensure it doesn't go beyond right edge
+    const dropdownWidth = 192; // w-48 = 192px
+    if (x + dropdownWidth > window.innerWidth) {
+      x = window.innerWidth - dropdownWidth - 5;
+    }
+
+    setDropdownPosition({ x, y });
+    setActionMenuOpen(id);
   };
 
   const handleChangeDate = (e) => {
@@ -127,44 +245,6 @@ export const AwaitingApproval = () => {
       });
     }
   };
-
-  // const handleReject = async (vehicle) => {
-  //   try {
-  //     const result = await Swal.fire({
-  //       title: "Are you sure?",
-  //       text: `Do you want to reject ${vehicle.make} ${vehicle.model}?`,
-  //       icon: "warning",
-  //       showCancelButton: true,
-  //       confirmButtonColor: "#dc2626",
-  //       cancelButtonColor: "#6b7280",
-  //       confirmButtonText: "Yes, reject it!",
-  //       cancelButtonText: "Cancel",
-  //     });
-
-  //     if (result.isConfirmed) {
-  //       // FIXED: Added API call for reject
-  //       const res = await axios.put(`${BASE_URL}/rejectVehicle/${vehicle.id}`);
-  //       console.log(res.data);
-  //       setActionMenuOpen(null);
-  //       handleGetAllUnapprovalVehicles();
-
-  //       await Swal.fire({
-  //         title: "Rejected!",
-  //         text: `${vehicle.make} ${vehicle.model} has been rejected successfully.`,
-  //         icon: "success",
-  //         confirmButtonColor: "#9333ea",
-  //       });
-  //     }
-  //   } catch (error) {
-  //     console.error(error);
-  //     await Swal.fire({
-  //       title: "Error!",
-  //       text: "Something went wrong while rejecting the vehicle.",
-  //       icon: "error",
-  //       confirmButtonColor: "#9333ea",
-  //     });
-  //   }
-  // };
 
   const handleReject = async (vehicle) => {
     try {
@@ -215,35 +295,6 @@ export const AwaitingApproval = () => {
     setCurrentImageIndex(0);
   };
 
-  const handlePrevImage = () => {
-    if (selectedVehicle?.images) {
-      setCurrentImageIndex((prev) =>
-        prev === 0 ? selectedVehicle.images.length - 1 : prev - 1,
-      );
-    }
-  };
-
-  const handleNextImage = () => {
-    if (selectedVehicle?.images) {
-      setCurrentImageIndex((prev) =>
-        prev === selectedVehicle.images.length - 1 ? 0 : prev + 1,
-      );
-    }
-  };
-
-  useEffect(() => {
-    const handleClickOutside = (event) => {
-      if (menuRef.current && !menuRef.current.contains(event.target)) {
-        setActionMenuOpen(null);
-      }
-    };
-
-    document.addEventListener("mousedown", handleClickOutside);
-    return () => {
-      document.removeEventListener("mousedown", handleClickOutside);
-    };
-  }, []);
-
   const filteredVehicles = vehicles.filter((v) => {
     const searchTerm = search.toLowerCase();
     return (
@@ -251,7 +302,11 @@ export const AwaitingApproval = () => {
       (v.model && v.model.toLowerCase().includes(searchTerm)) ||
       (v.series && v.series.toLowerCase().includes(searchTerm)) ||
       (v.lot_number &&
-        v.lot_number.toString().toLowerCase().includes(searchTerm))
+        v.lot_number.toString().toLowerCase().includes(searchTerm)) ||
+      (v.year && v.year.toString().toLowerCase().includes(searchTerm)) ||
+      (v.cityName &&
+        v.cityName.toString().toLowerCase().includes(searchTerm)) ||
+      (v.color && v.color.toString().toLowerCase().includes(searchTerm))
     );
   });
 
@@ -286,16 +341,30 @@ export const AwaitingApproval = () => {
     handleGetAllUnapprovalVehicles();
   }, [dateRange]);
 
+  // Close dropdown when scrolling
+  useEffect(() => {
+    const handleScroll = () => {
+      if (actionMenuOpen) {
+        setActionMenuOpen(null);
+      }
+    };
+
+    window.addEventListener("scroll", handleScroll, true);
+    return () => {
+      window.removeEventListener("scroll", handleScroll, true);
+    };
+  }, [actionMenuOpen]);
+
   return (
     <div className="max-h-screen bg-gray-100 p-6">
       <div className="flex flex-col sm:flex-row justify-between items-center mb-6">
         <h2 className="lg:text-3xl text-xl font-bold text-gray-800 text-center">
-          Awaiting Approval Vehicles
+          Awaiting Vehicles
         </h2>
 
         <div className="relative w-full sm:w-80 mt-4 sm:mt-0">
           <CustomSearch
-            placeholder="Search by Car Name or Lot Number..."
+            placeholder="Search..."
             value={search}
             onChange={(e) => {
               setSearch(e.target.value);
@@ -308,13 +377,13 @@ export const AwaitingApproval = () => {
         </div>
       </div>
 
-      <div className="flex flex-col lg:flex-row items-start lg:items-center justify-between mb-6 gap-4">
-        <div className="text-gray-800 font-semibold text-2xl">
-          Total Pending: {totalItems}
+      <div className="flex flex-col lg:flex-row  items-center justify-between mb-6 gap-4">
+        <div className="text-gray-800 font-semibold lg:text-2xl text-xl ">
+          Total Awaiting Vehicles: {totalItems}
         </div>
 
-        <div className="flex flex-col sm:flex-row items-center gap-4">
-          <div className="flex flex-col">
+        <div className="flex  items-center gap-4">
+          <div className="flex flex-col ">
             <label className="text-sm font-medium text-gray-800 mb-1">
               From Date :
             </label>
@@ -328,7 +397,7 @@ export const AwaitingApproval = () => {
             />
           </div>
 
-          <div className="flex flex-col">
+          <div className="flex flex-col ">
             <label className="text-sm font-medium text-gray-800 mb-1">
               To Date :
             </label>
@@ -352,7 +421,7 @@ export const AwaitingApproval = () => {
             <p className="mt-4 text-gray-600">Loading vehicles...</p>
           </div>
         ) : currentPageVehicles?.length > 0 ? (
-          <div className="overflow-x-auto rounded-lg border border-gray-200 bg-white shadow-sm">
+          <div className="overflow-x-auto rounded-lg border border-gray-200 bg-white shadow-sm relative">
             <table className="w-full">
               <thead className="bg-blue-950 text-white">
                 <tr>
@@ -365,10 +434,7 @@ export const AwaitingApproval = () => {
                   </th>
                   <th className="p-4 text-left text-sm font-semibold">Lot#</th>
                   <th className="p-4 text-left text-sm font-semibold">Year</th>
-                  <th className="p-4 text-left text-sm font-semibold">
-                    Fuel Type
-                  </th>
-                  <th className="p-4 text-left text-sm font-semibold">Color</th>
+
                   <th className="p-4 text-left text-sm font-semibold">City</th>
                   <th className="p-4 text-left text-sm font-semibold">
                     Date / Time
@@ -388,7 +454,7 @@ export const AwaitingApproval = () => {
                 {currentPageVehicles.map((vehicle, index) => (
                   <tr
                     key={vehicle.id}
-                    className="hover:bg-gray-50 transition-colors"
+                    className="hover:bg-gray-50 transition-colors relative"
                   >
                     <td className="p-3 text-start text-gray-600">
                       {startIndex + index + 1}
@@ -463,26 +529,6 @@ export const AwaitingApproval = () => {
                     </td>
 
                     <td className="p-1">
-                      <span className="text-sm text-gray-600">
-                        {vehicle.fuelType
-                          ? vehicle.fuelType.charAt(0).toUpperCase() +
-                            vehicle.fuelType.slice(1)
-                          : "--"}
-                      </span>
-                    </td>
-
-                    <td className="p-1">
-                      <div className="flex items-center gap-2">
-                        <span className="text-sm text-gray-600">
-                          {vehicle.color
-                            ? vehicle.color.charAt(0).toUpperCase() +
-                              vehicle.color.slice(1)
-                            : "--"}
-                        </span>
-                      </div>
-                    </td>
-
-                    <td className="p-1">
                       <span className="text-sm text-gray-600 capitalize">
                         {vehicle.cityName || "--"}
                       </span>
@@ -516,7 +562,7 @@ export const AwaitingApproval = () => {
                     <td className="p-1">
                       {vehicle.approval === "A" && (
                         <span className="text-xs text-orange-500 bg-orange-50 rounded-full p-2 uppercase">
-                          Awaiking
+                          Awaiting
                         </span>
                       )}
                     </td>
@@ -524,44 +570,17 @@ export const AwaitingApproval = () => {
                     <td className="p-1">
                       <div className="relative">
                         <button
-                          onClick={() => toggleActionMenu(vehicle.id)}
+                          ref={(el) => (buttonRefs.current[vehicle.id] = el)}
+                          onClick={(e) => {
+                            e.stopPropagation();
+                            toggleActionMenu(vehicle.id, index);
+                          }}
                           className="p-2 rounded-lg hover:bg-gray-200 transition"
                           aria-label="Actions"
                           type="button"
                         >
                           <MoreVertical className="h-5 w-5 text-gray-600" />
                         </button>
-
-                        {actionMenuOpen === vehicle.id && (
-                          <div className="absolute right-0 top-full mt-1 w-48 bg-white border border-gray-200 rounded-lg shadow-lg z-50">
-                            <button
-                              onClick={() => handleApprove(vehicle)}
-                              className="w-full px-4 py-2.5 text-sm text-green-600 hover:bg-green-50 hover:text-green-700 text-left flex items-center gap-2 rounded-t-lg transition"
-                              type="button"
-                            >
-                              <CheckCircle className="h-4 w-4" />
-                              Approve
-                            </button>
-
-                            <button
-                              onClick={() => handleReject(vehicle)}
-                              className="w-full px-4 py-2.5 text-sm text-red-600 hover:bg-red-50 hover:text-red-700 text-left flex items-center gap-2 transition"
-                              type="button"
-                            >
-                              <XCircle className="h-4 w-4" />
-                              Reject
-                            </button>
-
-                            <button
-                              onClick={() => handleViewDetails(vehicle)}
-                              className="w-full px-4 py-2.5 text-sm text-blue-600 hover:bg-blue-50 hover:text-blue-700 text-left flex items-center gap-2 rounded-b-lg transition"
-                              type="button"
-                            >
-                              <Eye className="h-4 w-4" />
-                              View Details
-                            </button>
-                          </div>
-                        )}
                       </div>
                     </td>
                   </tr>
@@ -662,6 +681,19 @@ export const AwaitingApproval = () => {
             </div>
           </div>
         </div>
+      )}
+
+      {/* Portal-based Dropdown Menu */}
+      {actionMenuOpen && (
+        <DropdownMenu
+          vehicle={currentPageVehicles.find((v) => v.id === actionMenuOpen)}
+          isOpen={true}
+          position={dropdownPosition}
+          onClose={() => setActionMenuOpen(null)}
+          onApprove={handleApprove}
+          onReject={handleReject}
+          onViewDetails={handleViewDetails}
+        />
       )}
 
       {isViewModalOpen && (

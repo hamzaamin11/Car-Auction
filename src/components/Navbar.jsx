@@ -24,7 +24,6 @@ import { BASE_URL } from "./Contant/URL";
 import Swal from "sweetalert2";
 
 const getInitialProfileForm = (user) => ({
-  name: user?.name || "",
   gender: user?.gender || "",
   dateOfBirth: user?.dateOfBirth || "",
   country: user?.country || "Pakistan",
@@ -78,7 +77,7 @@ const Navbar = () => {
 
   // Profile form state
   const [profileForm, setProfileForm] = useState(
-    getInitialProfileForm(currentUser)
+    getInitialProfileForm(currentUser),
   );
 
   // Options lists
@@ -96,15 +95,15 @@ const Navbar = () => {
 
   // Filter functions
   const filteredCountries = countries.filter((country) =>
-    country.toLowerCase().includes(countrySearch.toLowerCase())
+    country.toLowerCase().includes(countrySearch.toLowerCase()),
   );
 
   const filteredCities = cities.filter((city) =>
-    city?.cityName?.toLowerCase().includes(citySearch.toLowerCase())
+    city?.cityName?.toLowerCase().includes(citySearch.toLowerCase()),
   );
 
   const filteredGenders = genders.filter((gender) =>
-    gender.toLowerCase().includes(genderSearch.toLowerCase())
+    gender.toLowerCase().includes(genderSearch.toLowerCase()),
   );
 
   // Handle image upload with separate file and preview
@@ -214,7 +213,7 @@ const Navbar = () => {
         `${BASE_URL}/updatePassword/${currentUser?.id}`,
         {
           password: passwordForm.newPassword,
-        }
+        },
       );
       setPasswordForm({
         currentPassword: "",
@@ -244,7 +243,6 @@ const Navbar = () => {
     try {
       const formData = new FormData();
 
-      formData.append("name", profileForm.name);
       formData.append("gender", profileForm.gender);
       formData.append("dateOfBirth", profileForm.dateOfBirth);
       formData.append("country", profileForm.country);
@@ -266,7 +264,7 @@ const Navbar = () => {
           headers: {
             "Content-Type": "multipart/form-data",
           },
-        }
+        },
       );
 
       console.log("Profile updated:", res.data);
@@ -275,7 +273,7 @@ const Navbar = () => {
 
       if (res.data.image || res.data.imageUrl || res.data.profileImage) {
         setImagePreview(
-          res.data.image || res.data.imageUrl || res.data.profileImage
+          res.data.image || res.data.imageUrl || res.data.profileImage,
         );
       }
 
@@ -317,7 +315,9 @@ const Navbar = () => {
       currentUser?.profileImage
     ) {
       setImagePreview(
-        currentUser?.image || currentUser?.imageUrl || currentUser?.profileImage
+        currentUser?.image ||
+          currentUser?.imageUrl ||
+          currentUser?.profileImage,
       );
     }
   }, [currentUser]);
@@ -332,14 +332,14 @@ const Navbar = () => {
         currentUser?.gender
           ? currentUser.gender.charAt(0).toUpperCase() +
               currentUser.gender.slice(1)
-          : ""
+          : "",
       );
 
       setImagePreview(
         currentUser?.image ||
           currentUser?.imageUrl ||
           currentUser?.profileImage ||
-          ""
+          "",
       );
       setImageFile(null);
     }
@@ -446,7 +446,7 @@ const Navbar = () => {
           </Link>
 
           {currentUser ? null : (
-            <div className="lg:flex items-center gap-3 hidden ">
+            <div className="md:flex items-center gap-3 hidden ">
               |
               <Link
                 to="/register"
@@ -779,7 +779,7 @@ const Navbar = () => {
               <button
                 onClick={() =>
                   setActiveDropdown(
-                    activeDropdown === dropdown.id ? null : dropdown.id
+                    activeDropdown === dropdown.id ? null : dropdown.id,
                   )
                 }
                 className="w-full flex justify-between items-center font-medium text-[14px]"
@@ -1015,8 +1015,8 @@ const Navbar = () => {
                   </label>
                   <input
                     type="text"
-                    name="name"
-                    value={profileForm.name}
+                    name="username"
+                    value={profileForm.username}
                     onChange={handleProfileChange}
                     className="p-2.5 w-full border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-900"
                     required

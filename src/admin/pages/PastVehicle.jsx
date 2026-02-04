@@ -1,12 +1,5 @@
 import React, { useEffect, useState, useRef } from "react";
-import {
-  MoreVertical,
-  X,
-  ChevronLeft,
-  ChevronRight,
-  Search,
-  CircleUser,
-} from "lucide-react";
+import { Search, CircleUser } from "lucide-react";
 import axios from "axios";
 import { BASE_URL } from "../../components/Contant/URL";
 import Swal from "sweetalert2";
@@ -34,15 +27,15 @@ export const PastVehicle = () => {
   const currentDate = new Date().toISOString().split("T")[0];
 
   const initialState = {
-    fromDate: currentDate,
-    toDate: currentDate,
+    fromDate: "",
+    toDate: "",
   };
   const [dateRange, setDateRange] = useState(initialState);
 
   const handleGetAllUnapprovalVehicles = async () => {
     try {
       const res = await axios.get(
-        `${BASE_URL}/PastAuctionVehicleListbyDateRange/${currentUser.role}/${currentUser.id}/${dateRange.fromDate}/${dateRange.toDate}`,
+        `${BASE_URL}/PastAuctionVehicleListbyDateRange/${currentUser.role}/${currentUser.id}?fromDate=${dateRange.fromDate}&toDate=${dateRange.toDate}`,
       );
       console.log(res.data);
       setVehicles(res.data);
@@ -178,7 +171,7 @@ export const PastVehicle = () => {
   }, []);
 
   const filteredVehicles = vehicles.filter((v) =>
-    `${v.make} ${v.model} ${v.series}`
+    `${v.make} ${v.model} ${v.series} ${v.year} ${v.color} ${v.lot_number} ${v.cityName} `
       .toLowerCase()
       .includes(search.toLowerCase()),
   );
@@ -221,7 +214,7 @@ export const PastVehicle = () => {
 
         <div className="relative w-full sm:w-80 mt-4 sm:mt-0">
           <CustomSearch
-            placeholder="Search by Car Name..."
+            placeholder="Search..."
             value={search}
             onChange={(e) => {
               setSearch(e.target.value);
@@ -234,9 +227,9 @@ export const PastVehicle = () => {
         </div>
       </div>
 
-      <div className="flex items-center justify-between mb-2">
-        <div className="text-gray-800 mb-2 font-semibold text-2xl">
-          Total Pending: {totalItems}
+      <div className="flex flex-col md:flex-row items-center justify-between mb-2">
+        <div className="text-gray-800 mb-2 font-semibold  lg:text-2xl text-xl">
+          Total Sold Vehicle: {totalItems}
         </div>
 
         <div className="flex items-center gap-4">
@@ -291,7 +284,6 @@ export const PastVehicle = () => {
                   <th className="p-1 text-left text-sm font-semibold">Lot#</th>
                   <th className="p-1 text-left text-sm font-semibold">Year</th>
 
-                  <th className="p-1 text-left text-sm font-semibold">Color</th>
                   <th className="p-1 text-left text-sm font-semibold">City</th>
 
                   <th className="p-1 text-left text-sm font-semibold">
@@ -410,14 +402,6 @@ export const PastVehicle = () => {
                       </span>
                     </td>
 
-                    {/* Color */}
-                    <td className="p-1">
-                      <span className="text-sm text-gray-600">
-                        {vehicle.color?.charAt(0)?.toUpperCase() +
-                          vehicle.color?.slice(1) || "--"}
-                      </span>
-                    </td>
-
                     {/* City */}
                     <td className="p-1">
                       <span className="text-sm text-gray-600">
@@ -429,17 +413,15 @@ export const PastVehicle = () => {
                     <td className="px-4 py-3 text-gray-700">
                       <div className="flex flex-col">
                         <span>
-                          {vehicle?.VehicleCreatedAt
-                            ? new Date(
-                                vehicle?.VehicleCreatedAt,
-                              ).toLocaleDateString("en-GB")
+                          {vehicle?.endTime
+                            ? new Date(vehicle?.endTime).toLocaleDateString(
+                                "en-GB",
+                              )
                             : "N/A"}
                         </span>
                         <span className="text-xs text-gray-500">
-                          {vehicle?.VehicleCreatedAt
-                            ? moment(vehicle?.VehicleCreatedAt)
-                                .local()
-                                .format("hh:mm A")
+                          {vehicle?.endTime
+                            ? moment(vehicle?.endTime).local().format("hh:mm A")
                             : "--"}
                         </span>
                       </div>

@@ -10,8 +10,8 @@ import Swal from "sweetalert2";
 const currentDate = new Date().toISOString().split("T")[0];
 
 const initialState = {
-  fromDate: currentDate,
-  toDate: currentDate,
+  fromDate: "",
+  toDate: "",
 };
 
 export const SetEventAuction = () => {
@@ -129,7 +129,7 @@ export const SetEventAuction = () => {
             Add Event
           </button>
         </div>
-        <div className="flex items-center justify-end my-2 gap-4">
+        <div className="flex items-center justify-between md:justify-end my-2 gap-4">
           <div className="flex flex-col">
             <label className="text-sm font-medium text-gray-800 mb-1">
               From Date :
@@ -159,7 +159,7 @@ export const SetEventAuction = () => {
 
         <div className="w-full bg-white rounded shadow-md border border-gray-600 mb-8">
           {/* Desktop Table View  */}
-          <div className="hidden md:block overflow-x-auto">
+          <div className=" overflow-x-auto">
             <table className="min-w-full text-sm table-fixed">
               <thead className="bg-blue-950 text-white">
                 <tr>

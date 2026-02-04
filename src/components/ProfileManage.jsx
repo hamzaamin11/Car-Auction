@@ -25,7 +25,6 @@ const getInitialProfileForm = (user) => ({
 
 export const ProfileManage = ({ handleIsOpenModal }) => {
   const { currentUser } = useSelector((state) => state?.auth);
-  const [accountSettingsOpen, setAccountSettingsOpen] = useState(false);
   const [dropdownOpen, setDropdownOpen] = useState(false);
   const [passwordModalOpen, setPasswordModalOpen] = useState(false);
   const [profileModalOpen, setProfileModalOpen] = useState(false);
@@ -380,6 +379,7 @@ export const ProfileManage = ({ handleIsOpenModal }) => {
                   name="name"
                   value={profileForm?.name}
                   onChange={handleProfileChange}
+                  readOnly
                   className="p-2.5 w-full border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-900"
                   required
                 />

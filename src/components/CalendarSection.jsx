@@ -28,7 +28,7 @@ export default function CalendarSection() {
   const handleGetAllDates = async () => {
     try {
       const res = await axios.get(`${BASE_URL}/seller/getCalenderEvents`);
-      console.log("=> date", res.data);
+      console.log("=> date", res);
        setAllAuctions(res.data);
     } catch (error) {
       console.log(error);
@@ -54,9 +54,7 @@ export default function CalendarSection() {
 
       <div className="w-full mt-2 lg:mt-6 text-gray-600 text-base leading-relaxed text-justify">
         <p>
-          Don’t miss an auction with the Auctions Calendar. The Auction Calendar
-          shows you all upcoming auctions planned for the week by date, time and
-          location.
+          Don’t miss an auction with the Auctions Calendar.
         </p>
       </div>
 

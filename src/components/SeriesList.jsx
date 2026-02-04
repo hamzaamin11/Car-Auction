@@ -182,8 +182,8 @@ export const SeriesList = () => {
       </div>
 
       {/* Desktop Table — YOUR ORIGINAL */}
-      <div className="hidden md:block bg-white shadow-md rounded-lg overflow-hidden">
-        <table className="min-w-full">
+      <div className="w-full bg-white shadow-md rounded-lg overflow-hidden">
+        <table className="w-full">
           <thead className="bg-blue-950 text-white">
             <tr>
               <th className="py-3 px-4 text-left">Sr</th>
@@ -235,42 +235,6 @@ export const SeriesList = () => {
             )}
           </tbody>
         </table>
-      </div>
-
-      {/* Mobile Cards — YOUR ORIGINAL */}
-      <div className="md:hidden">
-        {currentDisplay.length === 0 ? (
-          <p className="text-center text-gray-500 py-6">No series found</p>
-        ) : (
-          currentDisplay.map((series, index) => (
-            <div
-              key={series._id}
-              className="bg-white border border-gray-200 rounded-xl shadow-sm p-4 mb-4 hover:shadow-md"
-            >
-              <h4 className="font-bold text-lg text-gray-800 capitalize mb-2">
-                {series.seriesName}
-              </h4>
-              <div className="grid grid-cols-2 gap-y-2 text-sm">
-                <span className="font-semibold">Brand:</span>
-                <span>{series.brandName}</span>
-                <span className="font-semibold">Model:</span>
-                <span>{series.modelName}</span>
-              </div>
-              <div className="flex gap-3 mt-4">
-                <CustomAdd
-                  text="Edit"
-                  variant="edit"
-                  onClick={() => handleEditBtn(series)}
-                />
-                <CustomAdd
-                  text="Delete"
-                  variant="delete"
-                  onClick={() => handleDeleteSeries(series?.seriesId)}
-                />
-              </div>
-            </div>
-          ))
-        )}
       </div>
 
       {/* PERFECT PAGINATION — SAME AS BRANDLIST */}

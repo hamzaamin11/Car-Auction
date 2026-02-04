@@ -45,7 +45,7 @@ export const AddCommission = ({ handleClose, handleGetAllCommission }) => {
       <div className="bg-white rounded-lg shadow-lg w-full max-w-md p-6">
         <div className="flex items-center justify-between">
           <h2 className="text-xl font-semibold mb-4 text-center">
-            Add Commission %
+            Add Commission
           </h2>
           <span
             onClick={handleClose}

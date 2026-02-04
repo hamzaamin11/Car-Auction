@@ -31,53 +31,37 @@ export default function ManageUsers() {
       setSearch(value);
       setCurrentPage(1);
     }, 300),
-    []
+    [],
   );
 
   const fetchPage = async (page, searchTerm = "") => {
     try {
       const res = await axios.get(`${BASE_URL}/admin/getRegisteredMembers`, {
-        params: { entry: itemsPerRequest, page, search: searchTerm },
+        params: { entry: itemsPerRequest, page, search: search },
       });
       const data = res.data || [];
       if (data.length < itemsPerRequest) setHasMore(false);
-      return data;
+      setAllUsers(data);
     } catch (error) {
       Swal.fire({
         title: "Error",
-        text: "Failed to load users",
+        text: error?.response?.data?.message,
         icon: "error",
-        confirmButtonColor: "#9333ea",
+        confirmButtonColor: "#172554",
       });
       return [];
     }
   };
 
-  const loadUsers = async (reset = false) => {
-    setLoading(true);
-    const pageToLoad = reset ? 1 : currentPage;
-    const users = await fetchPage(pageToLoad, search);
-
-    if (reset) {
-      setAllUsers(users);
-      setHasMore(users.length === itemsPerRequest);
-    } else {
-      setAllUsers((prev) => [...prev, ...users]);
-    }
-    setLoading(false);
-  };
-
   useEffect(() => {
-    setAllUsers([]);
+    fetchPage();
     setHasMore(true);
     setCurrentPage(1);
-    loadUsers(true);
   }, [search, itemsPerPage]);
 
   useEffect(() => {
     const totalNeeded = currentPage * itemsPerPage;
     if (allUsers.length < totalNeeded && hasMore && !loading) {
-      loadUsers(false);
     }
   }, [currentPage, itemsPerPage]);
 
@@ -135,7 +119,7 @@ export default function ManageUsers() {
 
   const handleUserUpdated = (updatedUser) => {
     setAllUsers((prev) =>
-      prev.map((u) => (u.id === updatedUser.id ? { ...u, ...updatedUser } : u))
+      prev.map((u) => (u.id === updatedUser.id ? { ...u, ...updatedUser } : u)),
     );
     setIsModalOpen(false);
   };
@@ -160,7 +144,6 @@ export default function ManageUsers() {
     } else if (currentPage >= totalPages - 2) {
       for (let i = totalPages - 4; i <= totalPages; i++) pages.push(i);
     } else {
-      maxBidRef;
       for (let i = currentPage - 2; i <= currentPage + 2; i++) pages.push(i);
     }
     return pages;
@@ -212,7 +195,7 @@ export default function ManageUsers() {
             </svg>
           </span>
           <CustomSearch
-            placeholder="Search by Role..."
+            placeholder="Search..."
             value={search}
             onChange={(e) => {
               setSearch(e.target.value);
@@ -226,11 +209,6 @@ export default function ManageUsers() {
         <div>
           Total Customers:
           <span>{totals?.totalCustomers}</span>
-        </div>{" "}
-        |
-        <div>
-          Total Seller:
-          <span>{totals?.totalSellers}</span>
         </div>
       </div>
 
@@ -244,7 +222,7 @@ export default function ManageUsers() {
                 <th className="p-1 text-left text-sm font-semibold">Email</th>
                 <th className="p-1 text-left text-sm font-semibold">Phone</th>
                 <th className="p-1 text-left text-sm font-semibold">Role</th>
-                <th className="p-1 text-left text-sm font-semibold">Actions</th>
+                <th className="p-1 text-center text-sm font-semibold">Actions</th>
               </tr>
             </thead>
             <tbody className="divide-y">
@@ -256,7 +234,7 @@ export default function ManageUsers() {
                   {/* Serial Number */}
                   <td className="p-1">
                     <span className="text-sm text-gray-600 px-2">
-                      {index + 1}
+                      {startIndex + index + 1}
                     </span>
                   </td>
 
@@ -293,8 +271,8 @@ export default function ManageUsers() {
                         user.role === "admin"
                           ? "bg-blue-100 text-blue-800"
                           : user.role === "customer"
-                          ? "bg-yellow-100 text-yellow-800"
-                          : "bg-green-100 text-green-800"
+                            ? "bg-yellow-100 text-yellow-800"
+                            : "bg-green-100 text-green-800"
                       }`}
                     >
                       {user.role.charAt(0).toUpperCase() + user.role.slice(1)}
@@ -302,8 +280,8 @@ export default function ManageUsers() {
                   </td>
 
                   {/* Actions - Three Buttons */}
-                  <td className="p-1">
-                    <div className="flex gap-2">
+                  <td className="p-1 ">
+                    <div className="flex text-center gap-2">
                       {/* Edit Button */}
                       <button
                         onClick={() => {
@@ -401,8 +379,8 @@ export default function ManageUsers() {
                     user.role === "admin"
                       ? "bg-blue-100 text-blue-500"
                       : user.role === "customer"
-                      ? "bg-yellow-100 text-yellow-500"
-                      : "bg-green-100 text-green-500"
+                        ? "bg-yellow-100 text-yellow-500"
+                        : "bg-green-100 text-green-500"
                   }`}
                 >
                   {user?.role?.charAt(0)?.toUpperCase() + user?.role?.slice(1)}

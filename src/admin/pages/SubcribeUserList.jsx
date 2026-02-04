@@ -20,7 +20,7 @@ export const SubcribeUserList = () => {
       setSearch(value);
       setCurrentPage(1);
     }, 300),
-    []
+    [],
   );
 
   const handleGetSuggestions = async () => {
@@ -41,7 +41,7 @@ export const SubcribeUserList = () => {
 
   useEffect(() => {
     const filtered = allContacts.filter((contact) =>
-      contact?.email?.toLowerCase().includes(search.toLowerCase())
+      contact?.email?.toLowerCase().includes(search.toLowerCase()),
     );
     setFilteredContacts(filtered);
   }, [search, allContacts]);
@@ -112,7 +112,7 @@ export const SubcribeUserList = () => {
       </div>
 
       {/* Desktop Table – 100% unchanged */}
-      <div className="hidden md:block">
+      <div className="">
         <div className="bg-white shadow-lg rounded overflow-hidden border border-gray-600">
           <table className="w-full">
             <thead>
@@ -206,33 +206,6 @@ export const SubcribeUserList = () => {
             </tbody>
           </table>
         </div>
-      </div>
-
-      {/* Mobile Cards – 100% unchanged */}
-      <div className="md:hidden space-y-4">
-        {currentItems.length > 0 ? (
-          currentItems.map((contact) => (
-            <div
-              key={contact.id}
-              className="bg-white rounded-xl shadow-md border border-gray-200 p-4 transition-all duration-300 hover:shadow-lg cursor-pointer"
-              onClick={() => handleView(contact)}
-            >
-              <div className="space-y-2 text-sm">
-                <p className="flex justify-between">
-                  <span className="font-bold text-gray-900">Email</span>
-                  <span className="text-gray-700">
-                    {contact?.email.charAt(0).toUpperCase() +
-                      contact?.email.slice(1)}
-                  </span>
-                </p>
-              </div>
-            </div>
-          ))
-        ) : (
-          <div className="text-center py-8 text-gray-400 text-sm">
-            No Emails found.
-          </div>
-        )}
       </div>
 
       {/* ONLY THIS PART CHANGED – PERFECT PAGINATION */}

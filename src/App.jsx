@@ -110,6 +110,10 @@ import { SetEventAuction } from "./admin/pages/SetEventAuction";
 import { AssignEvent } from "./admin/pages/AssignEvent";
 import { UnsoldVehicles } from "./admin/pages/UnsoldVehicles";
 import { IncrementConfig } from "./admin/pages/IncrementConfig";
+import { AddPayment } from "./admin/pages/Addpayment";
+import Sellers from "./admin/pages/Sellers";
+import { CommissionList } from "./admin/pages/CommissionList";
+import { BuyVehicles } from "./pages/BuyVehicles";
 
 function Layout() {
   const location = useLocation();
@@ -130,6 +134,8 @@ function Layout() {
   const vehicleList = location.pathname === "/seller/addVehicle";
   const unsoldVehicle = location.pathname === "/seller/unsold";
   const upcomingAuction = location.pathname === "/seller/upcoming-auctions";
+  const sellerInspection = location.pathname === "/seller/inspection";
+  const soldVehicle = location.pathname === "/seller/pastvehicle";
   const bidHistory = location.pathname === "/seller/my-bids";
 
   const hideNavbarFooter =
@@ -140,6 +146,8 @@ function Layout() {
     upcomingAuction ||
     vehicleList ||
     unsoldVehicle ||
+    soldVehicle ||
+    sellerInspection ||
     bidHistory;
 
   if (
@@ -233,6 +241,8 @@ function Layout() {
 
           <Route path="/join" element={<JoinAuctions />} />
 
+          <Route path="/buyvehicles" element={<BuyVehicles />} />
+
           <Route path="/calculator" element={<PriceCalculator />} />
 
           <Route path="/certified" element={<CertifiedCarsPage />} />
@@ -278,15 +288,30 @@ function Layout() {
           <Route index element={<AdminDashboard />} />
 
           <Route path="vehicles" element={<AddAdminVehicle />} />
+
           <Route path="eventauction" element={<SetEventAuction />} />
+
           <Route path="/admin/addbrand" element={<BrandList />} />
+
           <Route path="/admin/addmodel" element={<ModelList />} />
+
           <Route path="/admin/addseries" element={<SeriesList />} />
+
           <Route path="/admin/approval" element={<VehicleApproval />} />
+
+          {/** 
+
           <Route path="/admin/awaiting" element={<AwaitingApproval />} />
+
+          */}
+
           <Route path="/admin/city" element={<CitiesList />} />
+
           <Route path="/admin/accountsetting" element={<AccountSetting />} />
+
           <Route path="/admin/pastvehicle" element={<PastVehicle />} />
+
+          <Route path="/admin/addpayment" element={<AddPayment />} />
 
           <Route path="/admin/configuration" element={<Configuration />} />
 
@@ -306,20 +331,33 @@ function Layout() {
 
           <Route path="/admin/contactlist" element={<ContactList />} />
 
+          <Route path="/admin/commissionlist" element={<CommissionList />} />
+
           <Route
             path="/admin/becomepartnerlist"
             element={<BecomePartnerList />}
           />
 
           <Route path="vehicle-prices" element={<AddVehiclePrices />} />
+
           <Route path="vehicle-spects" element={<AddVehicleSpects />} />
+
           <Route path="vehicle-details" element={<VehicleDetailsViewer />} />
+
           <Route path="live-auctions" element={<LiveAuctions />} />
+
           <Route path="/admin/unsold" element={<UnsoldVehicles />} />
+
           <Route path="upcoming-auctions" element={<UpcomingAuctions />} />
+
           <Route path="bid-history" element={<AdminBidHistory />} />
+
           <Route path="manage-users" element={<ManageUsers />} />
+
+          <Route path="/admin/seller" element={<Sellers />} />
+
           <Route path="/admin/customerlist" element={<CustomerList />} />
+
           <Route path="/admin/subcribeuser" element={<SubcribeUserList />} />
         </Route>
 

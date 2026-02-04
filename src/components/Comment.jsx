@@ -32,6 +32,9 @@ const LiveCommentsModal = ({
   const [showIncrementModal, setShowIncrementModal] = useState(false);
   const commentsEndRef = useRef(null);
   const [currentAmount, setCurrentAmount] = useState(null);
+
+  console.log("currentBid =>", currentAmount);
+
   const maxBidRef = useRef();
   const [incrematalAmount, setIncrementAmount] = useState([]);
 
@@ -139,9 +142,10 @@ const LiveCommentsModal = ({
   };
 
   const handleGetCurrentBid = async () => {
+    console.log("vehicleId =>", vehicleId);
     try {
       const res = await axios.get(
-        `${BASE_URL}/customer/getLatestBidAmount/${vehicleId}`
+        `${BASE_URL}/customer/getLatestBidAmount/${vehicleId}`,
       );
       setCurrentAmount(res.data);
     } catch (error) {
@@ -190,7 +194,7 @@ const LiveCommentsModal = ({
         icon: "success",
         title: "Bid Placed!",
         text: `PKR ${parseInt(
-          bidAmount.maxBid
+          bidAmount.maxBid,
         ).toLocaleString()} bid placed successfully!`,
         confirmButtonColor: "#10b981",
         timer: 3000,
@@ -217,9 +221,15 @@ const LiveCommentsModal = ({
   const handleIncrement = (value) => {
     const current = BigInt(currentAmount?.yourOffer || 0);
 
+    console.log("current val =>", current);
+
     const increment = BigInt(value);
 
+    console.log("increment val =>", increment);
+
     const newBid = current + increment;
+
+    console.log("newBid =>", newBid);
 
     setBidAmount((prev) => ({
       ...prev,
@@ -246,10 +256,6 @@ const LiveCommentsModal = ({
   }, [bidAmount.maxBid]);
 
   if (!isOpen) return null;
-
-  useEffect(() => {
-    handleGetCurrentBid();
-  }, []);
 
   return (
     <>
@@ -297,20 +303,20 @@ const LiveCommentsModal = ({
                       {phase === "before"
                         ? "Starts In"
                         : phase === "running"
-                        ? "Time Left"
-                        : "Ended"}
+                          ? "Time Left"
+                          : "Ended"}
                     </div>
                   </div>
                 );
               }}
             </CountdownCircleTimer>
             {allCustomerBid.filter(
-              (bid) => bid.role !== "admin" && bid.role !== "seller"
+              (bid) => bid.role !== "admin" && bid.role !== "seller",
             ).length > 0 &&
               // Current and Second Last Bid
               (() => {
                 const filteredBids = allCustomerBid.filter(
-                  (bid) => bid.role !== "admin" && bid.role !== "seller"
+                  (bid) => bid.role !== "admin" && bid.role !== "seller",
                 );
                 const currentBid = filteredBids[filteredBids.length - 1];
                 const secondLastBid =
@@ -354,7 +360,7 @@ const LiveCommentsModal = ({
           {/* Bids List */}
           <div className="flex-1 overflow-y-auto p-4 space-y-3 bg-gray-50 min-h-0">
             {allCustomerBid.filter(
-              (bid) => bid.role !== "admin" && bid.role !== "seller"
+              (bid) => bid.role !== "admin" && bid.role !== "seller",
             ).length === 0 ? (
               <div className="flex flex-col items-center justify-center h-48 text-gray-400">
                 <FaMoneyCheck />
@@ -410,7 +416,9 @@ const LiveCommentsModal = ({
 
                 <button
                   type="button"
-                  onClick={() => setShowIncrementModal(true)}
+                  onClick={() => {
+                    (setShowIncrementModal(true), handleGetCurrentBid());
+                  }}
                   className="absolute right-1 top-1/2 -translate-y-1/2 bg-red-600 text-white rounded-md p-1.5 transition"
                   disabled={phase !== "running" || loading}
                 >

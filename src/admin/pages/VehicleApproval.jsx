@@ -1,9 +1,7 @@
 import React, { useEffect, useState, useRef } from "react";
+import ReactDOM from "react-dom";
 import {
   MoreVertical,
-  X,
-  ChevronLeft,
-  ChevronRight,
   Search,
   Edit,
   CheckCircle,
@@ -22,8 +20,104 @@ import moment from "moment";
 import { UserDetailModal } from "../components/UserDetailModal/UserDetail";
 import { ViewAdminCar } from "../../components/ViewAdminCar";
 
+// Dropdown Menu Component using Portal
+const DropdownMenu = ({
+  vehicle,
+  isOpen,
+  position,
+  onClose,
+  onEdit,
+  onApprove,
+  onAwaiting,
+  onReject,
+  onViewDetails,
+}) => {
+  const menuRef = useRef(null);
+
+  useEffect(() => {
+    const handleClickOutside = (event) => {
+      if (menuRef.current && !menuRef.current.contains(event.target)) {
+        onClose();
+      }
+    };
+
+    if (isOpen) {
+      document.addEventListener("mousedown", handleClickOutside);
+    }
+
+    return () => {
+      document.removeEventListener("mousedown", handleClickOutside);
+    };
+  }, [isOpen, onClose]);
+
+  if (!isOpen) return null;
+
+  return ReactDOM.createPortal(
+    <div
+      ref={menuRef}
+      className="fixed z-50 w-48 bg-white border border-gray-200 rounded-lg shadow-lg"
+      style={{
+        left: `${position.x}px`,
+        top: `${position.y}px`,
+      }}
+    >
+      <button
+        onClick={(e) => {
+          e.stopPropagation();
+          onEdit(vehicle);
+        }}
+        className="w-full px-4 py-2.5 text-sm text-orange-600 hover:bg-orange-50 hover:text-orange-700 text-left flex items-center gap-2 rounded-t-lg transition"
+        type="button"
+      >
+        <Edit className="h-4 w-4" />
+        Edit
+      </button>
+
+      <button
+        onClick={(e) => {
+          e.stopPropagation();
+          onApprove(vehicle);
+        }}
+        className="w-full px-4 py-2.5 text-sm text-green-600 hover:bg-green-50 hover:text-green-700 text-left flex items-center gap-2 transition"
+        type="button"
+      >
+        <CheckCircle className="h-4 w-4" />
+        Approve
+      </button>
+
+    
+
+      <button
+        onClick={(e) => {
+          e.stopPropagation();
+          onReject(vehicle);
+        }}
+        className={`w-full px-4 py-2.5 text-sm text-red-600 hover:bg-red-50 hover:text-red-700 text-left flex items-center gap-2 transition ${vehicle.approval === "R" && "hidden"}`}
+        type="button"
+      >
+        <XCircle className="h-4 w-4" />
+        Reject
+      </button>
+
+      <button
+        onClick={(e) => {
+          e.stopPropagation();
+          onViewDetails(vehicle);
+        }}
+        className="w-full px-4 py-2.5 text-sm text-blue-600 hover:bg-blue-50 hover:text-blue-700 text-left flex items-center gap-2 rounded-b-lg transition"
+        type="button"
+      >
+        <Eye className="h-4 w-4" />
+        View Details
+      </button>
+    </div>,
+    document.body,
+  );
+};
+
 export const VehicleApproval = () => {
   const [actionMenuOpen, setActionMenuOpen] = useState(null);
+  const [dropdownPosition, setDropdownPosition] = useState({ x: 0, y: 0 });
   const [search, setSearch] = useState("");
   const [vehicles, setVehicles] = useState([]);
   const [selectedVehicle, setSelectedVehicle] = useState(null);
@@ -37,12 +131,13 @@ export const VehicleApproval = () => {
   const currentDate = new Date().toISOString().split("T")[0];
 
   const initialState = {
-    fromDate: currentDate,
-    toDate: currentDate,
+    fromDate: "",
+    toDate: "",
   };
   const [dateRange, setDateRange] = useState(initialState);
 
-  const menuRef = useRef(null);
+  const buttonRefs = useRef({});
+  const tableRef = useRef(null);
   const itemsPerPage = 10;
 
   const handleChangeDate = (e) => {
@@ -55,7 +150,7 @@ export const VehicleApproval = () => {
     setLoading(true);
     try {
       const res = await axios.get(
-        `${BASE_URL}/getUnApprovedVehiclesbyDateRange/${dateRange.fromDate}/${dateRange.toDate}`,
+        `${BASE_URL}/getUnApprovedVehiclesbyDateRange?fromDate=${dateRange.fromDate}&toDate=${dateRange.toDate}`,
       );
       console.log(res.data);
       setVehicles(res.data || []);
@@ -77,8 +172,45 @@ export const VehicleApproval = () => {
     setIsOpen((prev) => (prev === active ? "" : active));
   };
 
-  const toggleActionMenu = (id) => {
-    setActionMenuOpen((prev) => (prev === id ? null : id));
+  const toggleActionMenu = (id, index) => {
+    if (actionMenuOpen === id) {
+      setActionMenuOpen(null);
+      return;
+    }
+
+    // Calculate dropdown position
+    const button = buttonRefs.current[id];
+    if (!button) return;
+
+    const buttonRect = button.getBoundingClientRect();
+
+    // Calculate position for dropdown
+    // Open below the button by default
+    let x = buttonRect.left;
+    let y = buttonRect.bottom + 5;
+
+    // Check if there's enough space at the bottom
+    const viewportHeight = window.innerHeight;
+    const dropdownHeight = 200; // Approximate height of dropdown
+
+    if (y + dropdownHeight > viewportHeight) {
+      // If not enough space at bottom, open above the button
+      y = buttonRect.top - dropdownHeight - 5;
+
+      // Ensure it doesn't go above viewport
+      if (y < 5) {
+        y = 5;
+      }
+    }
+
+    // Ensure it doesn't go beyond right edge
+    const dropdownWidth = 192; // w-48 = 192px
+    if (x + dropdownWidth > window.innerWidth) {
+      x = window.innerWidth - dropdownWidth - 5;
+    }
+
+    setDropdownPosition({ x, y });
+    setActionMenuOpen(id);
   };
 
   const handleApprove = async (vehicle) => {
@@ -178,7 +310,6 @@ export const VehicleApproval = () => {
         },
       });
 
-      // ❗ Only when confirmed
       if (result.isConfirmed) {
         const reason = result.value;
 
@@ -225,6 +356,7 @@ export const VehicleApproval = () => {
   const handleUpdateVehicle = (vehicle, openModel) => {
     console.log(vehicle, openModel);
     setSelectedVehicle(vehicle);
+    setActionMenuOpen(null);
     handleIsOpen(openModel);
   };
 
@@ -234,35 +366,6 @@ export const VehicleApproval = () => {
     setCurrentImageIndex(0);
   };
 
-  const handlePrevImage = () => {
-    if (selectedVehicle?.images) {
-      setCurrentImageIndex((prev) =>
-        prev === 0 ? selectedVehicle.images.length - 1 : prev - 1,
-      );
-    }
-  };
-
-  const handleNextImage = () => {
-    if (selectedVehicle?.images) {
-      setCurrentImageIndex((prev) =>
-        prev === selectedVehicle.images.length - 1 ? 0 : prev + 1,
-      );
-    }
-  };
-
-  useEffect(() => {
-    const handleClickOutside = (event) => {
-      if (menuRef.current && !menuRef.current.contains(event.target)) {
-        setActionMenuOpen(null);
-      }
-    };
-
-    document.addEventListener("mousedown", handleClickOutside);
-    return () => {
-      document.removeEventListener("mousedown", handleClickOutside);
-    };
-  }, []);
-
   const filteredVehicles = vehicles.filter((v) => {
     const searchTerm = search.toLowerCase();
     return (
@@ -270,7 +373,10 @@ export const VehicleApproval = () => {
       (v.model && v.model.toLowerCase().includes(searchTerm)) ||
       (v.series && v.series.toLowerCase().includes(searchTerm)) ||
       (v.lot_number &&
-        v.lot_number.toString().toLowerCase().includes(searchTerm))
+        v.lot_number.toString().toLowerCase().includes(searchTerm)) ||
+      (v.year && v.year.toString().toLowerCase().includes(searchTerm)) ||
+      (v.color && v.color.toString().toLowerCase().includes(searchTerm)) ||
+      (v.cityName && v.cityName.toString().toLowerCase().includes(searchTerm))
     );
   });
 
@@ -287,7 +393,6 @@ export const VehicleApproval = () => {
     }
   };
 
-  console.log("honest =>", startIndex);
   const getPageNumbers = () => {
     const pages = [];
     if (totalPages <= 5) {
@@ -306,16 +411,30 @@ export const VehicleApproval = () => {
     handleGetAllUnapprovalVehicles();
   }, [dateRange]);
 
+  // Close dropdown when scrolling
+  useEffect(() => {
+    const handleScroll = () => {
+      if (actionMenuOpen) {
+        setActionMenuOpen(null);
+      }
+    };
+
+    window.addEventListener("scroll", handleScroll, true);
+    return () => {
+      window.removeEventListener("scroll", handleScroll, true);
+    };
+  }, [actionMenuOpen]);
+
   return (
     <div className="max-h-screen bg-gray-100 p-6">
-      <div className="flex flex-col sm:flex-row justify-between items-center mb-6">
+      <div className="flex flex-col md:flex-row justify-between items-center mb-6">
         <h2 className="lg:text-3xl text-xl font-bold text-gray-800 text-center">
-          Pending Vehicle Approvals
+          Pending Vehicles
         </h2>
 
         <div className="relative w-full sm:w-80 mt-4 sm:mt-0">
           <CustomSearch
-            placeholder="Search by Car Name or Lot Number..."
+            placeholder="Search..."
             value={search}
             onChange={(e) => {
               setSearch(e.target.value);
@@ -328,12 +447,12 @@ export const VehicleApproval = () => {
         </div>
       </div>
 
-      <div className="flex flex-col lg:flex-row items-start lg:items-center justify-between mb-6 gap-4">
-        <div className="text-gray-800 font-semibold text-2xl">
-          Total Pending: {totalItems}
+      <div className="flex flex-col lg:flex-row items-center justify-between mb-6 gap-4">
+        <div className="text-gray-800 font-semibold lg:text-2xl text-xl">
+          Total Pending Vehicles: {totalItems}
         </div>
 
-        <div className="flex flex-col sm:flex-row items-center gap-4">
+        <div className="flex items-center gap-4">
           <div className="flex flex-col">
             <label className="text-sm font-medium text-gray-800 mb-1">
               From Date :
@@ -365,7 +484,7 @@ export const VehicleApproval = () => {
         </div>
       </div>
 
-      <div className="max-w-7xl mx-auto px-2 lg:px-0">
+      <div className="max-w-7xl mx-auto px-2 lg:px-0" ref={tableRef}>
         {loading ? (
           <div className="text-center py-12">
             <div className="inline-block animate-spin rounded-full h-12 w-12 border-b-2 border-blue-900"></div>
@@ -380,26 +499,23 @@ export const VehicleApproval = () => {
                   <th className="p-1 text-left text-sm font-semibold">
                     Seller Name
                   </th>
-                  <th className="p-4 text-left text-sm font-semibold">
+                  <th className="p-1 text-left text-sm font-semibold">
                     Vehicle Name
                   </th>
-                  <th className="p-4 text-left text-sm font-semibold">Lot#</th>
-                  <th className="p-4 text-left text-sm font-semibold">Year</th>
-                  <th className="p-4 text-left text-sm font-semibold">
-                    Fuel Type
-                  </th>
-                  <th className="p-4 text-left text-sm font-semibold">Color</th>
-                  <th className="p-4 text-left text-sm font-semibold">City</th>
-                  <th className="p-4 text-left text-sm font-semibold">
+                  <th className="p-1 text-left text-sm font-semibold">Lot#</th>
+                  <th className="p-1 text-left text-sm font-semibold">Year</th>
+
+                  <th className="p-1 text-left text-sm font-semibold">City</th>
+                  <th className="p-1 text-left text-sm font-semibold">
                     Date / Time
                   </th>
-                  <th className="p-4 text-left text-sm font-semibold">
+                  <th className="p-1 text-left text-sm font-semibold">
                     Reserve Price
                   </th>
-                  <th className="p-4 text-left text-sm font-semibold">
+                  <th className="p-1 text-left text-sm font-semibold">
                     Status
                   </th>
-                  <th className="p-4 text-left text-sm font-semibold">
+                  <th className="p-1 text-left text-sm font-semibold">
                     Actions
                   </th>
                 </tr>
@@ -484,26 +600,6 @@ export const VehicleApproval = () => {
 
                     <td className="p-1">
                       <span className="text-sm text-gray-600">
-                        {vehicle.fuelType
-                          ? vehicle.fuelType.charAt(0).toUpperCase() +
-                            vehicle.fuelType.slice(1)
-                          : "--"}
-                      </span>
-                    </td>
-
-                    <td className="p-1">
-                      <div className="flex items-center gap-2">
-                        <span className="text-sm text-gray-600">
-                          {vehicle.color
-                            ? vehicle.color.charAt(0).toUpperCase() +
-                              vehicle.color.slice(1)
-                            : "--"}
-                        </span>
-                      </div>
-                    </td>
-
-                    <td className="p-1">
-                      <span className="text-sm text-gray-600">
                         {vehicle.cityName || "--"}
                       </span>
                     </td>
@@ -549,64 +645,17 @@ export const VehicleApproval = () => {
                     <td className="p-1">
                       <div className="relative">
                         <button
-                          onClick={() => toggleActionMenu(vehicle.id)}
+                          ref={(el) => (buttonRefs.current[vehicle.id] = el)}
+                          onClick={(e) => {
+                            e.stopPropagation();
+                            toggleActionMenu(vehicle.id, index);
+                          }}
                           className="p-2 rounded-lg hover:bg-gray-200 transition"
                           aria-label="Actions"
                           type="button"
                         >
                           <MoreVertical className="h-5 w-5 text-gray-600" />
                         </button>
-
-                        {actionMenuOpen === vehicle.id && (
-                          <div className="absolute right-0 top-full mt-2 w-48 bg-white border border-gray-200 rounded-lg shadow-lg z-50">
-                            <button
-                              onClick={() =>
-                                handleUpdateVehicle(vehicle, "edit")
-                              }
-                              className="w-full px-4 py-2.5 text-sm text-orange-600 hover:bg-orange-50 hover:text-orange-700 text-left flex items-center gap-2 rounded-t-lg transition"
-                              type="button"
-                            >
-                              <Edit className="h-4 w-4" />
-                              Edit
-                            </button>
-
-                            <button
-                              onClick={() => handleApprove(vehicle)}
-                              className="w-full px-4 py-2.5 text-sm text-green-600 hover:bg-green-50 hover:text-green-700 text-left flex items-center gap-2 transition"
-                              type="button"
-                            >
-                              <CheckCircle className="h-4 w-4" />
-                              Approve
-                            </button>
-
-                            <button
-                              onClick={() => handleAwaiting(vehicle)}
-                              className="w-full px-4 py-2.5 text-sm text-yellow-600 hover:bg-yellow-50 hover:text-yellow-700 text-left flex items-center gap-2 transition"
-                              type="button"
-                            >
-                              <Clock className="h-4 w-4" />
-                              Awaiting
-                            </button>
-
-                            <button
-                              onClick={() => handleReject(vehicle)}
-                              className={`w-full px-4 py-2.5 text-sm text-red-600 hover:bg-red-50 hover:text-red-700 text-left flex items-center gap-2 transition  ${vehicle.approval === "R" && "hidden"}`}
-                              type="button"
-                            >
-                              <XCircle className="h-4 w-4" />
-                              Reject
-                            </button>
-
-                            <button
-                              onClick={() => handleViewDetails(vehicle)}
-                              className="w-full px-4 py-2.5 text-sm text-blue-600 hover:bg-blue-50 hover:text-blue-700 text-left flex items-center gap-2 rounded-b-lg transition"
-                              type="button"
-                            >
-                              <Eye className="h-4 w-4" />
-                              View Details
-                            </button>
-                          </div>
-                        )}
                       </div>
                     </td>
                   </tr>
@@ -707,6 +756,21 @@ export const VehicleApproval = () => {
             </div>
           </div>
         </div>
+      )}
+
+      {/* Portal-based Dropdown Menu */}
+      {actionMenuOpen && (
+        <DropdownMenu
+          vehicle={currentPageVehicles.find((v) => v.id === actionMenuOpen)}
+          isOpen={true}
+          position={dropdownPosition}
+          onClose={() => setActionMenuOpen(null)}
+          onEdit={(vehicle) => handleUpdateVehicle(vehicle, "edit")}
+          onApprove={handleApprove}
+          onAwaiting={handleAwaiting}
+          onReject={handleReject}
+          onViewDetails={handleViewDetails}
+        />
       )}
 
       {isViewModalOpen && (

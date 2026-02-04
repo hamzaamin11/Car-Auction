@@ -1,0 +1,488 @@
+import React, { useContext, useEffect, useRef, useState } from "react";
+import { debounce } from "lodash";
+import UserContext from "../../context/UserContext";
+import EditUserModal from "./EditUserModal";
+import axios from "axios";
+import { BASE_URL } from "../../components/Contant/URL";
+import { User } from "lucide-react";
+import CustomAdd from "../../CustomAdd";
+import CustomSearch from "../../CustomSearch";
+import Swal from "sweetalert2"; // SweetAlert2 imported
+import SellerDetails from "./ViewUserModal";
+import SellerVehicleDetails from "../../components/SellerVehicleDetails";
+import SellerDetailsModal from "./SellerDetailsModal";
+
+export default function Sellers() {
+  const { getUserbyId, delUser } = useContext(UserContext);
+  const [isModalOpen, setIsModalOpen] = useState(false);
+  const [isViewModalOpen, setIsViewModalOpen] = useState(false);
+  const [selectedUser, setSelectedUser] = useState(null);
+  const sellerId = useRef();
+  const [allUsers, setAllUsers] = useState([]);
+  const [hasMore, setHasMore] = useState(true);
+  const [search, setSearch] = useState("");
+  const [currentPage, setCurrentPage] = useState(1);
+  const [itemsPerPage, setItemsPerPage] = useState(10);
+  const [loading, setLoading] = useState(false);
+  const [totals, setTotals] = useState({});
+
+  const itemsPerRequest = 10;
+
+  const debouncedSearch = React.useCallback(
+    debounce((value) => {
+      setSearch(value);
+      setCurrentPage(1);
+    }, 300),
+    [],
+  );
+
+  const fetchPage = async (page, searchTerm = "") => {
+    try {
+      const res = await axios.get(`${BASE_URL}/admin/getRegisteredSellers`, {
+        params: { entry: itemsPerRequest, page, search: search },
+      });
+      const data = res.data || [];
+      if (data.length < itemsPerRequest) setHasMore(false);
+      setAllUsers(data);
+    } catch (error) {
+      Swal.fire({
+        title: "Error",
+        text: error.response?.data?.message,
+        icon: "error",
+        confirmButtonColor: "#172554",
+      });
+    }
+  };
+
+  useEffect(() => {
+    setHasMore(true);
+    fetchPage();
+    setCurrentPage(1);
+  }, [search, itemsPerPage]);
+
+  useEffect(() => {
+    const totalNeeded = currentPage * itemsPerPage;
+    if (allUsers.length < totalNeeded && hasMore && !loading) {
+    }
+  }, [currentPage, itemsPerPage]);
+
+  useEffect(() => {
+    const handleTotalUsers = async () => {
+      try {
+        const res = await axios.get(`${BASE_URL}/customer/totalBuyers`);
+        setTotals(res.data);
+      } catch (error) {
+        console.log(error);
+      }
+    };
+    handleTotalUsers();
+  }, []);
+
+  const handleView = async (user) => {
+    sellerId.current = user.id;
+    setIsViewModalOpen(true);
+  };
+
+  const handleUserUpdated = (updatedUser) => {
+    setAllUsers((prev) =>
+      prev.map((u) => (u.id === updatedUser.id ? { ...u, ...updatedUser } : u)),
+    );
+    setIsModalOpen(false);
+  };
+
+  const totalItems = allUsers.length + (hasMore ? 1 : 0);
+  const totalPages = Math.ceil(totalItems / itemsPerPage);
+  const startIndex = (currentPage - 1) * itemsPerPage;
+  const endIndex = Math.min(startIndex + itemsPerPage, allUsers.length);
+  const currentDisplay = allUsers.slice(startIndex, endIndex);
+
+  const goToPage = (page) => {
+    setCurrentPage(page);
+    window.scrollTo({ top: 0, behavior: "smooth" });
+  };
+
+  const getPageNumbers = () => {
+    const pages = [];
+    if (totalPages <= 5) {
+      for (let i = 1; i <= totalPages; i++) pages.push(i);
+    } else if (currentPage <= 3) {
+      for (let i = 1; i <= 5; i++) pages.push(i);
+    } else if (currentPage >= totalPages - 2) {
+      for (let i = totalPages - 4; i <= totalPages; i++) pages.push(i);
+    } else {
+      for (let i = currentPage - 2; i <= currentPage + 2; i++) pages.push(i);
+    }
+    return pages;
+  };
+  const UserImage = ({ user, size = "md" }) => {
+    const sizeClasses = { sm: "w-8 h-8", md: "w-10 h-10", lg: "w-16 h-16" };
+    const iconSizes = { sm: 16, md: 20, lg: 32 };
+
+    if (user.image) {
+      return (
+        <img
+          src={user.image}
+          alt={user.name}
+          className={`${sizeClasses[size]} rounded-full object-cover border-2 border-gray-200`}
+        />
+      );
+    }
+    return (
+      <div
+        className={`${sizeClasses[size]} rounded-full bg-gray-200 flex items-center justify-center border-2 border-gray-300`}
+      >
+        <User size={iconSizes[size]} className="text-gray-500" />
+      </div>
+    );
+  };
+
+  return (
+    <div className="max-w-7xl mx-auto px-2 sm:px-4 py-6 font-sans ">
+      <div className="flex flex-col sm:flex-row justify-between items-center gap-4 mb-3">
+        <h1 className="lg:text-3xl text-xl font-bold text-gray-900">
+          Registered Sellers
+        </h1>
+        <div className="relative w-full max-w-md">
+          <span className="absolute inset-y-0 left-0 flex items-center pl-3 text-gray-400">
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              className="h-5 w-5"
+              fill="none"
+              viewBox="0 0 24 24"
+              stroke="currentColor"
+            >
+              <path
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                strokeWidth="2"
+                d="M21 21l-4.35-4.35m0 0A7.5 7.5 0 104.5 4.5a7.5 7.5 0 0012.15 12.15z"
+              />
+            </svg>
+          </span>
+          <CustomSearch
+            placeholder="Search..."
+            value={search}
+            onChange={(e) => {
+              setSearch(e.target.value);
+              debouncedSearch(e.target.value);
+            }}
+          />
+        </div>
+      </div>
+
+      <div className="flex gap-2 lg:text-2xl text-xl text-gray-800 font-semibold">
+        <div>
+          Total Sellers:
+          <span>{totals?.totalSellers}</span>
+        </div>
+      </div>
+
+      <div className="max-w-7xl mx-auto px-2 lg:px-0">
+        <div className="overflow-x-auto rounded">
+          <table className="w-full border-collapse border overflow-hidden">
+            <thead className="bg-blue-950 text-white">
+              <tr>
+                <th className="p-3 text-start text-sm font-semibold">Sr</th>
+                <th className="p-1 text-left text-sm font-semibold">User</th>
+                <th className="p-1 text-left text-sm font-semibold">Email</th>
+                <th className="p-1 text-left text-sm font-semibold">Phone</th>
+                <th className="p-1 text-left text-sm font-semibold">Role</th>
+                <th className="p-1 text-center text-sm font-semibold">
+                  Actions
+                </th>
+              </tr>
+            </thead>
+            <tbody className="divide-y">
+              {currentDisplay.map((user, index) => (
+                <tr
+                  key={user.id}
+                  className="hover:bg-gray-50 transition-colors"
+                >
+                  {/* Serial Number */}
+                  <td className="p-1">
+                    <span className="text-sm text-gray-600 px-2">
+                      {startIndex + index + 1}
+                    </span>
+                  </td>
+
+                  {/* User with Image */}
+                  <td className="p-1">
+                    <div className="flex items-center gap-3">
+                      <UserImage user={user} size="md" />
+                      <span className="text-sm font-medium text-gray-900">
+                        {user?.name?.charAt(0)?.toUpperCase() +
+                          user?.name?.slice(1)}
+                      </span>
+                    </div>
+                  </td>
+
+                  {/* Email */}
+                  <td className="p-1">
+                    <span className="text-sm text-gray-600">
+                      {user?.email?.charAt(0)?.toUpperCase() +
+                        user?.email?.slice(1)}
+                    </span>
+                  </td>
+
+                  {/* Phone */}
+                  <td className="p-1">
+                    <span className="text-sm text-gray-600">
+                      {user?.contact?.slice(0, 15) || "--"}
+                    </span>
+                  </td>
+
+                  {/* Role */}
+                  <td className="p-1">
+                    <span
+                      className={`inline-flex items-center px-3 py-1 text-xs font-medium rounded-full ${
+                        user.role === "admin"
+                          ? "bg-blue-100 text-blue-950"
+                          : user.role === "customer"
+                            ? "bg-yellow-100 text-yellow-800"
+                            : "bg-green-100 text-green-800"
+                      }`}
+                    >
+                      {user.role.charAt(0).toUpperCase() + user.role.slice(1)}
+                    </span>
+                  </td>
+
+                  {/* Actions - Three Buttons */}
+                  <td className="p-1">
+                    <div className="flex gap-2">
+                      {/* Edit Button */}
+                      <button
+                        onClick={() => {
+                          setSelectedUser(user);
+                          setIsModalOpen(true);
+                        }}
+                        className="px-3 py-1.5 text-xs font-medium text-yellow-600 bg-yellow-100  hover:bg-yellow-200 rounded transition-colors flex items-center gap-1"
+                      >
+                        <svg
+                          className="w-3 h-3"
+                          fill="none"
+                          stroke="currentColor"
+                          viewBox="0 0 24 24"
+                        >
+                          <path
+                            strokeLinecap="round"
+                            strokeLinejoin="round"
+                            strokeWidth={2}
+                            d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"
+                          />
+                        </svg>
+                        Edit
+                      </button>
+
+                      {/* View Button */}
+                      <button
+                        onClick={() => handleView(user)}
+                        className="px-3 py-1.5 text-xs font-medium text-white bg-blue-950 hover:bg-indigo-900 rounded transition-colors flex items-center gap-1"
+                      >
+                        <svg
+                          className="w-3 h-3"
+                          fill="none"
+                          stroke="currentColor"
+                          viewBox="0 0 24 24"
+                        >
+                          <path
+                            strokeLinecap="round"
+                            strokeLinejoin="round"
+                            strokeWidth={2}
+                            d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"
+                          />
+                          <path
+                            strokeLinecap="round"
+                            strokeLinejoin="round"
+                            strokeWidth={2}
+                            d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"
+                          />
+                        </svg>
+                        View
+                      </button>
+
+                      {/* Delete Button */}
+                      <button
+                        onClick={() => handleDeleteUser(user.id)}
+                        className="px-3 py-1.5 text-xs font-medium text-white bg-red-600 hover:bg-red-700 rounded transition-colors flex items-center gap-1"
+                      >
+                        <svg
+                          className="w-3 h-3"
+                          fill="none"
+                          stroke="currentColor"
+                          viewBox="0 0 24 24"
+                        >
+                          <path
+                            strokeLinecap="round"
+                            strokeLinejoin="round"
+                            strokeWidth={2}
+                            d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"
+                          />
+                        </svg>
+                        Delete
+                      </button>
+                    </div>
+                  </td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+      <div className="md:hidden space-y-4">
+        {currentDisplay.map((user) => (
+          <div
+            key={user.id}
+            className="bg-white shadow rounded-xl p-4 border border-gray-200"
+          >
+            <div className="flex gap-3 mb-3">
+              <UserImage user={user} size="lg" />
+              <div className="flex-1 flex items-start justify-between">
+                <h2 className="text-lg font-semibold text-gray-900 py-4">
+                  {user.name.charAt(0).toUpperCase() + user.name.slice(1)}
+                </h2>
+                <span
+                  className={`px-2 py-1 text-xs font-bold rounded-full ${
+                    user.role === "admin"
+                      ? "bg-blue-100 text-blue-500"
+                      : user.role === "customer"
+                        ? "bg-yellow-100 text-yellow-500"
+                        : "bg-green-100 text-green-500"
+                  }`}
+                >
+                  {user?.role?.charAt(0)?.toUpperCase() + user?.role?.slice(1)}
+                </span>
+              </div>
+            </div>
+            <div className="flex flex-col gap-2 mb-3">
+              <p className="text-sm text-gray-600">
+                <span className="font-bold">Email:</span>{" "}
+                {user?.email?.charAt(0)?.toUpperCase() + user?.email?.slice(1)}
+              </p>
+              <p className="text-sm text-gray-600">
+                <span className="font-bold">Phone:</span>{" "}
+                {user?.contact?.slice(0, 14)}
+              </p>
+            </div>
+            <div className="flex gap-2">
+              <CustomAdd
+                text="Edit"
+                variant="edit"
+                onClick={() => {
+                  setSelectedUser(user);
+                  setIsModalOpen(true);
+                }}
+                className="flex-1"
+              />
+              <CustomAdd
+                text="View"
+                variant="view"
+                onClick={() => handleView(user)}
+                className="flex-1"
+              />
+              <CustomAdd
+                text="Delete"
+                variant="delete"
+                onClick={() => handleDeleteUser(user.id)}
+                className="flex-1"
+              />
+            </div>
+          </div>
+        ))}
+      </div>
+
+      {currentDisplay.length === 0 && (
+        <div className="flex items-center justify-center mt-4 font-medium text-sm lg:text-xl text-gray-400">
+          No users found.
+        </div>
+      )}
+
+      {allUsers.length > 0 && (
+        <div className="bg-white rounded-lg shadow-sm p-4 mt-6">
+          <div className="flex flex-col sm:flex-row justify-between items-center gap-4 text-sm text-gray-700">
+            <div className="text-gray-600">
+              Showing <span className="font-medium">{startIndex + 1}</span> to{" "}
+              <span className="font-medium">{endIndex}</span>{" "}
+              <span className="font-medium"></span> entries
+            </div>
+
+            <div className="flex items-center gap-1">
+              <button
+                onClick={() => goToPage(1)}
+                disabled={currentPage === 1}
+                className={`px-3 py-1 rounded border ${
+                  currentPage === 1
+                    ? "bg-gray-100 text-gray-400 cursor-not-allowed"
+                    : "bg-white hover:bg-gray-50"
+                }`}
+              >
+                {"<<"}
+              </button>
+              <button
+                onClick={() => goToPage(currentPage - 1)}
+                disabled={currentPage === 1}
+                className={`px-3 py-1 rounded border ${
+                  currentPage === 1
+                    ? "bg-gray-100 text-gray-400 cursor-not-allowed"
+                    : "bg-white hover:bg-gray-50"
+                }`}
+              >
+                {"<"}
+              </button>
+
+              {getPageNumbers().map((page) => (
+                <button
+                  key={page}
+                  onClick={() => goToPage(page)}
+                  className={`px-3 py-1 rounded border ${
+                    currentPage === page
+                      ? "bg-blue-950 text-white"
+                      : "bg-white hover:bg-gray-50"
+                  }`}
+                >
+                  {page}
+                </button>
+              ))}
+
+              <button
+                onClick={() => goToPage(currentPage + 1)}
+                disabled={!hasMore && currentPage >= totalPages}
+                className={`px-3 py-1 rounded border ${
+                  !hasMore && currentPage >= totalPages
+                    ? "bg-gray-100 text-gray-400 cursor-not-allowed"
+                    : "bg-white hover:bg-gray-50"
+                }`}
+              >
+                {">"}
+              </button>
+              <button
+                onClick={() => goToPage(totalPages)}
+                disabled={!hasMore && currentPage >= totalPages}
+                className={`px-3 py-1 rounded border ${
+                  !hasMore && currentPage >= totalPages
+                    ? "bg-gray-100 text-gray-400 cursor-not-allowed"
+                    : "bg-white hover:bg-gray-50"
+                }`}
+              >
+                {">>"}
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+      {isViewModalOpen && (
+        <SellerDetailsModal
+          isOpen={isViewModalOpen}
+          onClose={() => setIsViewModalOpen(false)}
+          sellerId={sellerId?.current}
+        />
+      )}
+      <EditUserModal
+        Open={isModalOpen}
+        setOpen={setIsModalOpen}
+        selectedUser={selectedUser}
+        onUserUpdated={handleUserUpdated}
+      />
+    </div>
+  );
+}

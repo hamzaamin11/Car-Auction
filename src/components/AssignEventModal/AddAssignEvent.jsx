@@ -59,7 +59,7 @@ export const AddAssignEvent = ({ Open, setOpen, handleGetAssignEvent }) => {
     { value: "", label: "Select the Vehicle" },
     ...allvehicles.map((vehicle) => ({
       value: vehicle?.id,
-      label: `${vehicle?.make} | ${vehicle?.model} | ${vehicle?.series} | ${vehicle?.year}`,
+      label: `${vehicle?.make} | ${vehicle?.model} | ${vehicle?.series} | ${vehicle?.lot_number} | ${vehicle?.year} `,
     })),
   ];
 
@@ -75,7 +75,7 @@ export const AddAssignEvent = ({ Open, setOpen, handleGetAssignEvent }) => {
   const handleGetEventDate = async () => {
     try {
       const res = await axios.get(
-        `${BASE_URL}/admin/getEventDateById/${assignData.eventId}`
+        `${BASE_URL}/admin/getEventDateById/${assignData.eventId}`,
       );
       console.log(res.data);
       setSelectDate(res.data);
@@ -99,7 +99,7 @@ export const AddAssignEvent = ({ Open, setOpen, handleGetAssignEvent }) => {
     try {
       const res = await axios.post(
         `${BASE_URL}/admin/createAssignedEvents`,
-        assignData
+        assignData,
       );
       console.log(res.data);
       setOpen();
@@ -163,7 +163,7 @@ export const AddAssignEvent = ({ Open, setOpen, handleGetAssignEvent }) => {
               <Dialog.Panel className="w-full max-w-xl border transform overflow-hidden rounded-3xl bg-white p-8 text-left align-middle shadow-2xl transition-all">
                 <Dialog.Title
                   as="h3"
-                  className="text-2xl flex flex-row justify-between items-center font-bold leading-6 mb-4"
+                  className="text-2xl flex flex-row justify-between items-center font-bold leading-6 mb-4 text-blue-950"
                 >
                   Assign Event
                   <div>
@@ -252,7 +252,7 @@ export const AddAssignEvent = ({ Open, setOpen, handleGetAssignEvent }) => {
                   <div className="flex justify-center pt-3">
                     <button
                       type="submit"
-                      className="px-2 flex justify-center text-sm bg-blue-950 text-white py-2 rounded shadow-md hover:scale-105 transition-transform duration-300  hover:cursor-pointer"
+                      className="px-2 flex justify-center text-sm bg-blue-950 text-white py-2 rounded shadow-md hover:scale-105 transition-transform duration-300 hover:cursor-pointer"
                     >
                       Add Event
                     </button>
